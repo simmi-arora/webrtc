@@ -524,18 +524,19 @@ rtcMultiConnection.onmessage = function(e) {
             color: e.extra.color
         }); 
     }else if(e.data.type=="canvas"){
-        console.log(" canvas " , e.data.draw);
+        //console.log(" canvas " , e.data.draw);
         CanvasDesigner.syncData( e.data.draw );
     }else if(e.data.type=="pointer"){
         //console.log(" pointer " , e.data.corX , e.data.corY);
         placeCursor("cursor2" , e.data.corX , e.data.corY);
         //CanvasDesigner.syncData( e.data.draw );
-    }else if(e.data.type="shareFileShow"){
-
-    }else if(e.data.type="shareFileHide"){
-
-    }else if(e.data.type= "shareFileRemove"){
-        
+    }else if(e.data.type=="shareFileShow"){
+        showFile(e.data._uuid , e.data._element , e.data._fileurl , e.data._filename , e.data._filetype);
+    }else if(e.data.type=="shareFileHide"){
+        console.log(e.data._element);
+        hideFile(e.data._uuid , e.data._element , e.data._fileurl , e.data._filename , e.data._filetype);
+    }else if(e.data.type=="shareFileRemove"){
+        removeFile(e.data.element);
     }
     return;
 };
@@ -595,7 +596,7 @@ rtcMultiConnection.onclose = rtcMultiConnection.onleave = function(e) {
 		Session call 
 ************************************************************************************/
 // connecting to signaling medium
-//rtcMultiConnection.connect();
+// rtcMultiConnection.connect();
 
 function startcall() {
     //rtcMultiConnection.open();
@@ -653,11 +654,18 @@ function startcall() {
 /********************************************************************************8
         Chat
 **************************************************************************************/
+function addMessageLineformat(){
+
+}
+
+function addMessageBlockFormat(){
+
+}
 
 function addNewMessage(e) {
 
     if ("" != e.message && " " != e.message) {
-/*        var t = document.createElement("div");
+/*      var t = document.createElement("div");
         t.className = "user-activity user-activity-left remoteMessageClass", 
         /*t.innerHTML = '<div class="chatusername">' + e.header + "</div>";*/
 
@@ -666,7 +674,7 @@ function addNewMessage(e) {
         //t.appendChild(n), 
         n.innerHTML= e.message, 
         //$("#all-messages").append(n),
-/*        $("#all-messages").scrollTop($("#all-messages")[0].scrollHeight) */
+/*      $("#all-messages").scrollTop($("#all-messages")[0].scrollHeight) */
         document.getElementById("all-messages").insertBefore(n, document.getElementById("all-messages").firstChild);
     }
 }
@@ -821,6 +829,13 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
     var name = document.createElement("div");
     name.innerHTML = length +"   " + filename ;
     name.id="name"+filename;
+    var elementPeer=null;
+
+    if(element=="widget-filesharing-container1"){
+        elementPeer="widget-filesharing-container2";
+    }else if(element== "widget-filesharing-container2"){
+        elementPeer="widget-filesharing-container1"
+    }
 
     var downloadButton = document.createElement("div");
     downloadButton.setAttribute("class" , "btn btn-primary");
@@ -835,27 +850,41 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
         rtcMultiConnection.send({
             type:"shareFileShow", 
             _uuid: uuid , 
-            _element: element,
+            _element: elementPeer,
             _fileurl : fileurl, 
             _filename : filename, 
             _filetype : filetype
         });
-
-
     };
 
     var hideButton = document.createElement("div");
     hideButton.setAttribute("class" , "btn btn-primary");
     hideButton.innerHTML='hide';
     hideButton.onclick=function(){
+        console.log(element);
         hideFile(uuid , element , fileurl , filename , filetype);
+        rtcMultiConnection.send({
+            type:"shareFileHide", 
+            _uuid: uuid , 
+            _element: elementPeer,
+            _fileurl : fileurl, 
+            _filename : filename, 
+            _filetype : filetype
+        });
     }
 
     var removeButton = document.createElement("div");
     removeButton.setAttribute("class" , "btn btn-primary");
     removeButton.innerHTML='remove';
     removeButton.onclick=function(event){
-        event.target.parentNode.hidden=true;
+       // event.target.parentNode.hidden=true;
+        element = event.target.parentNode.id;
+        console.log("removeButton " , element);
+        removeFile(element);
+        rtcMultiConnection.send({
+            type:"shareFileRemove", 
+            _element: element
+        });    
     }
 
     r.innerHTML="";
@@ -932,6 +961,10 @@ function hideFile( uuid , element , fileurl , filename , filetype ){
     if($("#"+element).has("#display"+filename)){
         $("#"+element).html("");
     }
+}
+
+function removeFile(element){
+    document.getElementById(element).hidden=true;
 }
 
 function closeFV(id){
