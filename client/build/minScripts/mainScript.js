@@ -8191,7 +8191,7 @@ getScreenId(function (error, sourceId, screen_constraints) {
 
             loadCallback();
         };
-        iframe.src = 'https://127.0.0.1:8084/getScreenId.html';
+        iframe.src = 'https://www.villageexperts.com:8084/getScreenId.html';
         iframe.style.display = 'none';
         (document.body || document.documentElement).appendChild(iframe);
     }
@@ -8297,7 +8297,7 @@ getScreenId(function (error, sourceId, screen_constraints) {
 
             loadCallback();
         };
-        iframe.src = 'https://127.0.0.1:8084/getScreenId.html';
+        iframe.src = 'https://www.villageexperts.com:8084/getScreenId.html';
         iframe.style.display = 'none';
         (document.body || document.documentElement).appendChild(iframe);
     }
@@ -8900,8 +8900,6 @@ getScreenId(function (error, sourceId, screen_constraints) {
 
         return sdp;
     }
-
-    // getScreenId.js - https://github.com/muaz-khan/WebRTC-Experiment/tree/master/getScreenId.js
 
     function loadScript(src, onload) {
         var script = document.createElement('script');
