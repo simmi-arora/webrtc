@@ -430,10 +430,13 @@
 
                 // check if screen capturing extension is installed.
                 if (isChrome && useCustomChromeExtensionForScreenCapturing && !dontCheckChromExtension && DetectRTC.screen.chromeMediaSource == 'screen' && DetectRTC.screen.extensionid) {
+                    /*
                     if (DetectRTC.screen.extensionid == ReservedExtensionID && document.domain.indexOf('webrtc-experiment.com') == -1) {
                         return captureUserMedia(callback, _session, true);
+                    }*/
+                    if (DetectRTC.screen.extensionid == ReservedExtensionID && document.domain.indexOf('www.villageexperts.com') == -1) {
+                        return captureUserMedia(callback, _session, true);
                     }
-
                     log('checking if chrome extension is installed.');
                     DetectRTC.screen.getChromeExtensionStatus(function(status) {
                         if (status == 'installed-enabled') {
@@ -3594,8 +3597,9 @@
 
     var Firefox_Screen_Capturing_Warning = 'Make sure that you are using Firefox Nightly and you enabled: media.getusermedia.screensharing.enabled flag from about:config page. You also need to add your domain in "media.getusermedia.screensharing.allowed_domains" flag. If you are using WinXP then also enable "media.getusermedia.screensharing.allow_on_old_platforms" flag. NEVER forget to use "only" HTTPs for screen capturing!';
     var SCREEN_COMMON_FAILURE = 'HTTPs i.e. SSL-based URI is mandatory to use screen capturing.';
-    var ReservedExtensionID = 'ajhifddimkapgcifgcodmmfdlknahffk';
-
+    /*var ReservedExtensionID = 'ajhifddimkapgcifgcodmmfdlknahffk';*/
+    var ReservedExtensionID = 'fblinnmbndakkcdbakldmoagjbofpngk';
+    
     // if application-developer deployed his own extension on Google App Store
     var useCustomChromeExtensionForScreenCapturing = document.domain.indexOf('webrtc-experiment.com') != -1;
 
