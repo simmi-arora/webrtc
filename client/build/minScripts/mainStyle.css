@@ -842,12 +842,12 @@ input:focus {
 }
 
 .topPanelClass{
-width: 50%;
+    width: 50%;
     margin-left: 25%;
 }
 #topIconHolder {
     padding: 0px 0px 0px 0px;
-/*    background-color: #D9D9D9;
+/*  background-color: #D9D9D9;
     height: 40px;
     padding-left: 8%;
     line-height: 40px;
@@ -1257,6 +1257,10 @@ video {
     background: transparent;
     border: transparent;
     width: 48%;
+}
+
+#controlminiVideo  , #controlremoteVideo{
+
 }
 
 .merge{

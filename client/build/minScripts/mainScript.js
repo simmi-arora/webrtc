@@ -9671,12 +9671,18 @@ rtcMultiConnection.onmessage = function(e) {
         placeCursor("cursor2" , e.data.corX , e.data.corY);
         //CanvasDesigner.syncData( e.data.draw );
     }else if(e.data.type=="shareFileShow"){
-        showFile(e.data._uuid , e.data._element , e.data._fileurl , e.data._filename , e.data._filetype);
+        //showFile(e.data._uuid , e.data._element , e.data._fileurl , e.data._filename , e.data._filetype);
+       // $("#showButton"+e.data._filename).click();
+        document.getElementById("showButton"+e.data._filename).click();
     }else if(e.data.type=="shareFileHide"){
-        console.log(e.data._element);
-        hideFile(e.data._uuid , e.data._element , e.data._fileurl , e.data._filename , e.data._filetype);
+        //console.log(e.data._element);
+        //hideFile(e.data._uuid , e.data._element , e.data._fileurl , e.data._filename , e.data._filetype);
+        // $("#hideButton"+e.data._filename).click();
+         document.getElementById("hideButton"+e.data._filename).click();
     }else if(e.data.type=="shareFileRemove"){
-        removeFile(e.data.element);
+        //removeFile(e.data.element);
+        // $("#removeButton"+e.data._filename).click();
+       document.getElementById("removeButton"+e.data._filename).click();
     }
     return;
 };
@@ -9983,6 +9989,7 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
     downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '" style="color:white" > Download </a>';
     
     var showButton = document.createElement("div");
+    showButton.id= "showButton"+filename;
     showButton.setAttribute("class" , "btn btn-primary");
     showButton.innerHTML='show';
     showButton.onclick=function(){
@@ -9998,6 +10005,7 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
     };
 
     var hideButton = document.createElement("div");
+    hideButton.id= "hideButton"+filename;
     hideButton.setAttribute("class" , "btn btn-primary");
     hideButton.innerHTML='hide';
     hideButton.onclick=function(){
@@ -10014,11 +10022,15 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
     }
 
     var removeButton = document.createElement("div");
+    removeButton.id= "removeButton"+filename;
     removeButton.setAttribute("class" , "btn btn-primary");
     removeButton.innerHTML='remove';
     removeButton.onclick=function(event){
        // event.target.parentNode.hidden=true;
         element = event.target.parentNode.id;
+        //$("#hideButton"+filename).click();
+        document.getElementById("hideButton"+filename).click();
+
         console.log("removeButton " , element);
         removeFile(element);
         rtcMultiConnection.send({
