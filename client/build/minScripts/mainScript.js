@@ -8151,12 +8151,12 @@ screensharing.onuserleft = function(userid) {
 // check pre-shared screens
 screensharing.check();
 
-document.getElementById('share-screen').onclick = function() {
+document.getElementById('screenShareButton').onclick = function() {
     screensharing.share();
     this.disabled = true;
 };
 
-document.getElementById('share-screen').onclick = function() {
+document.getElementById('screenShareButton').onclick = function() {
     var username = document.getElementById('user-name');
     username.disabled = this.disabled = true;
     
