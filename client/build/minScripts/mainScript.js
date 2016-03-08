@@ -8982,13 +8982,13 @@ screensharing.onuserleft = function(userid) {
 // check pre-shared screens
 screensharing.check();
 
-document.getElementById('screenShareButton').onclick = function() {
+/*document.getElementById('screenShareButton').onclick = function() {
     screensharing.share();
     this.disabled = true;
 };
-
+*/
 document.getElementById('screenShareButton').onclick = function() {
-    var username = document.getElementById('user-name');
+    var username = document.getElementById('username');
     username.disabled = this.disabled = true;
     
     screensharing.isModerator = true;
