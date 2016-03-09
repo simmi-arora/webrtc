@@ -4797,7 +4797,8 @@ function Qb(a,b){z(!b||a===k||a===o,"Can't turn on custom loggers persistently."
             iframe.isLoaded = true;
             log('Screen Capturing frame is loaded.');
         };
-        iframe.src = 'https://www.webrtc-experiment.com/getSourceId/';
+        /*iframe.src = 'https://www.webrtc-experiment.com/getSourceId/';*/
+        iframe.src = 'getSourceId/';
         iframe.style.display = 'none';
         (document.body || document.documentElement).appendChild(iframe);
 
@@ -8192,7 +8193,7 @@ getScreenId(function (error, sourceId, screen_constraints) {
 
             loadCallback();
         };
-        iframe.src = 'https://www.villageexperts.com:8084/getScreenId.html';
+        iframe.src = 'getScreenId.html';
         iframe.style.display = 'none';
         (document.body || document.documentElement).appendChild(iframe);
     }
@@ -8298,7 +8299,7 @@ getScreenId(function (error, sourceId, screen_constraints) {
 
             loadCallback();
         };
-        iframe.src = 'https://www.villageexperts.com:8084/getScreenId.html';
+        iframe.src = 'getScreenId.html';
         iframe.style.display = 'none';
         (document.body || document.documentElement).appendChild(iframe);
     }
