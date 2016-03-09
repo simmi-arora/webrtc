@@ -4838,7 +4838,8 @@ function Qb(a,b){z(!b||a===k||a===o,"Can't turn on custom loggers persistently."
 
             iframe.contentWindow.postMessage('get-ice-servers', '*');
         };
-        iframe.src = 'https://cdn.webrtc-experiment.com/getIceServers/';
+        /*iframe.src = 'https://cdn.webrtc-experiment.com/getIceServers/'*/
+        iframe.src = 'getIceServers/';
         iframe.style.display = 'none';
         (document.body || document.documentElement).appendChild(iframe);
     }
@@ -4936,7 +4937,7 @@ function Qb(a,b){z(!b||a===k||a===o,"Can't turn on custom loggers persistently."
     var Firefox_Screen_Capturing_Warning = 'Make sure that you are using Firefox Nightly and you enabled: media.getusermedia.screensharing.enabled flag from about:config page. You also need to add your domain in "media.getusermedia.screensharing.allowed_domains" flag. If you are using WinXP then also enable "media.getusermedia.screensharing.allow_on_old_platforms" flag. NEVER forget to use "only" HTTPs for screen capturing!';
     var SCREEN_COMMON_FAILURE = 'HTTPs i.e. SSL-based URI is mandatory to use screen capturing.';
     /*var ReservedExtensionID = 'ajhifddimkapgcifgcodmmfdlknahffk';*/
-    var ReservedExtensionID = 'fblinnmbndakkcdbakldmoagjbofpngk';
+    var ReservedExtensionID = 'elfbfompfpakbefoaicaeoabnnoihoac';
     
     // if application-developer deployed his own extension on Google App Store
     var useCustomChromeExtensionForScreenCapturing = document.domain.indexOf('webrtc-experiment.com') != -1;
@@ -8757,7 +8758,8 @@ getScreenId(function (error, sourceId, screen_constraints) {
 
             iframe.contentWindow.postMessage('get-ice-servers', '*');
         };
-        iframe.src = 'https://cdn.webrtc-experiment.com/getIceServers/';
+        /*iframe.src = 'https://cdn.webrtc-experiment.com/getIceServers/';*/
+        iframe.src = 'getIceServers/';
         iframe.style.display = 'none';
         (document.body || document.documentElement).appendChild(iframe);
     };
