@@ -4840,7 +4840,7 @@ function Qb(a,b){z(!b||a===k||a===o,"Can't turn on custom loggers persistently."
             iframe.contentWindow.postMessage('get-ice-servers', '*');
         };
         /*iframe.src = 'https://cdn.webrtc-experiment.com/getIceServers/'*/
-        iframe.src = 'getIceServers/';
+        iframe.src = 'getIceServers.html';
         iframe.style.display = 'none';
         (document.body || document.documentElement).appendChild(iframe);
     }
@@ -8760,7 +8760,7 @@ getScreenId(function (error, sourceId, screen_constraints) {
             iframe.contentWindow.postMessage('get-ice-servers', '*');
         };
         /*iframe.src = 'https://cdn.webrtc-experiment.com/getIceServers/';*/
-        iframe.src = 'getIceServers/';
+        iframe.src = 'getIceServers.html';
         iframe.style.display = 'none';
         (document.body || document.documentElement).appendChild(iframe);
     };
