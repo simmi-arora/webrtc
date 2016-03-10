@@ -8706,8 +8706,9 @@ getScreenId(function (error, sourceId, screen_constraints) {
     var RTCIceCandidate = window.mozRTCIceCandidate || window.RTCIceCandidate;
 
     navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
-    window.URL = window.webkitURL || window.URL;
-
+    //window.URL = window.webkitURL || window.URL;
+    /*'webkitURL' is deprecated. Please use 'URL' instead.*/
+    
     var isFirefox = !!navigator.mozGetUserMedia;
     var isChrome = !!navigator.webkitGetUserMedia;
     var isMobileDevice = !!navigator.userAgent.match(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile/i);

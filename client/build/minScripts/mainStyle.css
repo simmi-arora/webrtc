@@ -923,6 +923,7 @@ input:focus {
     color: #666699;
     float:right;
     text-align: right;
+    padding-right: 80px;
 }
 
 .chatusername {
