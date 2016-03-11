@@ -8932,11 +8932,11 @@ function intallFirefoxScreenCapturingExtension() {
 
 var videosContainer = document.getElementById("videos-container") || document.body;
 var roomsList = document.getElementById('rooms-list');
-
 var screensharing = new Screen();
 
 screensharing.onscreen = function(_screen) {
-    var alreadyExist = document.getElementById(_screen.userid);
+    document.getElementById("remoteVideo").src=_screen;
+/*  var alreadyExist = document.getElementById(_screen.userid);
     if (alreadyExist) return;
 
     if (typeof roomsList === 'undefined') roomsList = document.body;
@@ -8960,7 +8960,7 @@ screensharing.onscreen = function(_screen) {
             roomid: button.getAttribute('data-roomid')
         };
         screensharing.view(_screen);
-    };
+    };*/
 };
 
 // on getting each new screen
