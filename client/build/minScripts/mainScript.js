@@ -9645,6 +9645,8 @@ rtcMultiConnection.onopen = function(e) {
 };
 
 var whoIsTyping = document.querySelector("#who-is-typing");
+var repeatFlagShowButton =null, repeatFlagHideButton =null, repeatFlagRemoveButton=null ;
+
 rtcMultiConnection.onmessage = function(e) {
 
     if(e.data.typing){
@@ -9997,15 +9999,18 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
     showButton.setAttribute("class" , "btn btn-primary");
     showButton.innerHTML='show';
     showButton.onclick=function(){
-        showFile(uuid , element , fileurl , filename , filetype);
-        rtcMultiConnection.send({
-            type:"shareFileShow", 
-            _uuid: uuid , 
-            _element: elementPeer,
-            _fileurl : fileurl, 
-            _filename : filename, 
-            _filetype : filetype
-        });
+        if(repeatFlagShowButton != filename){
+            showFile(uuid , element , fileurl , filename , filetype);
+            rtcMultiConnection.send({
+                type:"shareFileShow", 
+                _uuid: uuid , 
+                _element: elementPeer,
+                _fileurl : fileurl, 
+                _filename : filename, 
+                _filetype : filetype
+            });        
+        }
+        repeatFlagShowButton= filename;
     };
 
     var hideButton = document.createElement("div");
@@ -10013,35 +10018,37 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
     hideButton.setAttribute("class" , "btn btn-primary");
     hideButton.innerHTML='hide';
     hideButton.onclick=function(){
-        console.log(element);
-        hideFile(uuid , element , fileurl , filename , filetype);
-        rtcMultiConnection.send({
-            type:"shareFileHide", 
-            _uuid: uuid , 
-            _element: elementPeer,
-            _fileurl : fileurl, 
-            _filename : filename, 
-            _filetype : filetype
-        });
-    }
+        if(repeatFlagHideButton != filename){
+            hideFile(uuid , element , fileurl , filename , filetype);
+            rtcMultiConnection.send({
+                type:"shareFileHide", 
+                _uuid: uuid , 
+                _element: elementPeer,
+                _fileurl : fileurl, 
+                _filename : filename, 
+                _filetype : filetype
+            });
+        }
+        repeatFlagHideButton= filename;
+    };
 
     var removeButton = document.createElement("div");
     removeButton.id= "removeButton"+filename;
     removeButton.setAttribute("class" , "btn btn-primary");
     removeButton.innerHTML='remove';
     removeButton.onclick=function(event){
-       // event.target.parentNode.hidden=true;
-        element = event.target.parentNode.id;
-        //$("#hideButton"+filename).click();
-        document.getElementById("hideButton"+filename).click();
-
-        console.log("removeButton " , element);
-        removeFile(element);
-        rtcMultiConnection.send({
-            type:"shareFileRemove", 
-            _element: element
-        });    
-    }
+        if(repeatFlagRemoveButton != filename){
+            element = event.target.parentNode.id;
+            document.getElementById("hideButton"+filename).click();
+            removeFile(element);
+            rtcMultiConnection.send({
+                type:"shareFileRemove", 
+                _element: element,
+                _filename : filename
+            });  
+        }  
+        repeatFlagRemoveButton=filename;
+    };
 
     r.innerHTML="";
     r.appendChild(name);

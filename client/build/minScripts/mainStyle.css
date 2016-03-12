@@ -1135,8 +1135,11 @@ video {
 .chatBox{
     background-color: rgba(85, 209, 245, 0.39);
     height: 30%;
-}
 
+}
+#chatBox{
+        padding: 10px 56px 10px 10px;
+}
 /*.chatBoard{
     width: 100%;
     border: 0px;
@@ -1272,9 +1275,9 @@ video {
 .closeButton{
     float: right !important;
     /* background: rgb(183, 183, 183); */
-    padding: 2px 2px 2px 2px;
+    /*padding: 2px 2px 2px 2px;*/
     margin: 2px 2px 2px 2px;
-    font-size: 18px;
+    font-size: 14px;
     color: #333333;
     line-height :20px!important
 }

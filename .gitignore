@@ -1,5 +1,7 @@
-/node_modules
+node_modules
 gulpfile.js
-/client/scripts
-/client/drawboard
-/client/css
+client/build/scripts
+client/build/drawboard
+client/build/css
+desktopCapture
+desktopCapture.zip
