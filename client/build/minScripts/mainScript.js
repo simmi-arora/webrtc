@@ -8930,13 +8930,17 @@ function intallFirefoxScreenCapturingExtension() {
 }
 
 
-var videosContainer = document.getElementById("videos-container") || document.body;
-var roomsList = document.getElementById('rooms-list');
+//var videosContainer = document.getElementById("videos-container") || document.body;
+//var roomsList = document.getElementById('rooms-list');
 var screensharing = new Screen();
 
 screensharing.onscreen = function(_screen) {
-    document.getElementById("remoteVideo").src=_screen;
-/*  var alreadyExist = document.getElementById(_screen.userid);
+    //document.getElementById("remoteVideo").src=_screen;
+    console.log(_screen);
+    attachMediaStream(localVideo, _screen.stream);
+
+    /*  
+    var alreadyExist = document.getElementById(_screen.userid);
     if (alreadyExist) return;
 
     if (typeof roomsList === 'undefined') roomsList = document.body;
@@ -9013,7 +9017,7 @@ function rotateVideo(video) {
         else uniqueToken.innerHTML = uniqueToken.parentNode.parentNode.href = '#' + (Math.random() * new Date().getTime()).toString(36).toUpperCase().replace( /\./g , '-');
 })();
 
-screensharing.onNumberOfParticipantsChnaged = function(numberOfParticipants) {
+/*screensharing.onNumberOfParticipantsChnaged = function(numberOfParticipants) {
     if(!screensharing.isModerator) return;
     
     document.title = numberOfParticipants + ' users are viewing your screen!';
@@ -9021,7 +9025,7 @@ screensharing.onNumberOfParticipantsChnaged = function(numberOfParticipants) {
     if (element) {
         element.innerHTML = numberOfParticipants + ' users are viewing your screen!';
     }
-};
+};*/
 
 
 
@@ -10000,6 +10004,7 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
     showButton.innerHTML='show';
     showButton.onclick=function(){
         if(repeatFlagShowButton != filename){
+            alert(repeatFlagHideButton);
             showFile(uuid , element , fileurl , filename , filetype);
             rtcMultiConnection.send({
                 type:"shareFileShow", 
@@ -10008,9 +10013,11 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
                 _fileurl : fileurl, 
                 _filename : filename, 
                 _filetype : filetype
-            });        
+            }); 
+            repeatFlagShowButton= filename;       
+        }else if(repeatFlagShowButton == filename){
+            repeatFlagShowButton= "";
         }
-        repeatFlagShowButton= filename;
     };
 
     var hideButton = document.createElement("div");
@@ -10028,8 +10035,11 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
                 _filename : filename, 
                 _filetype : filetype
             });
+            repeatFlagHideButton= filename;
+        }else if(repeatFlagHideButton == filename){
+            repeatFlagHideButton= "";
         }
-        repeatFlagHideButton= filename;
+        
     };
 
     var removeButton = document.createElement("div");
@@ -10046,8 +10056,11 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
                 _element: element,
                 _filename : filename
             });  
+            repeatFlagRemoveButton=filename;
+        }else if(repeatFlagRemoveButton == filename){
+            repeatFlagRemoveButton= "";
         }  
-        repeatFlagRemoveButton=filename;
+        
     };
 
     r.innerHTML="";
