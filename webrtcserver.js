@@ -10,22 +10,22 @@ var file = new _static.Server('./client/build', {
 });
 
 
-/*
+
 var options = {
   key: fs.readFileSync('/etc/apache2/ssl/villageexpert.key'),
   cert: fs.readFileSync('/etc/apache2/ssl/edac0f74577a2bdf.crt'),
   ca: fs.readFileSync('/etc/apache2/ssl/gd_bundle-g2-g1.crt'),
 };
-*/
 
-var options = {
+
+/*var options = {
   key: fs.readFileSync('server.key'),
   cert: fs.readFileSync('server.crt'),
   ca: fs.readFileSync('ca.crt'),
   requestCert: true,
   rejectUnauthorized: false
 };
-
+*/
 
 var app = https.createServer(options, function(request, response){
         request.addListener('end', function () {
