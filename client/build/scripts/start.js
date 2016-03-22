@@ -1099,16 +1099,14 @@ var screen = new Screen('screen-unique-id');
 screen.onaddstream = function(e) {
     //document.body.appendChild(e.video);
     console.log("screen video ",e);
-    alert(e.type);
     document.getElementById("screenshare").appendChild(e.video);
     document.getElementById("screenshare").hidden=false;
-    io.connect("/" + rtcMultiConnection.channel).on('message', callback);
+
+    screen.openSignalingChannel = function(callback) {
+        return io.connect("/" + rtcMultiConnection.channel).on('message', callback);
+    };
 };
 
-// custom signaling channel
-/*screen.openSignalingChannel = function(callback) {
-    return io.connect("/" + rtcMultiConnection.channel).on('message', callback);
-};*/
 
 screen.check();
 
