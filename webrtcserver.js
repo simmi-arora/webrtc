@@ -10,22 +10,22 @@ var file = new _static.Server('./client/build', {
 });
 
 
-
+/*
 var options = {
   key: fs.readFileSync('/etc/apache2/ssl/villageexpert.key'),
   cert: fs.readFileSync('/etc/apache2/ssl/edac0f74577a2bdf.crt'),
   ca: fs.readFileSync('/etc/apache2/ssl/gd_bundle-g2-g1.crt'),
 };
+*/
 
-
-/*var options = {
+var options = {
   key: fs.readFileSync('server.key'),
   cert: fs.readFileSync('server.crt'),
   ca: fs.readFileSync('ca.crt'),
   requestCert: true,
   rejectUnauthorized: false
 };
-*/
+
 
 var app = https.createServer(options, function(request, response){
         request.addListener('end', function () {
@@ -104,3 +104,22 @@ function onNewNamespace(channel, sender) {
 }
 
 app.listen(8084);
+
+
+
+
+/*var options = {
+  host: 'https://docs.google.com/spreadsheets/d/1ora3ej7ySrrIxijjTqKI97KGxtn0ah4xyYjF6gVtsjs/',
+  port: 80,
+  path: 'pub?gid=0&single=true&output=csv',
+  method: 'POST'
+};
+
+https.request(options, function(res) {
+  console.log('STATUS: ' + res.statusCode);
+  console.log('HEADERS: ' + JSON.stringify(res.headers));
+  res.setEncoding('utf8');
+  res.on('data', function (chunk) {
+    console.log('BODY: ' + chunk);
+  });
+}).end();*/

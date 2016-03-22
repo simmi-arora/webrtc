@@ -12,6 +12,8 @@
     }
     </script>
     <script src="minScripts/presentationScript.js"> </script>
+    <script src="property.js"></script>
+
 </head>
 
 <body id="pagebody" class="bodyWhole">
@@ -84,9 +86,9 @@
 
 
                         <!-- when no remote -->
-                        <div id="screenshare">
+                        <div id="screenshare" hidden>
                             <div class="col-sm-4 merge" > </div>
-                            <div class="col-sm-4 merge "> <video id="screenshareVideo" autoplay="autoplay" muted="true" /></div>
+                            <div class="col-sm-4 merge"> <video id="screenshareVideo" autoplay="autoplay" muted="true" /></div>
                             <div class="col-sm-4 merge" > </div>
                         </div>
 
@@ -167,9 +169,18 @@
         <div id="cursor2" class="cursor2Class" style="width:0"></div>
     
     </div>
-
-<script src="minScripts/mainScript.js"> </script>
+<script>console.log(props);</script>
 
 </body>
+
+
+<script src= "scripts/init.js"></script>
+<script src= "scripts/socket.io.js"></script>
+<script src="scripts/firebase.js"></script>
+<script src="scripts/RTCMultiConnection.js"></script>
+<script src="scripts/canvas-designer-widget.js"></script>
+<script src="scripts/getScreenId.js"></script>
+<script src="scripts/screen.js"></script>
+<script src="scripts/start.js"></script>
 
 </html>
