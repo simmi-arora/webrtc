@@ -1098,25 +1098,17 @@ var screen = new Screen('screen-unique-id');
 // get shared screens
 screen.onaddstream = function(e) {
     //document.body.appendChild(e.video);
+    console.log("screen video ",e);
+    alert(e.type);
     document.getElementById("screenshare").appendChild(e.video);
     document.getElementById("screenshare").hidden=false;
+    io.connect("/" + rtcMultiConnection.channel).on('message', callback);
 };
 
 // custom signaling channel
-screen.openSignalingChannel = function(callback) {
-    return io.connect(rtcMultiConnection.channel).on('message', callback);
-    //Code to open  signalling channel 
-/*        var t = rtcMultiConnection.channel ;
-
-        var n = io.connect("/" + t);    
-        n.channel = t;
-
-        n.on("connect", function() {
-            rtcMultiConnection.callback && rtcMultiConnection.callback(n)
-        });
-
-        n.on("message", rtcMultiConnection.onmessage); */
-};
+/*screen.openSignalingChannel = function(callback) {
+    return io.connect("/" + rtcMultiConnection.channel).on('message', callback);
+};*/
 
 screen.check();
 
