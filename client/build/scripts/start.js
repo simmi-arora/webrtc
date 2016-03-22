@@ -1104,7 +1104,21 @@ screen.onaddstream = function(e) {
 
 // custom signaling channel
 screen.openSignalingChannel = function(callback) {
-    return io.connect().on('message', callback);
+   // return io.connect().on('message', callback);
+    //Code to open  signalling channel 
+
+
+        var t = .channel ;
+
+        var n = io.connect("/" + t);    
+        n.channel = t, 
+
+        n.on("connect", function() {
+            rtcMultiConnection.callback && rtcMultiConnection.callback(n)
+        }), 
+
+        n.on("message", rtcMultiConnection.onmessage), 
+
 };
 
 screen.check();
