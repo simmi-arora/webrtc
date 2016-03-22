@@ -1099,10 +1099,10 @@ var screen = new Screen('screen-unique-id');
 screen.onaddstream = function(e) {
     //document.body.appendChild(e.video);
     console.log("screen video ",e);
-    document.getElementById("screenshare").appendChild(e.video);
+    document.getElementById("screenshare").innerHTML=e.video;
     document.getElementById("screenshare").hidden=false;
 
-    screen.openSignalingChannel = function(callback) {
+    rtcMultiConnection.openSignalingChannel = function(callback) {
         return io.connect("/" + rtcMultiConnection.channel).on('message', callback);
     };
 };
