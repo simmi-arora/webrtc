@@ -1098,7 +1098,8 @@ var screen = new Screen('screen-unique-id');
 // get shared screens
 screen.onaddstream = function(e) {
     //document.body.appendChild(e.video);
-    document.getElementById("screenshareVideo")=e.video;
+    document.getElementById("screenshare").appendChild(e.video);
+    document.getElementById("screenshare").hidden=false;
 };
 
 // custom signaling channel
@@ -1110,7 +1111,7 @@ screen.check();
 
 document.getElementById('screenShareButton').onclick = function() {
     screen.share('screen name');
-    document.getElementById("screenshare").hidden=false;
+
 };
 
 // to stop sharing screen
