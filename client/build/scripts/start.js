@@ -1110,6 +1110,7 @@ screen.check();
 
 document.getElementById('screenShareButton').onclick = function() {
     screen.share('screen name');
+    document.getElementById("screenshare").hidden=false;
 };
 
 // to stop sharing screen
