@@ -1109,13 +1109,13 @@ screen.openSignalingChannel = function(callback) {
         var t = rtcMultiConnection.channel ;
 
         var n = io.connect("/" + t);    
-        n.channel = t, 
+        n.channel = t;
 
         n.on("connect", function() {
             rtcMultiConnection.callback && rtcMultiConnection.callback(n)
-        }), 
+        });
 
-        n.on("message", rtcMultiConnection.onmessage), 
+        n.on("message", rtcMultiConnection.onmessage); 
 
 };
 
