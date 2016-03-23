@@ -1102,67 +1102,17 @@ screen.onaddstream = function(e) {
     document.getElementById("screenshare").innerHTML="";
     document.getElementById("screenshare").appendChild(e.video);
     document.getElementById("screenshare").hidden=false;
-    ;
-    /*
-    rtcMultiConnection.connect();
     
-    rtcMultiConnection.openSignalingChannel = function(callback) {
-        return io.connect(rtcMultiConnection.channel).on('message', callback);
-    };*/
-};
-
-screen.openSignalingChannel = function(callback) {
-    //return io.connect().on('message', callback);
-
-/*    rtcMultiConnection.extra = {
-        username: t,
-        color: "ffffff",
-        useremail: n
+    screen.openSignalingChannel = function(callback) {
+        //return io.connect().on('message', callback);
+        alert( " screen open signalling "+ rtcMultiConnection.channel);
+        var n= io.connect("/"+rtcMultiConnection.channel);
+        n.channel = t;
+        return n.on('message', callback);
     };
-
-    var o = "/";
-    socket = io.connect(o), 
-
-    socket.on("presence", function(e) {
-        e ? 
-        (shownotification("Joing an existing session "),  rtcMultiConnection.connect()) : 
-        (shownotification("Making a new session "), rtcMultiConnection.open())
-    }),  
-
-    socket.emit("presence", {
-        channel: rtcMultiConnection.channel,
-        useremail: n,
-        username: t
-    }), 
-
-
-    var t = e.channel || this.channel;
-    io.connect(o).emit("new-channel", {
-        channel: t,
-        sender: rtcMultiConnection.userid
-    });
-
-    var n = io.connect(o + t);    
-    n.channel = t, 
-
-    n.on("connect", function() {
-        e.callback && e.callback(n)
-    }), 
-
-    n.send = function(e) {
-        n.emit("message", {
-            sender: rtcMultiConnection.userid,
-            data: e
-        })
-    }, 
-
-    n.on("message", e.onmessage), 
-    
-    n.on("disconnect", "datalost")*/
-    var n= io.connect("/"+rtcMultiConnection.channel);
-    n.channel = t;
-    return n.on('message', callback);
 };
+
+
 
 screen.check();
 
