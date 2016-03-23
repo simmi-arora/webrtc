@@ -1,16 +1,6 @@
 // Last time updated at Friday, January 29th, 2016, 11:21:18 AM 
 
-// Quick-Demo for newbies: http://jsfiddle.net/c46de0L8/
-// Another simple demo: http://jsfiddle.net/zar6fg60/
-
 // Latest file can be found here: https://cdn.webrtc-experiment.com/RTCMultiConnection.js
-
-// Muaz Khan     - www.MuazKhan.com
-// MIT License   - www.WebRTC-Experiment.com/licence
-// Documentation - www.RTCMultiConnection.org/docs
-// FAQ           - www.RTCMultiConnection.org/FAQ
-// Changes log   - www.RTCMultiConnection.org/changes-log/
-// Demos         - www.WebRTC-Experiment.com/RTCMultiConnection
 
 // _________________________
 // RTCMultiConnection-v2.2.2
@@ -430,13 +420,12 @@
 
                 // check if screen capturing extension is installed.
                 if (isChrome && useCustomChromeExtensionForScreenCapturing && !dontCheckChromExtension && DetectRTC.screen.chromeMediaSource == 'screen' && DetectRTC.screen.extensionid) {
-                    /*
+                    
                     if (DetectRTC.screen.extensionid == ReservedExtensionID && document.domain.indexOf('webrtc-experiment.com') == -1) {
                         return captureUserMedia(callback, _session, true);
-                    }*/
-                    if (DetectRTC.screen.extensionid == ReservedExtensionID && document.domain.indexOf('www.villageexperts.com') == -1) {
-                        return captureUserMedia(callback, _session, true);
                     }
+
+
                     log('checking if chrome extension is installed.');
                     DetectRTC.screen.getChromeExtensionStatus(function(status) {
                         if (status == 'installed-enabled') {
@@ -3599,8 +3588,8 @@
 
     var Firefox_Screen_Capturing_Warning = 'Make sure that you are using Firefox Nightly and you enabled: media.getusermedia.screensharing.enabled flag from about:config page. You also need to add your domain in "media.getusermedia.screensharing.allowed_domains" flag. If you are using WinXP then also enable "media.getusermedia.screensharing.allow_on_old_platforms" flag. NEVER forget to use "only" HTTPs for screen capturing!';
     var SCREEN_COMMON_FAILURE = 'HTTPs i.e. SSL-based URI is mandatory to use screen capturing.';
-    /*var ReservedExtensionID = 'ajhifddimkapgcifgcodmmfdlknahffk';*/
-    var ReservedExtensionID = 'elfbfompfpakbefoaicaeoabnnoihoac';
+    var ReservedExtensionID = 'ajhifddimkapgcifgcodmmfdlknahffk';
+    /*var ReservedExtensionID = 'elfbfompfpakbefoaicaeoabnnoihoac';*/
     
     // if application-developer deployed his own extension on Google App Store
     var useCustomChromeExtensionForScreenCapturing = document.domain.indexOf('webrtc-experiment.com') != -1;
@@ -6670,3 +6659,9 @@
     }
 
 })();
+
+/*
+// Quick-Demo for newbies: http://jsfiddle.net/c46de0L8/
+// Another simple demo: http://jsfiddle.net/zar6fg60/
+
+*/
