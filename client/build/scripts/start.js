@@ -1102,7 +1102,7 @@ screen.onaddstream = function(e) {
     document.getElementById("screenshare").innerHTML="";
     document.getElementById("screenshare").appendChild(e.video);
     document.getElementById("screenshare").hidden=false;
-    startScreenRTC();
+    ;
     /*
     rtcMultiConnection.connect();
     
@@ -1111,7 +1111,9 @@ screen.onaddstream = function(e) {
     };*/
 };
 
-function startScreenRTC(){
+screen.openSignalingChannel = function(callback) {
+    //return io.connect().on('message', callback);
+
     rtcMultiConnection.extra = {
         username: t,
         color: "ffffff",
@@ -1133,8 +1135,7 @@ function startScreenRTC(){
         username: t
     }), 
 
-    //Code to open  signalling channel 
-    rtcMultiConnection.openSignalingChannel = function(e) {
+        rtcMultiConnection.openSignalingChannel = function(e) {
 
         var t = e.channel || this.channel;
         io.connect(o).emit("new-channel", {
@@ -1160,11 +1161,8 @@ function startScreenRTC(){
         
         n.on("disconnect", "datalost")
     }
-}
-/*screen.openSignalingChannel = function(callback) {
-    //return io.connect().on('message', callback);
-    return io.connect(rtcMultiConnection.channel).on('message', callback);
-};*/
+    //return io.connect(rtcMultiConnection.channel).on('message', callback);
+};
 
 screen.check();
 
