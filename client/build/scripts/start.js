@@ -1117,12 +1117,16 @@ screen.check();
 var isScreenOn=0;
 document.getElementById('screenShareButton').onclick = function() {
     if(isScreenOn==0){
-        screen.share('screen name');
+        screen.share('screenShareVilageExperts');
         isScreenOn=1;
     }else if(isScreenOn ==1){
         screen.leave();
         isScreenOn=0;
     }
+};
+
+document.getElementById('viewScreenShareButton').onclick = function() {
+    screen.view({roomid:"screen"+rtcMultiConnection.channel , userid:rtcMultiConnection.userid});
 };
 
 /*screen  Object {broadcasting: true, roomid: 11, userid: 10494752123}*/

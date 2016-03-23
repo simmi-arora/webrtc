@@ -65,9 +65,14 @@
         this.share = function(roomid) {
             captureUserMedia(function() {
                 !signaler && initSignaler(roomid);
+                /*
                 signaler.broadcast({
                     roomid: (roomid && roomid.length) || self.channel,
                     userid: self.userid
+                });*/
+                signaler.broadcast({
+                    roomid: "screen"+rtcMultiConnection.channel,
+                    userid: rtcMultiConnection.userid
                 });
             });
         };
@@ -116,16 +121,12 @@
 
             else {
                 // for pretty logging
-                console.log("screen " ,message);
-
                 console.debug(JSON.stringify(message, function(key, value) {
                     if (value.sdp) {
                         console.log(value.sdp.type, '————', value.sdp.sdp);
                         return '';
                     } else return value;
                 }, '————'));
-
-                showPeerScreen(message);
             }
 
             // if someone shared SDP
