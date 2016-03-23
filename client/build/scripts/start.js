@@ -1125,8 +1125,10 @@ document.getElementById('screenShareButton').onclick = function() {
     }
 };
 
+var screen_roomid , screen_userid;
+
 document.getElementById('viewScreenShareButton').onclick = function() {
-    screen.view({roomid:"screen"+rtcMultiConnection.channel , userid:rtcMultiConnection.userid});
+    screen.view({roomid:screen_roomid , userid:screen_userid});
 };
 /*screen  Object {broadcasting: true, roomid: 11, userid: 10494752123}*/
 
@@ -1138,6 +1140,15 @@ screen.onuserleft = function(userid) {
 /*    var video = document.getElementById(userid);
     if(video) video.parentNode.removeChild(video);*/
 };
+
+
+screen.onscreen = function(screen) {
+    console.log( " onscreen " , screen );
+    if (self.detectedRoom) return;
+    self.detectedRoom = true;
+    self.view(screen);
+};
+        
 /******************************************************************************/
 
 $('document').ready(function(){

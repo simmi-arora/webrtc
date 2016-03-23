@@ -63,7 +63,7 @@
         this.share = function(roomid) {
             captureUserMedia(function() {
                 !signaler && initSignaler(roomid);
-                console.log("share new screen "); 
+                console.log("share new screen ",roomid); 
                 signaler.broadcast({
                     roomid: (roomid && roomid.length) || self.channel,
                     userid: self.userid
@@ -111,10 +111,16 @@
         // it is called when your signaling implementation fires "onmessage"
         this.onmessage = function(message) {
             // if new room detected
-            if (message.roomid == roomid && message.broadcasting && !signaler.sentParticipationRequest)
+            console.log(signaler.sentParticipationRequest);
+            console.log(roomid);
+            console.log(message);
+            if(message.roomid!=null && message.userid!=null){
+                screen_roomid =message.roomid;
+                screen_userid =message.userid;
+            }
+            if (message.roomid == roomid && message.broadcasting && !signaler.sentParticipationRequest){
                 root.onscreen(message);
-
-            else {
+            }else {
                 // for pretty logging
                 console.debug(JSON.stringify(message, function(key, value) {
                     if (value.sdp) {
