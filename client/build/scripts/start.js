@@ -1102,23 +1102,92 @@ screen.onaddstream = function(e) {
     document.getElementById("screenshare").innerHTML="";
     document.getElementById("screenshare").appendChild(e.video);
     document.getElementById("screenshare").hidden=false;
-    rtcMultiConnection.connect();
+    startScreenRTC();
     /*
+    rtcMultiConnection.connect();
+    
     rtcMultiConnection.openSignalingChannel = function(callback) {
         return io.connect(rtcMultiConnection.channel).on('message', callback);
     };*/
 };
 
+function startScreenRTC(){
+    rtcMultiConnection.extra = {
+        username: t,
+        color: "ffffff",
+        useremail: n
+    };
+
+    var o = "/";
+    socket = io.connect(o), 
+
+    socket.on("presence", function(e) {
+        e ? 
+        (shownotification("Joing an existing session "),  rtcMultiConnection.connect()) : 
+        (shownotification("Making a new session "), rtcMultiConnection.open())
+    }),  
+
+    socket.emit("presence", {
+        channel: rtcMultiConnection.channel,
+        useremail: n,
+        username: t
+    }), 
+
+    //Code to open  signalling channel 
+    rtcMultiConnection.openSignalingChannel = function(e) {
+
+        var t = e.channel || this.channel;
+        io.connect(o).emit("new-channel", {
+            channel: t,
+            sender: rtcMultiConnection.userid
+        });
+
+        var n = io.connect(o + t);    
+        n.channel = t, 
+
+        n.on("connect", function() {
+            e.callback && e.callback(n)
+        }), 
+
+        n.send = function(e) {
+            n.emit("message", {
+                sender: rtcMultiConnection.userid,
+                data: e
+            })
+        }, 
+
+        n.on("message", e.onmessage), 
+        
+        n.on("disconnect", "datalost")
+    }
+}
+/*screen.openSignalingChannel = function(callback) {
+    //return io.connect().on('message', callback);
+    return io.connect(rtcMultiConnection.channel).on('message', callback);
+};*/
 
 screen.check();
 
+var isScreenOn=0;
 document.getElementById('screenShareButton').onclick = function() {
-    screen.share('screen name');
+    if(isScreenOn==0){
+        screen.share('screen name');
+        isScreenOn=1;
+    }else if(isScreenOn ==1){
+        screen.leave();
+        isScreenOn=0;
+    }
+
 };
 
 // to stop sharing screen
 // screen.leave();
-
+// if someone leaves; just remove his video
+screen.onuserleft = function(userid) {
+    alert("screen stoped");
+/*    var video = document.getElementById(userid);
+    if(video) video.parentNode.removeChild(video);*/
+};
 /******************************************************************************/
 
 $('document').ready(function(){

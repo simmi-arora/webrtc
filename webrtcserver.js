@@ -57,7 +57,7 @@ io.sockets.on('connection', function (socket) {
         if (!channels[data.channel]) {
             initiatorChannel = data.channel;
         }
-        console.log("new channel ");
+        console.log("------------new channel------------- ");
         channels[data.channel] = data.channel;     
         onNewNamespace(data.channel, data.sender);
     });
