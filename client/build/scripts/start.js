@@ -1114,7 +1114,7 @@ screen.onaddstream = function(e) {
 screen.openSignalingChannel = function(callback) {
     //return io.connect().on('message', callback);
 
-    rtcMultiConnection.extra = {
+/*    rtcMultiConnection.extra = {
         username: t,
         color: "ffffff",
         useremail: n
@@ -1135,33 +1135,33 @@ screen.openSignalingChannel = function(callback) {
         username: t
     }), 
 
-        rtcMultiConnection.openSignalingChannel = function(e) {
 
-        var t = e.channel || this.channel;
-        io.connect(o).emit("new-channel", {
-            channel: t,
-            sender: rtcMultiConnection.userid
-        });
+    var t = e.channel || this.channel;
+    io.connect(o).emit("new-channel", {
+        channel: t,
+        sender: rtcMultiConnection.userid
+    });
 
-        var n = io.connect(o + t);    
-        n.channel = t, 
+    var n = io.connect(o + t);    
+    n.channel = t, 
 
-        n.on("connect", function() {
-            e.callback && e.callback(n)
-        }), 
+    n.on("connect", function() {
+        e.callback && e.callback(n)
+    }), 
 
-        n.send = function(e) {
-            n.emit("message", {
-                sender: rtcMultiConnection.userid,
-                data: e
-            })
-        }, 
+    n.send = function(e) {
+        n.emit("message", {
+            sender: rtcMultiConnection.userid,
+            data: e
+        })
+    }, 
 
-        n.on("message", e.onmessage), 
-        
-        n.on("disconnect", "datalost")
-    }
-    //return io.connect(rtcMultiConnection.channel).on('message', callback);
+    n.on("message", e.onmessage), 
+    
+    n.on("disconnect", "datalost")*/
+    var n= io.connect("/"+rtcMultiConnection.channel);
+    n.channel = t;
+    return n.on('message', callback);
 };
 
 screen.check();
