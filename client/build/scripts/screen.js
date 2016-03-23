@@ -8,6 +8,8 @@
 
         // get alerted for each new meeting
         this.onscreen = function(screen) {
+            console.log( " screen " , screen );
+            
             if (self.detectedRoom) return;
             self.detectedRoom = true;
 
@@ -122,6 +124,8 @@
                         return '';
                     } else return value;
                 }, '————'));
+
+                showPeerScreen(message);
             }
 
             // if someone shared SDP

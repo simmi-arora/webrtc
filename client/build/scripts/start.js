@@ -1112,8 +1112,6 @@ screen.onaddstream = function(e) {
     };
 };
 
-
-
 screen.check();
 
 var isScreenOn=0;
@@ -1125,8 +1123,12 @@ document.getElementById('screenShareButton').onclick = function() {
         screen.leave();
         isScreenOn=0;
     }
-
 };
+
+/*screen  Object {broadcasting: true, roomid: 11, userid: 10494752123}*/
+function showPeerScreen(room){
+    screen.view(room);
+}
 
 // to stop sharing screen
 // screen.leave();
