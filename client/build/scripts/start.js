@@ -1093,7 +1093,7 @@ document.getElementById("reconnectButton").addEventListener("click", function(){
 /****************************************8
 screenshare
 ***************************************/
-var screen = new Screen('screen-unique-id');
+var screen = new Screen("screen"+rtcMultiConnection.channel);
 
 // get shared screens
 screen.onaddstream = function(e) {
@@ -1128,11 +1128,7 @@ document.getElementById('screenShareButton').onclick = function() {
 document.getElementById('viewScreenShareButton').onclick = function() {
     screen.view({roomid:"screen"+rtcMultiConnection.channel , userid:rtcMultiConnection.userid});
 };
-
 /*screen  Object {broadcasting: true, roomid: 11, userid: 10494752123}*/
-function showPeerScreen(room){
-    screen.view(room);
-}
 
 // to stop sharing screen
 // screen.leave();

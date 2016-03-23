@@ -8,11 +8,9 @@
 
         // get alerted for each new meeting
         this.onscreen = function(screen) {
-            console.log( " screen " , screen );
-            
+            console.log( " onscreen " , screen );
             if (self.detectedRoom) return;
             self.detectedRoom = true;
-
             self.view(screen);
         };
 
@@ -65,14 +63,10 @@
         this.share = function(roomid) {
             captureUserMedia(function() {
                 !signaler && initSignaler(roomid);
-                /*
+                console.log("share new screen "); 
                 signaler.broadcast({
                     roomid: (roomid && roomid.length) || self.channel,
                     userid: self.userid
-                });*/
-                signaler.broadcast({
-                    roomid: "screen"+rtcMultiConnection.channel,
-                    userid: rtcMultiConnection.userid
                 });
             });
         };
@@ -80,6 +74,7 @@
         // view pre-shared screens
         this.view = function(room) {
             !signaler && initSignaler();
+            console.log("view and join new screen "); 
             signaler.join({
                 to: room.userid,
                 roomid: room.roomid
