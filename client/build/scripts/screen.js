@@ -114,6 +114,8 @@
 
             else {
                 // for pretty logging
+                console.log("screen " ,message);
+
                 console.debug(JSON.stringify(message, function(key, value) {
                     if (value.sdp) {
                         console.log(value.sdp.type, '————', value.sdp.sdp);
