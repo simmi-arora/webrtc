@@ -208,7 +208,8 @@
             },
             onaddstream: function(stream, _userid) {
                 console.debug('onaddstream', '>>>>>>', stream);
-                alert("screen activated ");
+                //alert("screen activated ");
+                document.getElementById("viewScreenShareButton").disabled=false;
                 stream.onended = function() {
                     if (root.onuserleft) root.onuserleft(_userid);
                 };

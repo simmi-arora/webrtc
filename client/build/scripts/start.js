@@ -311,16 +311,16 @@ function getPeerId(e ){
 Snapshot
 ************************************************/
 
-function syncSnapshot(datasnapshot){
-    rtcMultiConnection.send({type:"snapshot", message:datasnapshot });
+function syncSnapshot(datasnapshot , datatype , dataname ){
+    rtcMultiConnection.send({type:datatype, message:datasnapshot  , name : dataname});
 }
 
-function displaySnapshot(snapshotViewer , datasnapshot){
+/*function displaySnapshot(snapshotViewer , datasnapshot){
     var snaspshot=document.createElement("img");
     snaspshot.src = datasnapshot;
     document.getElementById(snapshotViewer).appendChild(snaspshot);
     console.log("snaspshot ",datasnapshot);
-}
+}*/
 
 /************************************
 control Buttons 
@@ -403,25 +403,13 @@ function attachControlButtons(videoElement, streamid , snapshotViewer){
             rtcMultiConnection.streams[streamid].takeSnapshot(function(datasnapshot) {
                     var snapshotname = "snapshot"+ new Date().getTime();
 
-                    if(localUserId==rtcMultiConnection.userid){
                         fileArray1.push(snapshotname);
                         var numFile= document.createElement("div");
                         numFile.value= fileArray1.length;
                         //displaySnapshot(snapshotViewer, datasnapshot);
-                        syncSnapshot(datasnapshot , snapshotname);
+                        syncSnapshot(datasnapshot , "imagesnapshot" , snapshotname );
                         displayList(rtcMultiConnection.uuid ,  "widget-filesharing-container1"  ,datasnapshot , snapshotname , "imagesnapshot" , fileArray1.length);
                         displayFile(rtcMultiConnection.uuid , "widget-filesharing-container1" , datasnapshot , snapshotname, "imagesnapshot");
-                    }
-                    /*
-                    else{
-                        fileArray2.push(e.name);
-                        var numFile= document.createElement("div");
-                        numFile.value= fileArray2.length;
-
-                        displayList(e.uuid ,  "widget-filesharing-container2" , e.url , e.name  , e.type , fileArray2.length);
-                        displayFile(e.uuid , "widget-filesharing-container2" , e.url , e.name , e.type);
-                    } */
-
 
             });         
         };
@@ -538,14 +526,17 @@ rtcMultiConnection.onmessage = function(e) {
             color: e.extra.color
         }); 
         void(document.title = e.data.message);
-    }else if(e.data.type=="snapshot"){
-        console.log("snapshot recived " , e.data);
+    }else if(e.data.type=="imagesnapshot"){
+        console.log("snapshot received " , e.data);
+         displayList(rtcMultiConnection.uuid ,  "widget-filesharing-container2"  ,e.data.message , e.data.name , "imagesnapshot" , fileArray1.length);
+         displayFile(rtcMultiConnection.uuid , "widget-filesharing-container2" , e.data.message , e.data.name, "imagesnapshot");
+        /*
         addNewMessage({
             header: e.extra.username,
             message: e.data.message,
             userinfo: getUserinfo(rtcMultiConnection.blobURLs[e.userid], "chat-message.png"),
             color: e.extra.color
-        }); 
+        }); */
     }else if(e.data.type == "file"){
         addNewMessage({
             header: e.extra.username,
@@ -887,7 +878,6 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
     showButton.innerHTML='show';
     showButton.onclick=function(){
         if(repeatFlagShowButton != filename){
-            alert(repeatFlagHideButton);
             showFile(uuid , element , fileurl , filename , filetype);
             rtcMultiConnection.send({
                 type:"shareFileShow", 

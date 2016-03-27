@@ -842,7 +842,7 @@ input:focus {
 }
 
 .topPanelClass{
-    width: 50%;
+   /* width: 50%;*/
     margin-left: 25%;
 }
 #topIconHolder {
