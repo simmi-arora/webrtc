@@ -182,9 +182,9 @@ function transitionToWaiting() {
     containerDiv.style.top      = (innerHeight - videoHeight) / 2 + 'px';
 };*/
 
-function enterFullScreen() {
+/*function enterFullScreen() {
     usersContainer.webkitRequestFullScreen();
-}
+}*/
 
 
 /* *************************************************************************************
@@ -307,7 +307,24 @@ function getPeerId(e ){
         }
     }
 }
+/* *************************************8
+Snapshot
+************************************************/
 
+function syncSnapshot(datasnapshot){
+    rtcMultiConnection.send({type:"snapshot", message:datasnapshot });
+}
+
+function displaySnapshot(snapshotViewer , datasnapshot){
+    var snaspshot=document.createElement("img");
+    snaspshot.src = datasnapshot;
+    document.getElementById(snapshotViewer).appendChild(snaspshot);
+    console.log("snaspshot ",datasnapshot);
+}
+
+/************************************
+control Buttons 
+*******************************************************************/
 function attachControlButtons(videoElement, streamid , snapshotViewer){
 
         console.log(videoElement , " : "  , streamid);
@@ -383,11 +400,29 @@ function attachControlButtons(videoElement, streamid , snapshotViewer){
         snapshotButton.className="pull-right glyphicon glyphicon-camera btn btn-default mediaButton";
         snapshotButton.innerHTML="Snap-shot";
         snapshotButton.onclick = function() {
-            var snaspshot=document.createElement("img");
-            rtcMultiConnection.streams[streamid].takeSnapshot(function(snapshot) {
-                snaspshot.src = snapshot;
-                document.getElementById(snapshotViewer).appendChild(snaspshot);
-                rtcMultiConnection.send(snaspshot);
+            rtcMultiConnection.streams[streamid].takeSnapshot(function(datasnapshot) {
+                    var snapshotname = "snapshot"+ new Date().getTime();
+
+                    if(localUserId==rtcMultiConnection.userid){
+                        fileArray1.push(snapshotname);
+                        var numFile= document.createElement("div");
+                        numFile.value= fileArray1.length;
+                        //displaySnapshot(snapshotViewer, datasnapshot);
+                        syncSnapshot(datasnapshot , snapshotname);
+                        displayList(rtcMultiConnection.uuid ,  "widget-filesharing-container1"  ,datasnapshot , snapshotname , "imagesnapshot" , fileArray1.length);
+                        displayFile(rtcMultiConnection.uuid , "widget-filesharing-container1" , datasnapshot , snapshotname, "imagesnapshot");
+                    }
+                    /*
+                    else{
+                        fileArray2.push(e.name);
+                        var numFile= document.createElement("div");
+                        numFile.value= fileArray2.length;
+
+                        displayList(e.uuid ,  "widget-filesharing-container2" , e.url , e.name  , e.type , fileArray2.length);
+                        displayFile(e.uuid , "widget-filesharing-container2" , e.url , e.name , e.type);
+                    } */
+
+
             });         
         };
 
@@ -503,6 +538,14 @@ rtcMultiConnection.onmessage = function(e) {
             color: e.extra.color
         }); 
         void(document.title = e.data.message);
+    }else if(e.data.type=="snapshot"){
+        console.log("snapshot recived " , e.data);
+        addNewMessage({
+            header: e.extra.username,
+            message: e.data.message,
+            userinfo: getUserinfo(rtcMultiConnection.blobURLs[e.userid], "chat-message.png"),
+            color: e.extra.color
+        }); 
     }else if(e.data.type == "file"){
         addNewMessage({
             header: e.extra.username,
@@ -511,24 +554,14 @@ rtcMultiConnection.onmessage = function(e) {
             color: e.extra.color
         }); 
     }else if(e.data.type=="canvas"){
-        //console.log(" canvas " , e.data.draw);
         CanvasDesigner.syncData( e.data.draw );
     }else if(e.data.type=="pointer"){
-        //console.log(" pointer " , e.data.corX , e.data.corY);
         placeCursor("cursor2" , e.data.corX , e.data.corY);
-        //CanvasDesigner.syncData( e.data.draw );
     }else if(e.data.type=="shareFileShow"){
-        //showFile(e.data._uuid , e.data._element , e.data._fileurl , e.data._filename , e.data._filetype);
-       // $("#showButton"+e.data._filename).click();
         document.getElementById("showButton"+e.data._filename).click();
     }else if(e.data.type=="shareFileHide"){
-        //console.log(e.data._element);
-        //hideFile(e.data._uuid , e.data._element , e.data._fileurl , e.data._filename , e.data._filetype);
-        // $("#hideButton"+e.data._filename).click();
          document.getElementById("hideButton"+e.data._filename).click();
     }else if(e.data.type=="shareFileRemove"){
-        //removeFile(e.data.element);
-        // $("#removeButton"+e.data._filename).click();
        document.getElementById("removeButton"+e.data._filename).click();
     }
     return;
@@ -658,7 +691,8 @@ function addMessageBlockFormat(){
 function addNewMessage(e) {
 
     if ("" != e.message && " " != e.message) {
-/*      var t = document.createElement("div");
+        /*      
+        var t = document.createElement("div");
         t.className = "user-activity user-activity-left remoteMessageClass", 
         /*t.innerHTML = '<div class="chatusername">' + e.header + "</div>";*/
 
@@ -667,7 +701,8 @@ function addNewMessage(e) {
         //t.appendChild(n), 
         n.innerHTML= e.message, 
         //$("#all-messages").append(n),
-/*      $("#all-messages").scrollTop($("#all-messages")[0].scrollHeight) */
+        /*      
+        $("#all-messages").scrollTop($("#all-messages")[0].scrollHeight) */
         document.getElementById("all-messages").insertBefore(n, document.getElementById("all-messages").firstChild);
     }
 }
@@ -750,8 +785,8 @@ var fileArray1=[] , fileArray2=[] ;
 
 rtcMultiConnection.onFileStart = function(e) {
     addNewFileLocal({
-        header: ' User local ',
-        message: ' File shared ',
+        header: 'User local',
+        message: 'File shared',
         userinfo: getUserinfo(rtcMultiConnection.blobURLs[rtcMultiConnection.userid], "images/share-files.png"),
         callback: function(r) {        }
     });
@@ -816,8 +851,19 @@ rtcMultiConnection.onFileEnd = function(e) {
 };
 
 function displayList(uuid , element , fileurl , filename , filetype , length){
+    var r;
+    if(filetype!="imagesnapshot"){
+        r = progressHelper[uuid].div;
+    }else{
+        r=document.createElement("div");
 
-    var r = progressHelper[uuid].div;
+        if(localUserId==rtcMultiConnection.userid){
+            document.getElementById("widget-filesharing1").appendChild(r);           
+        }else{
+            document.getElementById("widget-filesharing2").appendChild(r);                 
+        }
+        
+    }
 
     var name = document.createElement("div");
     name.innerHTML = length +"   " + filename ;
@@ -909,7 +955,20 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
 }
 
 function displayFile( uuid , element , fileurl , filename , filetype ){
-    var r = progressHelper[uuid].div;
+    
+    var r;
+    if(filetype!="imagesnapshot"){
+        r = progressHelper[uuid].div;
+    }else{
+        r=document.createElement("div");
+
+        if(localUserId==rtcMultiConnection.userid){
+            document.getElementById("widget-filesharing1").appendChild(r);           
+        }else{
+            document.getElementById("widget-filesharing2").appendChild(r);                 
+        }
+    }
+
 
     var image= document.createElement("img");
     image.src= fileurl;
@@ -923,7 +982,6 @@ function displayFile( uuid , element , fileurl , filename , filetype ){
     iframe.title= filename;
     iframe.id= "display"+filename;
 
-    console.log("filetype" , filetype);
 
     if(filetype.indexOf("msword")>-1 || filetype.indexOf("officedocument")>-1) {
         var divNitofcation= document.createElement("div");
@@ -1105,7 +1163,7 @@ screen.onaddstream = function(e) {
     
     screen.openSignalingChannel = function(callback) {
         //return io.connect().on('message', callback);
-        alert( " screen open signalling "+ rtcMultiConnection.channel);
+        //alert( " screen open signalling "+ rtcMultiConnection.channel);
         var n= io.connect("/"+rtcMultiConnection.channel);
         n.channel = t;
         return n.on('message', callback);
@@ -1136,9 +1194,13 @@ document.getElementById('viewScreenShareButton').onclick = function() {
 // screen.leave();
 // if someone leaves; just remove his video
 screen.onuserleft = function(userid) {
-    alert("screen stoped");
-/*    var video = document.getElementById(userid);
-    if(video) video.parentNode.removeChild(video);*/
+    //alert("screen stoped");
+     document.getElementById("screenshare").hidden=true;
+    /*       
+    var video = document.getElementById(userid);
+    if(video) {
+       // video.parentNode.removeChild(video);
+    }*/
 };
 
 

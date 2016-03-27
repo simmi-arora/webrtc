@@ -208,7 +208,7 @@
             },
             onaddstream: function(stream, _userid) {
                 console.debug('onaddstream', '>>>>>>', stream);
-
+                alert("screen activated ");
                 stream.onended = function() {
                     if (root.onuserleft) root.onuserleft(_userid);
                 };

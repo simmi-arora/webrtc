@@ -1152,6 +1152,7 @@ video {
 }
 .chatMessagesClass{
     overflow-y: scroll;
+        width: 76%;
 /*    height:80%;
     width: 100%;*/
 }
@@ -1329,3 +1330,8 @@ video {
     line-height: 20px!important;
 }
 
+.screenshareVideoClass{
+    transform: rotateY(180deg);
+    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+    -moz-transform:rotateY(180deg); /* Firefox */
+}
