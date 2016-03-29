@@ -528,8 +528,8 @@ rtcMultiConnection.onmessage = function(e) {
         void(document.title = e.data.message);
     }else if(e.data.type=="imagesnapshot"){
         console.log("snapshot received " , e.data);
-         displayList(rtcMultiConnection.uuid ,  "widget-filesharing-container2"  ,e.data.message , e.data.name , "imagesnapshot" , fileArray1.length);
-         displayFile(rtcMultiConnection.uuid , "widget-filesharing-container2" , e.data.message , e.data.name, "imagesnapshot");
+         displayList( rtcMultiConnection.uuid , "widget-filesharing-container2" , e.data.message , e.data.name , "imagesnapshot" , fileArray1.length);
+         displayFile( rtcMultiConnection.uuid , "widget-filesharing-container2" , e.data.message , e.data.name , "imagesnapshot");
         /*
         addNewMessage({
             header: e.extra.username,
