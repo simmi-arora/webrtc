@@ -428,6 +428,8 @@ function attachControlButtons(videoElement, streamid , snapshotViewer){
         referenceNode.parentNode.insertBefore(controlBar, referenceNode.parentNode.firstChild);
 }
 
+var localStream , localStreamId, remoteStream , remoteStreamId;
+
 rtcMultiConnection.onstream = function(e) {
 
     if (e.type == 'local') {
@@ -445,6 +447,8 @@ rtcMultiConnection.onstream = function(e) {
 
         $("#localVideo").show();
         localStream = e.stream;
+        localStreamId=e.stream.streamid;
+
         attachMediaStream(localVideo, e.stream);
         localVideo.muted = true;
         localVideo.style.opacity = 1;
@@ -462,9 +466,9 @@ rtcMultiConnection.onstream = function(e) {
         numberOfRemoteVideos++;
         $("#localVideo").hide();
         $("#controllocalVideo").hide();
-
         $("#remote").show();
-
+        remoteStream=e.stream;
+        remoteStreamId= e.stream.streamid;
         if ( numberOfRemoteVideos == 1) {
             remoteStream = e.stream;
             reattachMediaStream(miniVideo, localVideo);
@@ -487,13 +491,15 @@ rtcMultiConnection.onstream = function(e) {
                     attachControlButtons("miniVideo", webcallpeers[i].streamid , "widget-filesharing-container1");
             }
             
-        } else if(numberOfRemoteVideos == 2){
+        } else{
+            alert("  numberof Remotes is  more than one ");
+        }/*else if(numberOfRemoteVideos == 2){
             appendVideo(e, 'opacity: 1;position: fixed;bottom: 0;z-index: 1;width: 32%;');
         }else if (numberOfRemoteVideos == 3) {
             appendVideo(e, 'opacity: 1;position: fixed;top: 0;z-index: 1;width: 32%;');
         }else if (e.type == 'remote' && numberOfRemoteVideos == 4) {
             appendVideo(e, 'opacity: 1;position: fixed;top: 0;z-index: 1;width: 32%;right:0;');
-        }
+        }*/
 
     }
 }, 
@@ -1200,7 +1206,31 @@ screen.onscreen = function(screen) {
     self.detectedRoom = true;
     self.view(screen);
 };
-        
+
+/******************************************************************
+Record 
+******************************************************************/
+var recordButton= document.getElementById("recordButton");
+recordButton.onclick = function() {
+    if(recordButton.innerHTML=="Record"){
+        recordButton.innerHTML="Stop Recording";
+        rtcMultiConnection.streams[remoteStreamId].startRecording({
+            audio: true,
+            video: true
+        });
+    }else if(recordButton.innerHTML=="Stop Recording"){
+        recordButton.innerHTML="Record";
+        rtcMultiConnection.streams[remoteStreamId].stopRecording(function (blob) {
+                var mediaElement = document.createElement('video'); 
+                mediaElement.src = URL.createObjectURL(blob.video); 
+                document.getElementById("rightVideo").appendChild(mediaElement); 
+
+            // POST both audio/video "Blobs" to PHP/other server using single FormData/XHR2
+            // blob.audio  --- audio blob
+            // blob.video  --- video blob
+        }, {audio:true, video:true} );
+    }
+};    
 /******************************************************************************/
 
 $('document').ready(function(){

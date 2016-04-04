@@ -14,6 +14,7 @@
   "dependencies": {
     "dotenv": "*",
     "faker": "*",
+    "google-auth-library": "^0.9.7",
     "googleapis": "^3.1.0",
     "gulp": "*",
     "gulp-add-src": "*",
