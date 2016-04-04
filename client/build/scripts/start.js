@@ -1212,14 +1212,15 @@ Record
 ******************************************************************/
 var recordButton= document.getElementById("recordButton");
 recordButton.onclick = function() {
-    if(recordButton.innerHTML=="Record"){
-        recordButton.innerHTML="Stop Recording";
+    alert("recording started ");
+    if(recordButton.innerHTML==" Record "){
+        recordButton.innerHTML=" Stop Recording ";
         rtcMultiConnection.streams[remoteStreamId].startRecording({
             audio: true,
             video: true
         });
-    }else if(recordButton.innerHTML=="Stop Recording"){
-        recordButton.innerHTML="Record";
+    }else if(recordButton.innerHTML==" Stop Recording "){
+        recordButton.innerHTML=" Record ";
         rtcMultiConnection.streams[remoteStreamId].stopRecording(function (blob) {
                 var mediaElement = document.createElement('video'); 
                 mediaElement.src = URL.createObjectURL(blob.video); 
