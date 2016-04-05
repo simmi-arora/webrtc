@@ -1245,6 +1245,7 @@ recordButton.onclick = function() {
         rtcMultiConnection.streams[remoteStreamId].stopRecording(function (blob) {
                 var mediaElement = document.createElement('video'); 
                 mediaElement.src = URL.createObjectURL(blob.video); 
+                mediaElement.setAttribute("controls","controls");  
                 document.getElementById("rightVideo").appendChild(mediaElement); 
 
             // POST both audio/video "Blobs" to PHP/other server using single FormData/XHR2
