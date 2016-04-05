@@ -493,6 +493,28 @@ rtcMultiConnection.onstream = function(e) {
             
         } else{
             alert("  numberof Remotes is  more than one ");
+
+            remoteStream = e.stream;
+            reattachMediaStream(miniVideo, localVideo);
+            miniVideo.muted = true;
+            attachMediaStream(remoteVideo, e.stream);
+            waitForRemoteVideo();
+            remoteVideo.setAttribute('data-id', e.userid);
+            attachControlButtons("remoteVideo", e.stream.streamid , "widget-filesharing-container2");
+            
+            webcallpeers.push({ 
+                name: "remoteVideo" , 
+                userid: e.userid , 
+                streamid : e.stream.streamid , 
+                fileSharingcontainer : "widget-filesharing-container2"
+            });
+
+            miniVideo.setAttribute('data-id', rtcMultiConnection.userid);
+            for(i in webcallpeers ){
+                if(webcallpeers[i].name=="localVideo")
+                    attachControlButtons("miniVideo", webcallpeers[i].streamid , "widget-filesharing-container1");
+            }
+
         }/*else if(numberOfRemoteVideos == 2){
             appendVideo(e, 'opacity: 1;position: fixed;bottom: 0;z-index: 1;width: 32%;');
         }else if (numberOfRemoteVideos == 3) {
@@ -1190,8 +1212,7 @@ document.getElementById('viewScreenShareButton').onclick = function() {
 // screen.leave();
 // if someone leaves; just remove his video
 screen.onuserleft = function(userid) {
-    //alert("screen stoped");
-     document.getElementById("screenshare").hidden=true;
+    document.getElementById("screenshare").hidden=true;
     /*       
     var video = document.getElementById(userid);
     if(video) {
@@ -1212,7 +1233,7 @@ Record
 ******************************************************************/
 var recordButton= document.getElementById("recordButton");
 recordButton.onclick = function() {
-    alert("recording started ");
+    
     if(recordButton.innerHTML==" Record "){
         recordButton.innerHTML=" Stop Recording ";
         rtcMultiConnection.streams[remoteStreamId].startRecording({
