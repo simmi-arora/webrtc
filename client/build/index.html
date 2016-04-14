@@ -14,11 +14,17 @@
     <script src="minScripts/presentationScript.js"> </script>
     <script src="property.js"></script>
 
+
+<script src="https://cdn.webrtc-experiment.com/screenshot.js"></script>
+<script src="https://cdn.webrtc-experiment.com/RecordRTC/Whammy.js"></script>
+<script src="https://cdn.webrtc-experiment.com/RecordRTC/CanvasRecorder.js"></script>
+<script src="https://cdn.webrtc-experiment.com/RecordRTC/MediaStreamRecorder.js"></script>
+<script src="https://cdn.WebRTC-Experiment.com/gumadapter.js"></script>
 </head>
 
 <body id="pagebody" class="bodyWhole">
 
-    <div  class="container-fluid">
+    <div  id="elementToShare" class="container-fluid">
 
         <!-- ................................ top panel ....................... -->
         <div class="row topPanelClass" >    
@@ -28,13 +34,19 @@
                     <li> <span id="viewScreenShareButton" class="btn btn-success glyphicon glyphicon-expand topPanelButton" disabled=true> Screen View </span> </li>
                     <li> <span id="drawButton" class="btn btn-success glyphicon glyphicon-edit topPanelButton" disabled=true> Whiteborad </span> </li>
                     <li> <span id="reconnectButton" class="btn btn-success glyphicon glyphicon-refresh topPanelButton" > Reconnect </span> </li>
-                     <li> <span id="recordButton" class="btn btn-success glyphicon glyphicon-refresh topPanelButton" > Record </span> </li>
+                     <!-- <li> <span id="recordButton" class="btn btn-success glyphicon glyphicon-refresh topPanelButton" > Record </span> </li> -->
                     <li hidden> <span id="username" class="userName" hidden>a</span></li>
                     <li hidden> <span id="numbersofusers" class="numbers-of-users" hidden></span></li>
+                    <li> <span id="start" class="btn btn-success glyphicon glyphicon-refresh topPanelButton" > Start </span> </li>
+                    <li> <span id="stop" class="btn btn-success glyphicon glyphicon-refresh topPanelButton" > Stop </span> </li>
                     <!-- <li id="timerli" hidden> Time Remaining <span id="countdownMinutes">3</span>:<span id="countdownSecond">60</span></li>  -->
                 </ul>
             </div>
         </div>
+
+        <!--
+        <button id="start" contenteditable="false" disabled="">Start Canvas Recording</button>
+        <button id="stop" contenteditable="false" disabled="">Stop</button> -->
         <!-- .............alerts................. -->
         
         <div class="row" id="alertBox" hidden="true"></div>
@@ -54,7 +66,7 @@
         <!-- .......................... Row 2 ................................ -->
         <div class="row thirdPanelClass"> 
             <div class="col-xs-12 videoBox merge" id="videoHold">
-                <div class="row users-container merge" id="usersContainer" ondblclick="enterFullScreen()">
+                <div class="row users-container merge" id="usersContainer" >
                     <div class="CardClass" id="card">
                         
                         <!-- when no remote -->
@@ -69,7 +81,7 @@
                             <div class="col-sm-4 merge" class="leftVideoClass" id="leftVideo">
                                 <video id="miniVideo" autoplay="autoplay" muted="true" />
                             </div>
-                            <div class="col-sm-4 merge "  id="chatbox">
+                            <div class="col-sm-4 merge "  id="chatbox" >
                                 <div class="row">
                                     <div class="mainInputBox">   
                                         <button id="send" class="form-control btn-primary buttonChatSend">Send</button>
@@ -174,6 +186,9 @@
 </body>
 
 
+
+
+
 <script src= "scripts/init.js"></script>
 <script src= "scripts/socket.io.js"></script>
 <script src="scripts/firebase.js"></script>
@@ -182,5 +197,7 @@
 <script src="scripts/getScreenId.js"></script>
 <script src="scripts/screen.js"></script>
 <script src="scripts/start.js"></script>
+
+
 
 </html>
