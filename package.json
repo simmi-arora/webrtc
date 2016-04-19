@@ -12,7 +12,6 @@
   ],
   "analyze": false,
   "dependencies": {
-    "dotenv": "*",
     "faker": "*",
     "google-auth-library": "^0.9.7",
     "googleapis": "^3.1.0",
@@ -24,21 +23,13 @@
     "gulp-data-uri": "*",
     "gulp-expect-file": "*",
     "gulp-minify-css": "*",
-    "gulp-sass": "*",
     "gulp-sequence": "*",
     "gulp-uglify": "*",
-    "mocha": "*",
-    "phplint": "*",
     "request": "*",
     "underscore": "*"
   },
   "devDependencies": {
-    "babel-preset-es2015": "*",
-    "babel-preset-react": "*",
     "gulp": "^3.9.0",
-    "gulp-babel": "^6.1.0",
-    "gulp-util": "^3.0.7",
-    "react": "*",
-    "react-dom": "*"
+    "gulp-util": "^3.0.7"
   }
 }
