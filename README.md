@@ -42,6 +42,11 @@ read more about [node] ( )
 
 ###### To start the Server using forever module 
 Keeps running even when window is swirched off 
+```
+npm install forever -g
+cd WebCall
+forever start webrtcserver.js
+```
 
 read more :
 
