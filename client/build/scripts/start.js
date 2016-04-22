@@ -407,6 +407,7 @@ function attachControlButtons(videoElement, streamid , snapshotViewer){
                     numFile.value= fileArray1.length;
                         //displaySnapshot(snapshotViewer, datasnapshot);
                     syncSnapshot(datasnapshot , "imagesnapshot" , snapshotname );
+                    //displayList(uuid , element , fileurl , filename , filetype , length)
                     displayList(rtcMultiConnection.uuid ,  "widget-filesharing-container1"  ,datasnapshot , snapshotname , "imagesnapshot" , fileArray1.length);
                     displayFile(rtcMultiConnection.uuid , "widget-filesharing-container1" , datasnapshot , snapshotname, "imagesnapshot");
 
@@ -446,6 +447,7 @@ function attachControlButtons(videoElement, streamid , snapshotViewer){
                     numFile.value= fileArray1.length;
 
                     syncSnapshot(dataRecordedVideo , "imagesnapshot" , recordVideoname );
+                    //displayList(uuid , element , fileurl , filename , filetype , length)
                     displayList(rtcMultiConnection.uuid ,  "widget-filesharing-container1"  ,dataRecordedVideo , recordVideoname , "videoRecording" , fileArray1.length);
                     displayFile(rtcMultiConnection.uuid , "widget-filesharing-container1" , dataRecordedVideo , recordVideoname, "videoRecording");
 
@@ -941,7 +943,7 @@ rtcMultiConnection.onFileEnd = function(e) {
 
 function displayList(uuid , element , fileurl , filename , filetype , length){
     var r;
-    if(filetype!="imagesnapshot"){
+    if(filetype!="imagesnapshot" && filetype!="videoRecording"){
         r = progressHelper[uuid].div;
     }else{
         r=document.createElement("div");
@@ -1047,7 +1049,7 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
 function displayFile( uuid , element , fileurl , filename , filetype ){
     
     var r;
-    if(filetype!="imagesnapshot"){
+    if(filetype!="imagesnapshot" && filetype!="videoRecording"){
         r = progressHelper[uuid].div;
     }else{
         r=document.createElement("div");
@@ -1060,19 +1062,6 @@ function displayFile( uuid , element , fileurl , filename , filetype ){
     }
 
 
-    var image= document.createElement("img");
-    image.src= fileurl;
-    image.style.width="100%";
-    image.title=filename;
-    image.id= "display"+filename;
-
-    var iframe= document.createElement("iframe");
-    iframe.src= fileurl;
-    iframe.className= "viewerIframeClass";
-    iframe.title= filename;
-    iframe.id= "display"+filename;
-
-
     if(filetype.indexOf("msword")>-1 || filetype.indexOf("officedocument")>-1) {
         var divNitofcation= document.createElement("div");
         divNitofcation.className="alert alert-warning";
@@ -1081,6 +1070,31 @@ function displayFile( uuid , element , fileurl , filename , filetype ){
         document.getElementById(element).appendChild(divNitofcation);
         return;
     }else{
+
+        if(filetype.indexOf("image")>-1){
+            var image= document.createElement("img");
+            image.src= fileurl;
+            image.style.width="100%";
+            image.title=filename;
+            image.id= "display"+filename; 
+        }else if(filetype.indexOf("video")>-1){
+            //console.log(uuid ," ", element ," ", fileurl ," ", filename ," ", filetype);
+            console.log( fileurl);
+            var video = document.createElement("video");
+            video.src = fileurl; 
+            video.setAttribute("controls","controls");  
+            video.style.width="100%";
+            video.title=filename;
+            video.id= "display"+filename; 
+        }else{
+            var iframe= document.createElement("iframe");
+            iframe.src= fileurl;
+            iframe.className= "viewerIframeClass";
+            iframe.title= filename;
+            iframe.id= "display"+filename;
+
+        }
+
         $("#"+element).html( 
             (filetype.indexOf("image")>-1) ? image : iframe  , 
             setTimeout(function() {
