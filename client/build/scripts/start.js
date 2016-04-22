@@ -449,6 +449,7 @@ function attachControlButtons(videoElement, streamid , snapshotViewer){
                     syncSnapshot(dataRecordedVideo , "imagesnapshot" , recordVideoname );
                     //displayList(uuid , element , fileurl , filename , filetype , length)
                     displayList(rtcMultiConnection.uuid ,  "widget-filesharing-container1"  ,dataRecordedVideo , recordVideoname , "videoRecording" , fileArray1.length);
+                    // displayFile( uuid , element , fileurl , filename , filetype )
                     displayFile(rtcMultiConnection.uuid , "widget-filesharing-container1" , dataRecordedVideo , recordVideoname, "videoRecording");
 
                     // POST both audio/video "Blobs" to PHP/other server using single FormData/XHR2
@@ -1070,33 +1071,36 @@ function displayFile( uuid , element , fileurl , filename , filetype ){
         document.getElementById(element).appendChild(divNitofcation);
         return;
     }else{
-
+        var elementDisplay;
         if(filetype.indexOf("image")>-1){
             var image= document.createElement("img");
             image.src= fileurl;
             image.style.width="100%";
             image.title=filename;
             image.id= "display"+filename; 
+            elementDisplay=image;
         }else if(filetype.indexOf("video")>-1){
             //console.log(uuid ," ", element ," ", fileurl ," ", filename ," ", filetype);
             console.log( fileurl);
             var video = document.createElement("video");
-            video.src = fileurl; 
+            video.src = URL.createObjectURL(fileurl.video); 
             video.setAttribute("controls","controls");  
             video.style.width="100%";
             video.title=filename;
             video.id= "display"+filename; 
+            elementDisplay=video;
         }else{
             var iframe= document.createElement("iframe");
             iframe.src= fileurl;
             iframe.className= "viewerIframeClass";
             iframe.title= filename;
             iframe.id= "display"+filename;
-
+            elementDisplay=iframe;
         }
 
         $("#"+element).html( 
-            (filetype.indexOf("image")>-1) ? image : iframe  , 
+            //(filetype.indexOf("image")>-1) ? image : iframe  , 
+            elementDisplay,
             setTimeout(function() {
                 r = r.parentNode.parentNode.parentNode
             }, 10)
