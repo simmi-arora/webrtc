@@ -944,7 +944,7 @@ rtcMultiConnection.onFileEnd = function(e) {
 
 function displayList(uuid , element , fileurl , filename , filetype , length){
     var r;
-    if(filetype!="imagesnapshot" && filetype!="videoRecording"){
+    if(filetype!="imagesnapshot" && filetype!="videoRecording" && filetype!="videoScreenRecording"){
         r = progressHelper[uuid].div;
     }else{
         r=document.createElement("div");
@@ -954,8 +954,7 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
             document.getElementById("widget-filesharing1").appendChild(r);           
         }else{
             document.getElementById("widget-filesharing2").appendChild(r);                 
-        }*/
-        
+        }*/  
     }
 
     var name = document.createElement("div");
@@ -1050,7 +1049,7 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
 function displayFile( uuid , element , fileurl , filename , filetype ){
     
     var r;
-    if(filetype!="imagesnapshot" && filetype!="videoRecording"){
+    if(filetype!="imagesnapshot" && filetype!="videoRecording" && filetype!="videoScreenRecording"){
         r = progressHelper[uuid].div;
     }else{
         r=document.createElement("div");
@@ -1392,17 +1391,53 @@ var elementToShare = document.getElementById('elementToShare');
 var recorder = new CanvasRecorder(elementToShare, {
     disableLogs: false
 });
-document.getElementById('start').onclick = function() {
-    document.getElementById('start').disabled = true;
+document.getElementById('ScreenRecordButton').onclick = function() {
+            var recordButton= document.getElementById('ScreenRecordButton');
+            if(recordButton.innerHTML==" Record "){
+                recordButton.innerHTML=" Stop Recording ";
+                playVideo(function() {
+                    recorder.record();    
+                    setTimeout(function() {
+                        document.getElementById('stop').disabled = false;
+                    }, 1000);
+                });
+            }else if(recordButton.innerHTML==" Stop Recording "){
+                recordButton.innerHTML=" Record ";
+                recorder.stop(function(dataRecordedVideo) {
+                    /*
+                    var video = document.createElement('video');
+                    video.src = URL.createObjectURL(blob);
+                    video.setAttribute('style', 'height: 100%; position: absolute; top:0;');
+                    document.body.appendChild(video);
+                    video.controls = true;
+                    video.play();*/
+                
+                    var recordVideoname = "recordedScreenvideo"+ new Date().getTime();
+                    fileArray1.push(recordVideoname);
+
+                    var numFile= document.createElement("div");
+                    numFile.value= fileArray1.length;
+
+                    //syncSnapshot(dataRecordedVideo , "imagesnapshot" , recordVideoname );
+                    //displayList(uuid , element , fileurl , filename , filetype , length)
+                    displayList(rtcMultiConnection.uuid ,  "widget-filesharing-container1"  ,dataRecordedVideo , recordVideoname , "videoScreenRecording" , fileArray1.length);
+                    // displayFile( uuid , element , fileurl , filename , filetype )
+                    displayFile(rtcMultiConnection.uuid , "widget-filesharing-container1" , dataRecordedVideo , recordVideoname, "videoScreenRecording");
+            
+                });
+                
+            }
+
+/*    document.getElementById('start').disabled = true;
 
     playVideo(function() {
         recorder.record();    
         setTimeout(function() {
             document.getElementById('stop').disabled = false;
         }, 1000);
-    });
+    });*/
 };
-document.getElementById('stop').onclick = function() {
+/*document.getElementById('stop').onclick = function() {
     this.disabled = true;
     recorder.stop(function(blob) {
         var video = document.createElement('video');
@@ -1412,7 +1447,7 @@ document.getElementById('stop').onclick = function() {
         video.controls = true;
         video.play();
     });
-};
+};*/
 var videoElement = document.querySelector('video');
 function playVideo(callback) {
     function successCallback(stream) {
