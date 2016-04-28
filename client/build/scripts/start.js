@@ -434,23 +434,16 @@ function attachControlButtons(videoElement, streamid , snapshotViewer){
             }else if(recordButton.innerHTML==" Stop "){
                 recordButton.innerHTML=" Record ";
                 rtcMultiConnection.streams[streamid].stopRecording(function (dataRecordedVideo) {
-                        /*
-                        var mediaElement = document.createElement('video'); 
-                        mediaElement.src = URL.createObjectURL(blob.video); 
-                        mediaElement.setAttribute("controls","controls");  
-                        document.getElementById("rightVideo").appendChild(mediaElement); */
+
                     var recordVideoname = "recordedvideo"+ new Date().getTime();
                     fileArray1.push(recordVideoname);
                     var numFile= document.createElement("div");
                     numFile.value= fileArray1.length;
 
-                    syncSnapshot(dataRecordedVideo , "imagesnapshot" , recordVideoname );
+                    syncSnapshot(dataRecordedVideo , "videoRecording" , recordVideoname );
                     displayList(rtcMultiConnection.uuid ,  "widget-filesharing-container1"  ,dataRecordedVideo , recordVideoname , "videoRecording" , fileArray1.length);
                     displayFile(rtcMultiConnection.uuid , "widget-filesharing-container1" , dataRecordedVideo , recordVideoname, "videoRecording");
 
-                    // POST both audio/video "Blobs" to PHP/other server using single FormData/XHR2
-                    // blob.audio  --- audio blob
-                    // blob.video  --- video blob
                 }, {audio:true, video:true} );
             }
         };    
@@ -948,6 +941,12 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
     name.innerHTML = length +"   " + filename ;
     name.id="name"+filename;
 
+    var elementPeer;
+    for(i in webcallpeers ){
+        if(webcallpeers[i].fileSharingContainer!=element)
+            elementPeer=webcallpeers[i].fileSharingContainer;
+    }
+
     var downloadButton = document.createElement("div");
     downloadButton.setAttribute("class" , "btn btn-primary");
     downloadButton.setAttribute("style", "color:white");
@@ -1024,6 +1023,7 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
     var r;
     if(filetype=="imagesnapshot" || filetype=="videoRecording" || filetype=="videoScreenRecording"){
         r=document.createElement("div");
+        r.id=filename;
     }else{
         r = progressHelper[uuid].div;
     }
@@ -1112,7 +1112,7 @@ function hideFile( uuid , element , fileurl , filename , filetype ){
     if($("#"+element).has("#display"+filename)){
         $("#"+element).html("");
         element.innerHTML="";
-        console.log("hidefile " , element);
+        console.log("hidefile " ,filename , " from " , element);
     }else{
         console.log(" file is not displayed to hide  ");
     }
@@ -1120,6 +1120,7 @@ function hideFile( uuid , element , fileurl , filename , filetype ){
 }
 
 function removeFile(element){
+    console.log("removeFile " ,element);
     document.getElementById(element).hidden=true;
 }
 
@@ -1371,62 +1372,37 @@ var recorder = new CanvasRecorder(elementToShare, {
 });
 
 document.getElementById('ScreenRecordButton').onclick = function() {
-            var recordButton= document.getElementById('ScreenRecordButton');
-            if(recordButton.innerHTML==" Record "){
-                recordButton.innerHTML=" Stop Recording ";
-                playVideo(function() {
-                    recorder.record();    
-                    setTimeout(function() {
-                        document.getElementById('stop').disabled = false;
-                    }, 1000);
-                });
-            }else if(recordButton.innerHTML==" Stop Recording "){
-                recordButton.innerHTML=" Record ";
-                recorder.stop(function(dataRecordedVideo) {
-                    /*
-                    var video = document.createElement('video');
-                    video.src = URL.createObjectURL(blob);
-                    video.setAttribute('style', 'height: 100%; position: absolute; top:0;');
-                    document.body.appendChild(video);
-                    video.controls = true;
-                    video.play();*/
-                
-                    var recordVideoname = "recordedScreenvideo"+ new Date().getTime();
-                    fileArray1.push(recordVideoname);
+    var recordButton= document.getElementById('ScreenRecordButton');
+    if(recordButton.innerHTML==" Record "){
+        recordButton.innerHTML=" Stop Recording ";
+        playVideo(function() {
+            recorder.record();    
+        });
+    }else if(recordButton.innerHTML==" Stop Recording "){
+        recordButton.innerHTML=" Record ";
+        recorder.stop(function(dataRecordedVideo) {
+            /*
+            var video = document.createElement('video');
+            video.src = URL.createObjectURL(blob);
+            video.setAttribute('style', 'height: 100%; position: absolute; top:0;');
+            document.body.appendChild(video);
+            video.controls = true;
+            video.play();*/
+        
+            var recordVideoname = "recordedScreenvideo"+ new Date().getTime();
+            fileArray1.push(recordVideoname);
 
-                    var numFile= document.createElement("div");
-                    numFile.value= fileArray1.length;
+            var numFile= document.createElement("div");
+            numFile.value= fileArray1.length;
 
-                    //syncSnapshot(dataRecordedVideo , "imagesnapshot" , recordVideoname );
-                    //displayList(uuid , element , fileurl , filename , filetype , length)
-                    displayList(rtcMultiConnection.uuid ,  "widget-filesharing1"  ,dataRecordedVideo , recordVideoname , "videoScreenRecording" , fileArray1.length);
-                    // displayFile( uuid , element , fileurl , filename , filetype )
-                    displayFile(rtcMultiConnection.uuid , "widget-filesharing-container1" , dataRecordedVideo , recordVideoname, "videoScreenRecording");
-            
-                });
-                
-            }
-
-/*    document.getElementById('start').disabled = true;
-
-    playVideo(function() {
-        recorder.record();    
-        setTimeout(function() {
-            document.getElementById('stop').disabled = false;
-        }, 1000);
-    });*/
+            displayList(rtcMultiConnection.uuid , "widget-filesharing-container1" , dataRecordedVideo , recordVideoname , "videoScreenRecording" , fileArray1.length);
+            displayFile(rtcMultiConnection.uuid , "widget-filesharing-container1" , dataRecordedVideo , recordVideoname , "videoScreenRecording");
+    
+        });
+        
+    }
 };
-/*document.getElementById('stop').onclick = function() {
-    this.disabled = true;
-    recorder.stop(function(blob) {
-        var video = document.createElement('video');
-        video.src = URL.createObjectURL(blob);
-        video.setAttribute('style', 'height: 100%; position: absolute; top:0;');
-        document.body.appendChild(video);
-        video.controls = true;
-        video.play();
-    });
-};*/
+
 var videoElement = document.querySelector('video');
 function playVideo(callback) {
     function successCallback(stream) {
@@ -1447,7 +1423,7 @@ function playVideo(callback) {
     navigator.mediaDevices.getUserMedia(mediaConstraints).then(successCallback).catch(errorCallback);
 }
 
-/*******************8 help and settings ***********************/
+/******************* help and settings ***********************/
 
 
 /******************************************************************************/
