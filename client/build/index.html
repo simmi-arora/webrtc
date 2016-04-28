@@ -37,7 +37,10 @@
                      <!-- <li> <span id="recordButton" class="btn btn-success glyphicon glyphicon-refresh topPanelButton" > Record </span> </li> -->
                     <li hidden> <span id="username" class="userName" hidden>a</span></li>
                     <li hidden> <span id="numbersofusers" class="numbers-of-users" hidden></span></li>
-                    <li> <span id="ScreenRecordButton" class="btn btn-success glyphicon glyphicon-refresh topPanelButton" > Record </span> </li>
+                    <li> <span id="ScreenRecordButton" class="btn btn-success   glyphicon glyphicon-facetime-video topPanelButton" > Record </span> </li>
+                    
+<li> <span id="HelpButton" class="btn btn-success glyphicon glyphicon-question-sign topPanelButton" data-toggle="modal" data-target="#helpModal" > Help </span> </li>
+<li> <span id="SettingsButton" class="btn btn-success glyphicon glyphicon-exclamation-sign topPanelButton" data-toggle="modal" data-target="#settingsModal" > Settings </span> </li>
                      <!-- <li id="timerli" hidden> Time Remaining <span id="countdownMinutes">3</span>:<span id="countdownSecond">60</span></li>  -->
                 </ul>
             </div>
@@ -179,6 +182,46 @@
         <div id="cursor1" class="cursor1Class" style="width:0"></div>
         <div id="cursor2" class="cursor2Class" style="width:0"></div>
     
+        <!--modal help -->
+
+        <div class="modal fade" id="helpModal" role="dialog">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">Help</h4>
+                </div>
+                <div class="modal-body">
+                  <p>This is a for helping the user .</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <!--modal settings -->
+
+        <div class="modal fade" id="settingsModal" role="dialog">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">Settings</h4>
+                </div>
+                <div class="modal-body">
+                  <p>This is for settings if any.</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+        </div>
+
+
+
     </div>
 
 
