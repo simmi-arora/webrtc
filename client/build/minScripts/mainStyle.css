@@ -1264,10 +1264,6 @@ video {
     width: 48%;
 }
 
-#controlminiVideo  , #controlremoteVideo{
-
-}
-
 .merge{
     background: transparent;
     border: none;
@@ -1327,6 +1323,7 @@ video {
 }
 
 .mediaButton{
+        padding: 4px;
     line-height: 20px!important;
 }
 
@@ -1334,4 +1331,8 @@ video {
     transform: rotateY(180deg);
     -webkit-transform:rotateY(180deg); /* Safari and Chrome */
     -moz-transform:rotateY(180deg); /* Firefox */
+}
+
+#controlminiVideo{
+        float: left;
 }

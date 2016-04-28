@@ -405,16 +405,14 @@ function attachControlButtons(videoElement, streamid , snapshotViewer){
                     fileArray1.push(snapshotname);
                     var numFile= document.createElement("div");
                     numFile.value= fileArray1.length;
-                        //displaySnapshot(snapshotViewer, datasnapshot);
+
                     syncSnapshot(datasnapshot , "imagesnapshot" , snapshotname );
                     //displayList(uuid , element , fileurl , filename , filetype , length)
-                    displayList(rtcMultiConnection.uuid ,  "widget-filesharing-container1"  ,datasnapshot , snapshotname , "imagesnapshot" , fileArray1.length);
+                    displayList(rtcMultiConnection.uuid , "widget-filesharing-container1", datasnapshot , snapshotname , "imagesnapshot" , fileArray1.length);
                     displayFile(rtcMultiConnection.uuid , "widget-filesharing-container1" , datasnapshot , snapshotname, "imagesnapshot");
 
             });         
         };
-
-
 
         //add the snapshot button
         var recordButton=document.createElement("div");
@@ -428,12 +426,12 @@ function attachControlButtons(videoElement, streamid , snapshotViewer){
         recordButton.onclick = function() {
             
             if(recordButton.innerHTML==" Record "){
-                recordButton.innerHTML=" Stop Recording ";
+                recordButton.innerHTML=" Stop ";
                 rtcMultiConnection.streams[streamid].startRecording({
                     audio: true,
                     video: true
                 });
-            }else if(recordButton.innerHTML==" Stop Recording "){
+            }else if(recordButton.innerHTML==" Stop "){
                 recordButton.innerHTML=" Record ";
                 rtcMultiConnection.streams[streamid].stopRecording(function (dataRecordedVideo) {
                         /*
@@ -447,9 +445,7 @@ function attachControlButtons(videoElement, streamid , snapshotViewer){
                     numFile.value= fileArray1.length;
 
                     syncSnapshot(dataRecordedVideo , "imagesnapshot" , recordVideoname );
-                    //displayList(uuid , element , fileurl , filename , filetype , length)
                     displayList(rtcMultiConnection.uuid ,  "widget-filesharing-container1"  ,dataRecordedVideo , recordVideoname , "videoRecording" , fileArray1.length);
-                    // displayFile( uuid , element , fileurl , filename , filetype )
                     displayFile(rtcMultiConnection.uuid , "widget-filesharing-container1" , dataRecordedVideo , recordVideoname, "videoRecording");
 
                     // POST both audio/video "Blobs" to PHP/other server using single FormData/XHR2
@@ -490,7 +486,8 @@ rtcMultiConnection.onstream = function(e) {
             name : "localVideo",
             userid : e.userid , 
             streamid : e.stream.streamid , 
-            fileSharingcontainer : "widget-filesharing-container1"
+            fileSharingContainer : "widget-filesharing-container1",
+            fileListConainer : "widget-filesharing1"
         });
 
         $("#remote").hide();
@@ -549,7 +546,8 @@ rtcMultiConnection.onstream = function(e) {
                 name: "remoteVideo" , 
                 userid: e.userid , 
                 streamid : e.stream.streamid , 
-                fileSharingcontainer : "widget-filesharing-container2"
+                fileSharingcontainer : "widget-filesharing-container2",
+                fileListConainer : "widget-filesharing2"
             });
 
             miniVideo.setAttribute('data-id', rtcMultiConnection.userid);
@@ -559,7 +557,7 @@ rtcMultiConnection.onstream = function(e) {
             }
             
         } else{
-            console.log("  numberof Remotes is  more than one ");
+            console.log("  number of Remotes is  more than one ");
 
             remoteStream = e.stream;
             reattachMediaStream(miniVideo, localVideo);
@@ -577,10 +575,6 @@ rtcMultiConnection.onstream = function(e) {
             });
 
             miniVideo.setAttribute('data-id', rtcMultiConnection.userid);
-            for(i in webcallpeers ){
-                if(webcallpeers[i].name=="localVideo")
-                    attachControlButtons("miniVideo", webcallpeers[i].streamid , "widget-filesharing-container1");
-            }
 
         }/*else if(numberOfRemoteVideos == 2){
             appendVideo(e, 'opacity: 1;position: fixed;bottom: 0;z-index: 1;width: 32%;');
@@ -942,37 +936,23 @@ rtcMultiConnection.onFileEnd = function(e) {
 
 };
 
+function simulateClick(buttonName){
+    document.getElementById(buttonName).click(); 
+    console.log(buttonName);
+    return true;
+}
+
 function displayList(uuid , element , fileurl , filename , filetype , length){
-    var r;
-    if(filetype!="imagesnapshot" && filetype!="videoRecording" && filetype!="videoScreenRecording"){
-        r = progressHelper[uuid].div;
-    }else{
-        r=document.createElement("div");
-        document.getElementById(element).appendChild(r);
-        /*
-        if(localUserId==rtcMultiConnection.userid){
-            document.getElementById("widget-filesharing1").appendChild(r);           
-        }else{
-            document.getElementById("widget-filesharing2").appendChild(r);                 
-        }*/  
-    }
 
     var name = document.createElement("div");
     name.innerHTML = length +"   " + filename ;
     name.id="name"+filename;
-    var elementPeer=null;
-
-    if(element=="widget-filesharing-container1"){
-        elementPeer="widget-filesharing-container2";
-    }else if(element== "widget-filesharing-container2"){
-        elementPeer="widget-filesharing-container1"
-    }
 
     var downloadButton = document.createElement("div");
     downloadButton.setAttribute("class" , "btn btn-primary");
     downloadButton.setAttribute("style", "color:white");
     downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '" style="color:white" > Download </a>';
-    
+
     var showButton = document.createElement("div");
     showButton.id= "showButton"+filename;
     showButton.setAttribute("class" , "btn btn-primary");
@@ -1013,7 +993,6 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
         }else if(repeatFlagHideButton == filename){
             repeatFlagHideButton= "";
         }
-        
     };
 
     var removeButton = document.createElement("div");
@@ -1022,21 +1001,32 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
     removeButton.innerHTML='remove';
     removeButton.onclick=function(event){
         if(repeatFlagRemoveButton != filename){
-            element = event.target.parentNode.id;
-            console.log("about to be hidden ", filename);
-            document.getElementById("hideButton"+filename).click();
-            removeFile(element);
+            hideFile(uuid , element , fileurl , filename , filetype);
+
+            var tobeHiddenElement = event.target.parentNode.id;
             rtcMultiConnection.send({
                 type:"shareFileRemove", 
-                _element: element,
+                _element: tobeHiddenElement,
                 _filename : filename
             });  
+            removeFile(tobeHiddenElement);
+            /*
+            if(simulateClick("hideButton"+filename)){
+               // setTimeout(removeFile(element), 2000);
+               console.log("cliked");
+            }*/
             repeatFlagRemoveButton=filename;
         }else if(repeatFlagRemoveButton == filename){
             repeatFlagRemoveButton= "";
         }  
-        
     };
+
+    var r;
+    if(filetype=="imagesnapshot" || filetype=="videoRecording" || filetype=="videoScreenRecording"){
+        r=document.createElement("div");
+    }else{
+        r = progressHelper[uuid].div;
+    }
 
     r.innerHTML="";
     r.appendChild(name);
@@ -1044,34 +1034,27 @@ function displayList(uuid , element , fileurl , filename , filetype , length){
     r.appendChild(showButton);
     r.appendChild(hideButton);
     r.appendChild(removeButton);
-}
 
-function displayFile( uuid , element , fileurl , filename , filetype ){
-    
-    var r;
-    if(filetype!="imagesnapshot" && filetype!="videoRecording" && filetype!="videoScreenRecording"){
-        r = progressHelper[uuid].div;
-    }else{
-        r=document.createElement("div");
-
-        if(localUserId==rtcMultiConnection.userid){
-            document.getElementById("widget-filesharing1").appendChild(r);           
-        }else{
-            document.getElementById("widget-filesharing2").appendChild(r);                 
+    if(filetype=="imagesnapshot" || filetype=="videoRecording" || filetype=="videoScreenRecording"){
+        //document.getElementById(element).appendChild(r);
+        for(i in webcallpeers ){
+            if(webcallpeers[i].fileSharingContainer==element)
+                document.getElementById(webcallpeers[i].fileListConainer).appendChild(r);
         }
     }
 
+}
 
-    if(filetype.indexOf("msword")>-1 || filetype.indexOf("officedocument")>-1) {
-        var divNitofcation= document.createElement("div");
-        divNitofcation.className="alert alert-warning";
-        divNitofcation.innerHTML= "Microsoft and Libra word file cannt be opened in browser";
-        document.getElementById(element).innerHTML="";
-        document.getElementById(element).appendChild(divNitofcation);
-        return;
-    }else{
+
+function getFileElementDisplayByType(filetype , fileurl , filename){
         var elementDisplay;
-        if(filetype.indexOf("image")>-1){
+        
+        if(filetype.indexOf("msword")>-1 || filetype.indexOf("officedocument")>-1) {
+            var divNitofcation= document.createElement("div");
+            divNitofcation.className="alert alert-warning";
+            divNitofcation.innerHTML= "Microsoft and Libra word file cannt be opened in browser";
+            elementDisplay=divNitofcation;
+        }else if(filetype.indexOf("image")>-1){
             var image= document.createElement("img");
             image.src= fileurl;
             image.style.width="100%";
@@ -1079,8 +1062,6 @@ function displayFile( uuid , element , fileurl , filename , filetype ){
             image.id= "display"+filename; 
             elementDisplay=image;
         }else if(filetype.indexOf("video")>-1){
-            //console.log(uuid ," ", element ," ", fileurl ," ", filename ," ", filetype);
-            console.log( fileurl);
             var video = document.createElement("video");
             video.src = URL.createObjectURL(fileurl.video); 
             video.setAttribute("controls","controls");  
@@ -1096,49 +1077,46 @@ function displayFile( uuid , element , fileurl , filename , filetype ){
             iframe.id= "display"+filename;
             elementDisplay=iframe;
         }
-
-        $("#"+element).html( 
-            //(filetype.indexOf("image")>-1) ? image : iframe  , 
-            elementDisplay,
-            setTimeout(function() {
-                r = r.parentNode.parentNode.parentNode
-            }, 10)
-        );
-    }
+        return  elementDisplay
 }
 
-function showFile( uuid , element , fileurl , filename , filetype ){
-
-    var image= document.createElement("img");
-    image.src= fileurl;
-    image.style.width="100%";
-    image.title=filename;
-    image.id= "display"+filename;
-
-    var iframe= document.createElement("iframe");
-    iframe.src= fileurl;
-    iframe.className= "viewerIframeClass";
-    iframe.title= filename;
-    iframe.id= "display"+filename;
-
-    console.log("filetype" , filetype);
-
-    if(filetype.indexOf("msword")>-1 || filetype.indexOf("officedocument")>-1) {
-        var divNitofcation= document.createElement("div");
-        divNitofcation.className="alert alert-warning";
-        divNitofcation.innerHTML= "Microsoft and Libra word file cannt be opened in browser";
-        document.getElementById(element).innerHTML="";
-        document.getElementById(element).appendChild(divNitofcation);
-        return;
+function displayFile( uuid , element , fileurl , filename , filetype ){
+    
+    var r;
+    if(filetype!="imagesnapshot" && filetype!="videoRecording" && filetype!="videoScreenRecording"){
+        r = progressHelper[uuid].div;
     }else{
-        $("#"+element).html( (filetype.indexOf("image")>-1 )? image : iframe );
-    } 
+        r=document.createElement("div");
+        if(localUserId==rtcMultiConnection.userid){
+            document.getElementById("widget-filesharing1").appendChild(r);           
+        }else{
+            document.getElementById("widget-filesharing2").appendChild(r);                 
+        }
+    }
+
+    $("#"+element).html( 
+        getFileElementDisplayByType(filetype , fileurl , filename),
+        setTimeout(function() {
+            r = r.parentNode.parentNode.parentNode
+        }, 10)
+    );
+
+}
+
+
+function showFile( uuid , element , fileurl , filename , filetype ){
+    $("#"+element).html( getFileElementDisplayByType(filetype , fileurl , filename));
 }
 
 function hideFile( uuid , element , fileurl , filename , filetype ){
     if($("#"+element).has("#display"+filename)){
         $("#"+element).html("");
+        element.innerHTML="";
+        console.log("hidefile " , element);
+    }else{
+        console.log(" file is not displayed to hide  ");
     }
+
 }
 
 function removeFile(element){
@@ -1391,6 +1369,7 @@ var elementToShare = document.getElementById('elementToShare');
 var recorder = new CanvasRecorder(elementToShare, {
     disableLogs: false
 });
+
 document.getElementById('ScreenRecordButton').onclick = function() {
             var recordButton= document.getElementById('ScreenRecordButton');
             if(recordButton.innerHTML==" Record "){
@@ -1420,7 +1399,7 @@ document.getElementById('ScreenRecordButton').onclick = function() {
 
                     //syncSnapshot(dataRecordedVideo , "imagesnapshot" , recordVideoname );
                     //displayList(uuid , element , fileurl , filename , filetype , length)
-                    displayList(rtcMultiConnection.uuid ,  "widget-filesharing-container1"  ,dataRecordedVideo , recordVideoname , "videoScreenRecording" , fileArray1.length);
+                    displayList(rtcMultiConnection.uuid ,  "widget-filesharing1"  ,dataRecordedVideo , recordVideoname , "videoScreenRecording" , fileArray1.length);
                     // displayFile( uuid , element , fileurl , filename , filetype )
                     displayFile(rtcMultiConnection.uuid , "widget-filesharing-container1" , dataRecordedVideo , recordVideoname, "videoScreenRecording");
             
@@ -1467,6 +1446,10 @@ function playVideo(callback) {
 
     navigator.mediaDevices.getUserMedia(mediaConstraints).then(successCallback).catch(errorCallback);
 }
+
+/*******************8 help and settings ***********************/
+
+
 /******************************************************************************/
 
 $('document').ready(function(){
