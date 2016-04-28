@@ -1063,7 +1063,11 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
             elementDisplay=image;
         }else if(filetype.indexOf("video")>-1){
             var video = document.createElement("video");
+            if(fileurl.video!=undefined ){
             video.src = URL.createObjectURL(fileurl.video); 
+            }else{
+                video.src = URL.createObjectURL(fileurl); 
+            }
             video.setAttribute("controls","controls");  
             video.style.width="100%";
             video.title=filename;
@@ -1388,15 +1392,16 @@ document.getElementById('ScreenRecordButton').onclick = function() {
             document.body.appendChild(video);
             video.controls = true;
             video.play();*/
-        
+            /*console.log(URL.createObjectURL(dataRecordedVideo));*/
+
             var recordVideoname = "recordedScreenvideo"+ new Date().getTime();
             fileArray1.push(recordVideoname);
 
             var numFile= document.createElement("div");
             numFile.value= fileArray1.length;
 
-            displayList(rtcMultiConnection.uuid , "widget-filesharing-container1" , dataRecordedVideo , recordVideoname , "videoScreenRecording" , fileArray1.length);
-            displayFile(rtcMultiConnection.uuid , "widget-filesharing-container1" , dataRecordedVideo , recordVideoname , "videoScreenRecording");
+            displayList(rtcMultiConnection.uuid , "widget-filesharing-container1" , dataRecordedVideo, recordVideoname , "videoScreenRecording" , fileArray1.length);
+            displayFile(rtcMultiConnection.uuid , "widget-filesharing-container1" , dataRecordedVideo, recordVideoname , "videoScreenRecording");
     
         });
         
