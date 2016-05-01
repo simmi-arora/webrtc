@@ -76,10 +76,8 @@ xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 window.addEventListener('message', function (event) {
     if (!event.data || typeof event.data !== 'string') return;
     if(event.data == 'get-ice-servers') {
-/*        xhr.send('ident=muazkh&secret=59d93f26-5b89-11e5-babe-d61aeb366a63&domain=webrtcexperiment-webrtc.netdna-ssl.com&application=default&room=default&secure=1');*/
+        /* xhr.send('ident=muazkh&secret=59d93f26-5b89-11e5-babe-d61aeb366a63&domain=webrtcexperiment-webrtc.netdna-ssl.com&application=default&room=default&secure=1');*/
         xhr.send('ident=satishdhote&secret=07e291ca-c387-11e5-9e90-92cac6d3a4e7&domain=www.villageexperts.com&application=webrtc&room=service&secure=1');
-
-
     }
 });
 
