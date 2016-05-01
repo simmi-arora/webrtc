@@ -31,5 +31,9 @@
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-util": "^3.0.7"
+  },
+  "scripts": {
+    "start": "supervisor -i ./public/ webrtcserver.js",
+    "test": ""
   }
 }
