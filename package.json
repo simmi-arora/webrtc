@@ -1,39 +1,32 @@
 {
-  "name": "Webcall",
-  "subdomain": "villageexperts",
-  "preferGlobal": true,
-  "version": "3.0.0",
-  "author": {
-    "name": "#",
-    "email": "#"
+  "name": "webrtcdevelopment",
+  "version": "1.0.3",
+  "description": "webrtc based communication and collaboration client . contains lot of experiments modules ",
+  "main": "webrtcserver.js",
+  "dependencies": {
+    "supervisor": "^0.10.0",
+    "googleapis": "^3.1.0",
+    "gulp": "*"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm install & supervisor -i ./public/ webrtcserver.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/altanai/webrtc.git"
   },
   "keywords": [
-    "webrtc"
+    "webrtc",
+    "tfx",
+    "communication",
+    "webcall"
   ],
-  "analyze": false,
-  "dependencies": {
-    "faker": "*",
-    "google-auth-library": "^0.9.7",
-    "googleapis": "^3.1.0",
-    "gulp": "*",
-    "gulp-add-src": "*",
-    "gulp-base64": "*",
-    "gulp-cat": "*",
-    "gulp-concat": "*",
-    "gulp-data-uri": "*",
-    "gulp-expect-file": "*",
-    "gulp-minify-css": "*",
-    "gulp-sequence": "*",
-    "gulp-uglify": "*",
-    "request": "*",
-    "underscore": "*"
+  "author": "altanai",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/altanai/webrtc/issues"
   },
-  "devDependencies": {
-    "gulp": "^3.9.0",
-    "gulp-util": "^3.0.7"
-  },
-  "scripts": {
-    "start": "supervisor -i ./public/ webrtcserver.js",
-    "test": ""
-  }
+  "homepage": "https://github.com/altanai/webrtc#readme"
 }
