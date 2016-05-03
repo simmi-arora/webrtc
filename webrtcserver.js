@@ -2,14 +2,11 @@ var fs = require('fs');
 var _static = require('node-static');
 var https = require('https');
 
-
 var file = new _static.Server('./client/build', {
     cache: 3600,
     gzip: true,
     indexFile: "index.html"
 });
-
-
 
 /*var options = {
   key: fs.readFileSync('/etc/apache2/ssl/villageexpert.key'),
@@ -21,9 +18,9 @@ var file = new _static.Server('./client/build', {
 */
 
 var options = {
-  key: fs.readFileSync('server.key'),
-  cert: fs.readFileSync('server.crt'),
-  ca: fs.readFileSync('ca.crt'),
+  key: fs.readFileSync('ssl_certs/server.key'),
+  cert: fs.readFileSync('ssl_certs/server.crt'),
+  ca: fs.readFileSync('ssl_certs/ca.crt'),
   requestCert: true,
   rejectUnauthorized: false
 };
@@ -34,6 +31,8 @@ var app = https.createServer(options, function(request, response){
         file.serve(request, response);
     }).resume();     
 });
+app.listen(8084);
+
 
 var io = require('socket.io').listen(app, {
     log: false,
@@ -63,7 +62,6 @@ io.sockets.on('connection', function (socket) {
         channels[data.channel] = data.channel;     
         onNewNamespace(data.channel, data.sender);
     });
-
 
     socket.on('presence', function (channel) {
         console.log("presence ");
@@ -104,10 +102,6 @@ function onNewNamespace(channel, sender) {
         });
     });
 }
-
-app.listen(8084);
-
-
 
 
 /*var options = {
