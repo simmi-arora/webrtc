@@ -1,5 +1,4 @@
 function shownotification(message){
-   // alert(message);
     var alertDiv =document.createElement("div");
     alertDiv.className="alert alert-success fade in";
     alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ message;
@@ -325,10 +324,7 @@ function syncSnapshot(datasnapshot , datatype , dataname ){
 /************************************
 control Buttons 
 *******************************************************************/
-function attachControlButtons(videoElement, streamid , snapshotViewer){
-
-        console.log(videoElement , " : "  , streamid);
-        var referenceNode= document.getElementById(videoElement);
+function attachControlButtons(videoElement, streamid , controlBarName , snapshotViewer){
 
         //add the video mute button
         var videoButton=document.createElement("span");
@@ -450,26 +446,89 @@ function attachControlButtons(videoElement, streamid , snapshotViewer){
 
 
         var controlBar= document.createElement("div");
-        controlBar.id="control"+videoElement;
+        controlBar.id=controlBarName;
         controlBar.setAttribute("style" , "float:left;margin-left: 20px;");
         controlBar.name= streamid;
         controlBar.appendChild(videoButton);
         controlBar.appendChild(audioButton);
         controlBar.appendChild(snapshotButton);
         controlBar.appendChild(recordButton);
+        controlBar.setAttribute("style" , "-webkit-transform: rotateY(180deg)");
 
-        if(typeof mediaControlButtonsPosition!='undefined' && mediaControlButtonsPosition=="bottom"){
-            referenceNode.parentNode.appendChild(controlBar);
-            //referenceNode.parentNode.insertBefore(controlBar, referenceNode.nextSibling);
-            //referenceNode.= controlBar+ referenceNode;
-            //referenceNode.parentNode.insertBefore(controlBar, referenceNode.firstChild);
-        }else{
-            referenceNode.parentNode.insertBefore(controlBar, referenceNode.parentNode.firstChild);
-        }
-        
+        videoElement.parentNode.appendChild(controlBar);        
 }
 
 var localStream , localStreamId, remoteStream , remoteStreamId;
+
+function updateWebCallView(){
+    console.log(" webcallpeers" , webcallpeers);
+
+    if(webcallpeers.length==1){
+
+        localStream     =   webcallpeers[0].stream;
+        localStreamId   =   webcallpeers[0].streamid ;
+
+        $("#localVideo").show();
+        $("#remote").hide();
+        $("#controlremoteVideo").hide();
+        $("#controlminiVideo").hide();
+
+        attachMediaStream(localVideo, webcallpeers[0].stream);
+        localVideo.muted = true;
+        localVideo.id= webcallpeers[0].userid;
+        localVideo.style.opacity = 1;
+
+        attachControlButtons(localVideo , 
+            webcallpeers[0].streamid ,
+            webcallpeers[0].controlBarName,
+            webcallpeers[0].fileSharingContainer);
+
+        $("#widget-filesharing1").attr("name" , webcallpeers[0].userid);
+
+    }else {
+
+        $("#localVideo").hide();
+        $("#controllocalVideo").hide();
+        $("#remote").show();
+
+        remoteStream    =   webcallpeers[0].stream;
+        
+        if(miniVideo.played.length==0){
+            reattachMediaStream(miniVideo, localVideo);
+            miniVideo.muted =   true;
+            miniVideo.setAttribute('data-id', webcallpeers[0].userid);
+            
+            //if(miniVideo.parentNode.querySelector("#"+webcallpeers[0].controlBarName)!=null){
+            
+            console.log("minivideo should get only 1 control bar no matter how many remotes")
+            attachControlButtons(miniVideo, 
+                webcallpeers[0].streamid ,
+                webcallpeers[0].controlBarName,
+                webcallpeers[0].fileSharingContainer);   
+
+        }
+
+        attachMediaStream(remoteVideo, webcallpeers[webcallpeers.length-1].stream);
+        waitForRemoteVideo();
+        remoteVideo.setAttribute('data-id', webcallpeers[webcallpeers.length-1].userid);
+        attachControlButtons(remoteVideo, 
+            webcallpeers[webcallpeers.length-1].streamid ,
+            webcallpeers[webcallpeers.length-1].controlBarName,
+            webcallpeers[webcallpeers.length-1].fileSharingContainer);
+
+        $("widget-filesharing2").attr("name" , webcallpeers[webcallpeers.length-1].userid);
+        
+        if( typeof videoWidth!='undefined' ){
+            miniVideo.setAttribute("width",videoWidth);
+            remoteVideo.setAttribute("width",videoWidth);
+        }
+        /*
+        for(i in webcallpeers ){
+            if(webcallpeers[i].name=="localVideo")
+                attachControlButtons("miniVideo", webcallpeers[i].streamid , "widget-filesharing-container1");
+        }*/
+    }
+}
 
 rtcMultiConnection.onstream = function(e) {
 
@@ -478,105 +537,30 @@ rtcMultiConnection.onstream = function(e) {
         webcallpeers.push({ 
             name : "localVideo",
             userid : e.userid , 
+            stream : e.stream ,
             streamid : e.stream.streamid , 
             fileSharingContainer : "widget-filesharing-container1",
-            fileListConainer : "widget-filesharing1"
+            fileListContainer : "widget-filesharing1",
+            controlBarName: "controllocalvideo"
         });
 
-        $("#remote").hide();
-        $("#controlremoteVideo").hide();
-        $("#controlminiVideo").hide();
-
-        $("#localVideo").show();
-        localStream = e.stream;
-        localStreamId=e.stream.streamid;
-
-        attachMediaStream(localVideo, e.stream);
-        localVideo.muted = true;
-        localVideo.style.opacity = 1;
-        localUserId = e.userid;
-
-        if(document.getElementById("controllocalVideo")==null){
-            attachControlButtons("localVideo" , e.stream.streamid , "widget-filesharing-container1");
-        }
-        
-        document.getElementById("controllocalVideo").setAttribute("style" , "-webkit-transform: rotateY(180deg)");
-        
-        //$("#controllocalVideo").insertBefore($"#localVideo" );
-        /*document.getElementById("widget-filesharing1").setAttribute("name" , localUserId);*/
-       $("#widget-filesharing1").attr("name" , localUserId);
+        updateWebCallView();
     }
 
     if (e.type == 'remote'){
-        remoteUserId = getPeerId(e);
-        /*document.getElementById("widget-filesharing2").setAttribute("name" , remoteUserId);*/
-        $("widget-filesharing2").attr("name" , remoteUserId);
-        numberOfRemoteVideos++;
-        $("#localVideo").hide();
-        $("#controllocalVideo").hide();
-        $("#remote").show();
-        remoteStream=e.stream;
-        remoteStreamId= e.stream.streamid;
-        if ( numberOfRemoteVideos == 1) {
-            remoteStream = e.stream;
-            reattachMediaStream(miniVideo, localVideo);
-            miniVideo.muted = true;
-            attachMediaStream(remoteVideo, e.stream);
-            waitForRemoteVideo();
-            remoteVideo.setAttribute('data-id', e.userid);
 
-            if( typeof videoWidth!='undefined' ){
-                miniVideo.setAttribute("width",videoWidth);
-                remoteVideo.setAttribute("width",videoWidth);
-            }
-            //attachControlButtons("remoteVideo", e.stream.streamid , "widget-filesharing-container2");
+        webcallpeers.push({ 
+            name: "remoteVideo" , 
+            userid:  getPeerId(e) , 
+            stream : e.stream ,
+            streamid : e.stream.streamid , 
+            fileSharingcontainer : "widget-filesharing-container2",
+            fileListContainer : "widget-filesharing2",
+            controlBarName: "controlremotevideo"
+        });
 
-            if(document.getElementById("controlremoteVideo")==null){
-                attachControlButtons("remoteVideo", e.stream.streamid , "widget-filesharing-container2")
-            }
-        
-            webcallpeers.push({ 
-                name: "remoteVideo" , 
-                userid: e.userid , 
-                streamid : e.stream.streamid , 
-                fileSharingcontainer : "widget-filesharing-container2",
-                fileListConainer : "widget-filesharing2"
-            });
-
-            miniVideo.setAttribute('data-id', rtcMultiConnection.userid);
-            for(i in webcallpeers ){
-                if(webcallpeers[i].name=="localVideo")
-                    attachControlButtons("miniVideo", webcallpeers[i].streamid , "widget-filesharing-container1");
-            }
-            
-        } else{
-            console.log("  number of Remotes is  more than one ");
-
-            remoteStream = e.stream;
-            reattachMediaStream(miniVideo, localVideo);
-            miniVideo.muted = true;
-            attachMediaStream(remoteVideo, e.stream);
-            waitForRemoteVideo();
-            remoteVideo.setAttribute('data-id', e.userid);
-            attachControlButtons("remoteVideo", e.stream.streamid , "widget-filesharing-container2");
-            
-            webcallpeers.push({ 
-                name: "remoteVideo" , 
-                userid: e.userid , 
-                streamid : e.stream.streamid , 
-                fileSharingcontainer : "widget-filesharing-container2"
-            });
-
-            miniVideo.setAttribute('data-id', rtcMultiConnection.userid);
-
-        }/*else if(numberOfRemoteVideos == 2){
-            appendVideo(e, 'opacity: 1;position: fixed;bottom: 0;z-index: 1;width: 32%;');
-        }else if (numberOfRemoteVideos == 3) {
-            appendVideo(e, 'opacity: 1;position: fixed;top: 0;z-index: 1;width: 32%;');
-        }else if (e.type == 'remote' && numberOfRemoteVideos == 4) {
-            appendVideo(e, 'opacity: 1;position: fixed;top: 0;z-index: 1;width: 32%;right:0;');
-        }*/
-
+        numberOfRemoteVideos++;            
+        updateWebCallView();
     }
 }, 
 
