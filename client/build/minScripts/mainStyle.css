@@ -847,11 +847,6 @@ input:focus {
 }
 #topIconHolder {
     padding: 0px 0px 0px 0px;
-/*  background-color: #D9D9D9;
-    height: 40px;
-    padding-left: 8%;
-    line-height: 40px;
-    width: 100%;*/
 }
 
 #topIconHolder ul {
@@ -912,13 +907,13 @@ input:focus {
 }
 
 .localMessageclass{
-/*    background-color:#9999FF;
+/*  background-color:#9999FF;
     color: #968787;*/
     color: #9999FF;
     float: left;
 }
 .remoteMessageClass{
-/*    background-color:#666699;
+/*  background-color:#666699;
     color: #968787;*/
     color: #666699;
     float:right;
@@ -1195,7 +1190,8 @@ video {
 }
 
 .centre{
-    margin: 0 auto;width: 90%;"
+    margin: 0 auto;
+    width: 90%;"
 }
 
 .fileinputClass{
@@ -1234,11 +1230,13 @@ video {
     margin-left: 0px;
     margin-right: 0px
 }
+
 #local {
     -webkit-backface-visibility: hidden;
     -webkit-transform: scale(-1, 1);
     /*-webkit-transform: rotateY(180deg);*/
 }
+
 #remote {
     -webkit-backface-visibility: hidden;
     -webkit-transform: rotateY(180deg);
