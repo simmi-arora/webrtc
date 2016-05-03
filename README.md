@@ -48,6 +48,10 @@ cd WebCall
 forever start webrtcserver.js
 ```
 
+##### 5. useing browserify 
+
+browserify webrtcdevelopment_script.js --outfile webrtcdevelopment_script.bundle.js
+
 read more :
 
 ###### To start the Server using PM2 ( a process manager for nodejs)

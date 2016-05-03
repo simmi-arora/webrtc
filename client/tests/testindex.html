@@ -5,14 +5,15 @@
     <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel=stylesheet href="minScripts/mainStyle.css">
+    <link rel=stylesheet href="minScripts/customStyle.css">
     <script>
     if(!location.hash.replace('#', '').length) {
         location.href = location.href.split('#')[0] + '#' + (Math.random() * 100).toString().replace('.', '');
         location.reload();
     }
     </script>
-
     <script src="minScripts/presentationScript.js"> </script>
+
     <script src="property.js"></script>
 
 </head>
@@ -97,6 +98,7 @@
                         <div id="screenshare" hidden=true class="screenshareVideoClass">
 
                         </div>
+
 
                     </div>
                 </div>
@@ -211,12 +213,27 @@
             </div>
         </div>
 
+
+
     </div>
 
-</body>
 
-<script src="minScripts/snapshotRecord.js"></script>
-<script src="minScripts/mainScript.js"></script>
+</body>
+    <script src="https://cdn.webrtc-experiment.com/screenshot.js"></script>
+    <script src="https://cdn.webrtc-experiment.com/RecordRTC/Whammy.js"></script>
+    <script src="https://cdn.webrtc-experiment.com/RecordRTC/CanvasRecorder.js"></script>
+    <script src="https://cdn.webrtc-experiment.com/RecordRTC/MediaStreamRecorder.js"></script>
+    <script src="https://cdn.WebRTC-Experiment.com/gumadapter.js"></script>
+
+
+    <script src= "scripts/init.js"></script>
+    <script src= "scripts/socket.io.js"></script>
+    <script src="scripts/firebase.js"></script>
+    <script src="scripts/RTCMultiConnection.js"></script>
+    <script src="scripts/canvas-designer-widget.js"></script>
+    <script src="scripts/getScreenId.js"></script>
+    <script src="scripts/screen.js"></script>
+    <script src="scripts/start.js"></script> 
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -225,7 +242,7 @@
   })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
   ga('create', 'UA-38614709-4', 'auto');
-  ga('send', 'webrtc development pageview');
+  ga('send', 'test page view ');
 
 </script>
 

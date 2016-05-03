@@ -1367,65 +1367,69 @@ recordButton.onclick = function() {
 };    
 */
 
-/***************************************************************
+/************************************************************************
 Canvas Record 
 *************************************************************************/
-var elementToShare = document.getElementById('elementToShare');
-var recorder = new CanvasRecorder(elementToShare, {
-    disableLogs: false
-});
+try{
+    var elementToShare = document.getElementById('elementToShare');
+    var recorder = new CanvasRecorder(elementToShare, {
+        disableLogs: false
+    });
 
-document.getElementById('ScreenRecordButton').onclick = function() {
-    var recordButton= document.getElementById('ScreenRecordButton');
-    if(recordButton.innerHTML==" Record "){
-        recordButton.innerHTML=" Stop Recording ";
-        playVideo(function() {
-            recorder.record();    
-        });
-    }else if(recordButton.innerHTML==" Stop Recording "){
-        recordButton.innerHTML=" Record ";
-        recorder.stop(function(dataRecordedVideo) {
-            /*
-            var video = document.createElement('video');
-            video.src = URL.createObjectURL(blob);
-            video.setAttribute('style', 'height: 100%; position: absolute; top:0;');
-            document.body.appendChild(video);
-            video.controls = true;
-            video.play();*/
-            /*console.log(URL.createObjectURL(dataRecordedVideo));*/
+    document.getElementById('ScreenRecordButton').onclick = function() {
+        var recordButton= document.getElementById('ScreenRecordButton');
+        if(recordButton.innerHTML==" Record "){
+            recordButton.innerHTML=" Stop Recording ";
+            playVideo(function() {
+                recorder.record();    
+            });
+        }else if(recordButton.innerHTML==" Stop Recording "){
+            recordButton.innerHTML=" Record ";
+            recorder.stop(function(dataRecordedVideo) {
+                /*
+                var video = document.createElement('video');
+                video.src = URL.createObjectURL(blob);
+                video.setAttribute('style', 'height: 100%; position: absolute; top:0;');
+                document.body.appendChild(video);
+                video.controls = true;
+                video.play();*/
+                /*console.log(URL.createObjectURL(dataRecordedVideo));*/
 
-            var recordVideoname = "recordedScreenvideo"+ new Date().getTime();
-            fileArray1.push(recordVideoname);
+                var recordVideoname = "recordedScreenvideo"+ new Date().getTime();
+                fileArray1.push(recordVideoname);
 
-            var numFile= document.createElement("div");
-            numFile.value= fileArray1.length;
+                var numFile= document.createElement("div");
+                numFile.value= fileArray1.length;
 
-            displayList(rtcMultiConnection.uuid , "widget-filesharing-container1" , dataRecordedVideo, recordVideoname , "videoScreenRecording" , fileArray1.length);
-            displayFile(rtcMultiConnection.uuid , "widget-filesharing-container1" , dataRecordedVideo, recordVideoname , "videoScreenRecording");
-    
-        });
+                displayList(rtcMultiConnection.uuid , "widget-filesharing-container1" , dataRecordedVideo, recordVideoname , "videoScreenRecording" , fileArray1.length);
+                displayFile(rtcMultiConnection.uuid , "widget-filesharing-container1" , dataRecordedVideo, recordVideoname , "videoScreenRecording");
         
-    }
-};
+            });
+            
+        }
+    };
 
-var videoElement = document.querySelector('video');
-function playVideo(callback) {
-    function successCallback(stream) {
-        videoElement.onloadedmetadata = function() {
+    var videoElement = document.querySelector('video');
+    function playVideo(callback) {
+        function successCallback(stream) {
+            videoElement.onloadedmetadata = function() {
+                callback();
+            };
+            videoElement.srcObject = stream;
+            videoElement.play();
+        }
+
+        function errorCallback(error) {
+            console.error('get-user-media error', error);
             callback();
-        };
-        videoElement.srcObject = stream;
-        videoElement.play();
+        }
+
+        var mediaConstraints = { video: true };
+        navigator.mediaDevices.getUserMedia(mediaConstraints).then(successCallback).catch(errorCallback);
     }
 
-    function errorCallback(error) {
-        console.error('get-user-media error', error);
-        callback();
-    }
-
-    var mediaConstraints = { video: true };
-
-    navigator.mediaDevices.getUserMedia(mediaConstraints).then(successCallback).catch(errorCallback);
+}catch( e){
+    console.error(" Canvas recorder is not defined ");
 }
 
 /******************* help and settings ***********************/
