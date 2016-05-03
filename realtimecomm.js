@@ -1,4 +1,4 @@
-module.exports = function(realtimecomm ,app) {
+module.exports = function(app , properties) {
     
     console.log(properties);
     console.log("----------realtimecomm---------");
@@ -42,12 +42,13 @@ module.exports = function(realtimecomm ,app) {
         });
     });
 
-    module.onNewNamespace(channel, sender) {
-       console.log("onNewNamespace ");
+    function onNewNamespace(channel, sender) {
+       console.log(" ---------------> onNewNamespace ");
+
         io.of('/' + channel).on('connection', function (socket) {
             
             var username;
-            
+
             if (io.isConnected) {
                 io.isConnected = false;
                 socket.emit('connect', true);
