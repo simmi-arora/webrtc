@@ -16,7 +16,6 @@ if(properties.enviornment=="production"){
   folderPath='.client/build';
 }
 
-
 var file = new _static.Server('./client/build', {
     cache: 3600,
     gzip: true,

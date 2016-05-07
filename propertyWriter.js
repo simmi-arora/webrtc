@@ -5,7 +5,7 @@ module.exports = function(fs) {
         "enviornment"   : "local",        
         "host"          : "localhost",
         "jsdebug"       :  true,          
-        "httpsPort"     :  8084,
+        "httpsPort"     : 8084,
         "extensionID"   : "elfbfompfpakbefoaicaeoabnnoihoac"
     };
 
