@@ -27,14 +27,14 @@ module.exports = function(app , properties) {
             if (!channels[data.channel]) {
                 initiatorChannel = data.channel;
             }
-            console.log("------------new channel------------- ");
+            console.log("------------new channel------------- ", data.channel , " by " , data.sender);
             channels[data.channel] = data.channel;     
             onNewNamespace(data.channel, data.sender);
         });
 
         socket.on('presence', function (channel) {
-            console.log("presence ");
             var isChannelPresent = !! channels[channel.channel];
+            console.log("presence for channel " ,isChannelPresent);
             socket.emit('presence', isChannelPresent);
         });
 
@@ -43,7 +43,7 @@ module.exports = function(app , properties) {
     });
 
     function onNewNamespace(channel, sender) {
-       console.log(" ---------------> onNewNamespace ");
+       console.log(" ---------------> onNewNamespace ", channel);
 
         io.of('/' + channel).on('connection', function (socket) {
             
