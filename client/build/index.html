@@ -202,14 +202,15 @@
                 </div>
                 <div class="modal-body">
                   <div id="settingsContainer">
-                    Inspectore <input type="text" id="inspectorlink" readonly><br/>
-                    Channel <input type="text" id="channelname" readonly> <br/>
-                    User Id <input type="text" id="userid" readonly> <br/>
-                    Audio <input type="text" id="isAudio" readonly><br/>
-                    Video <input type="text" id="isVideo" readonly><br/>
-                    Data <input type="text" id="idData" readonly><br/>
-                    Screen <input type="text" id="isScreen" readonly><br/>
-                    Peers <div id="alllpeerinfo"></div>
+                    Inspectore <input class="form-control" type="text" id="inspectorlink" readonly><br/>
+                    Channel <input class="form-control" type="text" id="channelname" readonly> <br/>
+                    User Id <input class="form-control" type="text" id="userid" readonly> <br/>
+                    Audio <input class="form-control" type="text" id="isAudio" style="width:100px" readonly><br/>
+                    Video <input class="form-control" type="text" id="isVideo" style="width:100px" readonly><br/>
+                    Data <input class="form-control" type="text" id="idData" style="width:100px" readonly><br/>
+                    Screen <input class="form-control" type="text" id="isScreen" style="width:100px" readonly><br/>
+                    <button class="btn" id="btnGetPeers">Get Peers Info</button>
+                    <div id="allpeerinfo"></div>
                   </div>
                 </div>
                 <div class="modal-footer">
@@ -239,12 +240,31 @@
 <script>
 $('document').ready(function(){
 
-    var webrtcdomobj= new WebRTCdom(
-        "localVideo", ["video1" , "video2"]
-    );
+    var outAudio =true , outVideo =true ;
+    var searchParams = new URLSearchParams(window.location);
+
+    if(searchParams.get('audio')=="0"){
+        outAudio=false;
+    }
+
+    if(searchParams.get('video')=="0"){
+        outVideo=false;
+    }
+
+    var webrtcdomobj;
+    if(searchParams.get('role')=="inspector"){
+        webrtcdomobj= new WebRTCdom(
+            "localVideo", ["video1" , "video2"]
+        );
+    }else{
+        webrtcdomobj= new WebRTCdom(
+            "localVideo", ["video1" , "video2"]
+        );
+    }
+
     var webrtcdevobj = new WebRTCdev ( 
         true , true , true,
-        true , true , true,
+        outAudio , outVideo , true,
         true , true , true,true
     );
   startcall();

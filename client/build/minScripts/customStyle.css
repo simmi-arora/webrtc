@@ -669,7 +669,7 @@ video {
 .fileinputClass{
     background: transparent;
     border: none;
-        bottom: 10px;
+    bottom: 10px;
     position: fixed;
 }
 
