@@ -117,29 +117,42 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b7deed', end
                         <!-- when no remote -->
                         <div id="local">
                             <div class="col-sm-4 merge" > </div>
-                            <div class="col-sm-4 merge "> <video id="localVideo" autoplay="autoplay" muted="true" /></div>
+                            <div class="col-sm-4 merge "> <video name="myVideo" autoplay="autoplay" muted="true" /></div>
                             <div class="col-sm-4 merge" > </div>
                         </div>
 
                         <!-- when remote is connected -->
-                        <div id ="remote">
-                            <div class="col-sm-4 merge" class="leftVideoClass" id="leftVideo">
-                                <video id="miniVideo" autoplay="autoplay" muted="true" />
-                            </div>
-                            <div class="col-sm-4 merge "  id="chatbox" hidden>
-                                <div class="row">
-                                    <div class="mainInputBox">   
-                                        <button id="send" class="form-control btn-primary buttonChatSend">Send</button>
-                                        <input type=text style="width:70%;" id="chatInput" class="form-control" placeholder="Type message here">
+                        <div id ="remote" class="conatiner" style="display: inline;">
+                            <div  class="row">
+                                <div class="col-sm-4 merge" >
+                                    <video name="video1" autoplay="autoplay" muted="true" />
+                                </div>
+                                <div class="col-sm-4 merge "  id="chatbox" hidden>
+                                    <div class="row">
+                                        <div class="mainInputBox">   
+                                            <button id="send" class="form-control btn-primary buttonChatSend">Send</button>
+                                            <input type=text style="width:70%;" id="chatInput" class="form-control" placeholder="Type message here">
+                                        </div>
+                                        <div  id="chatBoard"  class="chatMessagesClass">
+                                            <div id="all-messages" style="padding:5px;"></div>
+                                        </div>
+                                        <p id="who-is-typing" hidden></p>
                                     </div>
-                                    <div  id="chatBoard"  class="chatMessagesClass">
-                                        <div id="all-messages" style="padding:5px;"></div>
-                                    </div>
-                                    <p id="who-is-typing" hidden></p>
+                                </div>
+                                <div class="col-sm-4 merge" >
+                                    <video name="video2" autoplay="autoplay" />
                                 </div>
                             </div>
-                            <div class="col-sm-4 merge" class="rightVideoClass" id="rightVideo">
-                                <video id="remoteVideo" autoplay="autoplay"></video>
+                            <div  class="row">
+                                <div class="col-sm-4 merge" >
+                                    <video name="video3" autoplay="autoplay" />
+                                </div>
+                                <div class="col-sm-4 merge">
+                                    <video name="video4" autoplay="autoplay" />
+                                </div>
+                                <div class="col-sm-4 merge" >
+                                    <video name="video5" autoplay="autoplay" />
+                                </div>
                             </div>
                         </div>
 
@@ -212,5 +225,20 @@ var videoWidth="100% !important";
 <script src="scripts/firebase.js"></script>
 <script src="scripts/RTCMultiConnection.js"></script>
 <script src="scripts/start.js"></script>
+<script>
+$('document').ready(function(){
 
+    var webrtcdomobj= new WebRTCdom(
+        "myVideo", ["video1" , "video2", "video3", "video4" , "video5"]
+    );
+
+    var webrtcdevobj = new WebRTCdev ( 
+        true , true , true,
+        true , true , true,
+        true , false , false, false
+    );
+
+    startcall();
+});
+</script>
 </html>
