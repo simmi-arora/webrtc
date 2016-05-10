@@ -16,13 +16,14 @@ if(properties.enviornment=="production"){
   folderPath='.client/build';
 }
 
-var file = new _static.Server('./client/build', {
+var file = new _static.Server('client/build', {
     cache: 3600,
     gzip: true,
     indexFile: "index.html"
 });
 
 console.log(folderPath , file);
+
 /*var options = {
   key: fs.readFileSync('/etc/apache2/ssl/villageexpert.key'),
   cert: fs.readFileSync('/etc/apache2/ssl/edac0f74577a2bdf.crt'),
@@ -41,13 +42,35 @@ var options = {
 };
 
 var app = https.createServer(options, function(request, response){
-        request.addListener('end', function () {
+    request.addListener('end', function () {
         file.serve(request, response);
     }).resume();     
 });
 app.listen(properties.httpsPort);
 
-var realtimecomm= require('./realtimecomm.js')(app, properties);
+var realtimecomm= require('./realtimecomm.js')(app, function(socket) {
+    try {
+        var params = socket.handshake.query;
+
+        // "socket" object is totally in your own hands!
+        // do whatever you want!
+
+        // in your HTML page, you can access socket as following:
+        // connection.socketCustomEvent = 'custom-message';
+        // var socket = connection.getSocket();
+        // socket.emit(connection.socketCustomEvent, { test: true });
+
+        if (!params.socketCustomEvent) {
+            params.socketCustomEvent = 'custom-message';
+        }
+
+        socket.on(params.socketCustomEvent, function(message) {
+            try {
+                socket.broadcast.emit(params.socketCustomEvent, message);
+            } catch (e) {}
+        });
+    } catch (e) {}
+});
 
 console.log(" WebRTC server env => "+ properties.enviornment+ " running at\n "+properties.httpsPort+ "/\nCTRL + C to shutdown");
 
