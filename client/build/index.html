@@ -70,9 +70,9 @@
                         </div>
 
                         <!-- when remote is connected -->
-                        <div id ="remote" class="row">
+                        <div id ="remote" class="row" style="display:inline">
                             <div class="col-sm-4 merge" class="leftVideoClass" id="leftVideo">
-                                <video name="miniVideo" autoplay="autoplay" muted="true" />
+                                <video name="video1" autoplay="autoplay" muted="true" />
                             </div>
                             <div class="col-sm-4 merge "  id="chatbox" >
                                 <div class="row">
@@ -96,7 +96,7 @@
                                 </div>
                             </div>
                             <div class="col-sm-4 merge" class="rightVideoClass" id="rightVideo">
-                                <video name="remoteVideo" autoplay="autoplay"></video>
+                                <video name="video2" autoplay="autoplay"></video>
                             </div>
                         </div>
 
@@ -236,5 +236,18 @@
   ga('send', 'webrtc development pageview');
 
 </script>
+<script>
+$('document').ready(function(){
 
+    var webrtcdomobj= new WebRTCdom(
+        "localVideo", ["video1" , "video2"]
+    );
+    var webrtcdevobj = new WebRTCdev ( 
+        true , true , true,
+        true , true , true,
+        true , true , true,true
+    );
+  startcall();
+});
+</script>
 </html>

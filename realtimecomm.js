@@ -1,7 +1,7 @@
 module.exports = function(app , properties) {
     
     console.log(properties);
-    console.log("----------realtimecomm---------");
+    console.log("< ------------------------realtimecomm-------------------> ");
     
     var io = require('socket.io').listen(app, {
         log: false,
@@ -40,6 +40,10 @@ module.exports = function(app , properties) {
 
         socket.on('disconnect', function (channel) {
         });
+
+        socket.on("admin_enquire",function(data){
+            socket.emit('response_to_admin_enquire', channels);
+        });
     });
 
     function onNewNamespace(channel, sender) {
@@ -48,14 +52,12 @@ module.exports = function(app , properties) {
         io.of('/' + channel).on('connection', function (socket) {
             
             var username;
-
             if (io.isConnected) {
                 io.isConnected = false;
                 socket.emit('connect', true);
             }
 
             socket.on('message', function (data) {
-                console.log("message" , data);
                 if (data.sender == sender) {
                     if(!username) username = data.data.sender;                
                     socket.broadcast.emit('message', data.data);
@@ -63,7 +65,6 @@ module.exports = function(app , properties) {
             });
             
             socket.on('disconnect', function() {
-                console.log("disconnect");
                 if(username) {
                     socket.broadcast.emit('user-left', username);
                     username = null;

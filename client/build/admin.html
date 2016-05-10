@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Socket.io</title>
+    </head>
+ 
+    <body>
+        <h1>Communication with socket.io!</h1>
+        <p><input type="button" value="Poke the server" id="poke" /></p>
+        
+        <pre>
+            <code id="channelsFeed"></code>
+        </pre>
+
+        <script src="minScripts/presentationScript.js"> </script>
+        <script src="scripts/socket.io.js"></script>
+        <script>
+            var socket = io.connect('https://localhost:8084');
+            console.log(socket);
+
+            socket.on('response_to_admin_enquire', function(message) {
+                //alert('The server has a message for you: ' + message);
+                console.log(message);
+                document.getElementById("channelsFeed").innerHTML=JSON.stringify(message, null, 4);
+            });
+
+            $('#poke').click(function () {
+                socket.emit('admin_enquire', 'give all channels info');
+            });
+        </script>
+    </body>
+</html>
