@@ -897,7 +897,7 @@ function startcall() {
         });
 
         var n = io.connect(o+t);    
-        n.channel = channelname, 
+        n.channel = o+t, 
         n.on("connect", function() {
             e.callback && e.callback(n)
         }), 
