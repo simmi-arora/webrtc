@@ -23,13 +23,25 @@ module.exports = function(app , properties) {
             io.isConnected = true;
         }
 
+        socket.on('namespace',function(data){
+            onNewNamespace(data.channel, data.sender);
+        });
+
         socket.on('new-channel', function (data) {  
             if (!channels[data.channel]) {
                 initiatorChannel = data.channel;
             }
             console.log("------------new channel------------- ", data.channel , " by " , data.sender);
-            channels[data.channel] = data.channel;     
-            onNewNamespace(data.channel, data.sender);
+            channels[data.channel] = {
+                channel: data.channel,
+                users:[data.sender]
+            };     
+
+        });
+
+        socket.on('join-channel', function (data) {  
+            console.log("------------new channel------------- ", data.channel , " by " , data.sender);
+            channels[data.channel].users.push(data.sender);    
         });
 
         socket.on('presence', function (channel) {
@@ -42,8 +54,20 @@ module.exports = function(app , properties) {
         });
 
         socket.on("admin_enquire",function(data){
-            socket.emit('response_to_admin_enquire', channels);
+            switch (data.ask){
+                case "channels":
+                    socket.emit('response_to_admin_enquire', channels);
+                break;
+                case "channel_clients":
+                    socket.emit('response_to_admin_enquire', io.of('/' + data.channel).clients());
+                break;
+                default :
+                 socket.emit('response_to_admin_enquire', channels);
+            }
+           
         });
+
+
     });
 
     function onNewNamespace(channel, sender) {
