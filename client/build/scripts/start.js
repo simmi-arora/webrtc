@@ -253,6 +253,7 @@ switch(role){
     case "inspector":
         $("#local").hide();
         $("#remote").show(); 
+        $("button").prop('disabled', false);
     break;
     default:
         console.log("Role ", role);
@@ -502,7 +503,7 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
         snapshotButton.setAttribute("data-toggle", "tooltip");
         snapshotButton.setAttribute("data-container", "body");
         snapshotButton.className="pull-right glyphicon glyphicon-camera btn btn-default mediaButton";
-        snapshotButton.innerHTML="Snap-shot";
+        snapshotButton.innerHTML="Snapshot";
         snapshotButton.onclick = function() {
             rtcMultiConnection.streams[streamid].takeSnapshot(function(datasnapshot) {
                 for(i in webcallpeers ){
@@ -527,7 +528,7 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
         recordButton.setAttribute("data-placement", "bottom");
         recordButton.setAttribute("data-toggle", "tooltip");
         recordButton.setAttribute("data-container", "body");
-        recordButton.className="pull-right glyphicon glyphicon-refresh btn btn-default mediaButton";
+        recordButton.className="pull-right glyphicon glyphicon-facetime-video btn btn-default mediaButton";
         recordButton.innerHTML=" Record ";
         recordButton.onclick = function() {
             
@@ -581,7 +582,7 @@ function updateWebCallView(peerInfo){
         localStream     =   webcallpeers[0].stream;
         localStreamId   =   webcallpeers[0].streamid ;
 
-        $("#localVideo").show();
+        $("#local").show();
         $("#remote").hide();
 
         attachMediaStream(localVideo, webcallpeers[0].stream);
@@ -595,8 +596,10 @@ function updateWebCallView(peerInfo){
             webcallpeers[0].fileSharingContainer);
     }else if(peerInfo.name=="remoteVideo") {
         numpeers= webcallpeers.length;
+
         $("#local").hide();
         $("#remote").show();
+        
         remoteStream=webcallpeers[numpeers-1].stream;
 
         for(x  in webcallpeers)
@@ -838,6 +841,28 @@ rtcMultiConnection.onclose = rtcMultiConnection.onleave = function(e) {
 // connecting to signaling medium
 // rtcMultiConnection.connect();
 
+opneWebRTC=function(){
+    alert("open webrtc ");
+    shownotification("Making a new session ");
+    rtcMultiConnection.open();
+
+        socket.emit("new-channel", {
+            channel: rtcMultiConnection.channel,
+            sender: rtcMultiConnection.userid
+        });
+}
+
+joinWebRTC=function(){
+    alert("join webrtc ");
+    shownotification("Joing an existing session ");
+    rtcMultiConnection.join();
+
+        socket.emit("join-channel", {
+            channel: rtcMultiConnection.channel,
+            sender: rtcMultiConnection.userid
+        });
+}
+
 function startcall() {
     //rtcMultiConnection.open();
      
@@ -848,34 +873,31 @@ function startcall() {
     };
 
     var o = "/";
-    socket = io.connect(o), 
-
-    socket.on("presence", function(e) {
-        e ? 
-        (shownotification("Joing an existing session "),  rtcMultiConnection.connect()) : 
-        (shownotification("Making a new session "), rtcMultiConnection.open())
-    }),  
-
-    socket.emit("presence", {
+    socket = io.connect(o);
+        socket.emit("presence", {
         channel: rtcMultiConnection.channel,
         useremail: n,
         username: t
-    }), 
+    });
+
+    socket.on("presence", function(e) {
+        e ?  joinWebRTC() : opneWebRTC()
+    });  
 
     //Code to open  signalling channel 
     rtcMultiConnection.openSignalingChannel = function(e) {
-
+        alert("openSignalingChannel");
 
         var t = e.channel || this.channel;
         console.log("Channel ----------" ,t);
 
-        io.connect(o).emit("new-channel", {
+        socket.emit("namespace", {
             channel: t,
             sender: rtcMultiConnection.userid
         });
 
-        var n = io.connect(o + t);    
-        n.channel = t, 
+        var n = io.connect(o+t);    
+        n.channel = channelname, 
         n.on("connect", function() {
             e.callback && e.callback(n)
         }), 
@@ -888,6 +910,7 @@ function startcall() {
         n.on("message", e.onmessage), 
         n.on("disconnect", "datalost");
     }
+
 };
 
 /********************************************************************************8
@@ -1522,8 +1545,7 @@ try{
                 for(i in webcallpeers ){
                     if(webcallpeers[i].userid==rtcMultiConnection.userid){
                         var recordVideoname = "recordedScreenvideo"+ new Date().getTime();
-                        fileArray1.push(recordVideoname);
-                        webcallpeers[i].filearray.push(e.name);
+                        webcallpeers[i].filearray.push(recordVideoname);
                         var numFile= document.createElement("div");
                         numFile.value= webcallpeers[i].filearray.length;
 
@@ -1571,8 +1593,26 @@ $("#isAudio").val(rtcMultiConnection.session.audio);
 $("#isVideo").val(rtcMultiConnection.session.video);
 $("#isData").val(rtcMultiConnection.session.data);
 
+$("#btnGetPeers").click(function(){
+   // $("#alllpeerinfo").html(JSON.stringify(webcallpeers,null,6));
+   $("#alllpeerinfo").empty();
+/*   for(x in webcallpeers){
+        $("#allpeerinfo").append( webcallpeers[x].userid+" "+webcallpeers[x].videoContainer)
+        $("#allpeerinfo").append('<br/>');
+   }*/
+
+   $('#allpeerinfo').append('<pre contenteditable>'+JSON.stringify(webcallpeers, null, 2)+'<pre>');
+});
+
+$("#btnDebug").click(function(){
+    //window.open().document.write('<pre>'+rtcMultiConnection+'<pre>');
+    $("#allwebrtcdevinfo").empty();
+    $('#allwebrtcdevinfo').append('<pre contenteditable>'+rtcMultiConnection+'<pre>');
+});
+
 function getAllPeerInfo(){
     console.log(webcallpeers);
 }
+
 
 /******************************************************************************/
