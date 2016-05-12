@@ -10,14 +10,14 @@ var WebRTCdom= function(  _local , _remotearr ){
             remoteVideos.push(document.getElementsByName(_remotearr[x])[0]);
         }     
     }
-    console.log(" remoteVideos " , remoteVideos)
-}
+};
 
 var WebRTCdev= function( 
     _sessionid,
     _incomingAudio , _incomingVideo , _incomingData,
     _outgoingAudio, _outgoingVideo , _outgoingData,
-    _chat , _fileShare ,  _screenrecord , _screenshare
+    _chat , _fileShare ,  _screenrecord , _screenshare,
+    _videoRecord , _drawCanvas , _reconnect
     ){
     
     sessionid     = _sessionid ,
@@ -30,8 +30,11 @@ var WebRTCdev= function(
     chat          = _chat , 
     fileShare     = _fileShare , 
     screenrecord  = _screenrecord , 
-    screenshare   = _screenshare
-}
+    screenshare   = _screenshare,
+    videoRecord   = _videoRecord , 
+    drawCanvas    = _drawCanvas ,
+    reconnect     = _reconnect
+};
 
 function shownotification(message){
     var alertDiv =document.createElement("div");
@@ -377,7 +380,7 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
             }             
         };
 
-        if(screenrecord){
+        //if(videorecord){
             //add the snapshot button
             var snapshotButton=document.createElement("div");
             snapshotButton.id="snapshotButton";
@@ -432,23 +435,34 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
                                 var numFile= document.createElement("div");
                                 numFile.value= webcallpeers[i].filearray.length;
 
-                                syncSnapshot(dataRecordedVideo , "videoRecording" , recordVideoname );
+                                var video = document.createElement("video");
+                                if(dataRecordedVideo.video!=undefined ){
+                                    video.src = URL.createObjectURL(dataRecordedVideo.video); 
+
+                                }else{
+                                    video.src = URL.createObjectURL(dataRecordedVideo); 
+                                }
+                                video.setAttribute("controls","controls");  
+                                video.style.width="100%";
+
+                                document.body.appendChild(video);
+
+/*                                syncSnapshot(dataRecordedVideo , "videoRecording" , recordVideoname );
                                 displayList(rtcMultiConnection.uuid , rtcMultiConnection.userid  ,dataRecordedVideo , recordVideoname , "videoRecording");
                                 displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , dataRecordedVideo , recordVideoname, "videoRecording");
-
+*/
                             }
                         }
                     }, {audio:true, video:true} );
                 }
             };  
             controlBar.appendChild(recordButton);
-        }
+        //}
    
         controlBar.appendChild(videoButton);
         controlBar.appendChild(audioButton);
 
         //controlBar.setAttribute("style" , "-webkit-transform: rotateY(180deg)");
-
         videoElement.parentNode.appendChild(controlBar);        
 }
 
@@ -939,6 +953,53 @@ function startcall() {
         n.on("disconnect", "datalost");
     }
 
+
+    $("#inspectorlink").val(window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0');
+    $("#channelname").val(rtcMultiConnection.channel);
+    $("#userid").val(rtcMultiConnection.userid);
+
+    $("#inAudio").val(rtcMultiConnection.session.audio);
+    $("#inVideo").val(rtcMultiConnection.session.video);
+    $("#inData").val(rtcMultiConnection.session.data);
+
+    $("#outAudio").val(rtcMultiConnection.session.audio);
+    $("#outVideo").val(rtcMultiConnection.session.video);
+    $("#outData").val(rtcMultiConnection.session.data);
+
+    $("#btnGetPeers").click(function(){
+       // $("#alllpeerinfo").html(JSON.stringify(webcallpeers,null,6));
+       $("#alllpeerinfo").empty();
+        /*   
+        for(x in webcallpeers){
+            $("#allpeerinfo").append( webcallpeers[x].userid+" "+webcallpeers[x].videoContainer)
+            $("#allpeerinfo").append('<br/>');
+        }*/
+
+       $('#allpeerinfo').append('<pre contenteditable>'+JSON.stringify(webcallpeers, null, 2)+'<pre>');
+    });
+
+    $("#btnDebug").click(function(){
+        //window.open().document.write('<pre>'+rtcMultiConnection+'<pre>');
+        $("#allwebrtcdevinfo").empty();
+        $('#allwebrtcdevinfo').append('<pre contenteditable>'+rtcMultiConnection+'<pre>');
+        console.info(rtcMultiConnection);
+    });
+
+
+
+    if(screenrecord){
+        var recordButton= document.createElement("span");
+        recordButton.className="btn btn-success glyphicon glyphicon-refresh topPanelButton" ;
+        recordButton.innerHTML="Record";
+        recordButton .onclick = function() {
+            recordScreenVideo(recordButton);
+        };
+
+        var li =document.createElement("li");
+        li.appendChild(recordButton);
+        document.getElementById("topIconHolder_ul").appendChild(li);
+    }
+
 };
 
 /********************************************************************************8
@@ -1324,24 +1385,36 @@ function maxFV(userid,  buttonId , arrFilesharingBoxes, selectedFileSharingBox){
 /**************************************************************************8
 draw 
 ******************************************************************************/
-try{
-    CanvasDesigner.addSyncListener(function(data) {
-        rtcMultiConnection.send({type:"canvas", draw:data});
-    });
+if(drawCanvas){
 
-    CanvasDesigner.setSelected('pencil');
+    try{
+        CanvasDesigner.addSyncListener(function(data) {
+            rtcMultiConnection.send({type:"canvas", draw:data});
+        });
 
-    CanvasDesigner.setTools({
-        pencil: true,
-        eraser: true
-    });
+        CanvasDesigner.setSelected('pencil');
 
-    CanvasDesigner.appendTo(document.getElementById('widget-container'));
-}catch( e){
-    $("#drawButton").hide();
-    console.log(" Canvas drawing not supported ");
-    console.log(e);
+        CanvasDesigner.setTools({
+            pencil: true,
+            eraser: true
+        });
+
+        CanvasDesigner.appendTo(document.getElementById('widget-container'));
+    }catch( e){
+        $("#drawButton").hide();
+        console.log(" Canvas drawing not supported ");
+        console.log(e);
+    }
+
+    var drawButton= document.createElement("span");
+    drawButton.className="btn btn-success glyphicon glyphicon-edit topPanelButton" ;
+    drawButton.innerHTML="Whiteborad";
+
+    var li =document.createElement("li");
+    li.appendChild(drawButton);
+    document.getElementById("topIconHolder_ul").appendChild(li);
 }
+
 
 
 /*******************************
@@ -1377,85 +1450,109 @@ function shareCursor(){
 /**********************************
 Reconnect 
 ****************************************/
-
-document.getElementById("reconnectButton").addEventListener("click", function(){
-    var r = confirm("Do you want to reconnet ?");
-    if (r == true) {
-       location.reload();
-    } else {
-       //do nothing
+if(reconnect){
+    var reconnectButton= document.createElement("span");
+    reconnectButton.className="btn btn-success glyphicon glyphicon-refresh topPanelButton" ;
+    reconnectButton.innerHTML="Reconnect";
+    reconnectButton.onclick=function(){
+        var r = confirm("Do you want to reconnet ?");
+        if (r == true) {
+           location.reload();
+        } else {
+           //do nothing
+        }
     }
-});
+    var li =document.createElement("li");
+    li.appendChild(reconnectButton);
+    document.getElementById("topIconHolder_ul").appendChild(li);
+}
 
 /****************************************8
 screenshare
 ***************************************/
- var screen;
-try{
-    screen = new Screen("screen"+rtcMultiConnection.channel);
+var screen , isScreenOn=0;
+var screen_roomid , screen_userid;
 
-    // get shared screens
-    screen.onaddstream = function(e) {
-        document.getElementById("screenshare").innerHTML="";
-        document.getElementById("screenshare").appendChild(e.video);
-        document.getElementById("screenshare").hidden=false;
-        
-        screen.openSignalingChannel = function(callback) {
-            var n= io.connect("/"+rtcMultiConnection.channel);
-            n.channel = t;
-            return n.on('message', callback);
+if(screenshare){
+
+    try{
+        screen = new Screen("screen"+rtcMultiConnection.channel);
+
+        // get shared screens
+        screen.onaddstream = function(e) {
+            document.getElementById("screenshare").innerHTML="";
+            document.getElementById("screenshare").appendChild(e.video);
+            document.getElementById("screenshare").hidden=false;
+            
+            screen.openSignalingChannel = function(callback) {
+                var n= io.connect("/"+rtcMultiConnection.channel);
+                n.channel = t;
+                return n.on('message', callback);
+            };
         };
+
+        screen.check();
+
+        // to stop sharing screen
+        // screen.leave();
+
+        // if someone leaves; just remove his video
+        screen.onuserleft = function(userid) {
+            document.getElementById("screenshare").hidden=true;
+            /*       
+            var video = document.getElementById(userid);
+            if(video) {
+               // video.parentNode.removeChild(video);
+            }*/
+        };
+
+        screen.onscreen = function(screen) {
+            console.log( " onscreen " , screen );
+            if (self.detectedRoom) return;
+            self.detectedRoom = true;
+            self.view(screen);
+        };
+    }catch(e){
+        console.log("------------screenshare not supported ");
+        $("#screenShareButton").hide();
+        $("#viewScreenShareButton").hide();
+        console.log(e);
+    }
+
+    var screenShareButton= document.createElement("span");
+    screenShareButton.className="btn btn-success glyphicon glyphicon-expand topPanelButton";
+    screenShareButton.innerHTML="Screen View";
+    screenShareButton.onclick = function() {
+    screenShareButton.id="screenShareButton";
+        if(isScreenOn==0){
+            screen.share('screenShareVilageExperts');
+            isScreenOn=1;
+        }else if(isScreenOn ==1){
+            screen.leave();
+            isScreenOn=0;
+        }
     };
 
-    screen.check();
+    var li =document.createElement("li");
+    li.appendChild(screenShareButton);
+    document.getElementById("topIconHolder_ul").appendChild(li);
 
-    // to stop sharing screen
-    // screen.leave();
 
-    // if someone leaves; just remove his video
-    screen.onuserleft = function(userid) {
-        document.getElementById("screenshare").hidden=true;
-        /*       
-        var video = document.getElementById(userid);
-        if(video) {
-           // video.parentNode.removeChild(video);
-        }*/
+    var viewScreenShareButton= document.createElement("span");
+    viewScreenShareButton.className="btn btn-success glyphicon glyphicon-expand topPanelButton";
+    viewScreenShareButton.innerHTML="Screenshare";
+    viewScreenShareButton.onclick = function() {
+    viewScreenShareButton.id="viewScreenShareButton";
+        screen.view({roomid:screen_roomid , userid:screen_userid});
     };
 
-
-    screen.onscreen = function(screen) {
-        console.log( " onscreen " , screen );
-        if (self.detectedRoom) return;
-        self.detectedRoom = true;
-        self.view(screen);
-    };
-}catch(e){
-    console.log("------------screenshare not supported ");
-    $("#screenShareButton").hide();
-    $("#viewScreenShareButton").hide();
-    console.log(e);
+    var li =document.createElement("li");
+    li.appendChild(viewScreenShareButton);
+    document.getElementById("topIconHolder_ul").appendChild(li);
 }
 
 
-var isScreenOn=0;
-document.getElementById('screenShareButton').onclick = function() {
-    if(isScreenOn==0){
-        screen.share('screenShareVilageExperts');
-        isScreenOn=1;
-    }else if(isScreenOn ==1){
-        screen.leave();
-        isScreenOn=0;
-    }
-};
-
-var screen_roomid , screen_userid;
-
-document.getElementById('viewScreenShareButton').onclick = function() {
-    screen.view({roomid:screen_roomid , userid:screen_userid});
-};
 /*screen  Object {broadcasting: true, roomid: 11, userid: 10494752123}*/
-
-
 
 /******************************************************************
 Record 
@@ -1491,7 +1588,7 @@ Canvas Record
 
 /*
 function downloadVideoScreenRecording(fileurl , filename){
-      return  document.getElementById("display"+filename).src;
+    return  document.getElementById("display"+filename).src;
 }
 */
 
@@ -1515,21 +1612,14 @@ function syncVideoScreenRecording(data , datatype , dataname ){
     rtcMultiConnection.send({type:datatype, message:data  , name : dataname});
 }
 
-try{
-    var elementToShare = document.getElementById('elementToShare');
-    var recorder = new CanvasRecorder(elementToShare, {
-        disableLogs: false
-    });
-
-    document.getElementById('ScreenRecordButton').onclick = function() {
-        var recordButton= document.getElementById('ScreenRecordButton');
-        if(recordButton.innerHTML==" Record "){
-            recordButton.innerHTML=" Stop Recording ";
+function recordScreenVideo(recordButton){
+        if(recordButton.innerHTML=="Record"){
+            recordButton.innerHTML="Stop Recording";
             playVideo(function() {
                 recorder.record();    
             });
-        }else if(recordButton.innerHTML==" Stop Recording "){
-            recordButton.innerHTML=" Record ";
+        }else if(recordButton.innerHTML=="Stop Recording"){
+            recordButton.innerHTML="Record";
             recorder.stop(function(dataRecordedVideo) {
                 for(i in webcallpeers ){
                     if(webcallpeers[i].userid==rtcMultiConnection.userid){
@@ -1547,7 +1637,13 @@ try{
             });
             
         }
-    };
+}
+
+try{
+    var elementToShare = document.getElementById('elementToShare');
+    var recorder = new CanvasRecorder(elementToShare, {
+        disableLogs: false
+    });
 
     var videoElement = document.querySelector('video');
     function playVideo(callback) {
@@ -1572,37 +1668,9 @@ try{
     console.error(" Canvas recorder is not defined ");
 }
 
+
 /******************* help and settings ***********************/
 
-$("#inspectorlink").val(window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0');
-$("#channelname").val(rtcMultiConnection.channel);
-$("#userid").val(rtcMultiConnection.userid);
-
-$("#inAudio").val(rtcMultiConnection.session.audio);
-$("#inVideo").val(rtcMultiConnection.session.video);
-$("#inData").val(rtcMultiConnection.session.data);
-
-$("#outAudio").val(rtcMultiConnection.session.audio);
-$("#outVideo").val(rtcMultiConnection.session.video);
-$("#outData").val(rtcMultiConnection.session.data);
-
-$("#btnGetPeers").click(function(){
-   // $("#alllpeerinfo").html(JSON.stringify(webcallpeers,null,6));
-   $("#alllpeerinfo").empty();
-/*   for(x in webcallpeers){
-        $("#allpeerinfo").append( webcallpeers[x].userid+" "+webcallpeers[x].videoContainer)
-        $("#allpeerinfo").append('<br/>');
-   }*/
-
-   $('#allpeerinfo').append('<pre contenteditable>'+JSON.stringify(webcallpeers, null, 2)+'<pre>');
-});
-
-$("#btnDebug").click(function(){
-    //window.open().document.write('<pre>'+rtcMultiConnection+'<pre>');
-    $("#allwebrtcdevinfo").empty();
-    $('#allwebrtcdevinfo').append('<pre contenteditable>'+rtcMultiConnection+'<pre>');
-    console.info(rtcMultiConnection);
-});
 
 function getAllPeerInfo(){
     console.log(webcallpeers);
