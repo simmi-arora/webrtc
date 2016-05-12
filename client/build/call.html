@@ -112,24 +112,24 @@
                         <div id ="remote" class="conatiner" style="display: inline;">
                             <div  class="row">
                                 <div class="col-sm-4 merge" >
-                                    <video name="video1" autoplay="autoplay" muted="true" />
+                                    <video hidden name="video1" autoplay="autoplay" muted="true" />
                                 </div>
                                 <div class="col-sm-4 merge" >
-                                    <video name="video2" autoplay="autoplay" />
+                                    <video hidden name="video2" autoplay="autoplay" />
                                 </div>
                                 <div class="col-sm-4 merge" >
-                                    <video name="video3" autoplay="autoplay" />
+                                    <video hidden name="video3" autoplay="autoplay" />
                                 </div>
                             </div>
                             <div  class="row">
                                 <div class="col-sm-4 merge" >
-                                    <video name="video4" autoplay="autoplay" />
+                                    <video hidden name="video4" autoplay="autoplay" />
                                 </div>
                                 <div class="col-sm-4 merge">
-                                    <video name="video5" autoplay="autoplay" />
+                                    <video hidden name="video5" autoplay="autoplay" />
                                 </div>
                                 <div class="col-sm-4 merge" >
-                                    <video name="video6" autoplay="autoplay" />
+                                    <video hidden name="video6" autoplay="autoplay" />
                                 </div>
                             </div>
                         </div>
@@ -208,7 +208,7 @@ $('document').ready(function(){
     var webrtcdevobj = new WebRTCdev ( 
         true , true , true,
         true , true , true,
-        false , false , false, false
+        false , false , true, false
     );
     startcall();
 });
