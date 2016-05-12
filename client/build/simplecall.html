@@ -5,7 +5,6 @@
     <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel=stylesheet href="minScripts/mainStyle.css">
-
     <style>
     .class1{
         background: rgba(210,255,82,1);
@@ -160,42 +159,12 @@
 
 </body>
 
-<script>
-var mediaControlButtonsPosition="bottom";
-var videoWidth="100% !important";
-    var sessionId = window.location.hash;
-    switch(Number(sessionId.substring(sessionId.length-1)) ){
-        case 1:
-        case 2:
-        document.body.className="class1";
-        break;
-        case 2:
-        case 3:
-        document.body.className="class2";
-        break;
-        case 4:
-        case 5:
-        document.body.className="class3";
-        break;
-        case 6:
-        case 7:
-        document.body.className="class4";
-        break;
-        case 8:
-        case 9:
-        document.body.className="class5";
-        break;
-        default:
-        document.body.className="class6";
-        break;
-    }
-</script>
 <script src="scripts/init.js"></script>
 <script src="scripts/socket.io.js"></script>
 <script src="scripts/firebase.js"></script>
 <script src="scripts/RTCMultiConnection.js"></script>
 <script src="scripts/start.js"></script>
-<script>
+<script >
 $('document').ready(function(){
     var webrtcdomobj= new WebRTCdom(
         "myVideo", ["video1" , "video2", "video3", "video4" , "video5"]

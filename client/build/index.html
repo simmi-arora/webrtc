@@ -5,12 +5,7 @@
     <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel=stylesheet href="minScripts/mainStyle.css">
-    <script>
-    if(!location.hash.replace('#', '').length) {
-        location.href = location.href.split('#')[0] + '#' + (Math.random() * 100).toString().replace('.', '');
-        location.reload();
-    }
-    </script>
+
 
     <script src="minScripts/presentationScript.js"> </script>
     <script src="property.js"></script>
@@ -111,57 +106,17 @@
 
         <!-- .......................... Row 3 ................................ -->
         <div class="row fourthPanelClass"> 
-
             <div class="col-xs-12 filesharingBox merge" >
-                
-                <div class="row fileSharingRow">
-                    
-                    <div name="filesharing1Box" class="col-sm-6 fileViewing1Box">
-                        <p> File Viewer  
-                            <span name="minButton1" class="btn btn-default glyphicon glyphicon-import closeButton"> Resize</span>
-                            <span name="maxButton1" class="btn btn-default glyphicon glyphicon-export closeButton"> Maximize </span>
-                            <span name="closeButton1" class="btn btn-default glyphicon glyphicon-remove closeButton"> Close </span> 
-                        </p>
-                        <div name="widget-filesharing-container1" class="filesharingWidget"></div> 
-                        <p class="filler"></p>                   
-                    </div>
-
-                    <div name="filesharing2Box" class="col-sm-6 fileViewing2Box">
-                        <p> File Viewer                           
-                            <span name="minButton2" class="btn btn-default glyphicon glyphicon-import closeButton"> Resize</span>
-                            <span name="maxButton2" class="btn btn-default glyphicon glyphicon-export closeButton"> Maximize </span>
-                            <span name="closeButton2" class="btn btn-default glyphicon glyphicon-remove closeButton"> Close </span>
-                        </p>
-                        <div name="widget-filesharing-container2"  class="filesharingWidget"></div>
-                        <p class="filler"></p>
-                    </div> 
-
-                </div>
-
-                <br/><br/>
-
+                <div id="fileSharingRow" class="row fileSharingRow"> </div>
             </div>
         </div>
 
+        <br/><br/>
         <!-- .......................... Row 4 ................................ -->
         
         <div class="row fifthPanelClass"> 
             <div class="col-xs-12 filesharingBox merge" >
-
-                <div class="row">
-
-                    <div name="widget-filelisting-container1" class="col-sm-6  filesharing1Box">
-                        <p> Uploaded Files </p>
-                        <div id="file-progress1"></div>
-                    </div>
-                    
-                    <div name="widget-filelisting-container2" class="col-sm-6  filesharing2Box">
-                         <p> Uploaded Files </p>
-                        <div id="file-progress2"></div>
-                    </div> 
-
-                </div>
-
+                <div id="fileListingRow" class="row">  </div>
             </div>
         </div>
 
@@ -202,28 +157,52 @@
                     Inspectore <input class="form-control" type="text" id="inspectorlink" readonly><br/>
                     Channel <input class="form-control" type="text" id="channelname" readonly> <br/>
                     User Id <input class="form-control" type="text" id="userid" readonly> <br/>
-                    
-                    <div style="display: inline-flex;">
-                        <div>Audio</div> <input class="form-control" type="text" id="isAudio" style="width:100px" readonly><br/>
-                    </div>
-                    
-                    <div style="display: inline-flex;">
-                        <div>Video</div> <input class="form-control" type="text" id="isVideo" style="width:100px" readonly><br/>
+
+                    <div class="row">
+                        <div style="display: inline-flex;">
+                            <div>Audio</div> <input class="form-control" type="text" id="inAudio" style="width:100px" readonly><br/>
+                        </div>
+                        
+                        <div style="display: inline-flex;">
+                            <div>Video</div> <input class="form-control" type="text" id="inVideo" style="width:100px" readonly><br/>
+                        </div>
+
+                        <div style="display: inline-flex;">
+                            Data <input class="form-control" type="text" id="inData" style="width:100px" readonly><br/>
+                        </div>
+
+                        <div style="display: inline-flex;">
+                            Screen <input class="form-control" type="text" id="inScreen" style="width:100px" readonly><br/>
+                        </div>
+
                     </div>
 
-                    <div style="display: inline-flex;">
-                        Data <input class="form-control" type="text" id="idData" style="width:100px" readonly><br/>
-                    </div>
+                    <div class="row">
+                        <div style="display: inline-flex;">
+                            <div>Audio</div> <input class="form-control" type="text" id="outAudio" style="width:100px" readonly><br/>
+                        </div>
+                        
+                        <div style="display: inline-flex;">
+                            <div>Video</div> <input class="form-control" type="text" id="outVideo" style="width:100px" readonly><br/>
+                        </div>
 
-                    <div style="display: inline-flex;">
-                        Screen <input class="form-control" type="text" id="isScreen" style="width:100px" readonly><br/>
-                    </div>
+                        <div style="display: inline-flex;">
+                            Data <input class="form-control" type="text" id="outData" style="width:100px" readonly><br/>
+                        </div>
 
-                    <button class="btn" id="btnGetPeers">Get Peers Info</button>
+                        <div style="display: inline-flex;">
+                            Screen <input class="form-control" type="text" id="outScreen" style="width:100px" readonly><br/>
+                        </div>                    
+                    </div>                    
+
+                    <div class="row">
+                         <button class="btn" id="btnGetPeers">Get Peers Info</button>
+                         <button class="btn" id="btnDebug">Debug</button>
+                    </div> 
+
                     <div id="allpeerinfo" style="text-align: left;"></div>
-                    
-                    <button class="btn" id="btnDebug">Debug</button>
                     <div id="allwebrtcdevinfo" style="text-align: left;"></div>
+
                   </div>
                 </div>
                 <div class="modal-footer">
@@ -239,6 +218,51 @@
 
 <script src="minScripts/snapshotRecord.js"></script>
 <script src="minScripts/mainScript.js"></script>
+<script>
+    
+    var searchParams = new URLSearchParams(window.location);
+    var role="participant",out_A=true, out_v=true ;
+    var webrtcdomobj;
+
+    if(searchParams.get('audio')=="0"){
+        out_A=false;
+    }
+
+    if(searchParams.get('video')=="0"){
+        out_v=false;
+    }
+
+    if(searchParams.get('role')=="inspector"){
+        role=searchParams.get('role');
+        webrtcdomobj= new WebRTCdom(
+            null, ["video1" , "video2"]
+        );    
+        sessionid = sessionid.substring(0,sessionid.indexOf("appname") );
+        alert("you joined as " + role + " channel  "+ sessionid);
+
+        var webrtcdevobj = new WebRTCdev ( 
+            sessionid,
+            true , true , true,
+            out_A , out_v , true,
+            true , true , true, true
+        );
+
+
+    }else{
+        webrtcdomobj= new WebRTCdom(
+            "localVideo", ["video1" , "video2"]
+        );
+
+        var webrtcdevobj = new WebRTCdev ( 
+            sessionid,
+            true , true , true,
+            out_A , out_v , true,
+            true , true , true, true
+        );
+
+    } 
+
+</script>
 <script src="scripts/start.js"></script>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -248,20 +272,11 @@
 
   ga('create', 'UA-38614709-4', 'auto');
   ga('send', 'webrtc development pageview');
-
 </script>
+
 <script>
 $('document').ready(function(){
-
-    var webrtcdomobj= new WebRTCdom(
-        "localVideo", ["video1" , "video2"]
-    );
-    var webrtcdevobj = new WebRTCdev ( 
-        true , true , true,
-        true , true , true,
-        true , true , true,true
-    );
-  startcall();
+    startcall();
 });
 </script>
 </html>
