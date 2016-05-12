@@ -651,7 +651,6 @@ joinWebRTC=function(){
 
 function startcall() {
     //rtcMultiConnection.open();
-    alert(sessionid);
     rtcMultiConnection= new RTCMultiConnection(sessionid);
     rtcMultiConnection.channel=sessionid;
     rtcMultiConnection.preventSSLAutoAllowed = false;
@@ -901,8 +900,8 @@ function startcall() {
         useredisplayListmail: n
     };
 
-    var o = "/";
-    //var o = "https://www.villageexperts.com:8084/";
+    //var o = "/";
+    var o = "https://www.villageexperts.com:8084/";
     //var o="https://localhost:8084/";
 
     socket = io.connect(o);
