@@ -67,12 +67,7 @@
         <!-- ................................ top panel ....................... -->
         <div class="row topPanelClass" >    
             <div id="topIconHolder" >
-                <ul>
-                    <li> <span id="screenShareButton" class="btn btn-success glyphicon glyphicon-expand topPanelButton"> Screenshare </span> </li>
-                    <li> <span id="viewScreenShareButton" class="btn btn-success glyphicon glyphicon-expand topPanelButton" disabled=true> Screen View </span> </li>
-                    <li> <span id="drawButton" class="btn btn-success glyphicon glyphicon-edit topPanelButton" disabled=true> Whiteborad </span> </li>
-                    <li> <span id="reconnectButton" class="btn btn-success glyphicon glyphicon-refresh topPanelButton" hidden> Reconnect </span> </li>
-                     <li> <span id="recordButton" class="btn btn-success glyphicon glyphicon-refresh topPanelButton"  hidden> Record </span> </li>
+                <ul id="topIconHolder_ul">
                     <li hidden> <span id="username" class="userName" hidden>a</span></li>
                     <li hidden> <span id="numbersofusers" class="numbers-of-users" hidden></span></li>
                     <!-- <li id="timerli" hidden> Time <span id="countdownMinutes">3</span>:<span id="countdownSecond">60</span></li>  -->
@@ -190,23 +185,33 @@ var videoWidth="100% !important";
         break;
     }
 </script>
-<script src="scripts/mainScript.js"></script>
+
+<script src="minScripts/snapshotRecord.js"></script>
+<script src="minScripts/mainScript.js"></script>
 <script src="scripts/start.js"></script>
+
 <script>
 $('document').ready(function(){
+
+    sessionid= init(false);
+
     var webrtcdomobj= new WebRTCdom(
         "myVideo", ["video1" , "video2", "video3", "video4" , "video5"]
     );
-    /*
-    _incomingAudio , _incomingVideo , _incomingData,
+
+    /*_incomingAudio , _incomingVideo , _incomingData,
     _outgoingAudio, _outgoingVideo , _outgoingData,
-    _chat , _fileShare ,  _screenrecord , _screenshare
+    _chat , _fileShare ,  _screenrecord , _screenshare,
+    _videoRecord , _drawCanvas , _reconnect
     */
     var webrtcdevobj = new WebRTCdev ( 
+        sessionid,
         true , true , true,
         true , true , true,
-        false , false , true, false
+        false, false , false, false,
+        true, false, false
     );
+
     startcall();
 });
 </script>
