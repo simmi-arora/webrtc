@@ -1,29 +1,3 @@
-/********************************************************************
-    global variables
-**********************************************************************/
-
-var t = " ";
-var o = "/";
-var e= null;
-var n="tara181989@gmail.com";
-
-var usersList       = document.getElementById("userslist");
-var numbersOfUsers  = document.getElementById("numbersofusers");
-var usersContainer  = document.getElementById("usersContainer");
-
-var localUserId=null , remoteUserId=null;
-
-var card = document.getElementById('card');
-var containerDiv;
-var main = document.querySelector('#main');
-var smaller = document.querySelector('#smaller');
-var webcallpeers=[];
-var sessions = {};
-var whoIsTyping = document.querySelector("#who-is-typing");
-var repeatFlagShowButton =null, repeatFlagHideButton =null, repeatFlagRemoveButton=null ;
-// DOM objects
-var localVideo =null, miniVideo=null, remoteVideos=[];
-
 var WebRTCdom= function(  _local , _remotearr ){
     if(_local!=null){
         localVideo = document.getElementsByName(_local)[0];
@@ -39,24 +13,17 @@ var WebRTCdom= function(  _local , _remotearr ){
     console.log(" remoteVideos " , remoteVideos)
 }
 
-//webrtc session intilization
-var sessionid=location.href.replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
-var incomingAudio =true , incomingVideo =true , incomingData = true;
-var outgoingAudio =true , outgoingVideo =true , outgoingData = true;
-var chat=true , fileShare=true ,  screenrecord=true , screenshare =true;
-var role="participant";
-
 var WebRTCdev= function( 
     _sessionid,
     _incomingAudio , _incomingVideo , _incomingData,
     _outgoingAudio, _outgoingVideo , _outgoingData,
     _chat , _fileShare ,  _screenrecord , _screenshare
     ){
-
-    sessionid     = _sessionid,
+    
+    sessionid     = _sessionid ,
     incomingAudio = _incomingAudio , 
     incomingVideo = _incomingVideo , 
-    incomingData  = _incomingData
+    incomingData  = _incomingData , 
     outgoingAudio = _outgoingAudio, 
     outgoingVideo = _outgoingVideo , 
     outgoingData  = _outgoingData,
@@ -65,9 +32,6 @@ var WebRTCdev= function(
     screenrecord  = _screenrecord , 
     screenshare   = _screenshare
 }
-
-
-
 
 function shownotification(message){
     var alertDiv =document.createElement("div");
@@ -82,6 +46,10 @@ function shownotification(message){
         document.getElementById("alertBox").hidden=true;
     }, 3000);
 
+}
+
+function error(arg1 , arg2){
+    console.log(arg1, arg2);
 }
 
 function getElement(e) {
@@ -577,220 +545,8 @@ var reattachMediaStream = null;
 var webrtcDetectedBrowser = null;
 var webrtcDetectedVersion = null;
 
-var rtcMultiConnection = new RTCMultiConnection;
+var rtcMultiConnection ;
 
-rtcMultiConnection.channel=sessionid;
-rtcMultiConnection.preventSSLAutoAllowed = false;
-rtcMultiConnection.autoReDialOnFailure = true;
-rtcMultiConnection.setDefaultEventsForMediaElement = false;
-
-rtcMultiConnection.customStreams = {}, 
-
-rtcMultiConnection.autoCloseEntireSession = !1, 
-
-rtcMultiConnection.autoTranslateText = !1, 
-
-rtcMultiConnection.maxParticipantsAllowed = 4, 
-
-rtcMultiConnection.setDefaultEventsForMediaElement = !1; 
-
-rtcMultiConnection.blobURLs = {},
-
-rtcMultiConnection.session = {
-    video: incomingVideo,
-    audio: incomingAudio,
-    data:  incomingData
-}, 
-
-rtcMultiConnection.sdpConstraints.mandatory = {
-    OfferToReceiveAudio: !0,
-    OfferToReceiveVideo: !0
-} ,
-
-
-rtcMultiConnection.onstream = function(e) {
-    var peerInfo=null;
-    if (e.type == 'local') {
-        console.log("LocalStream ------------",e  );
-        peerInfo={ 
-            name : "localVideo",
-            videoContainer : "video"+e.userid,
-            videoHeight : null,
-            videoClassName: null,
-            uuid: e.uuid,
-            userid : e.userid , 
-            stream : e.stream ,
-            streamid : e.stream.streamid , 
-            fileSharingContainer : "widget-filesharing-container"+e.userid,
-            fileSharingSubContents:{
-                fileSharingBox: "widget-filesharing-box"+e.userid,
-                minButton: "widget-filesharing-minbutton"+e.userid,
-                maxButton: "widget-filesharing-maxbutton"+e.userid,
-                closeButton: "widget-filesharing-closebutton"+e.userid
-            },
-            fileListContainer : "widget-filelisting-container"+e.userid,
-            controlBarName: "control-video"+e.userid,
-            filearray : []
-        };
-    }else if (e.type == 'remote'){
-        console.log("Remote ------------", e );
-        peerInfo={ 
-            name : "remoteVideo",
-            videoContainer : "video"+e.userid,
-            videoHeight : null,
-            videoClassName: null,
-            uuid : e.uuid,
-            userid:  e.userid , 
-            stream : e.stream ,
-            streamid : e.stream.streamid , 
-            fileSharingContainer : "widget-filesharing-container"+e.userid,
-            fileSharingSubContents:{
-                fileSharingBox: "widget-filesharing-box"+e.userid,
-                minButton: "widget-filesharing-minbutton"+e.userid,
-                maxButton: "widget-filesharing-maxbutton"+e.userid,
-                closeButton: "widget-filesharing-closebutton"+e.userid
-            },
-            fileListContainer : "widget-filelisting-container"+e.userid,
-            controlBarName: "control-video"+e.userid,
-            filearray: []
-        }; 
-    }
-    webcallpeers.push(peerInfo);
-    updateWebCallView(peerInfo);
-}, 
-
-rtcMultiConnection.onstreamended = function(e) {
-    e.isScreen ? $("#" + e.userid + "_screen").remove() : $("#" + e.userid).remove()
-}, 
-
-rtcMultiConnection.onopen = function(e) {
-    //startsessionTimer();
-    //numbersOfUsers.innerHTML = parseInt(numbersOfUsers.innerHTML) + 1 ; 
-    console.log(e);
-    console.log(rtcMultiConnection);
-    shownotification(e.extra.username + " joined channel ");
-};
-
-rtcMultiConnection.onmessage = function(e) {
-
-    if(e.data.typing){
-        void(whoIsTyping.innerHTML = e.extra.username + " is typing ...") ;
-    }else if(e.data.stoppedTyping){
-        void(whoIsTyping.innerHTML = "");
-    }else{
-
-        switch(e.data.type){
-            case "chat":
-                whoIsTyping.innerHTML = "";
-                addNewMessage({
-                    header: e.extra.username,
-                    message: e.data.message,
-                    userinfo: getUserinfo(rtcMultiConnection.blobURLs[e.userid], "chat-message.png"),
-                    color: e.extra.color
-                }); 
-                void(document.title = e.data.message);
-            break;
-            case "imagesnapshot":
-                displayList( null , e.userid , e.data.message , e.data.name , "imagesnapshot" );
-                displayFile( null , e.userid , e.data.message , e.data.name , "imagesnapshot");
-            break;
-            case "videoScreenRecording":
-                displayList( null , e.userid , e.data.message , e.data.name , "videoScreenRecording" );
-                displayFile( null , e.userid , e.data.message , e.data.name , "videoScreenRecording");
-            break;
-            case "file":
-                addNewMessage({
-                    header: e.extra.username,
-                    message: e.data.message,
-                    userinfo: getUserinfo(rtcMultiConnection.blobURLs[e.userid], "chat-message.png"),
-                    color: e.extra.color
-                }); 
-            break;
-            case "canvas":
-                CanvasDesigner.syncData( e.data.draw );
-            break;
-            case "pointer":
-                placeCursor("cursor2" , e.data.corX , e.data.corY);
-            break;
-            case "buttonclick":
-                var buttonElement= document.getElementById(e.data.buttonName);
-                if ( buttonElement.getAttribute("lastClickedBy") != rtcMultiConnection.userid ){
-                    buttonElement.setAttribute("lastClickedBy" , e.userid);
-                    buttonElement.click();
-                }
-            break;
-
-            default:
-                console.log(" unrecognizable message from peer  ",e);
-            break;
-
-        }
-
-    } 
-    return;
-};
-
-
-rtcMultiConnection.onNewSession = function(e) {
-    /*
-    sessions[e.sessionid] || (sessions[e.sessionid] = e, 
-        e.join({
-            audio: outgoingAudio, 
-            video: outgoingVideo, 
-            data: outgoingData
-        }))*/
-    sessions[e.sessionid] || (sessions[e.sessionid] = e, e.join())
-}, 
-
-rtcMultiConnection.onRequest = function(e) {
-    rtcMultiConnection.accept(e)
-}, 
-
-rtcMultiConnection.onCustomMessage = function(e) {
-    
-    if (e.hasCamera || e.hasScreen) {
-        var t = e.extra.username + " enabled webcam.";
-        e.hasScreen && (e.session.oneway = !0, rtcMultiConnection.sendMessage({
-            renegotiate: !0,
-            streamid: e.streamid,
-            session: e.session
-        }), t = e.extra.username + " is ready to share screen.")
-    }
-    if (e.hasMic && (e.session.oneway = !0, rtcMultiConnection.sendMessage({
-            renegotiate: !0,
-            streamid: e.streamid,
-            session: e.session
-        })), e.renegotiate) {
-        var n = rtcMultiConnection.customStreams[e.streamid];
-        n && rtcMultiConnection.peers[e.userid].renegotiate(n, e.session)
-    }
-}, 
-
-rtcMultiConnection.sendMessage = function(e) {
-    e.userid = rtcMultiConnection.userid, 
-    e.extra = rtcMultiConnection.extra, 
-    rtcMultiConnection.sendCustomMessage(e)
-}, 
-
-rtcMultiConnection.onclose = rtcMultiConnection.onleave = function(e) {
-    
-    addNewMessage({
-        header: e.extra.username,
-        message: e.extra.username + " left session.",
-        userinfo: getUserinfo(rtcMultiConnection.blobURLs[e.userid], "info.png"),
-        color: e.extra.color
-    }), 
-    
-    //webcallpeers.pop();
-    //    $("#" + e.userid).remove(), 
-
-    shownotification(e.extra.username + " left the conversation.");
-    //rtcMultiConnection.playRoleOfInitiator()
-    for(x in webcallpeers){
-        if(webcallpeers[x].userid=e.userid)
-            webcallpeers.splice(x,1);
-    }
-};
 
 if (navigator.mozGetUserMedia) {
     console.log("This appears to be Firefox");
@@ -873,16 +629,20 @@ opneWebRTC=function(){
     shownotification("Making a new session ");
     rtcMultiConnection.open();
 
-        socket.emit("new-channel", {
-            channel: rtcMultiConnection.channel,
-            sender: rtcMultiConnection.userid
-        });
+    socket.emit("new-channel", {
+        channel: rtcMultiConnection.channel,
+        sender: rtcMultiConnection.userid
+    });
 }
 
 joinWebRTC=function(){
-
     shownotification("Joing an existing session ");
-    rtcMultiConnection.join();
+    
+    rtcMultiConnection.join({
+        audio: outgoingAudio,
+        video: outgoingVideo
+    });
+
     socket.emit("join-channel", {
         channel: rtcMultiConnection.channel,
         sender: rtcMultiConnection.userid
@@ -891,15 +651,258 @@ joinWebRTC=function(){
 
 function startcall() {
     //rtcMultiConnection.open();
-     
+    alert(sessionid);
+    rtcMultiConnection= new RTCMultiConnection(sessionid);
+    rtcMultiConnection.channel=sessionid;
+    rtcMultiConnection.preventSSLAutoAllowed = false;
+    rtcMultiConnection.autoReDialOnFailure = true;
+    rtcMultiConnection.setDefaultEventsForMediaElement = false;
+    rtcMultiConnection.customStreams = {}, 
+    rtcMultiConnection.autoCloseEntireSession = !1, 
+    rtcMultiConnection.autoTranslateText = !1, 
+    rtcMultiConnection.maxParticipantsAllowed = 4, 
+    rtcMultiConnection.setDefaultEventsForMediaElement = !1; 
+    rtcMultiConnection.blobURLs = {},
+    rtcMultiConnection.session = {
+        video: incomingVideo,
+        audio: incomingAudio,
+        data:  incomingData
+    }, 
+    rtcMultiConnection.sdpConstraints.mandatory = {
+        OfferToReceiveAudio: !0,
+        OfferToReceiveVideo: !0
+    },
+    rtcMultiConnection.onstream = function(e) {
+        var peerInfo=null;
+        if (e.type == 'local') {
+            console.log("LocalStream ------------",e  );
+            peerInfo={ 
+                name : "localVideo",
+                videoContainer : "video"+e.userid,
+                videoHeight : null,
+                videoClassName: null,
+                uuid: e.uuid,
+                userid : e.userid , 
+                stream : e.stream ,
+                streamid : e.stream.streamid , 
+                fileSharingContainer : "widget-filesharing-container"+e.userid,
+                fileSharingSubContents:{
+                    fileSharingBox: "widget-filesharing-box"+e.userid,
+                    minButton: "widget-filesharing-minbutton"+e.userid,
+                    maxButton: "widget-filesharing-maxbutton"+e.userid,
+                    closeButton: "widget-filesharing-closebutton"+e.userid
+                },
+                fileListContainer : "widget-filelisting-container"+e.userid,
+                controlBarName: "control-video"+e.userid,
+                filearray : []
+            };
+        }else if (e.type == 'remote'){
+            console.log("Remote ------------", e );
+            peerInfo={ 
+                name : "remoteVideo",
+                videoContainer : "video"+e.userid,
+                videoHeight : null,
+                videoClassName: null,
+                uuid : e.uuid,
+                userid:  e.userid , 
+                stream : e.stream ,
+                streamid : e.stream.streamid , 
+                fileSharingContainer : "widget-filesharing-container"+e.userid,
+                fileSharingSubContents:{
+                    fileSharingBox: "widget-filesharing-box"+e.userid,
+                    minButton: "widget-filesharing-minbutton"+e.userid,
+                    maxButton: "widget-filesharing-maxbutton"+e.userid,
+                    closeButton: "widget-filesharing-closebutton"+e.userid
+                },
+                fileListContainer : "widget-filelisting-container"+e.userid,
+                controlBarName: "control-video"+e.userid,
+                filearray: []
+            }; 
+        }
+        webcallpeers.push(peerInfo);
+        updateWebCallView(peerInfo);
+    }, 
+
+    rtcMultiConnection.onstreamended = function(e) {
+        e.isScreen ? $("#" + e.userid + "_screen").remove() : $("#" + e.userid).remove()
+    }, 
+
+    rtcMultiConnection.onopen = function(e) {
+        //startsessionTimer();
+        //numbersOfUsers.innerHTML = parseInt(numbersOfUsers.innerHTML) + 1 ; 
+        console.log(e);
+        console.log(rtcMultiConnection);
+        shownotification(e.extra.username + " joined channel ");
+    },
+
+    rtcMultiConnection.onmessage = function(e) {
+
+        if(e.data.typing){
+            void(whoIsTyping.innerHTML = e.extra.username + " is typing ...") ;
+        }else if(e.data.stoppedTyping){
+            void(whoIsTyping.innerHTML = "");
+        }else{
+
+            switch(e.data.type){
+                case "chat":
+                    whoIsTyping.innerHTML = "";
+                    addNewMessage({
+                        header: e.extra.username,
+                        message: e.data.message,
+                        userinfo: getUserinfo(rtcMultiConnection.blobURLs[e.userid], "chat-message.png"),
+                        color: e.extra.color
+                    }); 
+                    void(document.title = e.data.message);
+                break;
+                case "imagesnapshot":
+                    displayList( null , e.userid , e.data.message , e.data.name , "imagesnapshot" );
+                    displayFile( null , e.userid , e.data.message , e.data.name , "imagesnapshot");
+                break;
+                case "videoScreenRecording":
+                    displayList( null , e.userid , e.data.message , e.data.name , "videoScreenRecording" );
+                    displayFile( null , e.userid , e.data.message , e.data.name , "videoScreenRecording");
+                break;
+                case "file":
+                    addNewMessage({
+                        header: e.extra.username,
+                        message: e.data.message,
+                        userinfo: getUserinfo(rtcMultiConnection.blobURLs[e.userid], "chat-message.png"),
+                        color: e.extra.color
+                    }); 
+                break;
+                case "canvas":
+                    CanvasDesigner.syncData( e.data.draw );
+                break;
+                case "pointer":
+                    placeCursor("cursor2" , e.data.corX , e.data.corY);
+                break;
+                case "buttonclick":
+                    var buttonElement= document.getElementById(e.data.buttonName);
+                    if ( buttonElement.getAttribute("lastClickedBy") != rtcMultiConnection.userid ){
+                        buttonElement.setAttribute("lastClickedBy" , e.userid);
+                        buttonElement.click();
+                    }
+                break;
+
+                default:
+                    console.log(" unrecognizable message from peer  ",e);
+                break;
+
+            }
+
+        } 
+        return;
+    },
+
+    rtcMultiConnection.onNewSession = function(e) {
+        /*
+        sessions[e.sessionid] || (sessions[e.sessionid] = e, 
+            e.join({
+                audio: outgoingAudio, 
+                video: outgoingVideo, 
+                data: outgoingData
+            }))*/
+        sessions[e.sessionid] || (sessions[e.sessionid] = e, e.join())
+    }, 
+
+    rtcMultiConnection.onRequest = function(e) {
+        rtcMultiConnection.accept(e)
+    }, 
+
+    rtcMultiConnection.onCustomMessage = function(e) {
+        
+        if (e.hasCamera || e.hasScreen) {
+            var t = e.extra.username + " enabled webcam.";
+            e.hasScreen && (e.session.oneway = !0, rtcMultiConnection.sendMessage({
+                renegotiate: !0,
+                streamid: e.streamid,
+                session: e.session
+            }), t = e.extra.username + " is ready to share screen.")
+        }
+        if (e.hasMic && (e.session.oneway = !0, rtcMultiConnection.sendMessage({
+                renegotiate: !0,
+                streamid: e.streamid,
+                session: e.session
+            })), e.renegotiate) {
+            var n = rtcMultiConnection.customStreams[e.streamid];
+            n && rtcMultiConnection.peers[e.userid].renegotiate(n, e.session)
+        }
+    }, 
+
+    rtcMultiConnection.sendMessage = function(e) {
+        e.userid = rtcMultiConnection.userid, 
+        e.extra = rtcMultiConnection.extra, 
+        rtcMultiConnection.sendCustomMessage(e)
+    }, 
+
+    rtcMultiConnection.onclose = rtcMultiConnection.onleave = function(e) {
+        
+        addNewMessage({
+            header: e.extra.username,
+            message: e.extra.username + " left session.",
+            userinfo: getUserinfo(rtcMultiConnection.blobURLs[e.userid], "info.png"),
+            color: e.extra.color
+        }), 
+        
+        //webcallpeers.pop();
+        //    $("#" + e.userid).remove(), 
+
+        shownotification(e.extra.username + " left the conversation.");
+        //rtcMultiConnection.playRoleOfInitiator()
+        for(x in webcallpeers){
+            if(webcallpeers[x].userid=e.userid)
+                webcallpeers.splice(x,1);
+        }
+    },
+
+    rtcMultiConnection.onFileStart = function(e) {
+
+        addNewFileLocal({
+            userid : rtcMultiConnection.userid,
+            header: 'User local',
+            message: 'File shared',
+            userinfo: getUserinfo(rtcMultiConnection.blobURLs[rtcMultiConnection.userid], "images/share-files.png"),
+            callback: function(r) {        }
+        });
+        
+        addProgressHelper(e.uuid , e.userid , e.name , e.maxChunks,  "fileBoxClass");
+    }, 
+
+    rtcMultiConnection.onFileProgress = function(e) {
+        var r = progressHelper[e.uuid];
+        r && (r.progress.value = e.currentPosition || e.maxChunks || r.progress.max, updateLabel(r.progress, r.label))
+    }, 
+
+
+    rtcMultiConnection.onFileEnd = function(e) {
+        /*
+        if (!progressHelper[e.uuid]) {
+            console.error("No such progress-helper element exists.", e);
+            //return void console.error("No such progress-helper element exists.", e);
+        }*/
+        console.log(" on File End " , e.userid);
+
+        for(i in webcallpeers ){
+            if(webcallpeers[i].userid==e.userid){
+
+                webcallpeers[i].filearray.push(e.name);
+                var numFile= document.createElement("div");
+                numFile.value= webcallpeers[i].filearray.length;
+
+                displayList(e.uuid , webcallpeers[i].userid , e.url , e.name , e.type);
+                displayFile(e.uuid , webcallpeers[i].userid , e.url , e.name , e.type);
+           
+            }
+        }
+    },     
     rtcMultiConnection.extra = {
         username: t,
         color: "ffffff",
         useredisplayListmail: n
     };
 
-    //var o = "/";
-    var o = "https://www.villageexperts.com:8084/";
+    var o = "/";
+    //var o = "https://www.villageexperts.com:8084/";
     //var o="https://localhost:8084/";
 
     socket = io.connect(o);
@@ -1056,46 +1059,9 @@ function updateLabel(e, r) {
     }
 }
 
-rtcMultiConnection.onFileStart = function(e) {
-
-    addNewFileLocal({
-        userid : rtcMultiConnection.userid,
-        header: 'User local',
-        message: 'File shared',
-        userinfo: getUserinfo(rtcMultiConnection.blobURLs[rtcMultiConnection.userid], "images/share-files.png"),
-        callback: function(r) {        }
-    });
-    
-    addProgressHelper(e.uuid , e.userid , e.name , e.maxChunks,  "fileBoxClass");
-}, 
-
-rtcMultiConnection.onFileProgress = function(e) {
-    var r = progressHelper[e.uuid];
-    r && (r.progress.value = e.currentPosition || e.maxChunks || r.progress.max, updateLabel(r.progress, r.label))
-}, 
 
 
-rtcMultiConnection.onFileEnd = function(e) {
-    /*
-    if (!progressHelper[e.uuid]) {
-        console.error("No such progress-helper element exists.", e);
-        //return void console.error("No such progress-helper element exists.", e);
-    }*/
-    console.log(" on File End " , e.userid);
 
-    for(i in webcallpeers ){
-        if(webcallpeers[i].userid==e.userid){
-
-            webcallpeers[i].filearray.push(e.name);
-            var numFile= document.createElement("div");
-            numFile.value= webcallpeers[i].filearray.length;
-
-            displayList(e.uuid , webcallpeers[i].userid , e.url , e.name , e.type);
-            displayFile(e.uuid , webcallpeers[i].userid , e.url , e.name , e.type);
-       
-        }
-    }
-};
 
 function simulateClick(buttonName){
     document.getElementById(buttonName).click(); 
