@@ -12,12 +12,54 @@ if(window.location.href.indexOf("s=1")>=0){
 }
 */
 
-    if(!location.hash.replace('#', '').length) {
-        location.href = location.href.split('#')[0] + '#' + (Math.random() * 100).toString().replace('.', '');
-        location.reload();
-    }
+/********************************************************************
+    global variables
+**********************************************************************/
 
+var t = " ";
+var o = "/";
+var e= null;
+var n="tara181989@gmail.com";
 
+var usersList       = document.getElementById("userslist");
+var numbersOfUsers  = document.getElementById("numbersofusers");
+var usersContainer  = document.getElementById("usersContainer");
+
+var localUserId=null , remoteUserId=null;
+
+var card = document.getElementById('card');
+var containerDiv;
+var main = document.querySelector('#main');
+var smaller = document.querySelector('#smaller');
+var webcallpeers=[];
+var sessions = {};
+var whoIsTyping = document.querySelector("#who-is-typing");
+var repeatFlagShowButton =null, repeatFlagHideButton =null, repeatFlagRemoveButton=null ;
+// DOM objects
+var localVideo =null, miniVideo=null, remoteVideos=[];
+
+var autoload=true;
+var sessionid=null;
+//webrtc session intilization
+
+var incomingAudio =true , incomingVideo =true , incomingData = true;
+var outgoingAudio =true , outgoingVideo =true , outgoingData = true;
+var chat=true , fileShare=true ,  screenrecord=true , screenshare =true;
+var role="participant";
+
+function init(autoload){
+	var ssid;
+	if(autoload && !location.hash.replace('#', '').length) {
+	        location.href = location.href.split('#')[0] + '#' + (Math.random() * 100).toString().replace('.', '');
+	        location.reload();
+	}else if(autoload && location.hash.replace('#', '').length){
+		ssid=location.href.replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
+	}else{
+	    ssid=prompt("Enter session ", "");
+	}
+	alert(" init ", ssid);
+	return ssid;
+}
 if (function(e, t) {
         var n = e;
         n.version = "0.9.0", n.protocol = 1, n.transports = [], n.j = [], n.sockets = {}, n.connect = function(e, o) {
