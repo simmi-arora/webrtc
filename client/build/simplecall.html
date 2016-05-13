@@ -77,13 +77,14 @@ $('document').ready(function(){
 
     /*_incomingAudio , _incomingVideo , _incomingData,
     _outgoingAudio, _outgoingVideo , _outgoingData,
-    _chat , _fileShare ,  _screenrecord , _screenshare
+    _chat , _fileShare ,  _screenrecord , _screenshare,
+    _videoRecord , _drawCanvas , _reconnect
     */
     var webrtcdevobj = new WebRTCdev ( 
         sessionid,
         true , true , true,
         true , true , true,
-        false , false , true, false,
+        false, false , false, false,
         false, false , false
     );
 
