@@ -348,6 +348,7 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
                 videoButton.className="pull-right glyphicon glyphicon-eye-open btn btn-default videoButtonClass mediaButton";   
             }  
         }; 
+        controlBar.appendChild(videoButton);
 
         //add the audio mute button
         var audioButton=document.createElement("span");
@@ -379,8 +380,9 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
                 audioButton.className="pull-right glyphicon glyphicon-volume-up btn btn-default mediaButton";
             }             
         };
+        controlBar.appendChild(audioButton);
 
-        if(videorecord){
+        if(videoRecord){
             //add the snapshot button
             var snapshotButton=document.createElement("div");
             snapshotButton.id="snapshotButton";
@@ -456,9 +458,6 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
             controlBar.appendChild(recordButton);
         }
    
-        controlBar.appendChild(videoButton);
-        controlBar.appendChild(audioButton);
-
         //controlBar.setAttribute("style" , "-webkit-transform: rotateY(180deg)");
         videoElement.parentNode.appendChild(controlBar);        
 }
@@ -658,9 +657,37 @@ joinWebRTC=function(){
     });
 }
 
+/*********************************************8
+ICE
+**************************************************/
+
+var iceServers=[];
+
+iceServers.push({
+    url: 'stun:stun.l.google.com:19302'
+});
+
+iceServers.push({
+    url: 'stun:stun.anyfirewall.com:3478'
+});
+
+iceServers.push({
+    url: 'turn:turn.bistri.com:80',
+    credential: 'homeo',
+    username: 'homeo'
+});
+
+iceServers.push({
+    url: 'turn:turn.anyfirewall.com:443?transport=tcp',
+    credential: 'webrtc',
+    username: 'webrtc'
+});
+
 function startcall() {
     //rtcMultiConnection.open();
+
     rtcMultiConnection= new RTCMultiConnection(sessionid);
+    rtcMultiConnection.iceServers = iceServers;
     rtcMultiConnection.channel=sessionid;
     rtcMultiConnection.preventSSLAutoAllowed = false;
     rtcMultiConnection.autoReDialOnFailure = true;
@@ -680,8 +707,10 @@ function startcall() {
         OfferToReceiveAudio: !0,
         OfferToReceiveVideo: !0
     },
+
     rtcMultiConnection.onstream = function(e) {
         var peerInfo=null;
+
         if (e.type == 'local') {
             console.log("LocalStream ------------",e  );
             peerInfo={ 
