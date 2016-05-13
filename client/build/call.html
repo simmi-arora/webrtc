@@ -56,7 +56,6 @@
     </style>
 
     <script src="minScripts/presentationScript.js"> </script>
-    <script src="property.js"></script>
 
 </head>
 
@@ -206,13 +205,14 @@ $('document').ready(function(){
     */
     var webrtcdevobj = new WebRTCdev ( 
         sessionid,
-        true , true , true,
-        true , true , true,
-        false, false , false, false,
-        true, false, false
+        true , true , true ,
+        true , true , true ,
+        true , true , true , false ,
+        true , false, false
     );
 
     startcall();
+
 });
 </script>
 </html>

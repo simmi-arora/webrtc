@@ -380,7 +380,7 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
             }             
         };
 
-        //if(videorecord){
+        if(videorecord){
             //add the snapshot button
             var snapshotButton=document.createElement("div");
             snapshotButton.id="snapshotButton";
@@ -399,9 +399,14 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
                             var numFile= document.createElement("div");
                             numFile.value= webcallpeers[i].filearray.length;
 
-                            syncSnapshot(datasnapshot , "imagesnapshot" , snapshotname );
-                            displayList(rtcMultiConnection.uuid , rtcMultiConnection.userid ,datasnapshot , snapshotname , "imagesnapshot");
-                            displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid, datasnapshot , snapshotname, "imagesnapshot");
+                            if(fileShare){
+                                syncSnapshot(datasnapshot , "imagesnapshot" , snapshotname );
+                                displayList(rtcMultiConnection.uuid , rtcMultiConnection.userid ,datasnapshot , snapshotname , "imagesnapshot");
+                                displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid, datasnapshot , snapshotname, "imagesnapshot");
+                            }else{
+                                displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid, datasnapshot , snapshotname, "imagesnapshot");
+                            } 
+
                         }
                     }
                 });         
@@ -435,29 +440,21 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
                                 var numFile= document.createElement("div");
                                 numFile.value= webcallpeers[i].filearray.length;
 
-                                var video = document.createElement("video");
-                                if(dataRecordedVideo.video!=undefined ){
-                                    video.src = URL.createObjectURL(dataRecordedVideo.video); 
-
+                                if(fileShare){
+                                    syncSnapshot(dataRecordedVideo , "videoRecording" , recordVideoname );
+                                    displayList(rtcMultiConnection.uuid , rtcMultiConnection.userid  ,dataRecordedVideo , recordVideoname , "videoRecording");
+                                    displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , dataRecordedVideo , recordVideoname, "videoRecording");
                                 }else{
-                                    video.src = URL.createObjectURL(dataRecordedVideo); 
-                                }
-                                video.setAttribute("controls","controls");  
-                                video.style.width="100%";
+                                    displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , dataRecordedVideo , recordVideoname, "videoRecording");
+                                }  
 
-                                document.body.appendChild(video);
-
-/*                                syncSnapshot(dataRecordedVideo , "videoRecording" , recordVideoname );
-                                displayList(rtcMultiConnection.uuid , rtcMultiConnection.userid  ,dataRecordedVideo , recordVideoname , "videoRecording");
-                                displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , dataRecordedVideo , recordVideoname, "videoRecording");
-*/
                             }
                         }
                     }, {audio:true, video:true} );
                 }
             };  
             controlBar.appendChild(recordButton);
-        //}
+        }
    
         controlBar.appendChild(videoButton);
         controlBar.appendChild(audioButton);
@@ -469,8 +466,6 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
 var localStream , localStreamId, remoteStream , remoteStreamId;
 
 function updateWebCallView(peerInfo){
-    console.log(" webcallpeers -----------" , webcallpeers);
-
     if(peerInfo.name=="localVideo"){
 
         localStream     =   webcallpeers[0].stream;
@@ -914,8 +909,8 @@ function startcall() {
         useredisplayListmail: n
     };
 
-    //var o = "/";
-    var o = "https://www.villageexperts.com:8084/";
+    var o = "/";
+    //var o = "https://www.villageexperts.com:8084/";
     //var o="https://localhost:8084/";
 
     socket = io.connect(o);
@@ -997,6 +992,70 @@ function startcall() {
 
         var li =document.createElement("li");
         li.appendChild(recordButton);
+        document.getElementById("topIconHolder_ul").appendChild(li);
+    }
+
+     if(screenshare){
+
+        var screenShareButton= document.createElement("span");
+        screenShareButton.className="btn btn-success glyphicon glyphicon-expand topPanelButton";
+        screenShareButton.innerHTML="Screen Share";
+        screenShareButton.onclick = function() {
+        screenShareButton.id="screenShareButton";
+            if(isScreenOn==0){
+                screen.share('screenShareVilageExperts');
+                isScreenOn=1;
+            }else if(isScreenOn ==1){
+                screen.leave();
+                isScreenOn=0;
+            }
+            webrtcdevScreenShare(screen);
+        };
+
+        var li =document.createElement("li");
+        li.appendChild(screenShareButton);
+        document.getElementById("topIconHolder_ul").appendChild(li);
+
+
+        var viewScreenShareButton= document.createElement("span");
+        viewScreenShareButton.className="btn btn-success glyphicon glyphicon-expand topPanelButton";
+        viewScreenShareButton.innerHTML="Screen View";
+        viewScreenShareButton.id="viewScreenShareButton";
+        viewScreenShareButton.onclick = function() {
+            screen.view({roomid:screen_roomid , userid:screen_userid});
+        };
+
+        var li =document.createElement("li");
+        li.appendChild(viewScreenShareButton);
+        document.getElementById("topIconHolder_ul").appendChild(li);
+    }   
+
+
+    if(reconnect){
+        var reconnectButton= document.createElement("span");
+        reconnectButton.className="btn btn-success glyphicon glyphicon-refresh topPanelButton" ;
+        reconnectButton.innerHTML="Reconnect";
+        reconnectButton.onclick=function(){
+            var r = confirm("Do you want to reconnet ?");
+            if (r == true) {
+               location.reload();
+            } else {
+               //do nothing
+            }
+        }
+        var li =document.createElement("li");
+        li.appendChild(reconnectButton);
+        document.getElementById("topIconHolder_ul").appendChild(li);
+    }
+
+
+    if(drawCanvas){
+        var drawButton= document.createElement("span");
+        drawButton.className="btn btn-success glyphicon glyphicon-edit topPanelButton" ;
+        drawButton.innerHTML="Whiteborad";
+
+        var li =document.createElement("li");
+        li.appendChild(drawButton);
         document.getElementById("topIconHolder_ul").appendChild(li);
     }
 
@@ -1131,7 +1190,7 @@ function simulateClick(buttonName){
 
 function displayList(uuid , userid , fileurl , filename , filetype ){
 
-    var element , elementPeer , listlength;
+    var element=null , elementPeer=null , listlength=null;
     for(i in webcallpeers ){
         if(webcallpeers[i].userid==userid){
            element=webcallpeers[i].fileListContainer;
@@ -1140,7 +1199,6 @@ function displayList(uuid , userid , fileurl , filename , filetype ){
         else
             elementPeer= webcallpeers[i].fileListContainer;
     }
-    console.log(element , " || ", elementPeer);
 
     var name = document.createElement("div");
     name.innerHTML = listlength +"   " + filename ;
@@ -1222,25 +1280,31 @@ function displayList(uuid , userid , fileurl , filename , filetype ){
     };
 
     var r;
-    switch(filetype) {
-        
-        case "imagesnapshot":
-            r=document.createElement("div");
-            r.id=filename;
-            document.getElementById(element).appendChild(r);
-        break;
-        case "videoRecording":
-            r=document.createElement("div");
-            r.id=filename;  
-            document.getElementById(element).appendChild(r);         
-        break;
-        case "videoScreenRecording":
-            r=document.createElement("div");
-            r.id=filename;  
-            document.getElementById(element).appendChild(r);         
-        break;
-        default:
-            r = progressHelper[uuid].div;
+    console.log(element);
+    if(fileShare && document.getElementById(element)!=null){
+        switch(filetype) {
+            case "imagesnapshot":
+                r=document.createElement("div");
+                r.id=filename;
+                document.getElementById(element).appendChild(r);
+            break;
+            case "videoRecording":
+                r=document.createElement("div");
+                r.id=filename;  
+                document.getElementById(element).appendChild(r);         
+            break;
+            case "videoScreenRecording":
+                r=document.createElement("div");
+                r.id=filename;  
+                document.getElementById(element).appendChild(r);         
+            break;
+            default:
+                r = progressHelper[uuid].div;
+        }
+    }else{
+        r=document.createElement("div");
+        r.id=filename;
+        document.body.appendChild(r);
     }
 
     r.innerHTML="";
@@ -1293,12 +1357,17 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
 
 
 function displayFile( uuid , userid , fileurl , filename , filetype ){
-    var element;
+    var element=null;
     for(i in webcallpeers ){
         if(webcallpeers[i].userid==userid)
            element=webcallpeers[i].fileSharingContainer;
     }
-    $("#"+element).html(getFileElementDisplayByType(filetype , fileurl , filename));
+    if(element){
+        $("#"+element).html(getFileElementDisplayByType(filetype , fileurl , filename));
+    }else{
+        document.body.appendChild(getFileElementDisplayByType(filetype , fileurl , filename));
+    }
+
 }
 
 
@@ -1337,7 +1406,6 @@ function hideFile( uuid , element , fileurl , filename , filetype ){
     }else{
         console.log(" file is not displayed to hide  ");
     }
-
 }
 
 function removeFile(element){
@@ -1385,8 +1453,8 @@ function maxFV(userid,  buttonId , arrFilesharingBoxes, selectedFileSharingBox){
 /**************************************************************************8
 draw 
 ******************************************************************************/
-if(drawCanvas){
 
+function webrtcdevCanvasDEsigner(){
     try{
         CanvasDesigner.addSyncListener(function(data) {
             rtcMultiConnection.send({type:"canvas", draw:data});
@@ -1405,15 +1473,8 @@ if(drawCanvas){
         console.log(" Canvas drawing not supported ");
         console.log(e);
     }
-
-    var drawButton= document.createElement("span");
-    drawButton.className="btn btn-success glyphicon glyphicon-edit topPanelButton" ;
-    drawButton.innerHTML="Whiteborad";
-
-    var li =document.createElement("li");
-    li.appendChild(drawButton);
-    document.getElementById("topIconHolder_ul").appendChild(li);
 }
+
 
 
 
@@ -1450,22 +1511,9 @@ function shareCursor(){
 /**********************************
 Reconnect 
 ****************************************/
-if(reconnect){
-    var reconnectButton= document.createElement("span");
-    reconnectButton.className="btn btn-success glyphicon glyphicon-refresh topPanelButton" ;
-    reconnectButton.innerHTML="Reconnect";
-    reconnectButton.onclick=function(){
-        var r = confirm("Do you want to reconnet ?");
-        if (r == true) {
-           location.reload();
-        } else {
-           //do nothing
-        }
-    }
-    var li =document.createElement("li");
-    li.appendChild(reconnectButton);
-    document.getElementById("topIconHolder_ul").appendChild(li);
-}
+/*
+add code hetre for redial 
+*/
 
 /****************************************8
 screenshare
@@ -1473,82 +1521,51 @@ screenshare
 var screen , isScreenOn=0;
 var screen_roomid , screen_userid;
 
-if(screenshare){
+function webrtcdevScreenShare(screen){
+        try{
+            screen = new Screen("screen"+rtcMultiConnection.channel);
 
-    try{
-        screen = new Screen("screen"+rtcMultiConnection.channel);
-
-        // get shared screens
-        screen.onaddstream = function(e) {
-            document.getElementById("screenshare").innerHTML="";
-            document.getElementById("screenshare").appendChild(e.video);
-            document.getElementById("screenshare").hidden=false;
-            
-            screen.openSignalingChannel = function(callback) {
-                var n= io.connect("/"+rtcMultiConnection.channel);
-                n.channel = t;
-                return n.on('message', callback);
+            // get shared screens
+            screen.onaddstream = function(e) {
+                /*
+                document.getElementById("screenshare").innerHTML="";
+                document.getElementById("screenshare").appendChild(e.video);
+                document.getElementById("screenshare").hidden=false;*/
+                
+                screen.openSignalingChannel = function(callback) {
+                    var n= io.connect("/"+rtcMultiConnection.channel);
+                    n.channel = t;
+                    return n.on('message', callback);
+                };
             };
-        };
 
-        screen.check();
+            screen.check();
 
-        // to stop sharing screen
-        // screen.leave();
+            // to stop sharing screen
+            // screen.leave();
 
-        // if someone leaves; just remove his video
-        screen.onuserleft = function(userid) {
-            document.getElementById("screenshare").hidden=true;
-            /*       
-            var video = document.getElementById(userid);
-            if(video) {
-               // video.parentNode.removeChild(video);
-            }*/
-        };
+            // if someone leaves; just remove his video
+            screen.onuserleft = function(userid) {
+                document.getElementById("screenshare").hidden=true;
+                /*       
+                var video = document.getElementById(userid);
+                if(video) {
+                   // video.parentNode.removeChild(video);
+                }*/
+            };
 
-        screen.onscreen = function(screen) {
-            console.log( " onscreen " , screen );
-            if (self.detectedRoom) return;
-            self.detectedRoom = true;
-            self.view(screen);
-        };
-    }catch(e){
-        console.log("------------screenshare not supported ");
-        $("#screenShareButton").hide();
-        $("#viewScreenShareButton").hide();
-        console.log(e);
-    }
-
-    var screenShareButton= document.createElement("span");
-    screenShareButton.className="btn btn-success glyphicon glyphicon-expand topPanelButton";
-    screenShareButton.innerHTML="Screen View";
-    screenShareButton.onclick = function() {
-    screenShareButton.id="screenShareButton";
-        if(isScreenOn==0){
-            screen.share('screenShareVilageExperts');
-            isScreenOn=1;
-        }else if(isScreenOn ==1){
-            screen.leave();
-            isScreenOn=0;
+            screen.onscreen = function(screen) {
+                console.log( " onscreen " , screen );
+                if (self.detectedRoom) return;
+                self.detectedRoom = true;
+                self.view(screen);
+            };
+        }catch(e){
+            console.log("------------screenshare not supported ");
+            $("#screenShareButton").hide();
+            $("#viewScreenShareButton").hide();
+            console.log(e);
         }
-    };
-
-    var li =document.createElement("li");
-    li.appendChild(screenShareButton);
-    document.getElementById("topIconHolder_ul").appendChild(li);
-
-
-    var viewScreenShareButton= document.createElement("span");
-    viewScreenShareButton.className="btn btn-success glyphicon glyphicon-expand topPanelButton";
-    viewScreenShareButton.innerHTML="Screenshare";
-    viewScreenShareButton.onclick = function() {
-    viewScreenShareButton.id="viewScreenShareButton";
-        screen.view({roomid:screen_roomid , userid:screen_userid});
-    };
-
-    var li =document.createElement("li");
-    li.appendChild(viewScreenShareButton);
-    document.getElementById("topIconHolder_ul").appendChild(li);
 }
 
 
