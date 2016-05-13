@@ -1,8 +1,8 @@
 var WebRTCdom= function(  _local , _remotearr ){
     if(_local!=null){
         localVideo = document.getElementsByName(_local)[0];
-        miniVideo = document.getElementsByName(_remotearr[0])[0];   
-        for(var x=1;x<_remotearr.length;x++){
+       /* miniVideo = document.getElementsByName(_remotearr[0])[0]; */  
+        for(var x=0;x<_remotearr.length;x++){
             remoteVideos.push(document.getElementsByName(_remotearr[x])[0]);
         }     
     }else{
@@ -143,8 +143,6 @@ function createVideoContainer(e, style, callback) {
 
 function waitForRemoteVideo(_remoteStream , _remoteVideo , _localVideo  , _miniVideo ) {
     // Call the getVideoTracks method via adapter.js.
-    console.log(" _remoteStream" , _remoteStream);
-    console.log(" _remoteVideo" , _remoteVideo);
 
     var videoTracks = _remoteStream.getVideoTracks();
     if (videoTracks.length === 0 || _remoteVideo.currentTime > 0) {
@@ -159,12 +157,16 @@ function waitForRemoteVideo(_remoteStream , _remoteVideo , _localVideo  , _miniV
 function transitionToActive(_remoteVideo ,_localVideo ,  _miniVideo) {
     _remoteVideo.style.opacity = 1;
     //card.style.webkitTransform = 'rotateY(180deg)';
-    setTimeout(function() {
-        _localVideo.src = '';
-    }, 500);
-    setTimeout(function() {
-        _miniVideo.style.opacity = 1;
-    }, 1000);
+    if(localVideo!=null){
+        setTimeout(function() {
+            _localVideo.src = '';
+        }, 500); 
+    }
+    if(miniVideo!=null){
+        setTimeout(function() {
+            _miniVideo.style.opacity = 1;
+        }, 1000); 
+    }
 }
 
 function transitionToWaiting() {
@@ -473,75 +475,99 @@ function updateWebCallView(peerInfo){
         $("#local").show();
         $("#remote").hide();
 
-        attachMediaStream(localVideo, webcallpeers[0].stream);
-        localVideo.muted = true;
-        localVideo.id= webcallpeers[0].userid;
-        localVideo.style.opacity = 1;
+        if(localVideo){
+            attachMediaStream(localVideo, webcallpeers[0].stream);
+            localVideo.muted = true;
+            localVideo.id= webcallpeers[0].userid;
+            localVideo.style.opacity = 1;
 
-        attachControlButtons(localVideo , 
-            webcallpeers[0].streamid ,
-            webcallpeers[0].controlBarName,
-            webcallpeers[0].fileSharingContainer);
+            attachControlButtons(localVideo , 
+                webcallpeers[0].streamid ,
+                webcallpeers[0].controlBarName,
+                webcallpeers[0].fileSharingContainer);
+        }
 
     }else if(peerInfo.name=="remoteVideo") {
-        numpeers= webcallpeers.length;
+        var pi = 0;
+        var vi = 0;
 
         $("#local").hide();
         $("#remote").show();
-        
-        remoteStream=webcallpeers[numpeers-1].stream;
-
+    
         for(x  in webcallpeers)
             arrFilesharingBoxes.push(webcallpeers[x].fileSharingSubContents.fileSharingBox);
 
-        if(miniVideo.played.length==0 && outgoingVideo){
-            //transfer video controls from local video to minivideoelement
-            reattachMediaStream(miniVideo, localVideo);
-            miniVideo.id=webcallpeers[0].videoContainer;
-            miniVideo.muted =   true;
-            if( typeof videoWidth!='undefined' ){
-                miniVideo.setAttribute("width",videoWidth);
-            }
-            //if(miniVideo.parentNode.querySelector("#"+webcallpeers[0].controlBarName)!=null){
-            attachControlButtons(miniVideo, 
-                webcallpeers[0].streamid ,
-                webcallpeers[0].controlBarName,
-                webcallpeers[0].fileSharingContainer); 
+        if( outgoingVideo ){
+            if( remoteVideos[0].played.length==0 ){
+                reattachMediaStream(remoteVideos[0], localVideo);
+                remoteVideos[0].id=webcallpeers[0].videoContainer;
+                remoteVideos[0].muted =   true;
 
-            if(fileShare){
-                createFileSharingDiv(0);
-            }
+                //if(miniVideo.parentNode.querySelector("#"+webcallpeers[0].controlBarName)!=null){
+                attachControlButtons(remoteVideos[0], 
+                    webcallpeers[0].streamid ,
+                    webcallpeers[0].controlBarName,
+                    webcallpeers[0].fileSharingContainer); 
 
-            if(miniVideo.hidden){
-                miniVideo.hidden=false;
-            }
-        }
-        
-        attachMediaStream(remoteVideos[numpeers-2], webcallpeers[numpeers-1].stream);
-        waitForRemoteVideo(remoteStream , remoteVideos[numpeers-2] , localVideo  , miniVideo );
-        
-        if( typeof videoWidth!='undefined' ){
-            remoteVideos[numpeers-2].setAttribute("width",videoWidth);
-        }
+                if(remoteVideos[0].hidden){
+                    remoteVideos[0].hidden=false;
+                }
 
-        if(remoteVideos[numpeers-2].hidden){
-            remoteVideos[numpeers-2].hidden=false;
+                if(fileShare){
+                    createFileSharingDiv(0);
+                }
+            }
+            console.log("............local...................");
+            console.log(0 , remoteVideos[0]);
+            console.log(0 , webcallpeers[0]);
+            console.log("..................................");
+            vi++;
+            pi++;
+        }else{
+            pi++;
         }
 
-        if(!$("#"+webcallpeers[numpeers-1].controlBarName).length){
-            attachControlButtons(remoteVideos[numpeers-2], 
-                webcallpeers[numpeers-1].streamid ,
-                webcallpeers[numpeers-1].controlBarName,
-                webcallpeers[numpeers-1].fileSharingContainer);
+        for(var v=vi;v< remoteVideos.length;v++){
+            //if(remoteVideos[v].played.length>0 && remoteVideos[v].src){
+            console.log("checking "+ v +" for length "+ remoteVideos[v].played.length);
+            if(remoteVideos[v].src){
+                console.log("............existing.remotes...................");
+                console.log(vi , remoteVideos[vi]);
+                console.log(pi , webcallpeers[pi]);
+                console.log("..................................");
+                vi++;
+                pi++;
+            } 
+        }
+
+        console.log("Empty for new remote stream " , vi  , " || ", pi);
+
+        attachMediaStream(remoteVideos[vi], webcallpeers[pi].stream);
+        attachControlButtons(remoteVideos[vi] , 
+            webcallpeers[pi].streamid ,
+            webcallpeers[pi].controlBarName,
+            webcallpeers[pi].fileSharingContainer); 
+
+        if(outgoingVideo)
+            waitForRemoteVideo(webcallpeers[pi].stream , remoteVideos[vi] , localVideo  , remoteVideos[0] );
+        else
+            waitForRemoteVideo(webcallpeers[pi].stream , remoteVideos[vi] , null  , null );
+
+        if(remoteVideos[vi].hidden){
+            remoteVideos[vi].hidden=false;
         }
 
         if(fileShare){
-            createFileSharingDiv(numpeers-1);
+            createFileSharingDiv(pi);
         }
+        console.log("............remotes just added...................");
+        console.log(vi , remoteVideos[vi]);
+        console.log(pi , webcallpeers[pi]);
+        console.log("..................................");
 
+        console.log("webcallperrs " , webcallpeers);
     }
 }
-
 
 /**************************************************************************************
         peerconnection 
@@ -552,9 +578,7 @@ var attachMediaStream = null;
 var reattachMediaStream = null;
 var webrtcDetectedBrowser = null;
 var webrtcDetectedVersion = null;
-
 var rtcMultiConnection ;
-
 
 if (navigator.mozGetUserMedia) {
     console.log("This appears to be Firefox");
@@ -587,7 +611,9 @@ if (navigator.mozGetUserMedia) {
     webrtcDetectedBrowser = "chrome";
     webrtcDetectedVersion =  parseInt(navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./)[2]);
     RTCPeerConnection = webkitRTCPeerConnection;
-    getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
+    
+    if(outgoingVideo)
+        getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
 
     attachMediaStream = function(element, stream) {
         if (typeof element.srcObject !== 'undefined') {
@@ -645,9 +671,9 @@ opneWebRTC=function(){
 
 joinWebRTC=function(){
     shownotification("Joing an existing session ");
-    
+
     rtcMultiConnection.join({
-        audio: outgoingAudio,
+        audio: outgoingVideo,
         video: outgoingVideo
     });
 
@@ -1707,7 +1733,8 @@ try{
         }
 
         var mediaConstraints = { video: true };
-        navigator.mediaDevices.getUserMedia(mediaConstraints).then(successCallback).catch(errorCallback);
+        var getUserMedia1= navigator.webkitGetUserMedia.bind(navigator);
+        navigator.mediaDevices.getUserMedia1(mediaConstraints).then(successCallback).catch(errorCallback);
     }
 
 }catch( e){
