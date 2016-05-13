@@ -148,7 +148,7 @@
                 </div>
                 <div class="modal-body">
                   <div id="settingsContainer">
-                  
+
                     Inspectore <input class="form-control" type="text" id="inspectorlink" readonly><br/>
                     Channel <input class="form-control" type="text" id="channelname" readonly> <br/>
                     User Id <input class="form-control" type="text" id="userid" readonly> <br/>
@@ -254,8 +254,6 @@ $('document').ready(function(){
             out_A , out_V , true,
             true , true , true, true
         );
-
-
     }else{
 
         webrtcdomobj= new WebRTCdom(
@@ -267,9 +265,8 @@ $('document').ready(function(){
             true , true , true,
             out_A , out_V , true,
             true , true , true, true,
-            true, false, true
+            true , false, true
         );
-
     } 
 
     startcall();
