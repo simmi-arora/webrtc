@@ -44,7 +44,11 @@ var sessionid=null;
 
 var incomingAudio =true , incomingVideo =true , incomingData = true;
 var outgoingAudio =true , outgoingVideo =true , outgoingData = true;
-var chat=false , fileShare=false ,  screenrecord=false, screenshare =false , 
+
+var chat=false ;
+var chatContainer=""
+
+fileShare=false ,  screenrecord=false, screenshare =false , 
 videorecord=false, drawCanvas=false , reconnect=false;
 var role="participant";
 

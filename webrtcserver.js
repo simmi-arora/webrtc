@@ -23,14 +23,6 @@ var file = new _static.Server('./client/build', {
 });
 
 console.log(folderPath , file);
-/*var options = {
-  key: fs.readFileSync('/etc/apache2/ssl/villageexpert.key'),
-  cert: fs.readFileSync('/etc/apache2/ssl/edac0f74577a2bdf.crt'),
-  ca: fs.readFileSync('/etc/apache2/ssl/gd_bundle-g2-g1.crt'),
-  requestCert: true,
-  rejectUnauthorized: false
-};
-*/
 
 var options = {
   key: fs.readFileSync('ssl_certs/server.key'),
