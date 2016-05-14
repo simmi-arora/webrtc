@@ -1,7 +1,17 @@
-var WebRTCdom= function(  _local , _remotearr ){
+var WebRTCdom= function(  _localObj , _remoteObj ){
+
+    var _local=_localObj.localVideo;
+    var _localVideoClass=_localObj.videoClass;
+    var _localVideoUserDisplay= _localObj.userDisplay;
+    var _localVideoMetaDisplay= _localObj.userMetaDisplay;
+
+    var _remotearr=_remoteObj.remotearr;
+    var _remotearrClass= _remoteObj.videoClass;
+    var _remoteVideoUserDisplay= _remoteObj.userDisplay;
+    var _remoteVideoMetaDisplay= _remoteObj.userMetaDisplay;
+
     if(_local!=null){
         localVideo = document.getElementsByName(_local)[0];
-       /* miniVideo = document.getElementsByName(_remotearr[0])[0]; */  
         for(var x=0;x<_remotearr.length;x++){
             remoteVideos.push(document.getElementsByName(_remotearr[x])[0]);
         }     
@@ -10,30 +20,35 @@ var WebRTCdom= function(  _local , _remotearr ){
             remoteVideos.push(document.getElementsByName(_remotearr[x])[0]);
         }     
     }
+    console.log(remoteVideos);
 };
-
-var WebRTCdev= function( 
+/*
     _sessionid,
     _incomingAudio , _incomingVideo , _incomingData,
     _outgoingAudio, _outgoingVideo , _outgoingData,
     _chat , _fileShare ,  _screenrecord , _screenshare,
     _videoRecord , _drawCanvas , _reconnect
-    ){
+*/
+
+var WebRTCdev= function(session, incoming, outgoing, widgets){
+    sessionid     = session.sessionid,
+
+    incomingAudio = incoming.audio , 
+    incomingVideo = incoming.video , 
+    incomingData  = incoming.data , 
     
-    sessionid     = _sessionid ,
-    incomingAudio = _incomingAudio , 
-    incomingVideo = _incomingVideo , 
-    incomingData  = _incomingData , 
-    outgoingAudio = _outgoingAudio, 
-    outgoingVideo = _outgoingVideo , 
-    outgoingData  = _outgoingData,
-    chat          = _chat , 
-    fileShare     = _fileShare , 
-    screenrecord  = _screenrecord , 
-    screenshare   = _screenshare,
-    videoRecord   = _videoRecord , 
-    drawCanvas    = _drawCanvas ,
-    reconnect     = _reconnect
+    outgoingAudio = outgoing.audio, 
+    outgoingVideo = outgoing.video , 
+    outgoingData  = outgoing.data,
+
+    chat          = widgets.chat.active , 
+
+    fileShare     = widgets.fileShare , 
+    screenrecord  = widgets.screenrecord , 
+    screenshare   = widgets.screenshare,
+    videoRecord   = widgets.videoRecord , 
+    drawCanvas    = widgets.drawCanvas ,
+    reconnect     = widgets.reconnect
 };
 
 function shownotification(message){
@@ -220,8 +235,9 @@ Snapshot
 function syncSnapshot(datasnapshot , datatype , dataname ){
     rtcMultiConnection.send({
         type:datatype, 
-        message:datasnapshot  , 
-        name : dataname});
+        message:datasnapshot, 
+        name : dataname
+    });
 }
 
 /*function displaySnapshot(snapshotViewer , datasnapshot){
@@ -821,6 +837,10 @@ function startcall() {
                     displayList( null , e.userid , e.data.message , e.data.name , "imagesnapshot" );
                     displayFile( null , e.userid , e.data.message , e.data.name , "imagesnapshot");
                 break;
+                case "videoRecording":
+                    displayList( null , e.userid , e.data.message , e.data.name , "videoRecording" );
+                    displayFile( null , e.userid , e.data.message , e.data.name , "videoRecording");
+                break;
                 case "videoScreenRecording":
                     displayList( null , e.userid , e.data.message , e.data.name , "videoScreenRecording" );
                     displayFile( null , e.userid , e.data.message , e.data.name , "videoScreenRecording");
@@ -943,23 +963,26 @@ function startcall() {
             console.error("No such progress-helper element exists.", e);
             //return void console.error("No such progress-helper element exists.", e);
         }*/
-        console.log(" on File End " , e.userid);
-
+        
         for(i in webcallpeers ){
             if(webcallpeers[i].userid==e.userid){
 
                 webcallpeers[i].filearray.push(e.name);
                 var numFile= document.createElement("div");
                 numFile.value= webcallpeers[i].filearray.length;
-
-                displayList(e.uuid , webcallpeers[i].userid , e.url , e.name , e.type);
+            
+                /*              
                 displayFile(e.uuid , webcallpeers[i].userid , e.url , e.name , e.type);
-           
+                displayList(e.uuid , webcallpeers[i].userid , e.url , e.name , e.type);*/
             }
         }
+
+        displayFile(e.uuid , e.userid , e.url , e.name , e.type);
+        displayList(e.uuid , e.userid , e.url , e.name , e.type);
+
     },     
     rtcMultiConnection.extra = {
-        username: t,
+        username: "none",
         color: "ffffff",
         useredisplayListmail: n
     };
@@ -1245,14 +1268,18 @@ function simulateClick(buttonName){
 
 function displayList(uuid , userid , fileurl , filename , filetype ){
 
-    var element=null , elementPeer=null , listlength=null;
+    var elementList=null , elementPeerList=null , listlength=null;
+    var elementDisplay=null, elementPeerDisplay=null ;
     for(i in webcallpeers ){
         if(webcallpeers[i].userid==userid){
-           element=webcallpeers[i].fileListContainer;
+           elementList=webcallpeers[i].fileListContainer;
+           elementDisplay= webcallpeers[i].fileSharingContainer;
            listlength=webcallpeers[i].filearray.length;
         }
-        else
-            elementPeer= webcallpeers[i].fileListContainer;
+        else{
+            elementPeerList= webcallpeers[i].fileListContainer;
+            elementPeerDisplay= webcallpeers[i].fileSharingContainer;
+        }
     }
 
     var name = document.createElement("div");
@@ -1278,11 +1305,11 @@ function displayList(uuid , userid , fileurl , filename , filetype ){
     showButton.innerHTML='show';
     showButton.onclick=function(){
         if(repeatFlagShowButton != filename){
-            showFile(uuid , element , fileurl , filename , filetype);
+            showFile(uuid , elementDisplay , fileurl , filename , filetype);
             rtcMultiConnection.send({
                 type:"shareFileShow", 
                 _uuid: uuid , 
-                _element: elementPeer,
+                _element: elementDisplayPeer,
                 _fileurl : fileurl, 
                 _filename : filename, 
                 _filetype : filetype
@@ -1299,11 +1326,11 @@ function displayList(uuid , userid , fileurl , filename , filetype ){
     hideButton.innerHTML='hide';
     hideButton.onclick=function(){
         if(repeatFlagHideButton != filename){
-            hideFile(uuid , element , fileurl , filename , filetype);
+            hideFile(uuid , elementDisplay , fileurl , filename , filetype);
             rtcMultiConnection.send({
                 type:"shareFileHide", 
                 _uuid: uuid , 
-                _element: elementPeer,
+                _element: elementPeerDisplay,
                 _fileurl : fileurl, 
                 _filename : filename, 
                 _filetype : filetype
@@ -1320,7 +1347,7 @@ function displayList(uuid , userid , fileurl , filename , filetype ){
     removeButton.innerHTML='remove';
     removeButton.onclick=function(event){
         if(repeatFlagRemoveButton != filename){
-            hideFile(uuid , element , fileurl , filename , filetype);
+            hideFile(uuid , elementDisplay , fileurl , filename , filetype);
             var tobeHiddenElement = event.target.parentNode.id;
             rtcMultiConnection.send({
                 type:"shareFileRemove", 
@@ -1335,23 +1362,22 @@ function displayList(uuid , userid , fileurl , filename , filetype ){
     };
 
     var r;
-    console.log(element);
-    if(fileShare && document.getElementById(element)!=null){
+    if(fileShare && document.getElementById(elementList)!=null){
         switch(filetype) {
             case "imagesnapshot":
                 r=document.createElement("div");
                 r.id=filename;
-                document.getElementById(element).appendChild(r);
+                document.getElementById(elementList).appendChild(r);
             break;
             case "videoRecording":
                 r=document.createElement("div");
                 r.id=filename;  
-                document.getElementById(element).appendChild(r);         
+                document.getElementById(elementList).appendChild(r);         
             break;
             case "videoScreenRecording":
                 r=document.createElement("div");
                 r.id=filename;  
-                document.getElementById(element).appendChild(r);         
+                document.getElementById(elementList).appendChild(r);         
             break;
             default:
                 r = progressHelper[uuid].div;
@@ -1390,7 +1416,6 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
             var video = document.createElement("video");
             if(fileurl.video!=undefined ){
                 video.src = URL.createObjectURL(fileurl.video); 
-
             }else{
                 video.src = URL.createObjectURL(fileurl); 
             }
@@ -1411,16 +1436,18 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
 }
 
 
-function displayFile( uuid , userid , fileurl , filename , filetype ){
+function displayFile( uuid , _userid , _fileurl , _filename , _filetype ){
+    alert(" display File " + _userid );
     var element=null;
     for(i in webcallpeers ){
-        if(webcallpeers[i].userid==userid)
+        if(webcallpeers[i].userid==_userid)
            element=webcallpeers[i].fileSharingContainer;
     }
+    /*alert(_userid+ " "+ element);*/
     if(element){
-        $("#"+element).html(getFileElementDisplayByType(filetype , fileurl , filename));
+        $("#"+element).html(getFileElementDisplayByType(_filetype , _fileurl , _filename));
     }else{
-        document.body.appendChild(getFileElementDisplayByType(filetype , fileurl , filename));
+        document.body.appendChild(getFileElementDisplayByType(_filetype , _fileurl , _filename));
     }
 
 }
@@ -1428,7 +1455,9 @@ function displayFile( uuid , userid , fileurl , filename , filetype ){
 
 function syncButton(buttonId){
     var buttonElement= document.getElementById(buttonId);
-    console.log(buttonElement.getAttribute("lastClickedBy") , (buttonElement.getAttribute("lastClickedBy")!=rtcMultiConnection.userid) , buttonElement.getAttribute("lastClickedBy")!='' );
+    console.log(buttonElement.getAttribute("lastClickedBy") , 
+        (buttonElement.getAttribute("lastClickedBy")!=rtcMultiConnection.userid) , 
+        buttonElement.getAttribute("lastClickedBy")!='' );
 
     for(x in webcallpeers){
         if(buttonElement.getAttribute("lastClickedBy")==webcallpeers[x].userid){
@@ -1455,8 +1484,7 @@ function showFile( uuid , element , fileurl , filename , filetype ){
 
 function hideFile( uuid , element , fileurl , filename , filetype ){
     if($("#"+element).has("#display"+filename)){
-        $("#"+element).html("");
-        element.innerHTML="";
+        document.getElementById(element).innerHTML="";
         console.log("hidefile " ,filename , " from " , element);
     }else{
         console.log(" file is not displayed to hide  ");
@@ -1492,7 +1520,6 @@ function minFV(userid, buttonId , arrFilesharingBoxes){
 }
 
 function maxFV(userid,  buttonId , arrFilesharingBoxes, selectedFileSharingBox){
-
     for ( x in arrFilesharingBoxes){
         if(arrFilesharingBoxes[x]==selectedFileSharingBox){
             document.getElementById(arrFilesharingBoxes[x]).hidden=false;

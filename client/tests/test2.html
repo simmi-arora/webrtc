@@ -1,0 +1,155 @@
+<html lang=en>
+<head>
+    <title>WebRTC Call</title>
+    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel=stylesheet href="minScripts/mainStyle.css">
+    <style>
+        body{
+            background-color: coral;
+        }
+    </style>
+
+    <script src="minScripts/presentationScript.js"> </script>
+
+</head>
+
+<body>
+
+    <div  class="container-fluid">
+
+        <!-- ................................ top panel ....................... -->
+        <div class="row topPanelClass" >    
+            <div id="topIconHolder" >
+                <ul>
+                   <!-- <li id="timerli" hidden> Time <span id="countdownMinutes">3</span>:<span id="countdownSecond">60</span></li>  -->
+                </ul>
+            </div>
+        </div>
+        <!-- .............  alerts ................. -->
+        
+        <div class="row" id="alertBox" hidden="true"></div>
+
+        <!-- .......................... Row 1 ................................ -->
+        
+        <div class="row secondPanelClass" hidden> 
+            <div class="col-xs-12 filesharingBox merge" >
+                <div class="row">
+                    <div class="col-sm-6 drawBox">
+                        <div id="widget-container" class="row drawBoard"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- .......................... Row 2 ................................ -->
+        <div class="row thirdPanelClass"> 
+            <div class="col-xs-8 videoBox merge" id="videoHold">
+                <div class="row users-container merge" id="usersContainer">
+                    <div class="CardClass" id="card">
+                        
+                        <!-- when no remote -->
+                        <div id="local">
+                            <div class="col-sm-4 merge" > </div>
+                            <div class="col-sm-4 merge "> <video name="localVideo" autoplay="autoplay" muted="true" /></div>
+                            <div class="col-sm-4 merge" > </div>
+                        </div>
+
+                        <!-- when remote is connected -->
+                        <div id ="remote" class="conatiner" style="display: inline;">
+                            <div  class="row">
+                                <div class="col-sm-4 merge" >
+                                    <video name="video1" autoplay="autoplay" />
+                                </div>
+                                <div class="col-sm-4 merge">
+                                    <video name="video2" autoplay="autoplay" />
+                                </div>
+                            </div>
+
+                            <div  class="row">
+                                <div class="col-sm-4 merge" >
+                                    <video name="video3" autoplay="autoplay" />
+                                </div>
+                                <div class="col-sm-4 merge">
+                                    <video name="video4" autoplay="autoplay" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+
+    </div>
+
+
+</body>
+
+<script src="minScripts/mainScript.js"></script>
+<script>
+    $('document').ready(function(){
+
+        sessionid= init(false);
+
+        var webrtcdomobj;
+
+            var local={
+                localVideo: "localVideo",
+                videoClass:"",
+                userDisplay:false,
+                userMetaDisplay:false  
+            };
+
+            var remote={
+                remotearr: ["video1" , "video2" , "video3" , "video4"],
+                videoClass:"",
+                userDisplay:false,
+                userMetaDisplay:false    
+            };
+
+            webrtcdomobj= new WebRTCdom(
+                local,remote
+            );
+
+
+        var session ={
+            sessionid : sessionid
+        };
+
+        var incoming={
+            audio: true,
+            video: true,
+            data: true,
+            screen: true
+        };
+
+        var outgoing={
+            audio: true,
+            video: true,
+            data: true,
+            screen: true
+        };
+
+        var widgets={
+            chat        :{
+                           active: true,
+                           chatContainer: ""
+                        },
+            fileShare   : false,
+            screenrecord: false,
+            screenshare : false,
+            videoRecord : true, 
+            drawCanvas  : false,
+            reconnect   : false
+        };
+
+        var webrtcdevobj = new WebRTCdev ( 
+            session,  incoming,  outgoing ,  widgets
+        );
+
+        startcall();
+    });
+</script>
+</html>

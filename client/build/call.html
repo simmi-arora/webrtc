@@ -195,7 +195,12 @@ $('document').ready(function(){
     sessionid= init(false);
 
     var webrtcdomobj= new WebRTCdom(
-        "myVideo", ["video1" , "video2", "video3", "video4" , "video5"]
+        {
+            localVideo: "myVideo"
+        }, 
+        {
+           remotearr : ["video1" , "video2", "video3", "video4" , "video5", "video6"]
+        }
     );
 
     /*_incomingAudio , _incomingVideo , _incomingData,
@@ -206,7 +211,7 @@ $('document').ready(function(){
     var webrtcdevobj = new WebRTCdev ( 
         sessionid,
         true , true , true ,
-        false , false , true ,
+        true , true , true ,
         true , false , true , false ,
         true , false, false
     );

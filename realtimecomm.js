@@ -66,8 +66,6 @@ module.exports = function(app , properties) {
             }
            
         });
-
-
     });
 
     function onNewNamespace(channel, sender) {
