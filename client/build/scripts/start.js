@@ -23,7 +23,7 @@ var WebRTCdom= function(  _localObj , _remoteObj ){
     console.log(remoteVideos);
 };
 /*
-    _sessionid,
+    _sessionid , _socket,
     _incomingAudio , _incomingVideo , _incomingData,
     _outgoingAudio, _outgoingVideo , _outgoingData,
     _chat , _fileShare ,  _screenrecord , _screenshare,
@@ -31,24 +31,31 @@ var WebRTCdom= function(  _localObj , _remoteObj ){
 */
 
 var WebRTCdev= function(session, incoming, outgoing, widgets){
-    sessionid     = session.sessionid,
-
-    incomingAudio = incoming.audio , 
-    incomingVideo = incoming.video , 
-    incomingData  = incoming.data , 
+    sessionid     = session.sessionid;
+    socketAddr    = session.socketAddr;
     
-    outgoingAudio = outgoing.audio, 
-    outgoingVideo = outgoing.video , 
-    outgoingData  = outgoing.data,
+    if(incoming){
+        incomingAudio = incoming.audio ; 
+        incomingVideo = incoming.video ; 
+        incomingData  = incoming.data  ;  
+    }
 
-    chat          = widgets.chat.active , 
+    if(outgoing){
+        outgoingAudio = outgoing.audio ; 
+        outgoingVideo = outgoing.video ; 
+        outgoingData  = outgoing.data ;
+    }
 
-    fileShare     = widgets.fileShare , 
-    screenrecord  = widgets.screenrecord , 
-    screenshare   = widgets.screenshare,
-    videoRecord   = widgets.videoRecord , 
-    drawCanvas    = widgets.drawCanvas ,
-    reconnect     = widgets.reconnect
+    if(widgets){
+        chat          = widgets.chat.active ; 
+        fileShare     = widgets.fileShare ;
+        screenrecord  = widgets.screenrecord ; 
+        screenshare   = widgets.screenshare ;
+        videoRecord   = widgets.videoRecord ; 
+        drawCanvas    = widgets.drawCanvas ;
+        reconnect     = widgets.reconnect ;
+    }
+
 };
 
 function shownotification(message){
@@ -988,8 +995,11 @@ function startcall() {
     };
 
     var o = "/";
+    if(socketAddr!="/"){
+        o= socketAddr;
+    }
     //var o = "https://www.villageexperts.com:8084/";
-    //var o="https://localhost:8084/";
+    //var o = "https://localhost:8084/";
 
     socket = io.connect(o);
         socket.emit("presence", {

@@ -17,7 +17,6 @@ if(window.location.href.indexOf("s=1")>=0){
 **********************************************************************/
 
 var t = " ";
-var o = "/";
 var e= null;
 var n="tara181989@gmail.com";
 
@@ -35,21 +34,20 @@ var webcallpeers=[];
 var sessions = {};
 var whoIsTyping = document.querySelector("#who-is-typing");
 var repeatFlagShowButton =null, repeatFlagHideButton =null, repeatFlagRemoveButton=null ;
-// DOM objects
+
+/* DOM objects */
 var localVideo =null, miniVideo=null, remoteVideos=[];
 
+/* webrtc session intilization */
 var autoload=true;
-var sessionid=null;
-//webrtc session intilization
+var sessionid=null, socketAddr="/";
 
+/* iconsoming and outgoing call params */
 var incomingAudio =true , incomingVideo =true , incomingData = true;
 var outgoingAudio =true , outgoingVideo =true , outgoingData = true;
 
-var chat=false ;
-var chatContainer=""
-
-fileShare=false ,  screenrecord=false, screenshare =false , 
-videorecord=false, drawCanvas=false , reconnect=false;
+var chat=false , fileShare=false ,  screenrecord=false, screenshare =false , 
+videoRecord=false, drawCanvas=false , reconnect=false;
 var role="participant";
 
 function init(autoload){
