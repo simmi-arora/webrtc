@@ -92,7 +92,9 @@
 <script>
 $('document').ready(function(){
 
-    sessionid= init(true);
+    sessionid= init(false);
+
+    var webrtcdomobj;
 
     var local={
         localVideo: "localVideo",
@@ -117,7 +119,30 @@ $('document').ready(function(){
         socketAddr: "https://localhost:8084/"
     };
 
-    var webrtcdevobj = new WebRTCdev ( session,  null,  null ,  null );
+    var incoming={
+        audio: true,
+        video: true,
+        data: true,
+        screen: true
+    };
+
+    var outgoing={
+        audio: true,
+        video: true,
+        data: true,
+        screen: true
+    };
+
+    var widgets={
+
+        videoRecord :{
+                        active: true,
+                    }
+    };
+
+    var webrtcdevobj = new WebRTCdev ( 
+        session,  incoming,  outgoing ,  widgets
+    );
 
     startcall();
 });
