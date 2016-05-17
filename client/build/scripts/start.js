@@ -40,28 +40,41 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
     }
 
     if(widgets){
-        chat          = widgets.chat.active ;
-        if(chat){
-
+        var chatobj          = widgets.chat ;
+        if(chatobj){
+            chat=chatobj.active
         }
 
-        fileShare     = widgets.fileShare.active ;
-        if(fileShare){
-
+        var fileShareobj     = widgets.fileShare ;
+        if(fileShareobj){
+            fileShare= fileShareobj.active
         }
 
-        screenrecord  = widgets.screenrecord.active ; 
-        if(screenrecord){
-
+        var screenrecordobj  = widgets.screenrecord; 
+        if(screenrecordobj){
+            screenrecord= screenrecordobj.active;
         }
 
-        screenshare   = widgets.screenshare.active ;
-        videoRecord   = widgets.videoRecord.active ; 
-        if(videoRecord){
-            videoRecordContainer= widgets.videoRecord.videoRecordContainer;
+        var screenshareobj   = widgets.screenshare;
+        if(screenshareobj){
+            screenshare=screenshareobj.active;
         }
-        drawCanvas    = widgets.drawCanvas.active ;
-        reconnect     = widgets.reconnect.active ;
+
+        var videoRecordobj   = widgets.videoRecord; 
+        if(videoRecordobj){
+            videoRecord = videoRecordobj.active 
+            videoRecordContainer= videoRecordobj.videoRecordContainer;
+        }
+
+        var reconnectobj   = widgets.reconnect; 
+        if(reconnectobj){
+            reconnect = reconnectobj.active 
+        }
+
+        var drawCanvasobj   = widgets.drawCanvas; 
+        if(drawCanvasobj){
+            drawCanvas = drawCanvasobj.active 
+        }
     }
 
 };
