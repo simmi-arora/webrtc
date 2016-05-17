@@ -4,10 +4,8 @@
     <meta name="google-site-verification" content="8NqEkVsX8mkRCn13Qov4K0njgF0T6t97_a-NZNIXkpE" />
     <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel=stylesheet href="minScripts/mainStyle.css">
-
-    <script src="minScripts/presentationScript.js"> </script>
-    <script src="property.js"></script>
+    <link rel=stylesheet href="minScripts/webrtcdevelopment_header.css">
+    <script src="minScripts/webrtcdevelopment_header.js"> </script>
 
 </head>
 
@@ -88,9 +86,8 @@
                             </div>
                         </div>
 
-
                         <!-- when no remote -->
-                        <div id="screenshare" hidden=true class="screenshareVideoClass">
+                        <div id="screenshareBox" hidden=true class="screenshareVideoClass">
                         </div>
 
                     </div>
@@ -210,10 +207,9 @@
     </div>
 
 </body>
-
-<script src="minScripts/snapshotRecord.js"></script>
-<script src="minScripts/mainScript.js"></script>
-<script src="scripts/start.js"></script>
+<link rel=stylesheet href="minScripts/webrtcdevelopment.css">
+<script src="minScripts/webrtcdevelopment.js"></script>
+<script src="scripts/start.js"></script> 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -307,12 +303,31 @@ $('document').ready(function(){
                        active: true,
                        chatContainer: ""
                     },
-        fileShare   : true,
-        screenrecord: true,
-        screenshare : true,
-        videoRecord : true, 
-        drawCanvas  : true,
-        reconnect   : false
+        fileShare   :{
+                        active : true,
+                        fileShareContainer : true,
+                    },
+        screenrecord:{
+                        active: true,
+                        autoscreenrecord:false,
+                        screenrecordContainer: null
+                    }, 
+        screenshare : {
+                        active:true,
+                        screenshareContainer: "screenshareBox",
+                        extensionID: "elfbfompfpakbefoaicaeoabnnoihoac"
+                    },
+        videoRecord :{
+                        active: true,
+                        videoRecordContainer: true
+                    }, 
+        drawCanvas  :{
+                        active: true,
+                        drawCanvasContainer: true
+                    }, 
+        reconnect   :{
+                        active: true
+                    }, 
     };
 
     var webrtcdevobj = new WebRTCdev ( 
