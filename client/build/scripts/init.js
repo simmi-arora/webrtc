@@ -46,8 +46,20 @@ var sessionid=null, socketAddr="/";
 var incomingAudio =true , incomingVideo =true , incomingData = true;
 var outgoingAudio =true , outgoingVideo =true , outgoingData = true;
 
-var chat=false , fileShare=false ,  screenrecord=false, screenshare =false , 
-videoRecord=false, drawCanvas=false , reconnect=false;
+var chat=false , chatContainer= null;
+
+var fileShare=false ;
+
+var screenrecord=false , recorder=null;
+
+var screenshare =false;
+
+var videoRecord=false , videoRecordContainer=null;
+
+var drawCanvas=false ;
+
+var reconnect=false;
+
 var role="participant";
 
 function init(autoload){

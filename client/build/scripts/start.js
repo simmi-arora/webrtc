@@ -22,13 +22,6 @@ var WebRTCdom= function(  _localObj , _remoteObj ){
     }
     console.log(remoteVideos);
 };
-/*
-    _sessionid , _socket,
-    _incomingAudio , _incomingVideo , _incomingData,
-    _outgoingAudio, _outgoingVideo , _outgoingData,
-    _chat , _fileShare ,  _screenrecord , _screenshare,
-    _videoRecord , _drawCanvas , _reconnect
-*/
 
 var WebRTCdev= function(session, incoming, outgoing, widgets){
     sessionid     = session.sessionid;
@@ -47,13 +40,28 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
     }
 
     if(widgets){
-        chat          = widgets.chat.active ; 
-        fileShare     = widgets.fileShare ;
-        screenrecord  = widgets.screenrecord ; 
-        screenshare   = widgets.screenshare ;
-        videoRecord   = widgets.videoRecord ; 
-        drawCanvas    = widgets.drawCanvas ;
-        reconnect     = widgets.reconnect ;
+        chat          = widgets.chat.active ;
+        if(chat){
+
+        }
+
+        fileShare     = widgets.fileShare.active ;
+        if(fileShare){
+
+        }
+
+        screenrecord  = widgets.screenrecord.active ; 
+        if(screenrecord){
+
+        }
+
+        screenshare   = widgets.screenshare.active ;
+        videoRecord   = widgets.videoRecord.active ; 
+        if(videoRecord){
+            videoRecordContainer= widgets.videoRecord.videoRecordContainer;
+        }
+        drawCanvas    = widgets.drawCanvas.active ;
+        reconnect     = widgets.reconnect.active ;
     }
 
 };
@@ -408,6 +416,7 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
         controlBar.appendChild(audioButton);
 
         if(videoRecord){
+
             //add the snapshot button
             var snapshotButton=document.createElement("div");
             snapshotButton.id="snapshotButton";
@@ -450,7 +459,6 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
             recordButton.className="pull-right glyphicon glyphicon-facetime-video btn btn-default mediaButton";
             recordButton.innerHTML=" Record ";
             recordButton.onclick = function() {
-                
                 if(recordButton.innerHTML==" Record "){
                     recordButton.innerHTML=" Stop ";
                     rtcMultiConnection.streams[streamid].startRecording({
@@ -466,13 +474,13 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
                                 webcallpeers[i].filearray.push(recordVideoname);
                                 var numFile= document.createElement("div");
                                 numFile.value= webcallpeers[i].filearray.length;
-
+                                var fileurl=URL.createObjectURL(dataRecordedVideo.video);
                                 if(fileShare){
-                                    syncSnapshot(dataRecordedVideo , "videoRecording" , recordVideoname );
-                                    displayList(rtcMultiConnection.uuid , rtcMultiConnection.userid  ,dataRecordedVideo , recordVideoname , "videoRecording");
-                                    displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , dataRecordedVideo , recordVideoname, "videoRecording");
+                                    syncSnapshot(fileurl , "videoRecording" , recordVideoname );
+                                    displayList(rtcMultiConnection.uuid , rtcMultiConnection.userid  ,fileurl , recordVideoname , "videoRecording");
+                                    displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , fileurl , recordVideoname, "videoRecording");
                                 }else{
-                                    displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , dataRecordedVideo , recordVideoname, "videoRecording");
+                                    displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , fileurl , recordVideoname, "videoRecording");
                                 }  
 
                             }
@@ -1071,6 +1079,14 @@ function startcall() {
 
 
     if(screenrecord){
+
+        var element = document.body;
+        recorder = RecordRTC(element, {
+            type: 'canvas',
+            showMousePointer: true
+        });
+
+
         var recordButton= document.createElement("span");
         recordButton.className="btn btn-success glyphicon glyphicon-refresh topPanelButton" ;
         recordButton.innerHTML="Record";
@@ -1083,7 +1099,7 @@ function startcall() {
         document.getElementById("topIconHolder_ul").appendChild(li);
     }
 
-     if(screenshare){
+    if(screenshare){
 
         var screenShareButton= document.createElement("span");
         screenShareButton.className="btn btn-success glyphicon glyphicon-expand topPanelButton";
@@ -1280,6 +1296,7 @@ function displayList(uuid , userid , fileurl , filename , filetype ){
 
     var elementList=null , elementPeerList=null , listlength=null;
     var elementDisplay=null, elementPeerDisplay=null ;
+
     for(i in webcallpeers ){
         if(webcallpeers[i].userid==userid){
            elementList=webcallpeers[i].fileListContainer;
@@ -1299,14 +1316,15 @@ function displayList(uuid , userid , fileurl , filename , filetype ){
     var downloadButton = document.createElement("div");
     downloadButton.setAttribute("class" , "btn btn-primary");
     downloadButton.setAttribute("style", "color:white");
-    if(filetype=="videoScreenRecording"){
+/*    if(filetype=="videoScreenRecording"){
         downloadButton.innerHTML='Download';
         downloadButton.onclick=function(){
-            downloadVideoScreenRecording(URL.createObjectURL(fileurl), filename+"webm");
+            //downloadVideoScreenRecording(URL.createObjectURL(fileurl), filename+"webm");
+            invokeSaveAsDialog(URL.createObjectURL(fileurl), filename+"webm");
         };
-    }else{
+    }else{*/
         downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '" style="color:white" > Download </a>';
-    }
+    /*}*/
 
 
     var showButton = document.createElement("div");
@@ -1319,7 +1337,7 @@ function displayList(uuid , userid , fileurl , filename , filetype ){
             rtcMultiConnection.send({
                 type:"shareFileShow", 
                 _uuid: uuid , 
-                _element: elementDisplayPeer,
+                _element: elementPeerDisplay,
                 _fileurl : fileurl, 
                 _filename : filename, 
                 _filetype : filetype
@@ -1422,13 +1440,29 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
             image.title=filename;
             image.id= "display"+filename; 
             elementDisplay=image;
-        }else if(filetype.indexOf("video")>-1){
+        }else if(filetype.indexOf("videoScreenRecording")>-1){
+            console.log("videoScreenRecording " , fileurl);
             var video = document.createElement("video");
-            if(fileurl.video!=undefined ){
-                video.src = URL.createObjectURL(fileurl.video); 
-            }else{
-                video.src = URL.createObjectURL(fileurl); 
-            }
+            video.src = fileurl; 
+            video.setAttribute("controls","controls");  
+            video.style.width="100%";
+            video.title=filename;
+            video.id= "display"+filename; 
+            elementDisplay=video;
+        }else if(filetype.indexOf("video")>-1){
+            console.log("videoRecording " , fileurl);
+            var video = document.createElement("video");
+            console.log(fileurl);
+/*            try{
+                if(fileurl.video!=undefined ){
+                    video.src = URL.createObjectURL(fileurl.video); 
+                }else{
+                    video.src = URL.createObjectURL(fileurl); 
+                }
+            }catch(e){*/
+                video.src=fileurl;
+            /*}*/
+
             video.setAttribute("controls","controls");  
             video.style.width="100%";
             video.title=filename;
@@ -1445,19 +1479,19 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
         return  elementDisplay
 }
 
-
 function displayFile( uuid , _userid , _fileurl , _filename , _filetype ){
-    alert(" display File " + _userid );
     var element=null;
     for(i in webcallpeers ){
         if(webcallpeers[i].userid==_userid)
            element=webcallpeers[i].fileSharingContainer;
     }
     /*alert(_userid+ " "+ element);*/
-    if(element){
+    console.log(" Display File ---------" ,_userid ," ||", _filename , 
+        "||", _filetype ,"||", element);
+    if($('#'+ element).length > 0){
         $("#"+element).html(getFileElementDisplayByType(_filetype , _fileurl , _filename));
     }else{
-        document.body.appendChild(getFileElementDisplayByType(_filetype , _fileurl , _filename));
+        $( "body" ).append(getFileElementDisplayByType(_filetype , _fileurl , _filename));
     }
 
 }
@@ -1722,35 +1756,43 @@ function syncVideoScreenRecording(data , datatype , dataname ){
 }
 
 function recordScreenVideo(recordButton){
-        if(recordButton.innerHTML=="Record"){
-            recordButton.innerHTML="Stop Recording";
-            playVideo(function() {
-                recorder.record();    
-            });
-        }else if(recordButton.innerHTML=="Stop Recording"){
-            recordButton.innerHTML="Record";
-            recorder.stop(function(dataRecordedVideo) {
-                for(i in webcallpeers ){
-                    if(webcallpeers[i].userid==rtcMultiConnection.userid){
-                        var recordVideoname = "recordedScreenvideo"+ new Date().getTime();
-                        webcallpeers[i].filearray.push(recordVideoname);
-                        var numFile= document.createElement("div");
-                        numFile.value= webcallpeers[i].filearray.length;
 
-                        syncVideoScreenRecording(dataRecordedVideo , "videoScreenRecording" , recordVideoname);
-                        displayList(rtcMultiConnection.uuid , rtcMultiConnection.userid , dataRecordedVideo, recordVideoname , "videoScreenRecording");
-                        displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , dataRecordedVideo, recordVideoname , "videoScreenRecording");
-                    }
+    if(recordButton.innerHTML=="Record"){
+        recordButton.innerHTML="Stop Recording";
+        recorder.startRecording();
+    }else if(recordButton.innerHTML=="Stop Recording"){
+        recordButton.innerHTML="Record";
+
+        recorder.stopRecording(function(videoURL) {
+            /*video.src = videoURL;*/
+            console.log("videoURL " , videoURL);
+            for(i in webcallpeers ){
+                if(webcallpeers[i].userid==rtcMultiConnection.userid){
+
+                    var recordVideoname = "recordedScreenvideo"+ new Date().getTime();
+                    webcallpeers[i].filearray.push(recordVideoname);
+                    var numFile= document.createElement("div");
+                    numFile.value= webcallpeers[i].filearray.length;
+
+                    syncVideoScreenRecording(videoURL , "videoScreenRecording" , recordVideoname);
+                    displayList(rtcMultiConnection.uuid , rtcMultiConnection.userid , videoURL, recordVideoname , "videoScreenRecording");
+                    displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , videoURL, recordVideoname , "videoScreenRecording");
                 }
+            }
 
+            var recordedBlob = recorder.getBlob();
+            recorder.getDataURL(function(dataRecordedVideo) { 
+                console.log("dataURL " , dataRecordedVideo);
+                /* creates a file */
             });
-            
-        }
+        });
+        
+    }
 }
 
-try{
-    var elementToShare = document.getElementById('elementToShare');
-    var recorder = new CanvasRecorder(elementToShare, {
+/*try{
+    var screenshareBox = document.getElementById('screenshareBox');
+    var recorder = new CanvasRecorder(screenshareBox, {
         disableLogs: false
     });
 
@@ -1770,13 +1812,12 @@ try{
         }
 
         var mediaConstraints = { video: true };
-        var getUserMedia1= navigator.webkitGetUserMedia.bind(navigator);
-        navigator.mediaDevices.getUserMedia1(mediaConstraints).then(successCallback).catch(errorCallback);
+        getUserMedia(mediaConstraints).then(successCallback).catch(errorCallback);
     }
 
 }catch( e){
-    console.error(" Canvas recorder is not defined ");
-}
+    console.error(" Canvas recorder is not defined " , e);
+}*/
 
 
 /******************* help and settings ***********************/

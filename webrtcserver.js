@@ -15,15 +15,11 @@ if(properties.enviornment=="production"){
 }else{
   folderPath='.client/build';
 }
-
-var file = new _static.Server('./client/tests', {
+var file = new _static.Server('./client/build', {
     cache: 3600,
     gzip: true,
     indexFile: "index.html"
 });
-
-console.log(folderPath , file);
-
 var options = {
   key: fs.readFileSync('ssl_certs/server.key'),
   cert: fs.readFileSync('ssl_certs/server.crt'),
@@ -31,7 +27,6 @@ var options = {
   requestCert: true,
   rejectUnauthorized: false
 };
-
 var app = https.createServer(options, function(request, response){
         request.addListener('end', function () {
         file.serve(request, response);
