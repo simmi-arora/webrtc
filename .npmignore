@@ -1,11 +1,14 @@
 client/build/google1988a1c5458dd294.html
 client/build/getScreenId.html
 client/build/widget.html
-node_modules
 client/build/scripts
 client/build/css
 client/build/drawboard
 client/build/images
+client/prod
+client/testCDN
+client/testnpm
+node_modules
 webrtcserver.js
 sheetscript.js
 webcallservice.conf
