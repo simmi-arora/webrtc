@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel=stylesheet href="minScripts/webrtcdevelopment_header.css">
     <script src="minScripts/webrtcdevelopment_header.js"> </script>
-
+    
 </head>
 
 <body id="pagebody" class="bodyWhole">
@@ -325,10 +325,10 @@ $('document').ready(function(){
                         autoscreenrecord:false,
                         screenrecordContainer: null,
                         button:{
-                            class_on:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
-                            html_on:"Record",
-                            class_off:"btn btn-warning glyphicon glyphicon-refresh topPanelButton",
-                            html_off:"Stop"
+                            class_on:"btn btn-warning glyphicon glyphicon-refresh topPanelButton",
+                            html_on:"Stop",
+                            class_off:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
+                            html_off:"Record"
                         }
                     }, 
         screenshare : {
@@ -336,20 +336,20 @@ $('document').ready(function(){
                         screenshareContainer: "screenshareBox",
                         extensionID: "elfbfompfpakbefoaicaeoabnnoihoac",
                         button:{
-                            class_on:"btn btn-success glyphicon glyphicon-expand topPanelButton",
-                            html_on:"ScreenShare",
-                            class_off:"btn btn-warning glyphicon glyphicon-expand topPanelButton",
-                            html_off:"Stop Sharing"
+                            class_on:"btn btn-warning  glyphicon glyphicon-expand topPanelButton",
+                            html_on:"Stop Sharing",
+                            class_off:"btn btn-success glyphicon glyphicon-expand topPanelButton",
+                            html_off:"ScreenShare"
                         }
                     },
         videoRecord :{
                         active: true,
                         videoRecordContainer: true,
                         button:{
-                            class_on:"pull-right glyphicon glyphicon-facetime-video btn btn-default mediaButton",
-                            html_on:"Record",
-                            class_off:"pull-right glyphicon glyphicon-facetime-video btn btn-warning mediaButton",
-                            html_off:"Stop"
+                            class_on:"pull-right glyphicon glyphicon-facetime-video btn btn-warning mediaButton",
+                            html_on:"Stop",
+                            class_off:"pull-right glyphicon glyphicon-facetime-video btn btn-default mediaButton",
+                            html_off:"Record"
                         }
                     },
         snapshot :{
@@ -364,26 +364,38 @@ $('document').ready(function(){
                         active: true,
                         drawCanvasContainer: true,
                         button:{
-                            class_on:"btn btn-success glyphicon glyphicon-edit topPanelButton",
-                            html_on:"Draw",
-                            class_off:"btn btn-warning glyphicon glyphicon-edit topPanelButton",
-                            html_off:"close Draw"
+                            class_on:"btn btn-warning glyphicon glyphicon-edit topPanelButton",
+                            html_on:"close Draw",
+                            class_off:"btn btn-success glyphicon glyphicon-edit topPanelButton",
+                            html_off:"Draw"
                         }
                     }, 
         reconnect   :{
                         active: true,
                         button:{
                             class:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
-                            html:"Reconnect"
+                            html:"Reconnect",
+                            resyncfiles:false
                         }
                     }, 
         mute        :{
+                    active: true,
                     audio   :{
-
-                            },
-                    video : {
-
+                            button:{
+                                class_on:"pull-right glyphicon glyphicon-volume-up btn btn-default mediaButton",
+                                html_on:"Audio is On",
+                                class_off:"pull-right glyphicon glyphicon-volume-off btn btn-danger mediaButton",
+                                html_off:"Audio is Off"
                             }
+                        },
+                    video : {
+                            button:{
+                                class_on:"pull-right glyphicon glyphicon-eye-open btn btn-default videoButtonClass mediaButton",
+                                html_on:"Video is On",
+                                class_off:"pull-right glyphicon glyphicon-eye-close  btn btn-danger videoButtonClass mediaButton",
+                                html_off:"Video is Off"
+                            }
+                        }
                     }
     };
 
