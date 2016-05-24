@@ -88,11 +88,9 @@ getScreenId(function (error, sourceId, screen_constraints) {
             loadCallback();
             return;
         }
-
         iframe = document.createElement('iframe');
         iframe.onload = function() {
             iframe.isLoaded = true;
-
             loadCallback();
         };
         iframe.src = 'getScreenId.html';

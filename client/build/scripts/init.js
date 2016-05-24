@@ -48,7 +48,7 @@ var outgoingAudio =true , outgoingVideo =true , outgoingData = true;
 
 var chatobj=false , chatContainer= null;
 
-var fileShareobj=false ;
+var fileshareobj=false ;
 
 var screenrecordobj =false;
 
@@ -60,7 +60,11 @@ var drawCanvasobj=false ;
 
 var reconnectobj=false;
 
+var muteobj=false;
+
 var screenshareobj=false;
+var screen , isScreenOn=0;
+var screen_roomid , screen_userid;
 
 var role="participant";
 

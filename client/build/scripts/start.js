@@ -44,7 +44,7 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
 
         if(widgets.chat)            chatobj=widgets.chat
 
-        if(widgets.fileShare)       fileShareobj = widgets.fileShare;
+        if(widgets.fileShare)       fileshareobj = widgets.fileShare;
 
         if(widgets.screenrecord)    screenrecordobj = widgets.screenrecord;
 
@@ -58,6 +58,7 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
 
         if(widgets.drawCanvas)      drawCanvasobj = widgets.drawCanvas;
 
+        if(widgets.mute)            muteobj=widgets.mute;
     }
 
 };
@@ -349,71 +350,69 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
         controlBar.setAttribute("style" , "float:left;margin-left: 20px;");
         controlBar.name= streamid;
 
-        //add the video mute button
-        var videoButton=document.createElement("span");
-        videoButton.id="videoButton";
-        videoButton.setAttribute("data-val","mute");
-        videoButton.setAttribute("title", "Toggle Video");
-        videoButton.setAttribute("data-placement", "bottom");
-        videoButton.setAttribute("data-toggle", "tooltip");
-        videoButton.setAttribute("data-container", "body");
-        videoButton.className="pull-right glyphicon glyphicon-eye-open btn btn-default videoButtonClass mediaButton";   
-        videoButton.innerHTML="Video On";     
-        videoButton.onclick= function(event) {
-            if("mute" == this.getAttribute("data-val") ){
-                this.setAttribute("data-val", "unmute"); 
-                rtcMultiConnection.streams[streamid].mute({
-                    video: !0
-                });
-                videoButton.innerHTML="Video Off";
-                videoButton.className="pull-right glyphicon glyphicon-eye-close  btn btn-default videoButtonClass mediaButton";   
-            } 
-            else{
-                this.setAttribute("data-val", "mute"); 
-                rtcMultiConnection.streams[streamid].unmute({
-                    video: !0
-                });
-                videoButton.innerHTML="Video On";
-                videoButton.className="pull-right glyphicon glyphicon-eye-open btn btn-default videoButtonClass mediaButton";   
-            }  
-        }; 
-        controlBar.appendChild(videoButton);
-
-        //add the audio mute button
-        var audioButton=document.createElement("span");
-        audioButton.id="audioButton";
-        audioButton.setAttribute("data-val","mute");
-        audioButton.setAttribute("title", "Toggle Audio");
-        audioButton.setAttribute("data-placement", "bottom");
-        audioButton.setAttribute("data-toggle", "tooltip");
-        audioButton.setAttribute("data-container", "body");
-        audioButton.className="pull-right glyphicon glyphicon-volume-up btn btn-default mediaButton";
-        audioButton.innerHTML="Audio On";
-        audioButton.onclick = function() {
-            if("mute" == this.getAttribute("data-val") ){
-                this.setAttribute("data-val", "unmute"); 
-                /*
-                rtcMultiConnection.streams[streamid].mute({
-                    audio: !0
-                });*/
-                audioButton.innerHTML="Audio Off";
-                audioButton.className="pull-right glyphicon glyphicon-volume-off btn btn-default mediaButton";
-            } 
-            else{
-                this.setAttribute("data-val", "mute"); 
-                /*                
-                rtcMultiConnection.streams[streamid].unmute({
-                    audio: !0
-                });*/
-                audioButton.innerHTML="Audio On";
-                audioButton.className="pull-right glyphicon glyphicon-volume-up btn btn-default mediaButton";
-            }             
-        };
-        controlBar.appendChild(audioButton);
+        if(muteobj.active){
+            if(muteobj.audio){
+                var audioButton=document.createElement("span");
+                audioButton.id=controlBarName+"audioButton";
+                audioButton.setAttribute("data-val","mute");
+                audioButton.setAttribute("title", "Toggle Audio");
+                audioButton.setAttribute("data-placement", "bottom");
+                audioButton.setAttribute("data-toggle", "tooltip");
+                audioButton.setAttribute("data-container", "body");
+                audioButton.className=muteobj.audio.button.class_on;
+                audioButton.innerHTML=muteobj.audio.button.html_on;
+                audioButton.onclick = function() {
+                    if(audioButton.className == muteobj.audio.button.class_on ){
+                        rtcMultiConnection.streams[streamid].mute({
+                            audio: !0
+                        });
+                        audioButton.className=muteobj.audio.button.class_off;
+                        audioButton.innerHTML=muteobj.audio.button.html_off;
+                    } 
+                    else{            
+                        rtcMultiConnection.streams[streamid].unmute({
+                            audio: !0
+                        });
+                        audioButton.className=muteobj.audio.button.class_on;
+                        audioButton.innerHTML=muteobj.audio.button.html_on;
+                    }     
+                    syncButton(audioButton.id);        
+                };
+                controlBar.appendChild(audioButton);
+            }
+            if(muteobj.video){
+                var videoButton=document.createElement("span");
+                videoButton.id=controlBarName+"videoButton";
+                videoButton.setAttribute("title", "Toggle Video");
+                videoButton.setAttribute("data-placement", "bottom");
+                videoButton.setAttribute("data-toggle", "tooltip");
+                videoButton.setAttribute("data-container", "body");
+                videoButton.className=muteobj.video.button.class_on;   
+                videoButton.innerHTML=muteobj.video.button.html_on;     
+                videoButton.onclick= function(event) {
+                    if(videoButton.className == muteobj.video.button.class_on ){
+                        rtcMultiConnection.streams[streamid].mute({
+                            video: !0
+                        });
+                        videoButton.innerHTML=muteobj.video.button.html_off;
+                        videoButton.className=muteobj.video.button.class_off;   
+                    } 
+                    else{ 
+                        rtcMultiConnection.streams[streamid].unmute({
+                            video: !0
+                        });
+                        videoButton.innerHTML=muteobj.video.button.html_on;
+                        videoButton.className=muteobj.video.button.class_on; 
+                    }  
+                    syncButton(videoButton.id);
+                }; 
+                controlBar.appendChild(videoButton);        
+            }
+        }
 
         if(snapshotobj.active){
             var snapshotButton=document.createElement("div");
-            snapshotButton.id="snapshotButton";
+            snapshotButton.id=controlBarName+"snapshotButton";
             snapshotButton.setAttribute("title", "Snapshot");
             snapshotButton.setAttribute("data-placement", "bottom");
             snapshotButton.setAttribute("data-toggle", "tooltip");
@@ -429,7 +428,7 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
                             var numFile= document.createElement("div");
                             numFile.value= webcallpeers[i].filearray.length;
 
-                            if(fileShareobj.active){
+                            if(fileshareobj.active){
                                 syncSnapshot(datasnapshot , "imagesnapshot" , snapshotname );
                                 displayList(rtcMultiConnection.uuid , rtcMultiConnection.userid ,datasnapshot , snapshotname , "imagesnapshot");
                                 displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid, datasnapshot , snapshotname, "imagesnapshot");
@@ -448,13 +447,13 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
 
             //add the Record button
             var recordButton=document.createElement("div");
-            recordButton.id="recordButton";
+            recordButton.id=controlBarName+"recordButton";
             recordButton.setAttribute("title", "Record");
             recordButton.setAttribute("data-placement", "bottom");
             recordButton.setAttribute("data-toggle", "tooltip");
             recordButton.setAttribute("data-container", "body");
-            recordButton.className=videoRecordobj.button.class_on;
-            recordButton.innerHTML=videoRecordobj.button.html_on;
+            recordButton.className=videoRecordobj.button.class_off;
+            recordButton.innerHTML=videoRecordobj.button.html_off;
             recordButton.onclick = function() {
                 if(recordButton.className==videoRecordobj.button.class_on){
                     recordButton.className=videoRecordobj.button.class_off;
@@ -474,14 +473,13 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
                                 var numFile= document.createElement("div");
                                 numFile.value= webcallpeers[i].filearray.length;
                                 var fileurl=URL.createObjectURL(dataRecordedVideo.video);
-                                if(fileShareobj.active){
+                                if(fileshareobj.active){
                                     syncSnapshot(fileurl , "videoRecording" , recordVideoname );
                                     displayList(rtcMultiConnection.uuid , rtcMultiConnection.userid  ,fileurl , recordVideoname , "videoRecording");
-                                    displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , fileurl , recordVideoname, "videoRecording");
+                                    displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , fileurl , recordVideoname , "videoRecording");
                                 }else{
-                                    displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , fileurl , recordVideoname, "videoRecording");
-                                }  
-
+                                    displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , fileurl , recordVideoname , "videoRecording");
+                                }
                             }
                         }
                     }, {audio:true, video:true} );
@@ -543,7 +541,7 @@ function updateWebCallView(peerInfo){
                     remoteVideos[0].hidden=false;
                 }
 
-                if(fileShareobj.active){
+                if(fileshareobj.active){
                     createFileSharingDiv(0);
                 }
             }
@@ -575,7 +573,7 @@ function updateWebCallView(peerInfo){
             remoteVideos[vi].hidden=false;
         }
 
-        if(fileShareobj.active){
+        if(fileshareobj.active){
             createFileSharingDiv(pi);
         }
 
@@ -978,14 +976,7 @@ function startcall() {
         
         for(i in webcallpeers ){
             if(webcallpeers[i].userid==e.userid){
-
                 webcallpeers[i].filearray.push(e.name);
-                var numFile= document.createElement("div");
-                numFile.value= webcallpeers[i].filearray.length;
-            
-                /*              
-                displayFile(e.uuid , webcallpeers[i].userid , e.url , e.name , e.type);
-                displayList(e.uuid , webcallpeers[i].userid , e.url , e.name , e.type);*/
             }
         }
 
@@ -1083,7 +1074,6 @@ function startcall() {
         }
     }
 
-      
     if(screenrecordobj.active){
 
         var element = document.body;
@@ -1096,36 +1086,36 @@ function startcall() {
         recordButton.className= screenrecordobj.button.class_off ;
         recordButton.innerHTML= screenrecordobj.button.html_off;
         recordButton .onclick = function() {
-                if(recordButton.className==screenrecordobj.button.class_off){
-                    recordButton.className= screenrecordobj.button.class_on ;
-                    recordButton.innerHTML= screenrecordobj.button.html_on;
-                    recorder.startRecording();
-                }else if(recordButton.innerHTML==screenrecordobj.button.class_on){
-                    recordButton.className= screenrecordobj.button.class_off ;
-                    recordButton.innerHTML= screenrecordobj.button.html_off;
-                    recorder.stopRecording(function(videoURL) {
-                        for(i in webcallpeers ){
-                            if(webcallpeers[i].userid==rtcMultiConnection.userid){
+            if(recordButton.className==screenrecordobj.button.class_off){
+                recordButton.className= screenrecordobj.button.class_on ;
+                recordButton.innerHTML= screenrecordobj.button.html_on;
+                recorder.startRecording();
+            }else if(recordButton.innerHTML==screenrecordobj.button.class_on){
+                recordButton.className= screenrecordobj.button.class_off ;
+                recordButton.innerHTML= screenrecordobj.button.html_off;
+                recorder.stopRecording(function(videoURL) {
+                    for(i in webcallpeers ){
+                        if(webcallpeers[i].userid==rtcMultiConnection.userid){
 
-                                var recordVideoname = "recordedScreenvideo"+ new Date().getTime();
-                                webcallpeers[i].filearray.push(recordVideoname);
-                                var numFile= document.createElement("div");
-                                numFile.value= webcallpeers[i].filearray.length;
+                            var recordVideoname = "recordedScreenvideo"+ new Date().getTime();
+                            webcallpeers[i].filearray.push(recordVideoname);
+                            var numFile= document.createElement("div");
+                            numFile.value= webcallpeers[i].filearray.length;
 
-                                syncVideoScreenRecording(videoURL , "videoScreenRecording" , recordVideoname);
-                                displayList(rtcMultiConnection.uuid , rtcMultiConnection.userid , videoURL, recordVideoname , "videoScreenRecording");
-                                displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , videoURL, recordVideoname , "videoScreenRecording");
-                            }
+                            syncVideoScreenRecording(videoURL , "videoScreenRecording" , recordVideoname);
+                            displayList(rtcMultiConnection.uuid , rtcMultiConnection.userid , videoURL, recordVideoname , "videoScreenRecording");
+                            displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , videoURL, recordVideoname , "videoScreenRecording");
                         }
+                    }
 
-                        var recordedBlob = recorder.getBlob();
-                        recorder.getDataURL(function(dataRecordedVideo) { 
-                            console.log("dataURL " , dataRecordedVideo);
-                            /* creates a file */
-                        });
+                    var recordedBlob = recorder.getBlob();
+                    recorder.getDataURL(function(dataRecordedVideo) { 
+                        console.log("dataURL " , dataRecordedVideo);
+                        /* creates a file */
                     });
-                    
-                }
+                });
+                
+            }
         };
 
         var li =document.createElement("li");
@@ -1137,22 +1127,24 @@ function startcall() {
         var screenShareButton= document.createElement("span");
         screenShareButton.className=screenshareobj.button.class_off;
         screenShareButton.innerHTML=screenshareobj.button.html_off;
-        screenShareButton.onclick = function() {
         screenShareButton.id="screenShareButton";
-            if(isScreenOn==0){
+        screenShareButton.onclick = function() {
+            webrtcdevScreenShare();
+            if(screenShareButton.className==screenshareobj.button.class_off){
                 screen.share('screenShareVilageExperts');
-                isScreenOn=1;
-            }else if(isScreenOn ==1){
+                screenShareButton.className=screenshareobj.button.class_on;
+                screenShareButton.innerHTML=screenshareobj.button.html_on;
+            }else{
                 screen.leave();
-                isScreenOn=0;
+                screenShareButton.className=screenshareobj.button.class_off;
+                screenShareButton.innerHTML=screenshareobj.button.html_off;
             }
-            webrtcdevScreenShare(screen);
+
         };
 
         var li =document.createElement("li");
         li.appendChild(screenShareButton);
         document.getElementById("topIconHolder_ul").appendChild(li);
-
 
         var viewScreenShareButton= document.createElement("span");
         viewScreenShareButton.className="btn btn-success glyphicon glyphicon-expand topPanelButton";
@@ -1186,10 +1178,18 @@ function startcall() {
 
     if(drawCanvasobj.active){
         var drawButton= document.createElement("span");
-        drawButton.className=drawCanvasobj.button.class_on ;
-        drawButton.innerHTML=drawCanvasobj.button.html_on;
+        drawButton.className=drawCanvasobj.button.class_off ;
+        drawButton.innerHTML=drawCanvasobj.button.html_off;
         drawButton.onclick=function(){
-            document.getElementById("drawContainer").hidden=false;
+            if(drawButton.className==drawCanvasobj.button.class_off){
+                drawButton.className= drawCanvasobj.button.class_on ;
+                drawButton.innerHTML= drawCanvasobj.button.html_on;
+                document.getElementById("drawContainer").hidden=false;
+            }else if(drawButton.innerHTML==drawCanvasobj.button.class_on){
+                drawButton.className= drawCanvasobj.button.class_off ;
+                drawButton.innerHTML= drawCanvasobj.button.html_off;
+                document.getElementById("drawContainer").hidden=true;
+            }
         };
         var li =document.createElement("li");
         li.appendChild(drawButton);
@@ -1317,7 +1317,7 @@ function updateLabel(e, r) {
 
 function simulateClick(buttonName){
     document.getElementById(buttonName).click(); 
-    console.log(buttonName);
+    console.log("simulateClick on "+buttonName);
     return true;
 }
 
@@ -1345,17 +1345,7 @@ function displayList(uuid , userid , fileurl , filename , filetype ){
     var downloadButton = document.createElement("div");
     downloadButton.setAttribute("class" , "btn btn-primary");
     downloadButton.setAttribute("style", "color:white");
-    /*   
-    if(filetype=="videoScreenRecording"){
-        downloadButton.innerHTML='Download';
-        downloadButton.onclick=function(){
-            //downloadVideoScreenRecording(URL.createObjectURL(fileurl), filename+"webm");
-            invokeSaveAsDialog(URL.createObjectURL(fileurl), filename+"webm");
-        };
-    }else{*/
-        downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '" style="color:white" > Download </a>';
-    /*}*/
-
+    downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '" style="color:white" > Download </a>';
 
     var showButton = document.createElement("div");
     showButton.id= "showButton"+filename;
@@ -1420,7 +1410,7 @@ function displayList(uuid , userid , fileurl , filename , filetype ){
     };
 
     var r;
-    if(fileShareobj.active && document.getElementById(elementList)!=null){
+    if(fileshareobj.active && document.getElementById(elementList)!=null){
         switch(filetype) {
             case "imagesnapshot":
                 r=document.createElement("div");
@@ -1456,57 +1446,58 @@ function displayList(uuid , userid , fileurl , filename , filetype ){
 
 
 function getFileElementDisplayByType(filetype , fileurl , filename){
-        var elementDisplay;
-        
-        if(filetype.indexOf("msword")>-1 || filetype.indexOf("officedocument")>-1) {
-            var divNitofcation= document.createElement("div");
-            divNitofcation.className="alert alert-warning";
-            divNitofcation.innerHTML= "Microsoft and Libra word file cannt be opened in browser";
-            elementDisplay=divNitofcation;
-        }else if(filetype.indexOf("image")>-1){
-            var image= document.createElement("img");
-            image.src= fileurl;
-            image.style.width="100%";
-            image.title=filename;
-            image.id= "display"+filename; 
-            elementDisplay=image;
-        }else if(filetype.indexOf("videoScreenRecording")>-1){
-            console.log("videoScreenRecording " , fileurl);
-            var video = document.createElement("video");
-            video.src = fileurl; 
-            video.setAttribute("controls","controls");  
-            video.style.width="100%";
-            video.title=filename;
-            video.id= "display"+filename; 
-            elementDisplay=video;
-        }else if(filetype.indexOf("video")>-1){
-            console.log("videoRecording " , fileurl);
-            var video = document.createElement("video");
-            console.log(fileurl);
-/*            try{
-                if(fileurl.video!=undefined ){
-                    video.src = URL.createObjectURL(fileurl.video); 
-                }else{
-                    video.src = URL.createObjectURL(fileurl); 
-                }
-            }catch(e){*/
-                video.src=fileurl;
-            /*}*/
+    var elementDisplay;
+    
+    if(filetype.indexOf("msword")>-1 || filetype.indexOf("officedocument")>-1) {
+        var divNitofcation= document.createElement("div");
+        divNitofcation.className="alert alert-warning";
+        divNitofcation.innerHTML= "Microsoft and Libra word file cannt be opened in browser";
+        elementDisplay=divNitofcation;
+    }else if(filetype.indexOf("image")>-1){
+        var image= document.createElement("img");
+        image.src= fileurl;
+        image.style.width="100%";
+        image.title=filename;
+        image.id= "display"+filename; 
+        elementDisplay=image;
+    }else if(filetype.indexOf("videoScreenRecording")>-1){
+        console.log("videoScreenRecording " , fileurl);
+        var video = document.createElement("video");
+        video.src = fileurl; 
+        video.setAttribute("controls","controls");  
+        video.style.width="100%";
+        video.title=filename;
+        video.id= "display"+filename; 
+        elementDisplay=video;
+    }else if(filetype.indexOf("video")>-1){
+        console.log("videoRecording " , fileurl);
+        var video = document.createElement("video");
+        console.log(fileurl);
+        /*            
+        try{
+            if(fileurl.video!=undefined ){
+                video.src = URL.createObjectURL(fileurl.video); 
+            }else{
+                video.src = URL.createObjectURL(fileurl); 
+            }
+        }catch(e){*/
+            video.src=fileurl;
+        /*}*/
 
-            video.setAttribute("controls","controls");  
-            video.style.width="100%";
-            video.title=filename;
-            video.id= "display"+filename; 
-            elementDisplay=video;
-        }else{
-            var iframe= document.createElement("iframe");
-            iframe.src= fileurl;
-            iframe.className= "viewerIframeClass";
-            iframe.title= filename;
-            iframe.id= "display"+filename;
-            elementDisplay=iframe;
-        }
-        return  elementDisplay
+        video.setAttribute("controls","controls");  
+        video.style.width="100%";
+        video.title=filename;
+        video.id= "display"+filename; 
+        elementDisplay=video;
+    }else{
+        var iframe= document.createElement("iframe");
+        iframe.src= fileurl;
+        iframe.className= "viewerIframeClass";
+        iframe.title= filename;
+        iframe.id= "display"+filename;
+        elementDisplay=iframe;
+    }
+    return  elementDisplay
 }
 
 function displayFile( uuid , _userid , _fileurl , _filename , _filetype ){
@@ -1515,9 +1506,7 @@ function displayFile( uuid , _userid , _fileurl , _filename , _filetype ){
         if(webcallpeers[i].userid==_userid)
            element=webcallpeers[i].fileSharingContainer;
     }
-    /*alert(_userid+ " "+ element);*/
-    console.log(" Display File ---------" ,_userid ," ||", _filename , 
-        "||", _filetype ,"||", element);
+    console.log(" Display File ---------" ,_userid ," ||", _filename , "||", _filetype ,"||", element);
     if($('#'+ element).length > 0){
         $("#"+element).html(getFileElementDisplayByType(_filetype , _fileurl , _filename));
     }else{
@@ -1529,9 +1518,6 @@ function displayFile( uuid , _userid , _fileurl , _filename , _filetype ){
 
 function syncButton(buttonId){
     var buttonElement= document.getElementById(buttonId);
-    console.log(buttonElement.getAttribute("lastClickedBy") , 
-        (buttonElement.getAttribute("lastClickedBy")!=rtcMultiConnection.userid) , 
-        buttonElement.getAttribute("lastClickedBy")!='' );
 
     for(x in webcallpeers){
         if(buttonElement.getAttribute("lastClickedBy")==webcallpeers[x].userid){
@@ -1545,8 +1531,7 @@ function syncButton(buttonId){
         rtcMultiConnection.send({
                 type:"buttonclick", 
                 buttonName: buttonId
-        }); 
-        console.log("Synced with peer " , buttonElement.getAttribute("lastClickedBy"));
+        });
     }
 }
 
@@ -1674,54 +1659,48 @@ add code hetre for redial
 /****************************************8
 screenshare
 ***************************************/
-var screen , isScreenOn=0;
-var screen_roomid , screen_userid;
+function webrtcdevScreenShare(){
+    try{
+        screen = new Screen("screen"+rtcMultiConnection.channel);
 
-function webrtcdevScreenShare(screen){
-        try{
-            screen = new Screen("screen"+rtcMultiConnection.channel);
-
-            // get shared screens
-            screen.onaddstream = function(e) {
-                /*
-                document.getElementById("screenshare").innerHTML="";
-                document.getElementById("screenshare").appendChild(e.video);
-                document.getElementById("screenshare").hidden=false;*/
-                
-                screen.openSignalingChannel = function(callback) {
-                    var n= io.connect("/"+rtcMultiConnection.channel);
-                    n.channel = t;
-                    return n.on('message', callback);
-                };
+        screen.onaddstream = function(e) {
+            /*
+            document.getElementById("screenshare").innerHTML="";
+            document.getElementById("screenshare").appendChild(e.video);
+            document.getElementById("screenshare").hidden=false;*/
+            
+            screen.openSignalingChannel = function(callback) {
+                var n= io.connect("/"+rtcMultiConnection.channel);
+                n.channel = t;
+                return n.on('message', callback);
             };
+        };
 
-            screen.check();
+        screen.check();
 
-            // to stop sharing screen
-            // screen.leave();
+        // to stop sharing screen
+        // screen.leave();
 
-            // if someone leaves; just remove his video
-            screen.onuserleft = function(userid) {
-                document.getElementById("screenshare").hidden=true;
-                /*       
-                var video = document.getElementById(userid);
-                if(video) {
-                   // video.parentNode.removeChild(video);
-                }*/
-            };
+        // if someone leaves; just remove his video
+        screen.onuserleft = function(userid) {
+            document.getElementById("screenshare").hidden=true;
+            /*       
+            var video = document.getElementById(userid);
+            if(video) {
+               // video.parentNode.removeChild(video);
+            }*/
+        };
 
-            screen.onscreen = function(screen) {
-                console.log( " onscreen " , screen );
-                if (self.detectedRoom) return;
-                self.detectedRoom = true;
-                self.view(screen);
-            };
-        }catch(e){
-            console.log("------------screenshare not supported ");
-            $("#screenShareButton").hide();
-            $("#viewScreenShareButton").hide();
-            console.log(e);
-        }
+        screen.onscreen = function(screen) {
+            console.log( " onscreen " , screen );
+            if (self.detectedRoom) return;
+            self.detectedRoom = true;
+            self.view(screen);
+        };
+    }catch(e){
+        console.log("------------screenshare not supported ");
+        console.log(e);
+    }
 }
 
 
@@ -1759,33 +1738,12 @@ recordButton.onclick = function() {
 Canvas Record 
 *************************************************************************/
 
-/*
-function downloadVideoScreenRecording(fileurl , filename){
-    return  document.getElementById("display"+filename).src;
-}
-*/
-
-var downloadVideoScreenRecording = (function (fileurl, filename ) {
-    var a = document.createElement("a");
-    document.body.appendChild(a);
-    a.style = "display: none";
-    return function (data, fileName) {
-        var json = JSON.stringify(fileurl),
-            blob = new Blob([json], {type: "octet/stream"}),
-            url = window.URL.createObjectURL(blob);
-        a.href = url;
-        a.download = filename;
-        a.click();
-        window.URL.revokeObjectURL(url);
-    };
-}());
-
 
 function syncVideoScreenRecording(data , datatype , dataname ){
     rtcMultiConnection.send({type:datatype, message:data  , name : dataname});
 }
 
-function recordScreenVideo(recordButton){
+function autorecordScreenVideo(){
 
 
 }
@@ -1828,7 +1786,7 @@ function getAllPeerInfo(){
 }
 
 
-/******************************************************************************/
+/************************* ICE NAT TURN *******************************/
 
 function createCORSRequest(method, url) {
     var xhr = new XMLHttpRequest();
@@ -1840,7 +1798,6 @@ function createCORSRequest(method, url) {
     } else {
         xhr = null;
     }
-    console.log(" xhr " , xhr);
     return xhr;
 }
 
