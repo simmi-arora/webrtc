@@ -40,25 +40,27 @@ var localVideo =null, miniVideo=null, remoteVideos=[];
 
 /* webrtc session intilization */
 var autoload=true;
-var sessionid=null, socketAddr="/";
-
+var sessionid=null, socketAddr="/",turn;
+var iceservers;
 /* iconsoming and outgoing call params */
 var incomingAudio =true , incomingVideo =true , incomingData = true;
 var outgoingAudio =true , outgoingVideo =true , outgoingData = true;
 
-var chat=false , chatContainer= null;
+var chatobj=false , chatContainer= null;
 
-var fileShare=false ;
+var fileShareobj=false ;
 
-var screenrecord=false , recorder=null;
+var screenrecordobj =false;
 
-var screenshare =false;
+var snapshotobj=false ;
 
-var videoRecord=false , videoRecordContainer=null;
+var videoRecordobj=false , videoRecordContainer=null;
 
-var drawCanvas=false ;
+var drawCanvasobj=false ;
 
-var reconnect=false;
+var reconnectobj=false;
+
+var screenshareobj=false;
 
 var role="participant";
 

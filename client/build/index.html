@@ -34,7 +34,7 @@
 
         <!-- .......................... Row 1 ................................ -->
         
-        <div class="row secondPanelClass" hidden> 
+        <div id="drawContainer" class="row secondPanelClass" hidden> 
             <div class="col-xs-12 filesharingBox merge" >
                 <div class="row">
                     <div class="col-sm-6 drawBox">
@@ -48,10 +48,9 @@
         <div class="row thirdPanelClass"> 
             <div class="col-xs-12 videoBox merge" id="videoHold">
                 <div class="row users-container merge" id="usersContainer" >
-                    <div class="CardClass" id="card">
-                        
+
                         <!-- when no remote -->
-                        <div id="local" class="row" hidden="">
+                        <div id="local" class="row" hidden>
                             <div class="col-sm-4 merge"> </div>
                             <div class="col-sm-4 merge"> <video name="localVideo" autoplay="autoplay" muted="true" /></div>
                             <div class="col-sm-4 merge"> </div>
@@ -66,7 +65,7 @@
                                 <div class="row">
 
                                     <div class="mainInputBox">   
-                                        <button id="send" class="form-control btn-primary buttonChatSend">Send</button>
+                                        <button id="send">Send</button>
                                         <input type=text style="width:70%;" id="chatInput" class="form-control" placeholder="Type message here">
                                     </div>
 
@@ -90,7 +89,6 @@
                         <div id="screenshareBox" hidden=true class="screenshareVideoClass">
                         </div>
 
-                    </div>
                 </div>
             </div> 
         </div>
@@ -126,7 +124,7 @@
                   <h4 class="modal-title">Help</h4>
                 </div>
                 <div class="modal-body">
-                  <p>This is a for helping the user .</p>
+                  <p>WebRTC (web, real-time communications) is – a browser-based, application programming interface (API) – leveraging JavaScript & HTML5, it enables developers to build apps capable of delivering – simultaneous voice/video/data sharing capability – using a browser with no plug-ins for peer-to – peer communications..</p>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -143,6 +141,7 @@
                   <button type="button" class="close" data-dismiss="modal">&times;</button>
                   <h4 class="modal-title">Settings</h4>
                 </div>
+
                 <div class="modal-body">
                   <div id="settingsContainer">
 
@@ -151,6 +150,7 @@
                     User Id <input class="form-control" type="text" id="userid" readonly> <br/>
 
                     <div class="row">
+                        <h2>Outgoing</h2>
                         <div style="display: inline-flex;">
                             <div>Audio</div> <input class="form-control" type="text" id="inAudio" style="width:100px" readonly><br/>
                         </div>
@@ -170,6 +170,7 @@
                     </div>
 
                     <div class="row">
+                        <h2>Incoming</h2>
                         <div style="display: inline-flex;">
                             <div>Audio</div> <input class="form-control" type="text" id="outAudio" style="width:100px" readonly><br/>
                         </div>
@@ -209,7 +210,7 @@
 </body>
 <link rel=stylesheet href="minScripts/webrtcdevelopment.css">
 <script src="minScripts/webrtcdevelopment.js"></script>
-<!-- <script src="scripts/start.js"></script>  -->
+<script src="scripts/start.js"></script> 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -281,7 +282,15 @@ $('document').ready(function(){
 
     var session ={
         sessionid : sessionid,
-        socketAddr: "https://localhost:8084/"
+        socketAddr: "https://localhost:8084/",
+        turn:{
+                username:"satishdhote",
+                secretkey:"07e291ca-c387-11e5-9e90-92cac6d3a4e7",
+                domain:"www.villageexperts.com",
+                application:"webrtc",
+                room:"service",
+                secure:1
+            }
     };
 
     var incoming={
@@ -300,34 +309,82 @@ $('document').ready(function(){
 
     var widgets={
         chat        :{
-                       active: true,
-                       chatContainer: ""
+                        active: true,
+                        chatContainer: "",
+                        button:{
+                            class:"form-control btn-primary buttonChatSend",
+                            html:"Send",
+                        }
                     },
         fileShare   :{
                         active : true,
-                        fileShareContainer : true,
+                        fileShareContainer : true
                     },
         screenrecord:{
                         active: true,
                         autoscreenrecord:false,
-                        screenrecordContainer: null
+                        screenrecordContainer: null,
+                        button:{
+                            class_on:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
+                            html_on:"Record",
+                            class_off:"btn btn-warning glyphicon glyphicon-refresh topPanelButton",
+                            html_off:"Stop"
+                        }
                     }, 
         screenshare : {
                         active:true,
                         screenshareContainer: "screenshareBox",
-                        extensionID: "elfbfompfpakbefoaicaeoabnnoihoac"
+                        extensionID: "elfbfompfpakbefoaicaeoabnnoihoac",
+                        button:{
+                            class_on:"btn btn-success glyphicon glyphicon-expand topPanelButton",
+                            html_on:"ScreenShare",
+                            class_off:"btn btn-warning glyphicon glyphicon-expand topPanelButton",
+                            html_off:"Stop Sharing"
+                        }
                     },
         videoRecord :{
                         active: true,
-                        videoRecordContainer: true
+                        videoRecordContainer: true,
+                        button:{
+                            class_on:"pull-right glyphicon glyphicon-facetime-video btn btn-default mediaButton",
+                            html_on:"Record",
+                            class_off:"pull-right glyphicon glyphicon-facetime-video btn btn-warning mediaButton",
+                            html_off:"Stop"
+                        }
+                    },
+        snapshot :{
+                        active: true,
+                        snapshotContainer: true,
+                        button:{
+                            class_on:"pull-right glyphicon glyphicon-camera btn btn-default mediaButton",
+                            html_on:"Snapshot"
+                        }
                     }, 
         drawCanvas  :{
                         active: true,
-                        drawCanvasContainer: true
+                        drawCanvasContainer: true,
+                        button:{
+                            class_on:"btn btn-success glyphicon glyphicon-edit topPanelButton",
+                            html_on:"Draw",
+                            class_off:"btn btn-warning glyphicon glyphicon-edit topPanelButton",
+                            html_off:"close Draw"
+                        }
                     }, 
         reconnect   :{
-                        active: true
+                        active: true,
+                        button:{
+                            class:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
+                            html:"Reconnect"
+                        }
                     }, 
+        mute        :{
+                    audio   :{
+
+                            },
+                    video : {
+
+                            }
+                    }
     };
 
     var webrtcdevobj = new WebRTCdev ( 

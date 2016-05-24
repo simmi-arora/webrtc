@@ -695,20 +695,12 @@ video {
     width: 100%;
 }
 
-.cardClass{
-    -webkit-transform-style: preserve-3d;
-    -webkit-transition-duration: 2s;
-    -webkit-transition-property: rotation;
-    margin-top: -20px;
-    margin-bottom: 0;
-    margin-left: 0px;
-    margin-right: 0px
-}
+
 
 #local {
     -webkit-backface-visibility: hidden;
     -webkit-transform: scale(-1, 1);
-    /*-webkit-transform: rotateY(180deg);*/
+    -webkit-transform: rotateY(180deg);
 }
 
 #remote {
@@ -753,7 +745,6 @@ video {
 
 .secondPanelClass , .thirdPanelClass , .fourthPanelClass , .fifthPanelClass{
     margin-bottom: -20px;
-   /* padding: 15px;*/
     margin-left: 10px;
     margin-right: 10px;
     margin-top: -20px;

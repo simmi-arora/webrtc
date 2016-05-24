@@ -26,6 +26,7 @@ var WebRTCdom= function(  _localObj , _remoteObj ){
 var WebRTCdev= function(session, incoming, outgoing, widgets){
     sessionid     = session.sessionid;
     socketAddr    = session.socketAddr;
+    turn          = session.turn;
     
     if(incoming){
         incomingAudio = incoming.audio ; 
@@ -40,41 +41,23 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
     }
 
     if(widgets){
-        var chatobj          = widgets.chat ;
-        if(chatobj){
-            chat=chatobj.active
-        }
 
-        var fileShareobj     = widgets.fileShare ;
-        if(fileShareobj){
-            fileShare= fileShareobj.active
-        }
+        if(widgets.chat)            chatobj=widgets.chat
 
-        var screenrecordobj  = widgets.screenrecord; 
-        if(screenrecordobj){
-            screenrecord= screenrecordobj.active;
-        }
+        if(widgets.fileShare)       fileShareobj = widgets.fileShare;
 
-        var screenshareobj   = widgets.screenshare;
-        if(screenshareobj){
-            screenshare=screenshareobj.active;
-        }
+        if(widgets.screenrecord)    screenrecordobj = widgets.screenrecord;
 
-        var videoRecordobj   = widgets.videoRecord; 
-        if(videoRecordobj){
-            videoRecord = videoRecordobj.active 
-            videoRecordContainer= videoRecordobj.videoRecordContainer;
-        }
+        if(widgets.screenshare)     screenshareobj = widgets.screenshare;
 
-        var reconnectobj   = widgets.reconnect; 
-        if(reconnectobj){
-            reconnect = reconnectobj.active 
-        }
+        if(widgets.snapshot)        snapshotobj = widgets.snapshot;
 
-        var drawCanvasobj   = widgets.drawCanvas; 
-        if(drawCanvasobj){
-            drawCanvas = drawCanvasobj.active 
-        }
+        if(widgets.videoRecord)     videoRecordobj = widgets.videoRecord;
+
+        if(widgets.reconnect)       reconnectobj = widgets.reconnect;
+
+        if(widgets.drawCanvas)      drawCanvasobj = widgets.drawCanvas;
+
     }
 
 };
@@ -428,17 +411,15 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
         };
         controlBar.appendChild(audioButton);
 
-        if(videoRecord){
-
-            //add the snapshot button
+        if(snapshotobj.active){
             var snapshotButton=document.createElement("div");
             snapshotButton.id="snapshotButton";
             snapshotButton.setAttribute("title", "Snapshot");
             snapshotButton.setAttribute("data-placement", "bottom");
             snapshotButton.setAttribute("data-toggle", "tooltip");
             snapshotButton.setAttribute("data-container", "body");
-            snapshotButton.className="pull-right glyphicon glyphicon-camera btn btn-default mediaButton";
-            snapshotButton.innerHTML="Snapshot";
+            snapshotButton.className=snapshotobj.button.class_on;
+            snapshotButton.innerHTML=snapshotobj.button.html_on;
             snapshotButton.onclick = function() {
                 rtcMultiConnection.streams[streamid].takeSnapshot(function(datasnapshot) {
                     for(i in webcallpeers ){
@@ -448,7 +429,7 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
                             var numFile= document.createElement("div");
                             numFile.value= webcallpeers[i].filearray.length;
 
-                            if(fileShare){
+                            if(fileShareobj.active){
                                 syncSnapshot(datasnapshot , "imagesnapshot" , snapshotname );
                                 displayList(rtcMultiConnection.uuid , rtcMultiConnection.userid ,datasnapshot , snapshotname , "imagesnapshot");
                                 displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid, datasnapshot , snapshotname, "imagesnapshot");
@@ -461,7 +442,10 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
                 });         
             };
             controlBar.appendChild(snapshotButton);
-            
+        }
+
+        if(videoRecordobj.active){
+
             //add the Record button
             var recordButton=document.createElement("div");
             recordButton.id="recordButton";
@@ -469,17 +453,19 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
             recordButton.setAttribute("data-placement", "bottom");
             recordButton.setAttribute("data-toggle", "tooltip");
             recordButton.setAttribute("data-container", "body");
-            recordButton.className="pull-right glyphicon glyphicon-facetime-video btn btn-default mediaButton";
-            recordButton.innerHTML=" Record ";
+            recordButton.className=videoRecordobj.button.class_on;
+            recordButton.innerHTML=videoRecordobj.button.html_on;
             recordButton.onclick = function() {
-                if(recordButton.innerHTML==" Record "){
-                    recordButton.innerHTML=" Stop ";
+                if(recordButton.className==videoRecordobj.button.class_on){
+                    recordButton.className=videoRecordobj.button.class_off;
+                    recordButton.innerHTML=videoRecordobj.button.html_off;
                     rtcMultiConnection.streams[streamid].startRecording({
                         audio: true,
                         video: true
                     });
-                }else if(recordButton.innerHTML==" Stop "){
-                    recordButton.innerHTML=" Record ";
+                }else if(recordButton.className==videoRecordobj.button.class_off){
+                    recordButton.className=videoRecordobj.button.class_on;
+                    recordButton.innerHTML=videoRecordobj.button.html_on;
                     rtcMultiConnection.streams[streamid].stopRecording(function (dataRecordedVideo) {
                         for(i in webcallpeers ){
                             if(webcallpeers[i].userid==rtcMultiConnection.userid){
@@ -488,7 +474,7 @@ function attachControlButtons(videoElement, streamid , controlBarName , snapshot
                                 var numFile= document.createElement("div");
                                 numFile.value= webcallpeers[i].filearray.length;
                                 var fileurl=URL.createObjectURL(dataRecordedVideo.video);
-                                if(fileShare){
+                                if(fileShareobj.active){
                                     syncSnapshot(fileurl , "videoRecording" , recordVideoname );
                                     displayList(rtcMultiConnection.uuid , rtcMultiConnection.userid  ,fileurl , recordVideoname , "videoRecording");
                                     displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , fileurl , recordVideoname, "videoRecording");
@@ -557,14 +543,10 @@ function updateWebCallView(peerInfo){
                     remoteVideos[0].hidden=false;
                 }
 
-                if(fileShare){
+                if(fileShareobj.active){
                     createFileSharingDiv(0);
                 }
             }
-            console.log("............local...................");
-            console.log(0 , remoteVideos[0]);
-            console.log(0 , webcallpeers[0]);
-            console.log("..................................");
             vi++;
             pi++;
         }else{
@@ -572,19 +554,11 @@ function updateWebCallView(peerInfo){
         }
 
         for(var v=vi;v< remoteVideos.length;v++){
-            //if(remoteVideos[v].played.length>0 && remoteVideos[v].src){
-            console.log("checking "+ v +" for length "+ remoteVideos[v].played.length);
             if(remoteVideos[v].src){
-                console.log("............existing.remotes...................");
-                console.log(vi , remoteVideos[vi]);
-                console.log(pi , webcallpeers[pi]);
-                console.log("..................................");
                 vi++;
                 pi++;
             } 
         }
-
-        console.log("Empty for new remote stream " , vi  , " || ", pi);
 
         attachMediaStream(remoteVideos[vi], webcallpeers[pi].stream);
         attachControlButtons(remoteVideos[vi] , 
@@ -601,17 +575,14 @@ function updateWebCallView(peerInfo){
             remoteVideos[vi].hidden=false;
         }
 
-        if(fileShare){
+        if(fileShareobj.active){
             createFileSharingDiv(pi);
         }
-        console.log("............remotes just added...................");
-        console.log(vi , remoteVideos[vi]);
-        console.log(pi , webcallpeers[pi]);
-        console.log("..................................");
 
-        console.log("webcallperrs " , webcallpeers);
+        console.log("webcallpeers " , webcallpeers);
     }
 }
+
 
 /**************************************************************************************
         peerconnection 
@@ -631,6 +602,8 @@ if (navigator.mozGetUserMedia) {
     RTCPeerConnection = mozRTCPeerConnection;
     RTCSessionDescription = mozRTCSessionDescription;
     RTCIceCandidate = mozRTCIceCandidate;
+    
+    if(outgoingVideo && outgoingAudio)
     getUserMedia = navigator.mozGetUserMedia.bind(navigator);
 
     attachMediaStream = function(element, stream) {
@@ -656,8 +629,8 @@ if (navigator.mozGetUserMedia) {
     webrtcDetectedVersion =  parseInt(navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./)[2]);
     RTCPeerConnection = webkitRTCPeerConnection;
     
-    if(outgoingVideo)
-        getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
+    if(outgoingVideo && outgoingAudio)
+    getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
 
     attachMediaStream = function(element, stream) {
         if (typeof element.srcObject !== 'undefined') {
@@ -757,7 +730,16 @@ function startcall() {
     //rtcMultiConnection.open();
 
     rtcMultiConnection= new RTCMultiConnection(sessionid);
-    rtcMultiConnection.iceServers = iceServers;
+    if(turn){
+        /*
+        rtcMultiConnection.iceServers = getICEServer(
+            turn.username ,turn.secretkey , turn.domain,
+            turn.application , turn.room , turn.secure); */
+        getICEServer(
+            turn.username ,turn.secretkey , turn.domain,
+            turn.application , turn.room , turn.secure); 
+    }
+    
     rtcMultiConnection.channel=sessionid;
     rtcMultiConnection.preventSSLAutoAllowed = false;
     rtcMultiConnection.autoReDialOnFailure = true;
@@ -768,11 +750,13 @@ function startcall() {
     rtcMultiConnection.maxParticipantsAllowed = 4, 
     rtcMultiConnection.setDefaultEventsForMediaElement = !1; 
     rtcMultiConnection.blobURLs = {},
+     
     rtcMultiConnection.session = {
         video: incomingVideo,
         audio: incomingAudio,
         data:  incomingData
-    }, 
+    },
+
     rtcMultiConnection.sdpConstraints.mandatory = {
         OfferToReceiveAudio: !0,
         OfferToReceiveVideo: !0
@@ -1007,8 +991,8 @@ function startcall() {
 
         displayFile(e.uuid , e.userid , e.url , e.name , e.type);
         displayList(e.uuid , e.userid , e.url , e.name , e.type);
-
     },     
+
     rtcMultiConnection.extra = {
         username: "none",
         color: "ffffff",
@@ -1035,7 +1019,6 @@ function startcall() {
 
     //Code to open  signalling channel 
     rtcMultiConnection.openSignalingChannel = function(e) {
-
         var t = e.channel || this.channel;
         socket.emit("namespace", {
             channel: t,
@@ -1062,13 +1045,13 @@ function startcall() {
     $("#channelname").val(rtcMultiConnection.channel);
     $("#userid").val(rtcMultiConnection.userid);
 
-    $("#inAudio").val(rtcMultiConnection.session.audio);
-    $("#inVideo").val(rtcMultiConnection.session.video);
-    $("#inData").val(rtcMultiConnection.session.data);
+    $("#inAudio").val(incomingAudio);
+    $("#inVideo").val(incomingVideo);
+    $("#inData").val(incomingData);
 
-    $("#outAudio").val(rtcMultiConnection.session.audio);
-    $("#outVideo").val(rtcMultiConnection.session.video);
-    $("#outData").val(rtcMultiConnection.session.data);
+    $("#outAudio").val(outgoingAudio);
+    $("#outVideo").val(outgoingVideo);
+    $("#outData").val(outgoingData);
 
     $("#btnGetPeers").click(function(){
        // $("#alllpeerinfo").html(JSON.stringify(webcallpeers,null,6));
@@ -1089,9 +1072,19 @@ function startcall() {
         console.info(rtcMultiConnection);
     });
 
+    if(chatobj.active){
+        var chatButton= document.getElementById("send");
+        chatButton.className=chatobj.button.class;
+        chatButton.innerHTML= chatobj.button.html;
+        chatButton.onclick=function(){
+            var chatInput=document.getElementById("chatInput");
+            sendChatMessage(chatInput.value);
+            chatInput.value = "";
+        }
+    }
 
-
-    if(screenrecord){
+      
+    if(screenrecordobj.active){
 
         var element = document.body;
         recorder = RecordRTC(element, {
@@ -1099,12 +1092,40 @@ function startcall() {
             showMousePointer: true
         });
 
-
         var recordButton= document.createElement("span");
-        recordButton.className="btn btn-success glyphicon glyphicon-refresh topPanelButton" ;
-        recordButton.innerHTML="Record";
+        recordButton.className= screenrecordobj.button.class_off ;
+        recordButton.innerHTML= screenrecordobj.button.html_off;
         recordButton .onclick = function() {
-            recordScreenVideo(recordButton);
+                if(recordButton.className==screenrecordobj.button.class_off){
+                    recordButton.className= screenrecordobj.button.class_on ;
+                    recordButton.innerHTML= screenrecordobj.button.html_on;
+                    recorder.startRecording();
+                }else if(recordButton.innerHTML==screenrecordobj.button.class_on){
+                    recordButton.className= screenrecordobj.button.class_off ;
+                    recordButton.innerHTML= screenrecordobj.button.html_off;
+                    recorder.stopRecording(function(videoURL) {
+                        for(i in webcallpeers ){
+                            if(webcallpeers[i].userid==rtcMultiConnection.userid){
+
+                                var recordVideoname = "recordedScreenvideo"+ new Date().getTime();
+                                webcallpeers[i].filearray.push(recordVideoname);
+                                var numFile= document.createElement("div");
+                                numFile.value= webcallpeers[i].filearray.length;
+
+                                syncVideoScreenRecording(videoURL , "videoScreenRecording" , recordVideoname);
+                                displayList(rtcMultiConnection.uuid , rtcMultiConnection.userid , videoURL, recordVideoname , "videoScreenRecording");
+                                displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , videoURL, recordVideoname , "videoScreenRecording");
+                            }
+                        }
+
+                        var recordedBlob = recorder.getBlob();
+                        recorder.getDataURL(function(dataRecordedVideo) { 
+                            console.log("dataURL " , dataRecordedVideo);
+                            /* creates a file */
+                        });
+                    });
+                    
+                }
         };
 
         var li =document.createElement("li");
@@ -1112,11 +1133,10 @@ function startcall() {
         document.getElementById("topIconHolder_ul").appendChild(li);
     }
 
-    if(screenshare){
-
+    if(screenshareobj.active){
         var screenShareButton= document.createElement("span");
-        screenShareButton.className="btn btn-success glyphicon glyphicon-expand topPanelButton";
-        screenShareButton.innerHTML="Screen Share";
+        screenShareButton.className=screenshareobj.button.class_off;
+        screenShareButton.innerHTML=screenshareobj.button.html_off;
         screenShareButton.onclick = function() {
         screenShareButton.id="screenShareButton";
             if(isScreenOn==0){
@@ -1147,11 +1167,10 @@ function startcall() {
         document.getElementById("topIconHolder_ul").appendChild(li);
     }   
 
-
-    if(reconnect){
+    if(reconnectobj.active){
         var reconnectButton= document.createElement("span");
-        reconnectButton.className="btn btn-success glyphicon glyphicon-refresh topPanelButton" ;
-        reconnectButton.innerHTML="Reconnect";
+        reconnectButton.className= reconnectobj.button.class;
+        reconnectButton.innerHTML= reconnectobj.button.html;
         reconnectButton.onclick=function(){
             var r = confirm("Do you want to reconnet ?");
             if (r == true) {
@@ -1159,18 +1178,19 @@ function startcall() {
             } else {
                //do nothing
             }
-        }
+        };
         var li =document.createElement("li");
         li.appendChild(reconnectButton);
         document.getElementById("topIconHolder_ul").appendChild(li);
     }
 
-
-    if(drawCanvas){
+    if(drawCanvasobj.active){
         var drawButton= document.createElement("span");
-        drawButton.className="btn btn-success glyphicon glyphicon-edit topPanelButton" ;
-        drawButton.innerHTML="Whiteborad";
-
+        drawButton.className=drawCanvasobj.button.class_on ;
+        drawButton.innerHTML=drawCanvasobj.button.html_on;
+        drawButton.onclick=function(){
+            document.getElementById("drawContainer").hidden=false;
+        };
         var li =document.createElement("li");
         li.appendChild(drawButton);
         document.getElementById("topIconHolder_ul").appendChild(li);
@@ -1215,8 +1235,7 @@ function addNewMessagelocal(e) {
     }
 }
 
-function sendChatMessage(){
-    var msg=document.getElementById("chatInput").value;
+function sendChatMessage(msg){
     addNewMessagelocal({
                 header: rtcMultiConnection.extra.username,
                 message: msg,
@@ -1224,19 +1243,18 @@ function sendChatMessage(){
                 color: rtcMultiConnection.extra.color
             });
     rtcMultiConnection.send({type:"chat", message:msg });
-    document.getElementById("chatInput").value = "";
 }
 
-$("#chatInput").keypress(function(e) {
+/*$("#chatInput").keypress(function(e) {
     if (e.keyCode == 13) {
         sendChatMessage();
     }
-})
+})*/
 
-$('#send').click( function() {
+/*$('#send').click( function() {
     sendChatMessage();
     return false; 
-});
+});*/
 
 //$('#chatbox').height($( "#leftVideo" ).height());
 $('#chatbox').css('max-height', $( "#leftVideo" ).height()+ 80);
@@ -1297,8 +1315,6 @@ function updateLabel(e, r) {
 
 
 
-
-
 function simulateClick(buttonName){
     document.getElementById(buttonName).click(); 
     console.log(buttonName);
@@ -1329,7 +1345,8 @@ function displayList(uuid , userid , fileurl , filename , filetype ){
     var downloadButton = document.createElement("div");
     downloadButton.setAttribute("class" , "btn btn-primary");
     downloadButton.setAttribute("style", "color:white");
-/*    if(filetype=="videoScreenRecording"){
+    /*   
+    if(filetype=="videoScreenRecording"){
         downloadButton.innerHTML='Download';
         downloadButton.onclick=function(){
             //downloadVideoScreenRecording(URL.createObjectURL(fileurl), filename+"webm");
@@ -1403,7 +1420,7 @@ function displayList(uuid , userid , fileurl , filename , filetype ){
     };
 
     var r;
-    if(fileShare && document.getElementById(elementList)!=null){
+    if(fileShareobj.active && document.getElementById(elementList)!=null){
         switch(filetype) {
             case "imagesnapshot":
                 r=document.createElement("div");
@@ -1770,37 +1787,7 @@ function syncVideoScreenRecording(data , datatype , dataname ){
 
 function recordScreenVideo(recordButton){
 
-    if(recordButton.innerHTML=="Record"){
-        recordButton.innerHTML="Stop Recording";
-        recorder.startRecording();
-    }else if(recordButton.innerHTML=="Stop Recording"){
-        recordButton.innerHTML="Record";
 
-        recorder.stopRecording(function(videoURL) {
-            /*video.src = videoURL;*/
-            console.log("videoURL " , videoURL);
-            for(i in webcallpeers ){
-                if(webcallpeers[i].userid==rtcMultiConnection.userid){
-
-                    var recordVideoname = "recordedScreenvideo"+ new Date().getTime();
-                    webcallpeers[i].filearray.push(recordVideoname);
-                    var numFile= document.createElement("div");
-                    numFile.value= webcallpeers[i].filearray.length;
-
-                    syncVideoScreenRecording(videoURL , "videoScreenRecording" , recordVideoname);
-                    displayList(rtcMultiConnection.uuid , rtcMultiConnection.userid , videoURL, recordVideoname , "videoScreenRecording");
-                    displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , videoURL, recordVideoname , "videoScreenRecording");
-                }
-            }
-
-            var recordedBlob = recorder.getBlob();
-            recorder.getDataURL(function(dataRecordedVideo) { 
-                console.log("dataURL " , dataRecordedVideo);
-                /* creates a file */
-            });
-        });
-        
-    }
 }
 
 /*try{
@@ -1842,3 +1829,37 @@ function getAllPeerInfo(){
 
 
 /******************************************************************************/
+
+function createCORSRequest(method, url) {
+    var xhr = new XMLHttpRequest();
+    if ("withCredentials" in xhr) {
+        xhr.open(method, url, true);
+    } else if (typeof XDomainRequest != "undefined") {
+        xhr = new XDomainRequest();
+        xhr.open(method, url);
+    } else {
+        xhr = null;
+    }
+    console.log(" xhr " , xhr);
+    return xhr;
+}
+
+function getICEServer(username , secretkey , domain , appname , roomname , secure){
+    console.log(" TURN -------------" , username , secretkey , domain , appname , roomname , secure);
+    var url = 'https://service.xirsys.com/ice';
+    var xhr = createCORSRequest('POST', url);
+    xhr.onload = function () {
+        iceservers=JSON.parse(xhr.responseText).d.iceServers;
+        console.log("iceserver got" ,iceservers );
+        rtcMultiConnection.iceServers=iceservers;
+    };
+    xhr.onerror = function () {
+        console.error('Woops, there was an error making xhr request.');
+    };
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    /* xhr.send('ident=muazkh&secret=59d93f26-5b89-11e5-babe-d61aeb366a63&domain=webrtcexperiment-webrtc.netdna-ssl.com&application=default&room=default&secure=1');*/
+    xhr.send('ident='+username+'&secret='+secretkey +
+        '&domain='+domain +'&application='+appname+
+        '&room='+ roomname+'&secure='+secure);
+}
