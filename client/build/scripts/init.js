@@ -40,8 +40,7 @@ var localVideo =null, miniVideo=null, remoteVideos=[];
 
 /* webrtc session intilization */
 var autoload=true;
-var sessionid=null, socketAddr="/",turn;
-var iceservers;
+var sessionid=null, socketAddr="/",turn , webrtcdevIceServers;
 /* iconsoming and outgoing call params */
 var incomingAudio =true , incomingVideo =true , incomingData = true;
 var outgoingAudio =true , outgoingVideo =true , outgoingData = true;
