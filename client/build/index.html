@@ -35,14 +35,10 @@
 
         <!-- .......................... Row 1 ................................ -->
         
-        <div id="drawContainer" class="row secondPanelClass" hidden style="margin-top:40px"> 
-            <div class="col-xs-12 filesharingBox merge" >
-                <div class="row">
-                    <div class="col-sm-6 drawBox">
-                        <div id="widget-container" class="row drawBoard"></div>
-                    </div>
-                </div>
-            </div>
+        <div id="widget-drawContainer" class="row secondPanelClass" hidden style="margin-top:40px"> 
+        </div>
+
+        <div id="widget-screenshareContainer" class="row secondPanelClass" hidden style="margin-top:40px"> 
         </div>
 
         <!-- .......................... Row 2 ................................ -->
@@ -85,11 +81,6 @@
                                 <video name="video2" autoplay="autoplay"></video>
                             </div>
                         </div>
-
-                        <!-- when no remote -->
-                        <div id="screenshareBox" hidden=true class="screenshareVideoClass">
-                        </div>
-
                 </div>
             </div> 
         </div>
@@ -335,7 +326,7 @@ $('document').ready(function(){
                     }, 
         screenshare : {
                         active:true,
-                        screenshareContainer: "screenshareBox",
+                        screenshareContainer: "widget-screenshareContainer",
                         extensionID: "elfbfompfpakbefoaicaeoabnnoihoac",
                         button:{
                             shareButton:{
@@ -372,7 +363,7 @@ $('document').ready(function(){
                     }, 
         drawCanvas  :{
                         active: true,
-                        drawCanvasContainer: true,
+                        drawCanvasContainer: "widget-drawContainer",
                         button:{
                             class_on:"btn btn-warning glyphicon glyphicon-edit topPanelButton",
                             html_on:"close Draw",

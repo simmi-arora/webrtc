@@ -28,8 +28,10 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
     socketAddr    = session.socketAddr;
     turn          = session.turn;
     
-    getICEServer( turn.username ,turn.secretkey , turn.domain,
-    turn.application , turn.room , turn.secure); 
+    if(turn){
+        getICEServer( turn.username ,turn.secretkey , turn.domain,
+                        turn.application , turn.room , turn.secure); 
+    }
 
     if(incoming){
         incomingAudio = incoming.audio ; 
@@ -63,7 +65,6 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
 
         if(widgets.mute)            muteobj=widgets.mute;
     }
-
 };
 
 function shownotification(message){
@@ -727,17 +728,18 @@ iceServers.push({
     username: 'webrtc'
 });*/
 
+var myVar = setInterval(startcall, 1000);
 
 function startcall() {
     //rtcMultiConnection.open();
 
     rtcMultiConnection= new RTCMultiConnection(sessionid);
     if(turn){
-        /*
-        rtcMultiConnection.iceServers = getICEServer(
-            turn.username ,turn.secretkey , turn.domain,
-            turn.application , turn.room , turn.secure); 
-        */
+        if(!webrtcdevIceServers) {
+            return;
+        }else{
+            clearInterval(myVar)
+        }
         rtcMultiConnection.iceServers=webrtcdevIceServers; 
     }
     
@@ -1128,16 +1130,15 @@ function startcall() {
     if(screenshareobj.active){
 
         detectExtensionScreenshare(screenshareobj.extensionID);
+        webrtcdevScreenShare();
 
         var screenShareButton= document.createElement("span");
         screenShareButton.className=screenshareobj.button.shareButton.class_off;
         screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
         screenShareButton.id="screenShareButton";
-        screenShareButton.onclick = function() {
-            webrtcdevScreenShare();
+        screenShareButton.onclick = function() {    
             if(screenShareButton.className==screenshareobj.button.shareButton.class_off){
                 screen.share('screenShareVilageExperts');
-                /*$("#"+screenshareobj.screenshareContainer).hide();*/
                 screenShareButton.className=screenshareobj.button.shareButton.class_on;
                 screenShareButton.innerHTML=screenshareobj.button.shareButton.html_on;
             }else if(screenShareButton.className==screenshareobj.button.shareButton.class_on){
@@ -1157,14 +1158,13 @@ function startcall() {
         viewScreenShareButton.id="viewScreenShareButton";
         viewScreenShareButton.onclick = function() {
             if(viewScreenShareButton.className==screenshareobj.button.viewButton.class_off){
-                $("#"+screenshareobj.screenshareContainer).show();
                 screen.view({roomid:screen_roomid , userid:screen_userid});
-                screenShareButton.className=screenshareobj.button.viewButton.class_on;
-                screenShareButton.innerHTML=screenshareobj.button.viewButtonhtml_on;
+                viewScreenShareButton.className=screenshareobj.button.viewButton.class_on;
+                viewScreenShareButton.innerHTML=screenshareobj.button.viewButton.html_on;
             }else if(viewScreenShareButton.className==screenshareobj.button.viewButton.class_on){
                 screen.leave();
-                screenShareButton.className=screenshareobj.button.viewButton.class_off;
-                screenShareButton.innerHTML=screenshareobj.button.viewButton.html_off;
+                viewScreenShareButton.className=screenshareobj.button.viewButton.class_off;
+                viewScreenShareButton.innerHTML=screenshareobj.button.viewButton.html_off;
             }
         };
 
@@ -1679,11 +1679,12 @@ function webrtcdevScreenShare(){
     try{
         screen = new Screen("screen"+rtcMultiConnection.channel);
 
+        console.log("----------- screen" , screen);
         // get shared screens
         screen.onaddstream = function(e) {
-            document.getElementById("screenshare").innerHTML="";
-            document.getElementById("screenshare").appendChild(e.video);
-            document.getElementById("screenshare").hidden=false;
+            document.getElementById(screenshareobj.screenshareContainer).innerHTML="";
+            document.getElementById(screenshareobj.screenshareContainer).appendChild(e.video);
+            document.getElementById(screenshareobj.screenshareContainer).hidden=false;
             
             screen.openSignalingChannel = function(callback) {
                 var n= io.connect("/"+rtcMultiConnection.channel);
@@ -1694,25 +1695,14 @@ function webrtcdevScreenShare(){
 
         screen.check();
 
-        // to stop sharing screen
-        // screen.leave();
-
         // if someone leaves; just remove his video
         screen.onuserleft = function(userid) {
-            document.getElementById("screenshare").hidden=true;
+            document.getElementById(screenshareobj.screenshareContainer).hidden=true;
             /*       
             var video = document.getElementById(userid);
             if(video) {
                // video.parentNode.removeChild(video);
             }*/
-        };
-
-
-        screen.onscreen = function(screen) {
-            console.log( " onscreen " , screen );
-            if (self.detectedRoom) return;
-            self.detectedRoom = true;
-            self.view(screen);
         };
 
     }catch(e){
@@ -1721,12 +1711,16 @@ function webrtcdevScreenShare(){
         $("#viewScreenShareButton").hide();
         console.log(e);
     }
-
 }
+screen.onscreen = function(screen) {
+    alert("onscreen");
+    if (self.detectedRoom) return;
+    self.detectedRoom = true;
+    self.view(screen);
 
+};
 
 function detectExtensionScreenshare(extensionID){
-
     var extensionid = 'elfbfompfpakbefoaicaeoabnnoihoac';
     rtcMultiConnection.DetectRTC.screen.getChromeExtensionStatus(extensionid, function(status) {
         alert(status);
@@ -1752,7 +1746,6 @@ function detectExtensionScreenshare(extensionID){
         // hide inline-install button
         alert("onScreenCapturingExtensionAvailable , hide inline installation button ");
     };
-
 
     // a middle-agent between public API and the Signaler object
     window.Screen = function(channel) {
@@ -1839,7 +1832,6 @@ function detectExtensionScreenshare(extensionID){
     };
 
     // it is a backbone objectc
-
     function Signaler(root, roomid) {
         var socket;
 
@@ -1865,14 +1857,14 @@ function detectExtensionScreenshare(extensionID){
         this.onmessage = function(message) {
             // if new room detected
             console.log(signaler.sentParticipationRequest);
-            console.log(roomid);
-            console.log(message);
+            console.log(roomid , " " , message);
             if(message.roomid!=null && message.userid!=null){
                 screen_roomid =message.roomid;
                 screen_userid =message.userid;
+                shownotification(" Incoming shared screen ");
             }
             if (message.roomid == roomid && message.broadcasting && !signaler.sentParticipationRequest){
-                root.onscreen(message);
+                screen.onscreen(message);
             }else {
                 // for pretty logging
                 console.debug(JSON.stringify(message, function(key, value) {
@@ -1960,7 +1952,7 @@ function detectExtensionScreenshare(extensionID){
                 });
             },
             onaddstream: function(stream, _userid) {
-                console.debug('onaddstream', '>>>>>>', stream);
+                alert('onaddstream', '>>>>>>', stream);
                 //document.getElementById("viewScreenShareButton").disabled=false;
                 document.getElementById("viewScreenShareButton").removeAttribute("disabled");
 
