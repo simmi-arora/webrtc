@@ -1,15 +1,3 @@
-/*
-getScreenId(function (error, sourceId, screen_constraints) {
-    // error    == null || 'permission-denied' || 'not-installed' || 'installed-disabled' || 'not-chrome'
-    // sourceId == null || 'string' || 'firefox'
-    
-    if(sourceId == 'firefox') {
-        navigator.mozGetUserMedia(screen_constraints, onSuccess, onFailure);
-    }
-    else navigator.webkitGetUserMedia(screen_constraints, onSuccess, onFailure);
-});
-*/
-
 (function() {
     window.getScreenId = function(callback) {
         // for Firefox:
