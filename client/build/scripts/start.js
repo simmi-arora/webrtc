@@ -704,7 +704,7 @@ ICE
 
 var iceServers=[];
 
-iceServers.push({
+/*iceServers.push({
     url: 'stun:stun.l.google.com:19302'
 });
 
@@ -722,7 +722,7 @@ iceServers.push({
     url: 'turn:turn.anyfirewall.com:443?transport=tcp',
     credential: 'webrtc',
     username: 'webrtc'
-});
+});*/
 
 function startcall() {
     //rtcMultiConnection.open();
@@ -732,8 +732,9 @@ function startcall() {
         /*
         rtcMultiConnection.iceServers = getICEServer(
             turn.username ,turn.secretkey , turn.domain,
-            turn.application , turn.room , turn.secure); */
-        getICEServer(
+            turn.application , turn.room , turn.secure); 
+        */
+        rtcMultiConnection.iceServers=getICEServer(
             turn.username ,turn.secretkey , turn.domain,
             turn.application , turn.room , turn.secure); 
     }
@@ -1671,10 +1672,6 @@ add code hetre for redial
 screenshare
 ***************************************/
 
-
-
-
-
 function webrtcdevScreenShare(){
 
     try{
@@ -1751,8 +1748,8 @@ function detectExtensionScreenshare(extensionID){
     // if following function is defined, it will be called if screen capturing extension seems available
     rtcMultiConnection.DetectRTC.screen.onScreenCapturingExtensionAvailable = function() {
         // hide inline-install button
+        alert("hide inline isntallation button ");
     };
-
 
 
     // a middle-agent between public API and the Signaler object
@@ -2465,7 +2462,7 @@ function getICEServer(username , secretkey , domain , appname , roomname , secur
     xhr.onload = function () {
         iceservers=JSON.parse(xhr.responseText).d.iceServers;
         console.log("iceserver got" ,iceservers );
-        rtcMultiConnection.iceServers=iceservers;
+        return iceservers;
     };
     xhr.onerror = function () {
         console.error('Woops, there was an error making xhr request.');
