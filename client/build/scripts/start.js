@@ -28,6 +28,9 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
     socketAddr    = session.socketAddr;
     turn          = session.turn;
     
+    getICEServer( turn.username ,turn.secretkey , turn.domain,
+    turn.application , turn.room , turn.secure); 
+
     if(incoming){
         incomingAudio = incoming.audio ; 
         incomingVideo = incoming.video ; 
@@ -724,6 +727,7 @@ iceServers.push({
     username: 'webrtc'
 });*/
 
+
 function startcall() {
     //rtcMultiConnection.open();
 
@@ -734,9 +738,7 @@ function startcall() {
             turn.username ,turn.secretkey , turn.domain,
             turn.application , turn.room , turn.secure); 
         */
-        rtcMultiConnection.iceServers=getICEServer(
-            turn.username ,turn.secretkey , turn.domain,
-            turn.application , turn.room , turn.secure); 
+        rtcMultiConnection.iceServers=webrtcdevIceServers; 
     }
     
     rtcMultiConnection.channel=sessionid;
@@ -1748,7 +1750,7 @@ function detectExtensionScreenshare(extensionID){
     // if following function is defined, it will be called if screen capturing extension seems available
     rtcMultiConnection.DetectRTC.screen.onScreenCapturingExtensionAvailable = function() {
         // hide inline-install button
-        alert("hide inline isntallation button ");
+        alert("onScreenCapturingExtensionAvailable , hide inline installation button ");
     };
 
 
@@ -2156,63 +2158,7 @@ function detectExtensionScreenshare(extensionID){
     var isChrome = !!navigator.webkitGetUserMedia;
     var isMobileDevice = !!navigator.userAgent.match(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile/i);
 
-    var iceServers = [];
-
-    iceServers.push({
-        url: 'stun:stun.l.google.com:19302'
-    });
-
-    iceServers.push({
-        url: 'stun:stun.anyfirewall.com:3478'
-    });
-
-    iceServers.push({
-        url: 'turn:turn.bistri.com:80',
-        credential: 'homeo',
-        username: 'homeo'
-    });
-
-    iceServers.push({
-        url: 'turn:turn.anyfirewall.com:443?transport=tcp',
-        credential: 'webrtc',
-        username: 'webrtc'
-    });
-
-    iceServers = {
-        iceServers: iceServers
-    };
-
-    var iceFrame, loadedIceFrame;
-
-    function loadIceFrame(callback, skip) {
-        if (loadedIceFrame) return;
-        if (!skip) return loadIceFrame(callback, true);
-
-        loadedIceFrame = true;
-
-        var iframe = document.createElement('iframe');
-        iframe.onload = function() {
-            iframe.isLoaded = true;
-
-            window.addEventListener('message', function(event) {
-                window.iceServers = event.data.iceServers;
-
-                if (!event.data || !event.data.iceServers) return;
-                callback(event.data.iceServers);
-            });
-
-            iframe.contentWindow.postMessage('get-ice-servers', '*');
-        };
-        /*iframe.src = 'https://cdn.webrtc-experiment.com/getIceServers/';*/
-        iframe.src = 'getIceServers.html';
-        iframe.style.display = 'none';
-        (document.body || document.documentElement).appendChild(iframe);
-    };
-
-    loadIceFrame(function(_iceServers) {
-        iceServers.iceServers = iceServers.iceServers.concat(_iceServers);
-        //console.log('iceServers', JSON.stringify(iceServers.iceServers, null, '\t'));
-    });
+    var iceServers = webrtcdevIceServers;
 
     var optionalArgument = {
         optional: [{
@@ -2460,9 +2406,8 @@ function getICEServer(username , secretkey , domain , appname , roomname , secur
     var url = 'https://service.xirsys.com/ice';
     var xhr = createCORSRequest('POST', url);
     xhr.onload = function () {
-        iceservers=JSON.parse(xhr.responseText).d.iceServers;
-        console.log("iceserver got" ,iceservers );
-        return iceservers;
+        webrtcdevIceServers=JSON.parse(xhr.responseText).d.iceServers;
+        console.log("iceserver got" ,webrtcdevIceServers );
     };
     xhr.onerror = function () {
         console.error('Woops, there was an error making xhr request.');
