@@ -85,7 +85,7 @@
         this.check = initSignaler;
     };
 
-    // it is a backbone object
+    // it is a backbone objectc
 
     function Signaler(root, roomid) {
         var socket;

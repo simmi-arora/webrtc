@@ -2,6 +2,7 @@
 <head>
     <title>WebRTC Call</title>
     <meta name="google-site-verification" content="8NqEkVsX8mkRCn13Qov4K0njgF0T6t97_a-NZNIXkpE" />
+    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/elfbfompfpakbefoaicaeoabnnoihoac">
     <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel=stylesheet href="minScripts/webrtcdevelopment_header.css">
@@ -34,7 +35,7 @@
 
         <!-- .......................... Row 1 ................................ -->
         
-        <div id="drawContainer" class="row secondPanelClass" hidden> 
+        <div id="drawContainer" class="row secondPanelClass" hidden style="margin-top:40px"> 
             <div class="col-xs-12 filesharingBox merge" >
                 <div class="row">
                     <div class="col-sm-6 drawBox">
@@ -336,10 +337,18 @@ $('document').ready(function(){
                         screenshareContainer: "screenshareBox",
                         extensionID: "elfbfompfpakbefoaicaeoabnnoihoac",
                         button:{
-                            class_on:"btn btn-warning  glyphicon glyphicon-expand topPanelButton",
-                            html_on:"Stop Sharing",
-                            class_off:"btn btn-success glyphicon glyphicon-expand topPanelButton",
-                            html_off:"ScreenShare"
+                            shareButton:{
+                                class_on:"btn btn-warning  glyphicon glyphicon-expand topPanelButton",
+                                html_on:"Stop Sharing",
+                                class_off:"btn btn-success glyphicon glyphicon-expand topPanelButton",
+                                html_off:"ScreenShare"
+                            },
+                            viewButton:{
+                                class_on:"btn btn-warning  glyphicon glyphicon-expand topPanelButton",
+                                html_on:"Stop Viewing",
+                                class_off:"btn btn-success glyphicon glyphicon-expand topPanelButton",
+                                html_off:"View Screen"
+                            }
                         }
                     },
         videoRecord :{

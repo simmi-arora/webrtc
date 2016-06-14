@@ -50,7 +50,7 @@ var chatobj=false , chatContainer= null;
 
 var fileshareobj=false ;
 
-var screenrecordobj =false;
+var screenrecordobj =false ;
 
 var snapshotobj=false ;
 
