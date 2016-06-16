@@ -7,8 +7,8 @@
  
     <body>
         <h1>Communication with socket.io!</h1>
-        <p><input type="button" value="Poke the server" id="poke" /></p>
-        
+        <p><input type="button" value="Poke the server" id="channels" /></p>
+        <p><input type="button" value="Poke the server" id="channel_clients" /></p>
         <pre>
             <code id="channelsFeed"></code>
         </pre>
@@ -25,9 +25,19 @@
                 document.getElementById("channelsFeed").innerHTML=JSON.stringify(message, null, 4);
             });
 
-            $('#poke').click(function () {
-                socket.emit('admin_enquire', 'give all channels info');
+            $('#channels').click(function () {
+                socket.emit('admin_enquire', {ask:'channels'});
             });
+
+
+            $('#channel_clients').click(function () {
+                socket.emit('admin_enquire', 
+                    {
+                        ask:'channel_clients',
+                        channel: 'https172162010780841524489749781952'
+                    });
+            });
+
         </script>
     </body>
 </html>

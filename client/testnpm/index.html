@@ -727,22 +727,8 @@ video {
 
 
 </body>
-    <script src="https://cdn.webrtc-experiment.com/screenshot.js"></script>
-    <script src="https://cdn.webrtc-experiment.com/RecordRTC/Whammy.js"></script>
-    <script src="https://cdn.webrtc-experiment.com/RecordRTC/CanvasRecorder.js"></script>
-    <script src="https://cdn.webrtc-experiment.com/RecordRTC/MediaStreamRecorder.js"></script>
-    <script src="https://cdn.WebRTC-Experiment.com/gumadapter.js"></script>
-
-
-    <script src="scripts/init.js"></script>
-    <script src="scripts/socket.io.js"></script>
-    <script src="scripts/firebase.js"></script>
-    <script src="scripts/RTCMultiConnection.js"></script>
-    <script src="scripts/canvas-designer-widget.js"></script>
-    <script src="scripts/getScreenId.js"></script>
-    <script src="scripts/screen.js"></script>
-    <script src="scripts/start.js"></script> 
-
+<link rel=stylesheet href="https://ec2-54-193-124-35.us-west-1.compute.amazonaws.com:8084/minScripts/webrtcdevelopment.css">
+<script src="https://ec2-54-193-124-35.us-west-1.compute.amazonaws.com:8084/minScripts/webrtcdevelopment.js"> </script>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -753,5 +739,123 @@ video {
   ga('send', 'test page view ');
 
 </script>
+<script type="text/javascript">
+    
 
+    $('document').ready(function(){
+
+    sessionid= init(true);
+
+    var searchParams = new URLSearchParams(window.location);
+    var role="participant",out_A=true, out_V=true ;
+    var webrtcdomobj;
+
+    if(searchParams.get('audio')=="0"){
+        out_A=false;
+    }
+
+    if(searchParams.get('video')=="0"){
+        out_V=false;
+    }
+
+    if(searchParams.get('role')=="inspector"){
+        role=searchParams.get('role');
+
+        var local={
+            localVideo: null,
+            videoClass:"",
+            userDisplay:false,
+            userMetaDisplay:false  
+        };
+
+        var remote={
+            remotearr: ["video1" , "video2"],
+            videoClass:"",
+            userDisplay:false,
+            userMetaDisplay:false    
+        };
+
+        webrtcdomobj= new WebRTCdom(
+            local, remote
+        );    
+        
+        sessionid = sessionid.substring(0,sessionid.indexOf("appname") );
+    }else{
+        var local={
+            localVideo: "localVideo",
+            videoClass:"",
+            userDisplay:false,
+            userMetaDisplay:false  
+        };
+
+        var remote={
+            remotearr: ["video1" , "video2"],
+            videoClass:"",
+            userDisplay:false,
+            userMetaDisplay:false    
+        };
+
+        webrtcdomobj= new WebRTCdom(
+            local,remote
+        );
+    } 
+
+    var session ={
+        sessionid : sessionid,
+        socketAddr: "https://localhost:8084/"
+    };
+
+    var incoming={
+        audio: true,
+        video: true,
+        data: true,
+        screen: true
+    };
+
+    var outgoing={
+        audio: out_A,
+        video: out_V,
+        data: true,
+        screen: true
+    };
+
+    var widgets={
+        chat        :{
+                       active: true,
+                       chatContainer: ""
+                    },
+        fileShare   :{
+                        active : true,
+                        fileShareContainer : true,
+                    },
+        screenrecord:{
+                        active: true,
+                        autoscreenrecord:false,
+                        screenrecordContainer: null
+                    }, 
+        screenshare : {
+                        active:true,
+                        screenshareContainer: "screenshareBox",
+                        extensionID: "elfbfompfpakbefoaicaeoabnnoihoac"
+                    },
+        videoRecord :{
+                        active: true,
+                        videoRecordContainer: true
+                    }, 
+        drawCanvas  :{
+                        active: true,
+                        drawCanvasContainer: true
+                    }, 
+        reconnect   :{
+                        active: true
+                    }, 
+    };
+
+    var webrtcdevobj = new WebRTCdev ( 
+        session,  incoming,  outgoing ,  widgets
+    );
+
+    startcall();
+});
+</script>
 </html>
