@@ -21,21 +21,20 @@ var file = new _static.Server('./client/build', {
     indexFile: "index.html"
 });
 
-/*var options = {
-  key: fs.readFileSync('/etc/apache2/ssl/villageexpert.key'),
-  cert: fs.readFileSync('/etc/apache2/ssl/edac0f74577a2bdf.crt'),
+var options = {
+  key: fs.readFileSync('/etc/apache2/ssl/villageexperts.key'),
+  cert: fs.readFileSync('/etc/apache2/ssl/ed0be9191f0a4d2e.crt'),
   ca: fs.readFileSync('/etc/apache2/ssl/gd_bundle-g2-g1.crt'),
   requestCert: true,
   rejectUnauthorized: false
 };
-*/
-var options = {
+/*var options = {
   key: fs.readFileSync('ssl_certs/server.key'),
   cert: fs.readFileSync('ssl_certs/server.crt'),
   ca: fs.readFileSync('ssl_certs/ca.crt'),
   requestCert: true,
   rejectUnauthorized: false
-};
+};*/
 var app = https.createServer(options, function(request, response){
         request.addListener('end', function () {
         file.serve(request, response);
