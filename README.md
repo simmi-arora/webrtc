@@ -1,6 +1,8 @@
 # webrtc
 web real time communication platform 
 
+![alt webrtc development ] (http://s20.postimg.org/sywx5rjx5/webrtc_development_logo_1_1.png)
+
 Technologies used 
 
 1. WebRTC 
