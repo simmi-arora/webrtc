@@ -28,6 +28,7 @@ var options = {
   requestCert: true,
   rejectUnauthorized: false
 };
+
 /*var options = {
   key: fs.readFileSync('ssl_certs/server.key'),
   cert: fs.readFileSync('ssl_certs/server.crt'),
