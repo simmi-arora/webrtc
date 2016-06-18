@@ -1157,27 +1157,6 @@ function startcall() {
         var li =document.createElement("li");
         li.appendChild(screenShareButton);
         document.getElementById("topIconHolder_ul").appendChild(li);
-
-        var viewScreenShareButton= document.createElement("span");
-        viewScreenShareButton.className=screenshareobj.button.viewButton.class_off;
-        viewScreenShareButton.innerHTML=screenshareobj.button.viewButton.html_off;;
-        viewScreenShareButton.id="viewScreenShareButton";
-        viewScreenShareButton.onclick = function() {
-            console.log("viewScreenShareButton" , screen);
-            if(viewScreenShareButton.className==screenshareobj.button.viewButton.class_off){
-                screen.view({roomid:screen_roomid , userid:screen_userid});
-                viewScreenShareButton.className=screenshareobj.button.viewButton.class_on;
-                viewScreenShareButton.innerHTML=screenshareobj.button.viewButton.html_on;
-            }else if(viewScreenShareButton.className==screenshareobj.button.viewButton.class_on){
-                /*screen.leave();*/
-                viewScreenShareButton.className=screenshareobj.button.viewButton.class_off;
-                viewScreenShareButton.innerHTML=screenshareobj.button.viewButton.html_off;
-            }
-        };
-
-        var li =document.createElement("li");
-        li.appendChild(viewScreenShareButton);
-        document.getElementById("topIconHolder_ul").appendChild(li);
     }   
 
     if(reconnectobj.active){
@@ -1683,7 +1662,7 @@ function webrtcdevScreenShare(){
         console.log("----------- screen" , screen);
         // get shared screens
         screen.onaddstream = function(e) {
-            alert(e.type);
+            
             document.getElementById(screenshareobj.screenshareContainer).innerHTML="";
             document.getElementById(screenshareobj.screenshareContainer).appendChild(e.video);
             document.getElementById(screenshareobj.screenshareContainer).hidden=false;
@@ -1694,6 +1673,28 @@ function webrtcdevScreenShare(){
                     return n.on('message', callback);
                 };
             }
+
+            var viewScreenShareButton= document.createElement("span");
+            viewScreenShareButton.className=screenshareobj.button.viewButton.class_on;
+            viewScreenShareButton.innerHTML=screenshareobj.button.viewButton.html_on;;
+            viewScreenShareButton.id="viewScreenShareButton";
+            viewScreenShareButton.onclick = function() {
+                if(viewScreenShareButton.className==screenshareobj.button.viewButton.class_off){
+                    /*screen.view({roomid:screen_roomid , userid:screen_userid});*/
+                     document.getElementById(screenshareobj.screenshareContainer).hidden=false;
+                    viewScreenShareButton.className=screenshareobj.button.viewButton.class_on;
+                    viewScreenShareButton.innerHTML=screenshareobj.button.viewButton.html_on;
+                }else if(viewScreenShareButton.className==screenshareobj.button.viewButton.class_on){
+                    /*screen.leave();*/
+                     document.getElementById(screenshareobj.screenshareContainer).hidden=true;
+                    viewScreenShareButton.className=screenshareobj.button.viewButton.class_off;
+                    viewScreenShareButton.innerHTML=screenshareobj.button.viewButton.html_off;
+                }
+            };
+
+            var li =document.createElement("li");
+            li.appendChild(viewScreenShareButton);
+            document.getElementById("topIconHolder_ul").appendChild(li);
 
         };
 
@@ -1861,7 +1862,7 @@ function detectExtensionScreenshare(extensionID){
             if(message.roomid!=null && message.userid!=null){
                 screen_roomid =message.roomid;
                 screen_userid =message.userid;
-                shownotification(" Incoming shared screen ");
+                /*shownotification(" Incoming shared screen ");*/
             }
             if (message.roomid == roomid && message.broadcasting && !signaler.sentParticipationRequest){
                 screen.onscreen(message);
