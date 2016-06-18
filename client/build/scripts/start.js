@@ -1683,6 +1683,7 @@ function webrtcdevScreenShare(){
         console.log("----------- screen" , screen);
         // get shared screens
         screen.onaddstream = function(e) {
+            alert(e.type);
             document.getElementById(screenshareobj.screenshareContainer).innerHTML="";
             document.getElementById(screenshareobj.screenshareContainer).appendChild(e.video);
             document.getElementById(screenshareobj.screenshareContainer).hidden=false;
@@ -1757,7 +1758,6 @@ function detectExtensionScreenshare(extensionID){
 
         // get alerted for each new meeting
         this.onscreen = function(screen) {
-            alert( " onscreen 2 " + screen );
             if (self.detectedRoom) return;
             self.detectedRoom = true;
             self.view(screen);
@@ -1811,7 +1811,6 @@ function detectExtensionScreenshare(extensionID){
         this.share = function(roomid) {
             captureUserMedia(function() {
                 !signaler && initSignaler(roomid);
-                alert("share new screen "+roomid); 
                 signaler.broadcast({
                     roomid: (roomid && roomid.length) || self.channel,
                     userid: self.userid
@@ -1822,7 +1821,6 @@ function detectExtensionScreenshare(extensionID){
         // view pre-shared screens
         this.view = function(room) {
             !signaler && initSignaler();
-            alert("view and join new screen "+ room.roomid); 
             signaler.join({
                 to: room.userid,
                 roomid: room.roomid
