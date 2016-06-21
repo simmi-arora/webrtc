@@ -1196,7 +1196,6 @@ function startcall() {
         li.appendChild(drawButton);
         document.getElementById("topIconHolder_ul").appendChild(li);
     }
-
 };
 
 /********************************************************************************8
@@ -1269,7 +1268,6 @@ File sharing
 var progressHelper = {};
 
 function addProgressHelper(uuid , userid , filename , fileSize,  progressHelperclassName ){
-
     for(i in webcallpeers ){
         if(webcallpeers[i].userid==userid){
             var n = document.createElement("div");
