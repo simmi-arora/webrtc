@@ -34,13 +34,16 @@ module.exports = function(app , properties) {
             console.log("------------new channel------------- ", data.channel , " by " , data.sender);
             channels[data.channel] = {
                 channel: data.channel,
-                users:[data.sender]
+                timestamp: new Date().toLocaleString(),
+                users:[data.sender],
+                status:"active",
+                endtimestamp:0
             };     
 
         });
 
         socket.on('join-channel', function (data) {  
-            console.log("------------new channel------------- ", data.channel , " by " , data.sender);
+            console.log("------------join channel------------- ", data.channel , " by " , data.sender);
             channels[data.channel].users.push(data.sender);    
         });
 
@@ -56,7 +59,27 @@ module.exports = function(app , properties) {
         socket.on("admin_enquire",function(data){
             switch (data.ask){
                 case "channels":
-                    socket.emit('response_to_admin_enquire', channels);
+                    socket.emit('response_to_admin_enquire', {
+                        response:'channels',
+                        channels:channels,
+                        format:data.format
+                    });
+                break;
+                case "users":
+                    var users=[];
+                    console.log("Request for users by Admin");
+                    for (i in Object.keys(channels)) { 
+                        var key=Object.keys(channels)[i];
+                        for (j in channels[key].users) {
+                            users.push(channels[key].users[j]);
+                        }
+                    }
+                    console.log(users);
+                    socket.emit('response_to_admin_enquire', {
+                        response:'users',
+                        users:users,
+                        format:data.format
+                    });
                 break;
                 case "channel_clients":
                     socket.emit('response_to_admin_enquire', io.of('/' + data.channel).clients());
