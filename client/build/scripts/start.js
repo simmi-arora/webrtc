@@ -1149,6 +1149,10 @@ function startcall() {
                 screenShareButton.innerHTML=screenshareobj.button.shareButton.html_on;
             }else if(screenShareButton.className==screenshareobj.button.shareButton.class_on){
                 screen.leave();
+                
+                var elem = document.getElementById("viewScreenShareButton");
+                elem.parentElement.removeChild(elem);
+                
                 screenShareButton.className=screenshareobj.button.shareButton.class_off;
                 screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
             }
@@ -1679,12 +1683,12 @@ function webrtcdevScreenShare(){
             viewScreenShareButton.onclick = function() {
                 if(viewScreenShareButton.className==screenshareobj.button.viewButton.class_off){
                     /*screen.view({roomid:screen_roomid , userid:screen_userid});*/
-                     document.getElementById(screenshareobj.screenshareContainer).hidden=false;
+                    document.getElementById(screenshareobj.screenshareContainer).hidden=false;
                     viewScreenShareButton.className=screenshareobj.button.viewButton.class_on;
                     viewScreenShareButton.innerHTML=screenshareobj.button.viewButton.html_on;
                 }else if(viewScreenShareButton.className==screenshareobj.button.viewButton.class_on){
                     /*screen.leave();*/
-                     document.getElementById(screenshareobj.screenshareContainer).hidden=true;
+                    document.getElementById(screenshareobj.screenshareContainer).hidden=true;
                     viewScreenShareButton.className=screenshareobj.button.viewButton.class_off;
                     viewScreenShareButton.innerHTML=screenshareobj.button.viewButton.html_off;
                 }
