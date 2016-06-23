@@ -49,7 +49,7 @@ var CanvasDesigner = (function() {
             iframe = document.createElement('iframe');
             iframe.id="drawboard";
             iframe.src = 'widget.html?tools=' + JSON.stringify(tools) + '&selectedIcon=' + selectedIcon;
-            iframe.style.width = '100%';
+            iframe.style.width ="100%";
             iframe.style.height="100%";
             iframe.style.border = 0;
             parentNode.appendChild(iframe);

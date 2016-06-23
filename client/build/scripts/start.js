@@ -598,7 +598,6 @@ var webrtcDetectedVersion = null;
 var rtcMultiConnection ;
 
 if (navigator.mozGetUserMedia) {
-    console.log("This appears to be Firefox");
     webrtcDetectedBrowser = "firefox";
     webrtcDetectedVersion = parseInt(navigator.userAgent.match(/Firefox\/([0-9]+)\./)[1]);
     RTCPeerConnection = mozRTCPeerConnection;
@@ -626,7 +625,6 @@ if (navigator.mozGetUserMedia) {
         return [];
     };
 } else if (navigator.webkitGetUserMedia) {
-    console.log("This appears to be Chrome");
     webrtcDetectedBrowser = "chrome";
     webrtcDetectedVersion =  parseInt(navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./)[2]);
     RTCPeerConnection = webkitRTCPeerConnection;
@@ -680,10 +678,8 @@ if (navigator.mozGetUserMedia) {
 // rtcMultiConnection.connect();
 
 opneWebRTC=function(){
-
     shownotification("Making a new session ");
     rtcMultiConnection.open();
-
     socket.emit("new-channel", {
         channel: rtcMultiConnection.channel,
         sender: rtcMultiConnection.userid
@@ -692,12 +688,10 @@ opneWebRTC=function(){
 
 joinWebRTC=function(){
     shownotification("Joing an existing session ");
-
     rtcMultiConnection.join({
         audio: outgoingVideo,
         video: outgoingVideo
     });
-
     socket.emit("join-channel", {
         channel: rtcMultiConnection.channel,
         sender: rtcMultiConnection.userid
@@ -843,7 +837,6 @@ function startcall() {
         }else if(e.data.stoppedTyping){
             void(whoIsTyping.innerHTML = "");
         }else{
-
             switch(e.data.type){
                 case "chat":
                     whoIsTyping.innerHTML = "";
@@ -893,7 +886,6 @@ function startcall() {
                     alert(" unrecognizable message from peer  ");
                     console.log(" unrecognizable message from peer  ",e);
                 break;
-
             }
 
         } 
@@ -982,14 +974,12 @@ function startcall() {
         r && (r.progress.value = e.currentPosition || e.maxChunks || r.progress.max, updateLabel(r.progress, r.label))
     }, 
 
-
     rtcMultiConnection.onFileEnd = function(e) {
         /*
         if (!progressHelper[e.uuid]) {
             console.error("No such progress-helper element exists.", e);
             //return void console.error("No such progress-helper element exists.", e);
         }*/
-        
         for(i in webcallpeers ){
             if(webcallpeers[i].userid==e.userid){
                 webcallpeers[i].filearray.push(e.name);
