@@ -1,5 +1,4 @@
 node_modules
-gulpfile.js
 client/build/scripts
 client/build/css
 client/build/drawboard
