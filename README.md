@@ -3,14 +3,18 @@ web real time communication platform
 
 ![alt webrtc development ] (http://s20.postimg.org/sywx5rjx5/webrtc_development_logo_1_1.png)
 
+This is a ready to deploy webrtc SDK and SaaS for a customized and flexible communication and collaboration solution .
+
+Architecture 
+
 Technologies used 
 
 1. WebRTC 
 
-2. Node
+2. Node (v5.0.0)
 asynchronous event driven JavaScript runtime
 
-3. socket.io
+3. socket.io ( v0.9)
 
 
 To run this project following steps need to be followed in that order :
@@ -50,9 +54,6 @@ cd WebCall
 forever start webrtcserver.js
 ```
 
-##### 5. useing browserify 
-
-browserify webrtcdevelopment_script.js --outfile webrtcdevelopment_script.bundle.js
 
 read more :
 
