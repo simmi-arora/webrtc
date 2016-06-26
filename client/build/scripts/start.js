@@ -1719,7 +1719,7 @@ function webrtcdevScreenShare(){
 
 
 function detectExtensionScreenshare(extensionID){
-    var extensionid = 'elfbfompfpakbefoaicaeoabnnoihoac';
+    var extensionid = extensionID;
     rtcMultiConnection.DetectRTC.screen.getChromeExtensionStatus(extensionid, function(status) {
         if(status == 'installed-enabled') {
             // chrome extension is installed & enabled.
