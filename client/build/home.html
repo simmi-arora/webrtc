@@ -13,23 +13,21 @@
       margin-bottom: 0;
       border-radius: 0;
     }
-    
     /* Add a gray background color and some padding to the footer */
     footer {
       background-color: #f2f2f2;
       padding: 25px;
     }
-    .fork-left {
-        position: absolute;
-        top: 0;
-        left: 0;
-        background: url('home_images/forkme.png');
-    }
-    .fork-left, .fork-right {
+
+    .fork-right {
         background-repeat: no-repeat;
         background-position: center center;
-        width: 140px;
-        height: 140px;
+        width: 290px;
+        height: 290px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: url('home_images/forkme.png');
     }
   </style>   
 </head>
@@ -49,14 +47,14 @@
         <div class="collapse navbar-collapse" id="myNavbar">
           <ul class="nav navbar-nav">
             <li class="active"><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Source Code</a></li>
-            <li><a href="#">Contact</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="https://github.com/altanai/webrtc">Source Code</a></li>
+            <li><a href="https://about.me/altanai">Contact</a></li>
           </ul>
             <!-- 
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                </ul> 
+              <ul class="nav navbar-nav navbar-right">
+                  <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+              </ul> 
             -->
         </div>
       </div>
@@ -90,13 +88,17 @@
     </div>
     
     <div class="col-sm-3">
-      <p>Two-party video full features-set + screensharing </p>
-      <img src="http://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
+        <a href="twoparty_fullFeatures.html">
+            <p>Two-party video full features-set + screensharing </p>
+            <img src="http://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
+        </a>
     </div>
     
     <div class="col-sm-3">
-      <p>Two-party Complete two party elearning solution</p>
-      <img src="http://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
+        <a href="twoparty_texteditor.html">
+            <p>Two-party Complete two party elearning solution</p>
+            <img src="http://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
+        <a href="twoparty_fullFeatures.html">
     </div>
   
   </div>
@@ -127,7 +129,7 @@
 </div><br><br>
 
 <footer class="container-fluid text-center">
-  <p>Footer Text</p>
+  <p>Open source Software  - 2016 ( altanai - https://altanaitelecom.wordpress.com )</p>
 </footer>
 </body>
 
