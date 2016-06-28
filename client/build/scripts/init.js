@@ -57,6 +57,8 @@ var videoRecordobj=false , videoRecordContainer=null;
 
 var drawCanvasobj=false ;
 
+var texteditorobj= false;
+
 var reconnectobj=false;
 
 var muteobj=false;

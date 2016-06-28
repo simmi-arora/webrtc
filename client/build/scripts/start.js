@@ -28,7 +28,7 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
     socketAddr    = session.socketAddr;
     turn          = session.turn;
     
-    if(turn){
+    if(turn ){
         getICEServer( turn.username ,turn.secretkey , turn.domain,
                         turn.application , turn.room , turn.secure); 
     }
@@ -47,23 +47,25 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
 
     if(widgets){
 
-        if(widgets.chat)            chatobj=widgets.chat
+        if(widgets.chat)            chatobj         = widgets.chat
 
-        if(widgets.fileShare)       fileshareobj = widgets.fileShare;
+        if(widgets.fileShare)       fileshareobj    = widgets.fileShare;
 
         if(widgets.screenrecord)    screenrecordobj = widgets.screenrecord;
 
-        if(widgets.screenshare)     screenshareobj = widgets.screenshare;
+        if(widgets.screenshare)     screenshareobj  = widgets.screenshare;
 
-        if(widgets.snapshot)        snapshotobj = widgets.snapshot;
+        if(widgets.snapshot)        snapshotobj     = widgets.snapshot;
 
-        if(widgets.videoRecord)     videoRecordobj = widgets.videoRecord;
+        if(widgets.videoRecord)     videoRecordobj  = widgets.videoRecord;
 
-        if(widgets.reconnect)       reconnectobj = widgets.reconnect;
+        if(widgets.reconnect)       reconnectobj    = widgets.reconnect;
 
-        if(widgets.drawCanvas)      drawCanvasobj = widgets.drawCanvas;
+        if(widgets.drawCanvas)      drawCanvasobj   = widgets.drawCanvas;
 
-        if(widgets.mute)            muteobj=widgets.mute;
+        if(widgets.texteditor)      texteditorobj   = widgets.texteditor;
+
+        if(widgets.mute)            muteobj         = widgets.mute;
     }
 };
 
@@ -871,6 +873,9 @@ function startcall() {
                 case "canvas":
                     CanvasDesigner.syncData( e.data.draw );
                 break;
+                case "texteditor":
+                    receiveWebrtcdevTexteditorSync(e.data.data);
+                break;
                 case "pointer":
                     placeCursor("cursor2" , e.data.corX , e.data.corY);
                 break;
@@ -1052,7 +1057,6 @@ function startcall() {
             $("#allpeerinfo").append( webcallpeers[x].userid+" "+webcallpeers[x].videoContainer)
             $("#allpeerinfo").append('<br/>');
         }*/
-
        $('#allpeerinfo').append('<pre contenteditable>'+JSON.stringify(webcallpeers, null, 2)+'<pre>');
     });
 
@@ -1188,6 +1192,28 @@ function startcall() {
         };
         var li =document.createElement("li");
         li.appendChild(drawButton);
+        document.getElementById("topIconHolder_ul").appendChild(li);
+    }
+
+    if(texteditorobj.active){
+        var texteditorButton= document.createElement("span");
+        texteditorButton.className=texteditorobj.button.class_off ;
+        texteditorButton.innerHTML=texteditorobj.button.html_off;
+        texteditorButton.onclick=function(){
+            if(texteditorButton.className==texteditorobj.button.class_off){
+                texteditorButton.className= texteditorobj.button.class_on ;
+                texteditorButton.innerHTML= texteditorobj.button.html_on;
+                startWebrtcdevTexteditorSync();
+                document.getElementById(texteditorobj.texteditorContainer).hidden=false;
+            }else if(texteditorButton.className==drawCanvasobj.button.class_on){
+                texteditorButton.className= texteditorobj.button.class_off ;
+                texteditorButton.innerHTML= texteditorobj.button.html_off;
+                stopWebrtcdevTexteditorSync();
+                document.getElementById(texteditorobj.texteditorContainer).hidden=true;
+            }
+        };
+        var li =document.createElement("li");
+        li.appendChild(texteditorButton);
         document.getElementById("topIconHolder_ul").appendChild(li);
     }
 };
@@ -1606,9 +1632,46 @@ function webrtcdevCanvasDesigner(){
     }
 }
 
-/*******************************
+/*************************************************************************
+Text Editor
+******************************************************************************/
+
+function sendWebrtcdevTexteditorSync(evt){
+    // Left: 37 Up: 38 Right: 39 Down: 40 Esc: 27 SpaceBar: 32 Ctrl: 17 Alt: 18 Shift: 16 Enter: 13
+    if(evt.which ==  37 || evt.which ==  38 || evt.which ==  39 || evt.which ==  40  || evt.which==17 || evt.which == 18|| evt.which == 16){
+        return true; // handle left up right down  control alt shift
+    }
+
+    var tobj ={
+        "option" : "text",
+        "content": document.getElementById(texteditorobj.texteditorContainer).value
+    }
+    console.log(" sending " , document.getElementById(texteditorobj.texteditorContainer).value);
+    rtcMultiConnection.send({
+            type: "texteditor", 
+            data: tobj
+    });
+}
+
+function receiveWebrtcdevTexteditorSync(data){
+    console.log("texteditor " , data);
+    if(data.option=="text"){
+        document.getElementById(texteditorobj.texteditorContainer).value=data.content;
+    }
+}
+
+function startWebrtcdevTexteditorSync(){
+    document.getElementById(texteditorobj.texteditorContainer).addEventListener("keyup", sendWebrtcdevTexteditorSync, false);
+}
+
+function stopWebrtcdevTexteditorSync(){
+    document.getElementById(texteditorobj.texteditorContainer).removeEventListener("keyup", sendWebrtcdevTexteditorSync, false);
+}
+
+
+/***************************************************************************
 cursor sharing 
-************************************/
+***************************************************************************/
 
 function placeCursor(element , x_pos, y_pos) {
   var d = document.getElementById(element);
@@ -2355,7 +2418,6 @@ function syncVideoScreenRecording(data , datatype , dataname ){
 }
 
 function autorecordScreenVideo(){
-
 
 }
 
