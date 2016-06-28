@@ -1,26 +1,24 @@
 var WebRTCdom= function(  _localObj , _remoteObj ){
 
+    localobj=_localObj;
     var _local=_localObj.localVideo;
     var _localVideoClass=_localObj.videoClass;
     var _localVideoUserDisplay= _localObj.userDisplay;
     var _localVideoMetaDisplay= _localObj.userMetaDisplay;
 
+    remoteobj=_remoteObj;
     var _remotearr=_remoteObj.remotearr;
     var _remotearrClass= _remoteObj.videoClass;
     var _remoteVideoUserDisplay= _remoteObj.userDisplay;
     var _remoteVideoMetaDisplay= _remoteObj.userMetaDisplay;
 
     if(_local!=null){
-        localVideo = document.getElementsByName(_local)[0];
-        for(var x=0;x<_remotearr.length;x++){
-            remoteVideos.push(document.getElementsByName(_remotearr[x])[0]);
-        }     
-    }else{
-        for(var x=0;x<_remotearr.length;x++){
-            remoteVideos.push(document.getElementsByName(_remotearr[x])[0]);
-        }     
+        localVideo = document.getElementsByName(_local)[0];    
     }
-    console.log(remoteVideos);
+
+    for(var x=0;x<_remotearr.length;x++){
+        remoteVideos.push(document.getElementsByName(_remotearr[x])[0]);    
+    }
 };
 
 var WebRTCdev= function(session, incoming, outgoing, widgets){
@@ -532,6 +530,7 @@ function updateWebCallView(peerInfo){
             arrFilesharingBoxes.push(webcallpeers[x].fileSharingSubContents.fileSharingBox);
 
         if( outgoingVideo ){
+            /*adding local video to index 0 */
             if( remoteVideos[0].played.length==0 ){
                 reattachMediaStream(remoteVideos[0], localVideo);
                 remoteVideos[0].id=webcallpeers[0].videoContainer;
@@ -557,11 +556,20 @@ function updateWebCallView(peerInfo){
             pi++;
         }
 
+        /*get the next empty empty index of video and pointer in video array */
         for(var v=vi;v< remoteVideos.length;v++){
             if(remoteVideos[v].src){
                 vi++;
                 pi++;
-            } 
+            }
+            console.log(" vi " + vi + " || pi "+ pi); 
+        }
+
+        if(remoteobj.remoteVideoCount=="unlimited"){
+            var video = document.createElement('video');
+            video.autoplay="autoplay";
+            remoteVideos[vi]=video;
+            document.getElementById(remoteobj.remoteVideoContainer).appendChild(video);
         }
 
         attachMediaStream(remoteVideos[vi], webcallpeers[pi].stream);
