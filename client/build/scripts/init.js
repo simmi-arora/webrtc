@@ -37,6 +37,7 @@ var repeatFlagShowButton =null, repeatFlagHideButton =null, repeatFlagRemoveButt
 
 /* DOM objects */
 var localVideo =null, miniVideo=null, remoteVideos=[];
+var localobj , remoteobj;
 
 /* webrtc session intilization */
 var autoload=true;
@@ -146,29 +147,30 @@ function str2ab(str) {
     }
     return buf;
 }
-    function toStr(obj) {
-        return JSON.stringify(obj, function(key, value) {
-            if (value && value.sdp) {
-                log(value.sdp.type, '\t', value.sdp.sdp);
-                return '';
-            } else return value;
-        }, '\t');
-    }
 
-    function getLength(obj) {
-        var length = 0;
-        for (var o in obj)
-            if (o) length++;
-        return length;
-    }
-    function log() {
-        console.log(arguments);
-    }
+function toStr(obj) {
+    return JSON.stringify(obj, function(key, value) {
+        if (value && value.sdp) {
+            log(value.sdp.type, '\t', value.sdp.sdp);
+            return '';
+        } else return value;
+    }, '\t');
+}
 
-    function error() {
-        console.error(arguments);
-    }
+function getLength(obj) {
+    var length = 0;
+    for (var o in obj)
+        if (o) length++;
+    return length;
+}
+function log() {
+    console.log(arguments);
+}
 
-    function warn() {
-        console.warn(arguments);
-    }
+function error() {
+    console.error(arguments);
+}
+
+function warn() {
+    console.warn(arguments);
+}
