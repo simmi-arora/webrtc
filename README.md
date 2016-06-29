@@ -20,18 +20,25 @@ web real time communication platform
 
 This is a ready to deploy webrtc SDK and SaaS for a customized and flexible communication and collaboration solution .
 
-Architecture 
+SDK
+----
 
-Technologies used 
+##### Architecture 
+![alt webrtc development architecture ](http://s20.postimg.org/sywx5rjx5/webrtc_development_logo_1_1.png)
+
+##### Technologies used 
 
 1. WebRTC 
+Web based real time communication framework
 
 2. Node (v5.0.0)
 asynchronous event driven JavaScript runtime
 
 3. socket.io ( v0.9)
+communication and signalling 
 
-
+Get Started
+----
 
 To run this project following steps need to be followed in that order :
 
@@ -50,8 +57,8 @@ nvm use v5.0.0
 It will read the package.json and update the dependencies in node_modules folder on project location
 
 ```
-sudo apt-get install npm
-npm install
+	sudo apt-get install npm
+	npm install
 ```
 
 ###### 4. Change ENV variables and Test
@@ -70,23 +77,111 @@ To change the ports for running the https server and rest server, goto env.json
 
 To run the tests
 ```
-npm test
+	npm test
 ```
 
 ##### 5. Start up the Server 
 
-###### To start the Server in dev mode  
-It will stop the server as soon as Ctrl+ C is hit or the terminal widnow is closed . 
-node 
-read more about [node] ( )
+To start the Server in dev mode  and stop the server as soon as Ctrl+ C is hit or the terminal widnow is closed . 
+```
+	node webrtcserver.js
+```
+read more about [node](https://nodejs.org/en/about/ )
 
-###### To start the Server using npm start ( using package.json) , behaves same as earlier run using node. We use supervisor to restart the server incase of exceptions or new code .
+To start the Server using npm start ( using package.json) , behaves same as earlier run using node. We use supervisor to restart the server incase of exceptions or new code .
 
 ```
-npm start
+	npm start
 ```
 
-##### 6. Additional Libs
+##### 6. JS and CSS Libs
+
+Make a webpage and give holders for video and button elements that SDK will use .
+
+##### 7. Configure
+
+
+Create the webrtc dom object
+```
+var local={
+        localVideo: "localVideo",
+        videoClass:"",
+        userDisplay:false,
+        userMetaDisplay:false  
+    };
+
+    var remote={
+        remotearr: ["video1"],
+        remoteVideoCount: "unlimited",
+        remoteVideoContainer : "rightVideo",
+        videoClass:"",
+        userDisplay:false,
+        userMetaDisplay:false    
+    };
+
+    var webrtcdomobj= new WebRTCdom(
+        local,remote
+    );
+```
+
+Get session id
+```
+sessionid = init(true);
+```
+
+Create a session json object with turn credentials nd the session created from above step
+
+set preference for the incoming and outgoing media connectection. Bydefault all are set to true . 
+```
+    var incoming={
+        audio:  true,
+        video:  true,
+        data:   true,
+        screen: true
+    };
+
+    var outgoing={
+        audio:  true,
+        video:  true,
+        data:   true,
+        screen: true
+    };
+```
+Set widgets and their properties . Currently available widgets are 
+	* Chat
+	* Fileshare
+	* Screen Record
+	* Screen Share
+	* Video Record
+	* Snapshot
+	* Draw on Canvas and Sync
+	* Text Editor and Sync
+	* Mute (audio amd video)
+	* Reconnect
+
+```
+	var widgets={
+	}
+```
+Initiate the webrtcdev contructor 
+```
+    var webrtcdevobj = new WebRTCdev ( 
+        session,  incoming,  outgoing ,  widgets
+    );
+```
+
+Start the session 
+```
+    startcall();
+```
+
+##### 8. VOIP calls and conf
+open tab on chrome or mozilla browser and add a link to the https server using nodejs script
+https://127.0.0.1:8086/multiparty_fullfeatures.html
+
+
+Used Libs
+----
 
 Following are the additioanl libraries packed with the project 
 
@@ -109,11 +204,10 @@ cd WebCall
 forever start webrtcserver.js
 ```
 
-read more :
+###### PM2
+To start the Server using PM2 ( a process manager for nodejs)
 
-###### To start the Server using PM2 ( a process manager for nodejs)
-readmore : 
+License
+----
 
-##### 5. Run the webRTC call locally
-open tab on chrome or mozilla browser and add a link to the https server using nodejs script
-https://127.0.0.1:8084
+MIT
