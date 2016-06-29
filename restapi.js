@@ -1,6 +1,6 @@
 var restify = require('restify');
 
-module.exports = function(options) {
+module.exports = function(options , properties) {
     
     console.log("< ------------------------ REST API-------------------> ");
 
@@ -53,10 +53,10 @@ module.exports = function(options) {
     server.on('MethodNotAllowed', unknownMethodHandler);
 
     server.listen(properties.restPort, function() {
-      logger.info('%s listening at %s', server.name, server.url);
+      console.log('%s listening at %s', server.name, server.url);
     });
 
-    console.log(" REST server env => "+ properties.enviornment+ " running at\n "+properties.restPort+ "/\nCTRL + C to shutdown");
+    console.log(" REST server env => "+ properties.enviornment+ " running at\n "+properties.restPort);
 
    return   module;
 };
