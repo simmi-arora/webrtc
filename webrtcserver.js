@@ -37,9 +37,9 @@ var app = https.createServer(options, function(request, response){
 app.listen(properties.httpsPort);
 
 var realtimecomm= require('./realtimecomm.js')(app, properties);
+var restapi= require('./restapi.js')(options , properties);
 
 console.log(" WebRTC server env => "+ properties.enviornment+ " running at\n "+properties.httpsPort+ "/\nCTRL + C to shutdown");
-
 
 /*var options = {
   host: 'https://docs.google.com/spreadsheets/d/1ora3ej7ySrrIxijjTqKI97KGxtn0ah4xyYjF6gVtsjs/',

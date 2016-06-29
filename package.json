@@ -1,6 +1,6 @@
 {
   "name": "webrtcdevelopment",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "description": "webrtc based communication and collaboration client . contains lot of experiments modules ",
   "main": "webrtcserver.js",
   "dependencies": {
@@ -15,7 +15,8 @@
     "gulp-uglify": "^1.5.3",
     "node-static": "^0.7.7",
     "socket.io": "0.9.*",
-    "supervisor": "^0.10.0"
+    "supervisor": "^0.10.0",
+    "restify": "*"
   },
   "devDependencies": {
     "gulp-remote-src": "^0.4.1"

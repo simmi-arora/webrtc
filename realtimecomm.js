@@ -1,6 +1,5 @@
 module.exports = function(app , properties) {
     
-    console.log(properties);
     console.log("< ------------------------realtimecomm-------------------> ");
     
     var io = require('socket.io').listen(app, {
@@ -16,7 +15,6 @@ module.exports = function(app , properties) {
 
     io.sockets.on('connection', function (socket) {
 
-        console.log("connection ");
         var initiatorChannel = '';
 
         if (!io.isConnected) {
@@ -39,7 +37,6 @@ module.exports = function(app , properties) {
                 status:"active",
                 endtimestamp:0
             };     
-
         });
 
         socket.on('join-channel', function (data) {  
@@ -86,8 +83,7 @@ module.exports = function(app , properties) {
                 break;
                 default :
                  socket.emit('response_to_admin_enquire', channels);
-            }
-           
+            }           
         });
     });
 
@@ -118,7 +114,9 @@ module.exports = function(app , properties) {
         });
     }
 
-    return   module;
+    console.log(" Socket.io env => "+ properties.enviornment+ " running at\n "+properties.httpsPort+ "/\nCTRL + C to shutdown");
+
+    return module;
 };
 
 

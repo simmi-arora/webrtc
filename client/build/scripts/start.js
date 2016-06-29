@@ -3,14 +3,10 @@ var WebRTCdom= function(  _localObj , _remoteObj ){
     localobj=_localObj;
     var _local=_localObj.localVideo;
     var _localVideoClass=_localObj.videoClass;
-    var _localVideoUserDisplay= _localObj.userDisplay;
-    var _localVideoMetaDisplay= _localObj.userMetaDisplay;
 
     remoteobj=_remoteObj;
     var _remotearr=_remoteObj.remotearr;
     var _remotearrClass= _remoteObj.videoClass;
-    var _remoteVideoUserDisplay= _remoteObj.userDisplay;
-    var _remoteVideoMetaDisplay= _remoteObj.userMetaDisplay;
 
     if(_local!=null){
         localVideo = document.getElementsByName(_local)[0];    
@@ -18,6 +14,12 @@ var WebRTCdom= function(  _localObj , _remoteObj ){
 
     for(var x=0;x<_remotearr.length;x++){
         remoteVideos.push(document.getElementsByName(_remotearr[x])[0]);    
+    }
+
+    if(localobj.hasOwnProperty('userdetails')){
+        username    = localobj.userdetails.username;
+        usecolor   = localobj.userdetails.usercolor;
+        useremail   = localobj.userdetails.useremail;
     }
 };
 
@@ -750,9 +752,9 @@ function startcall() {
     }    
 
     rtcMultiConnection.extra = {
-        username: "none",
-        color: "ffffff",
-        useredisplayListmail: n
+        username: username,
+        color: useremail,
+        useredisplayListmail: usercolor
     };
 
     rtcMultiConnection.channel=sessionid;
@@ -2466,6 +2468,29 @@ function getAllPeerInfo(){
     console.log(webcallpeers);
 }
 
+$("#SettingsButton").click(function() {
+    
+    console.log(localobj.userdetails);
+    /*
+    localobj.userdetails.name.value=username;
+    localobj.userdetails.email.value=useremail;
+    localobj.userdetails.color.value=usercolor;*/
+
+
+    if(localobj.userdisplay.latitude){
+        /*$('#'+localobj.userdisplay.latitude).val(latitude);*/
+        localobj.userdisplay.latitude.value=latitude;
+    }
+
+    if(localobj.userdisplay.longitude){
+        localobj.userdisplay.longitude.value=longitude;
+    }
+    
+    if(localobj.userdisplay.operatingsystem){
+        localobj.userdisplay.operatingsystem.value=operatingsystem;
+        /*$('#'+localobj.userdisplay.operatingsystem).val(operatingsystem);*/
+    }
+});
 
 /************************* ICE NAT TURN *******************************/
 

@@ -112,6 +112,7 @@ gulp.task('webrtcdevelopmentjs',function() {
         "client/build/scripts/RecordRTC.js",
         "client/build/scripts/screenshot.js",
         "client/build/scripts/getScreenId.js",
+        "client/build/scripts/geolocation.js",
         "client/build/scripts/start.js",
         "client/build/scripts/admin.js"
     ]; 
