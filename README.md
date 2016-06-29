@@ -3,6 +3,21 @@ web real time communication platform
 
 ![alt webrtc development ] (http://s20.postimg.org/sywx5rjx5/webrtc_development_logo_1_1.png)
 
+
+[![Build Status][BS img]][Build Status]
+[![Dependency Status][DS img]][Dependency Status]
+[![NPM Status][NS img]][NPM Status]
+
+
+[Build Status]: https://travis-ci.org/altanai/webrtc
+[Dependency Status]: https://david-dm.org/altanai/webrtc
+[NPM Status]: https://www.npmjs.com/package/webrtcdevelopment
+
+
+[BS img]: https://api.travis-ci.org/altanai/webrtc.png
+[DS img]: https://david-dm.org/altanai/webrtc.svg
+[NS img]: https://nodei.co/npm/webrtcdevelopment.png
+
 This is a ready to deploy webrtc SDK and SaaS for a customized and flexible communication and collaboration solution .
 
 Architecture 

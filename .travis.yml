@@ -2,6 +2,13 @@ language: node_js
 node_js:
   - "5"
 
+before_install:
+  -nvm use v5.0.0
+
+install:
+  - npm install
+
 before_script:
   - npm install -g gulp
+
 script: gulp
