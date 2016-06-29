@@ -1,18 +1,16 @@
 # webrtc
 web real time communication platform 
 
-![alt webrtc development ] (http://s20.postimg.org/sywx5rjx5/webrtc_development_logo_1_1.png)
+![alt webrtc development ](http://s20.postimg.org/sywx5rjx5/webrtc_development_logo_1_1.png)
 
 
 [![Build Status][BS img]][Build Status]
 [![Dependency Status][DS img]][Dependency Status]
 [![NPM Status][NS img]][NPM Status]
 
-
 [Build Status]: https://travis-ci.org/altanai/webrtc
 [Dependency Status]: https://david-dm.org/altanai/webrtc
 [NPM Status]: https://www.npmjs.com/package/webrtcdevelopment
-
 
 [BS img]: https://api.travis-ci.org/altanai/webrtc.png
 [DS img]: https://david-dm.org/altanai/webrtc.svg
@@ -24,18 +22,28 @@ SDK
 ----
 
 ##### Architecture 
-![alt webrtc development architecture ](http://s20.postimg.org/sywx5rjx5/webrtc_development_logo_1_1.png)
+The Solution primarily contains nodejs frameworks for hosting the project and webbsockets over socket.io to perform offer - answer handshake and share SDP (Session description protocol ).
+![alt webrtc development architecture ](https://s32.postimg.org/uamq0uq9h/webrtcdevelopment_SDK.png)
 
 ##### Technologies used 
 
 1. WebRTC 
-Web based real time communication framework
+Web based real time communication framework.
+read more on [webrtc](https://altanaitelecom.wordpress.com/2013/08/02/what-is-webrtc/ )
 
 2. Node (v5.0.0)
-asynchronous event driven JavaScript runtime
+Asynchronous event driven JavaScript runtime
 
 3. socket.io ( v0.9)
-communication and signalling 
+Communication and signalling 
+
+Note  : while its possible to use any prtotocol like SIP , XMPP , AJAX , JSON etc for this purpose , modifying thsi libabry will require a lot of rework . It would be advisble to start from apprtc directly in that case .  
+
+4. Grunt
+It is a task Runner and its used to automate running of command in gruntfile
+```
+grunt -verbose
+```
 
 Get Started
 ----
@@ -189,12 +197,6 @@ Following are the additioanl libraries packed with the project
 Minify and concat the js and css files  into minscripts
 ```
 gulp
-```
-
-###### Task Runner
-Automates running of tasks in gruntfile
-```
-grunt -verbose
 ```
 
 ###### forever 
