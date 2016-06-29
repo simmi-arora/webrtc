@@ -237,6 +237,7 @@
     </div>
 
 </body>
+<script src="property.js"></script>
 <link rel=stylesheet href="minScripts/webrtcdevelopment.css">
 <script src="minScripts/webrtcdevelopment.js"></script>
 <!-- <script src="scripts/start.js"></script>  -->
@@ -346,6 +347,19 @@ $('document').ready(function(){
 
     var session ={
         sessionid : sessionid,
+        socketAddr: props.signaller,
+        turn:{
+                username    : props.xirsys.username,
+                secretkey   : props.xirsys.secretkey,
+                domain      : props.xirsys.domain,
+                application : props.xirsys.application,
+                room        : props.xirsys.room,
+                secure      : props.xirsys.secure
+            }
+    };
+
+/*    var session ={
+        sessionid : sessionid,
         socketAddr: "https://localhost:8086/",
         turn:{
                 username:"satishdhote",
@@ -355,7 +369,7 @@ $('document').ready(function(){
                 room:"service",
                 secure:1
             }
-    };
+    };*/
 
     var incoming={
         audio: true,
