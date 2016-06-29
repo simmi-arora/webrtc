@@ -3,12 +3,14 @@ node_js:
   - "5"
 
 before_install:
-  -nvm use v5.0.0
+  - nvm use v5.0.0
 
 install:
   - npm install
 
 before_script:
+  - npm install
   - npm install -g gulp
+  - npm install forever -g
 
 script: gulp

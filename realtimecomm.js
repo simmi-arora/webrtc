@@ -114,7 +114,7 @@ module.exports = function(app , properties) {
         });
     }
 
-    console.log(" Socket.io env => "+ properties.enviornment+ " running at\n "+properties.httpsPort+ "/\nCTRL + C to shutdown");
+    console.log(" Socket.io env => "+ properties.enviornment+ " running at\n "+properties.httpsPort);
 
     return module;
 };
