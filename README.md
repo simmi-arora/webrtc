@@ -3,15 +3,17 @@ web real time communication platform
 
 ![alt webrtc development ](http://s20.postimg.org/sywx5rjx5/webrtc_development_logo_1_1.png)
 
-
+[![Gitter][GS image]][Gitter]
 [![Build Status][BS img]][Build Status]
 [![Dependency Status][DS img]][Dependency Status]
 [![NPM Status][NS img]][NPM Status]
 
+[Gitter]: https://gitter.im/altanai/webrtc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge 
 [Build Status]: https://travis-ci.org/altanai/webrtc
 [Dependency Status]: https://david-dm.org/altanai/webrtc
 [NPM Status]: https://www.npmjs.com/package/webrtcdevelopment
 
+[GS img]: https://badges.gitter.im/altanai/webrtc.svg
 [BS img]: https://api.travis-ci.org/altanai/webrtc.png
 [DS img]: https://david-dm.org/altanai/webrtc.svg
 [NS img]: https://nodei.co/npm/webrtcdevelopment.png
@@ -66,7 +68,7 @@ It will read the package.json and update the dependencies in node_modules folder
 
 ```
 	sudo apt-get install npm
-	npm install
+	npm install 
 ```
 
 ###### 4. Change ENV variables and Test
@@ -105,6 +107,15 @@ To start the Server using npm start ( using package.json) , behaves same as earl
 ##### 6. JS and CSS Libs
 
 Make a webpage and give holders for video and button elements that SDK will use .
+
+Inside the head tag of html
+    minScripts/webrtcdevelopment_header.css
+    minScripts/webrtcdevelopment_header.js
+
+After the body tag of html
+    minScripts/webrtcdevelopment.css
+    minScripts/webrtcdevelopment.js
+
 
 ##### 7. Configure
 
