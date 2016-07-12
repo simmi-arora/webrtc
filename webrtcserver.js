@@ -37,7 +37,9 @@ var app = https.createServer(options, function(request, response){
 app.listen(properties.httpsPort);
 
 var realtimecomm= require('./realtimecomm.js')(app, properties);
-var restapi= require('./restapi.js')(options , properties);
+
+
+var restapi= require('./restapi.js')(realtimecomm, options ,app, properties);
 
 console.log("< ------------------------ HTTPS Server -------------------> ");
 console.log(" WebRTC server env => "+ properties.enviornment+ " running at\n "+properties.httpsPort+ "/\nCTRL + C to shutdown");

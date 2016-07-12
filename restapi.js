@@ -1,9 +1,7 @@
-var restify = require('restify');
-
-module.exports = function(options , properties) {
+module.exports = function(realtimecomm, options , app, properties) {
     
-    console.log("< ------------------------ REST API-------------------> ");
-
+    console.log("<------------------------ REST API-------------------> ");
+    var restify = require('restify');
     var server = restify.createServer(options);
 
     server.use(
@@ -14,9 +12,14 @@ module.exports = function(options , properties) {
       }
     );
 
-
     function getAllSessions(req, res, callback) {
-          res.json({ type:true , data : "some data" });
+        var result =realtimecomm.getAllChannels('json');
+        res.json({ type:true , data : result });
+    }
+
+    function getAllUsers(req, res, callback) {
+        var result =realtimecomm.getAllUsers('json');
+        res.json({ type:true , data : result });
     }
 
     server.use(restify.acceptParser(server.acceptable));
@@ -31,6 +34,8 @@ module.exports = function(options , properties) {
     /*server.use(restify.bodyParser({ mapParams: false }));*/
 
     server.get('/session/all-sessions',getAllSessions);
+
+    server.get('/user/all-users',getAllUsers);
 
     function unknownMethodHandler(req, res) {
       if (req.method.toLowerCase() === 'options') {
@@ -58,7 +63,7 @@ module.exports = function(options , properties) {
 
     console.log(" REST server env => "+ properties.enviornment+ " running at\n "+properties.restPort);
 
-   return   module;
+    return module;
 };
 
 

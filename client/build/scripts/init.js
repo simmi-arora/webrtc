@@ -63,6 +63,8 @@ var drawCanvasobj=false ;
 
 var texteditorobj= false;
 
+var codeeditorobj=false;
+
 var reconnectobj=false;
 
 var muteobj=false;
