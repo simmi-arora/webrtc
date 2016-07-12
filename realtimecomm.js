@@ -70,7 +70,11 @@ module.exports = function(app , properties) {
         socket.on("admin_enquire",function(data){
             switch (data.ask){
                 case "channels":
-                    socket.emit('response_to_admin_enquire', module.getAllChannels(data.format));
+                    if(data.find){
+                        socket.emit('response_to_admin_enquire', module.getChannel(data.find,data.format));
+                    }else{
+                        socket.emit('response_to_admin_enquire', module.getAllChannels(data.format));
+                    }
                 break;
                 case "users":
                     socket.emit('response_to_admin_enquire', module.getAllActiveUsers(data.format));
@@ -155,7 +159,6 @@ module.exports = function(app , properties) {
             };
         return output;
     };
-
 
     module.getAllActiveUsers=function(format){
         var users=[];

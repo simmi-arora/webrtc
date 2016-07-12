@@ -25,6 +25,16 @@
               <div id="home" class="tab-pane fade in active">
                 <h3>Channels List</h3>
                 <p>List of all channels ( active and inactive )</p>
+
+                <div class="row">
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="channelFindInput" placeholder="Search for specific channel">
+                      <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" id="channelFindBtn">Find</button>
+                      </span>
+                    </div><!-- /input-group -->
+                </div><!-- /.row -->
+
                 <div id="listArea">
                     <ul class="list-group"> </ul>
                 </div>
@@ -65,18 +75,20 @@
                   <code id="channelsFeed"></code>
                 </pre>
               </div>
+
             </div>
 
         </div>
     
         <script src="minScripts/webrtcdevelopment.js"></script>
-        <!-- <script src="scripts/admin.js"></script> -->
+        <script src="scripts/admin.js"></script>
 
         </script>
         <script type="text/javascript">
-                var WebRTCdevadminobj = new WebRTCdevadmin ( 
-                    "https://localhost:8086"
-                );
+            var WebRTCdevadminobj = new WebRTCdevadmin ( 
+                "https://localhost:8086"
+            );
+            onLoadAdmin();
         </script>
     </body>
 </html>
