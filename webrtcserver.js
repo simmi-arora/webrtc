@@ -38,7 +38,6 @@ app.listen(properties.httpsPort);
 
 var realtimecomm= require('./realtimecomm.js')(app, properties);
 
-
 var restapi= require('./restapi.js')(realtimecomm, options ,app, properties);
 
 console.log("< ------------------------ HTTPS Server -------------------> ");

@@ -7,7 +7,7 @@
 
     <link rel=stylesheet href="minScripts/webrtcdevelopment_header.css">
     <script src="minScripts/webrtcdevelopment_header.js"> </script>  
-    <script src="minScripts/codeEditorCss.css"></script>
+
 </head>
 
 <body id="pagebody">
@@ -41,12 +41,10 @@
         <div id="widget-codeeditorContainer" class="row secondPanelClass code-area" hidden style="margin-top:40px; height: 300px; width: 700px;">
               <div class="wrapper-1">
                   <span>Select Language :</span>
-                  <select id="CodeStyles"> 
-
-                  </select>
+                  <select id="CodeStyles"> </select>
               </div>
 
-              <textarea id="codeArea" name="code" >
+              <textarea id="codeArea" name="code" class="codeArea" style="height: 300px; width: 700px;">
 
                 x = findMax(1, 123, 500, 115, 44, 88);
 
@@ -230,7 +228,9 @@
 </body>
 <link rel=stylesheet href="minScripts/webrtcdevelopment.css">
 <script src="minScripts/webrtcdevelopment.js"></script>
+
 <script src="minScripts/codeEditorScript.js"></script>
+<link rel=stylesheet href="minScripts/codeEditorCss.css">
 <script src="scripts/start.js"></script>
 
 <script>
@@ -286,22 +286,6 @@ $('document').ready(function(){
         data:   true,
         screen: true
     };
-
-/*    var langugaes=[{
-                        mime:"text/x-csrc",
-                        mode: "clike",
-                        value: "1",
-                        innerhtml:"C"
-                    },
-                    {
-                        mime:"text/x-csrc",
-                        mode: "clike",
-                        value: "1",
-                        innerhtml:"C"                        
-                    },
-
-                    ];
-*/
 
     var arrLang=    [ '<option mime="text/x-csrc" mode="clike" value="1">C</option>',
                      '<option mime="text/x-c++src" mode="clike" value="2">C++</option>' ,
@@ -390,9 +374,9 @@ $('document').ready(function(){
                         codeeditorContainer: "widget-codeeditorContainer",
                         languages:arrLang,
                         button:{
-                            class_on:"btn btn-warning glyphicon glyphicon-edit topPanelButton",
+                            class_on:"btn btn-warning glyphicon glyphicon-align-left topPanelButton",
                             html_on:"close Coder",
-                            class_off:"btn btn-success glyphicon glyphicon-edit topPanelButton",
+                            class_off:"btn btn-success glyphicon glyphicon-align-left topPanelButton",
                             html_off:"Coder"
                         }
                     },     

@@ -62,6 +62,7 @@ gulp.task('serverjs',function() {
     console.log(" gulping admin script  ");
     list=[ 
         "realtimecomm.js",
+        "restapi.js"
     ]; 
     console.log(list);
     gulp.src(list)
@@ -142,9 +143,10 @@ gulp.task('betawebrtcdevelopmentjs',function() {
         "client/build/scripts/RecordRTC.js",
         "client/build/scripts/screenshot.js",
         "client/build/scripts/getScreenId.js",
-        "client/build/scripts/geolocation.js",
-        /*"client/build/scripts/start.js",*/
-        "client/build/scripts/admin.js"
+        "client/build/scripts/geolocation.js"
+        /*       
+        "client/build/scripts/start.js",
+        "client/build/scripts/admin.js"*/
     ]; 
     console.log(appJsList);
     gulp.src(appJsList)
