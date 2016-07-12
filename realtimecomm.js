@@ -12,6 +12,7 @@ module.exports = function(app , properties) {
     ]);
 
     var channels = {};
+    var users = {};
 
     io.sockets.on('connection', function (socket) {
 
@@ -22,6 +23,11 @@ module.exports = function(app , properties) {
         }
 
         socket.on('namespace',function(data){
+            users[data.sender]={
+                userid: data.sender,
+                join_timestamp: new Date().toLocaleString(),
+                status:"online"
+            }
             onNewNamespace(data.channel, data.sender);
         });
 
@@ -67,7 +73,7 @@ module.exports = function(app , properties) {
                     socket.emit('response_to_admin_enquire', module.getAllChannels(data.format));
                 break;
                 case "users":
-                    socket.emit('response_to_admin_enquire', module.getAllUsers(data.format));
+                    socket.emit('response_to_admin_enquire', module.getAllActiveUsers(data.format));
                 break;
                 case "channel_clients":
                     socket.emit('response_to_admin_enquire', module.getChannelClients(data.channel));
@@ -79,7 +85,7 @@ module.exports = function(app , properties) {
     });
 
     function onNewNamespace(channel, sender) {
-       console.log(" ---------------> onNewNamespace ", channel);
+        console.log(" ---------------> onNewNamespace ", channel);
 
         io.of('/' + channel).on('connection', function (socket) {
             
@@ -103,7 +109,7 @@ module.exports = function(app , properties) {
                         if(i != -1) {
                             channels[data.data.sessionid].users.splice(i, 1);
                         }
-                        
+
                         channels[data.data.sessionid].log.push(new Date().toLocaleString()+":-user "+data.data.userid+" left ");         
                         if( channels[data.data.sessionid].users.length ==0){
                             channels[data.data.sessionid].status="inactive";
@@ -130,6 +136,7 @@ module.exports = function(app , properties) {
         });
     }
 
+
     module.getAllChannels=function(format){
         var output={
                 response:'channels',
@@ -139,7 +146,18 @@ module.exports = function(app , properties) {
         return output;
     };
 
-    module.getAllUsers=function(format){
+    module.getChannel=function(channelid , format){
+
+        var output={
+                response:'users',
+                users:channels[channelid],
+                format:format
+            };
+        return output;
+    };
+
+
+    module.getAllActiveUsers=function(format){
         var users=[];
         for (i in Object.keys(channels)) { 
             var key=Object.keys(channels)[i];
@@ -151,6 +169,16 @@ module.exports = function(app , properties) {
         var output={
                 response:'users',
                 users:users,
+                format:format
+            };
+        return output;
+    };
+
+    module.getUser=function(userid , format){
+
+        var output={
+                response:'users',
+                users:(users[userid]?users[userid]:"notfound"),
                 format:format
             };
         return output;

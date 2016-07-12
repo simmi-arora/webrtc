@@ -1,55 +1,56 @@
 {
-    "name": "webrtcdevelopment",
-    "version": "1.5.5",
-    "description": "webrtc based communication and collaboration client . contains lot of experiments modules ",
-    "main": "webrtcserver.js",
-    "engines": {
-        "node": "5.*"
-    },
-    "dependencies": {
-        "googleapis": "^3.1.0",
-        "node-static": "^0.7.7",
-        "socket.io": "0.9.*",
-        "socket.io-client":"*",
-        "supervisor": "^0.10.0",
-        "restify": "*"
-    },
-    "devDependencies": {
-        "gulp": "*",
-        "gulp-add-src": "^0.2.0",
-        "gulp-base64": "^0.1.3",
-        "gulp-cat": "^0.3.3",
-        "gulp-concat": "^2.6.0",
-        "gulp-minify-css": "^1.2.4",
-        "gulp-sequence": "^0.4.5",
-        "gulp-uglify": "^1.5.3",
-        "gulp-remote-src": "^0.4.1",
-        "jshint": "^2.6.0",
-        "grunt": "~0.4.5",
-        "grunt-contrib-jshint": "~0.10.0",
-        "grunt-contrib-nodeunit": "~0.4.1",
-        "grunt-contrib-uglify": "~0.5.0"
-    },
-    "scripts": {
-        "test":  "npm install & gulp & node webrtcserver.js",
-        "start": "npm install & supervisor -i ./public/ webrtcserver.js"
-    },
-    "repository": {
-      "type": "git",
-      "url": "git+https://github.com/altanai/webrtc.git"
-    },
-    "keywords": [
-      "webrtc",
-      "tfx",
-      "communication",
-      "webcall",
-      "realtime",
-      "communication graphs"
-    ],
-    "author": "altanai <tara181989@gmail.com>",
-    "license": "MIT",
-    "bugs": {
-      "url": "https://github.com/altanai/webrtc/issues"
-    },
-    "homepage": "https://github.com/altanai/webrtc#readme"
+  "name": "webrtcdevelopment",
+  "version": "1.5.5",
+  "description": "webrtc based communication and collaboration client . contains lot of experiments modules ",
+  "main": "webrtcserver.js",
+  "engines": {
+    "node": "5.*"
+  },
+  "dependencies": {
+    "googleapis": "^3.1.0",
+    "node-static": "^0.7.7",
+    "socket.io": "0.9.*",
+    "supervisor": "^0.10.0",
+    "restify": "*"
+  },
+  "devDependencies": {
+    "apidoc": "*",
+    "grunt": "~0.4.5",
+    "grunt-apidoc": "^0.11.0",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-nodeunit": "~0.4.1",
+    "grunt-contrib-uglify": "~0.5.0",
+    "gulp": "*",
+    "gulp-add-src": "^0.2.0",
+    "gulp-base64": "^0.1.3",
+    "gulp-cat": "^0.3.3",
+    "gulp-concat": "^2.6.0",
+    "gulp-minify-css": "^1.2.4",
+    "gulp-remote-src": "^0.4.1",
+    "gulp-sequence": "^0.4.5",
+    "gulp-uglify": "^1.5.3",
+    "jshint": "^2.6.0"
+  },
+  "scripts": {
+    "test": "npm install & gulp & node webrtcserver.js",
+    "start": "npm install & gulp & apidoc -v -i /home/altanai/webrtcWSwksppace/webrtcdevelopment/ -e node_modules/  -o client/build/api/doc & supervisor -i ./public/ webrtcserver.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/altanai/webrtc.git"
+  },
+  "keywords": [
+    "webrtc",
+    "tfx",
+    "communication",
+    "webcall",
+    "realtime",
+    "communication graphs"
+  ],
+  "author": "altanai <tara181989@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/altanai/webrtc/issues"
+  },
+  "homepage": "https://github.com/altanai/webrtc#readme"
 }
