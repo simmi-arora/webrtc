@@ -65,6 +65,8 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
 
         if(widgets.texteditor)      texteditorobj   = widgets.texteditor;
 
+        if(widgets.codeeditor)      codeeditorobj   = widgets.codeeditor;
+
         if(widgets.mute)            muteobj         = widgets.mute;
     }
 };
@@ -736,18 +738,19 @@ iceServers.push({
     username: 'webrtc'
 });*/
 
-var myVar = setInterval(startcall, 1000);
+/*var myVar = setInterval(startcall, 1000);*/
 
 function startcall() {
     //rtcMultiConnection.open();
 
     rtcMultiConnection= new RTCMultiConnection(sessionid);
     if(turn){
+        /*
         if(!webrtcdevIceServers) {
             return;
         }else{
             clearInterval(myVar)
-        }
+        }*/
         rtcMultiConnection.iceServers=webrtcdevIceServers; 
     }    
 
@@ -884,6 +887,9 @@ function startcall() {
                     CanvasDesigner.syncData( e.data.draw );
                 break;
                 case "texteditor":
+                    receiveWebrtcdevTexteditorSync(e.data.data);
+                break;
+                case "codeeditor":
                     receiveWebrtcdevTexteditorSync(e.data.data);
                 break;
                 case "pointer":
@@ -1045,7 +1051,6 @@ function startcall() {
         n.on("message", e.onmessage), 
         n.on("disconnect", "datalost");
     }
-
 
     $("#inspectorlink").val(window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0');
     $("#channelname").val(rtcMultiConnection.channel);
@@ -1215,11 +1220,33 @@ function startcall() {
                 texteditorButton.innerHTML= texteditorobj.button.html_on;
                 startWebrtcdevTexteditorSync();
                 document.getElementById(texteditorobj.texteditorContainer).hidden=false;
-            }else if(texteditorButton.className==drawCanvasobj.button.class_on){
+            }else if(texteditorButton.className==texteditorobj.button.class_on){
                 texteditorButton.className= texteditorobj.button.class_off ;
                 texteditorButton.innerHTML= texteditorobj.button.html_off;
                 stopWebrtcdevTexteditorSync();
                 document.getElementById(texteditorobj.texteditorContainer).hidden=true;
+            }
+        };
+        var li =document.createElement("li");
+        li.appendChild(texteditorButton);
+        document.getElementById("topIconHolder_ul").appendChild(li);
+    }
+
+    if(codeeditorobj.active){
+        var codeeditorButton= document.createElement("span");
+        codeeditorButton.className=codeeditorobj.button.class_off ;
+        codeeditorButton.innerHTML=codeeditorobj.button.html_off;
+        codeeditorButton.onclick=function(){
+            if(codeeditorButton.className==codeeditorobj.button.class_off){
+                codeeditorButton.className= codeeditorobj.button.class_on ;
+                codeeditorButton.innerHTML= codeeditorobj.button.html_on;
+                startWebrtcdevcodeeditorSync();
+                document.getElementById(codeeditorobj.codeeditorContainer).hidden=false;
+            }else if(codeeditorButton.className==codeeditorobj.button.class_on){
+                codeeditorButton.className= codeeditorobj.button.class_off ;
+                codeeditorButton.innerHTML= codeeditorobj.button.html_off;
+                stopWebrtcdevcodeeditorSync();
+                document.getElementById(codeeditorobj.codeeditorContainer).hidden=true;
             }
         };
         var li =document.createElement("li");
@@ -1471,7 +1498,6 @@ function displayList(uuid , userid , fileurl , filename , filetype ){
     r.appendChild(removeButton);
 }
 
-
 function getFileElementDisplayByType(filetype , fileurl , filename){
     var elementDisplay;
     
@@ -1678,6 +1704,13 @@ function stopWebrtcdevTexteditorSync(){
     document.getElementById(texteditorobj.texteditorContainer).removeEventListener("keyup", sendWebrtcdevTexteditorSync, false);
 }
 
+function startWebrtcdevcodeeditorSync(){
+    document.getElementById(codeeditorobj.codeeditorContainer).addEventListener("keyup", sendWebrtcdevCodeeditorTexteditorSync, false);
+}
+
+function stopWebrtcdevTexteditorSync(){
+    document.getElementById(codeeditorobj.codeeditorContainer).removeEventListener("keyup", sendWebrtcdevCodeeditorSync, false);
+}
 
 /***************************************************************************
 cursor sharing 
@@ -1955,9 +1988,7 @@ function detectExtensionScreenshare(extensionID){
                 _options.to = message.userid;
                 _options.stream = root.stream;
                 peers[message.userid] = Offer.createOffer(_options);
-
                 numberOfParticipants++;
-
                 if (root.onNumberOfParticipantsChnaged) root.onNumberOfParticipantsChnaged(numberOfParticipants);
             }
         };
@@ -2104,6 +2135,11 @@ function detectExtensionScreenshare(extensionID){
         function leaveRoom() {
             signaler.signal({
                 leaving: true
+            });
+
+            socket.emit("leave-channel", {
+                channel: rtcMultiConnection.channel,
+                sender: rtcMultiConnection.userid
             });
 
             // stop broadcasting room

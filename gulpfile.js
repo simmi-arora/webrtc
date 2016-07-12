@@ -101,6 +101,58 @@ gulp.task('drawcss',function() {
         .pipe(gulp.dest(folderPath+'minScripts/')); 
 });
 
+gulp.task('codejs',function() {
+    console.log(" gulping codejs  ");
+    list=[ 
+        "client/build/codemirror/lib/codemirror.js",
+        "client/build/codemirror/addon/selection/active-line.js",
+        "client/build/codemirror/addon/mode/loadmode.js",
+        "client/build/codemirror/mode/meta.js",
+        "client/build/codemirror/mode/javascript/javascript.js",
+        "client/build/codemirror/codeStyles.js"
+    ]; 
+    console.log(list);
+    gulp.src(list)
+        .pipe(uglify())
+        .pipe(concat('codeEditorScript.js'))  
+        .pipe(gulp.dest(folderPath+'minScripts/')); 
+});
+
+gulp.task('codecss',function() {
+    console.log(" gulping main codecss  ");
+    list=[ 
+    "client/build/codemirror/theme/mdn-like.css",
+    "client/build/codemirror/lib/codemirror.css",
+    "client/build/codemirror/style.css"
+    ]; 
+    console.log(list);
+    gulp.src(list)
+        .pipe(concat('codeEditorCss.css'))  
+        .pipe(gulp.dest(folderPath+'minScripts/')); 
+});
+
+gulp.task('betawebrtcdevelopmentjs',function() {
+    console.log(" gulping main webrtc development scripts ");
+    appJsList=[ 
+        "client/build/scripts/init.js",
+        "client/build/scripts/firebase.js",
+        "client/build/scripts/FileBufferReader.js",
+        "client/build/scripts/RTCMultiConnection.js",
+        "client/build/scripts/canvas-designer-widget.js",
+        "client/build/scripts/RecordRTC.js",
+        "client/build/scripts/screenshot.js",
+        "client/build/scripts/getScreenId.js",
+        "client/build/scripts/geolocation.js",
+        /*"client/build/scripts/start.js",*/
+        "client/build/scripts/admin.js"
+    ]; 
+    console.log(appJsList);
+    gulp.src(appJsList)
+        .pipe(uglify())
+        .pipe(concat('webrtcdevelopment.js'))  
+        .pipe(gulp.dest(folderPath+'minScripts/')); 
+});
+
 gulp.task('webrtcdevelopmentjs',function() {
     console.log(" gulping main webrtc development scripts ");
     appJsList=[ 
@@ -122,7 +174,6 @@ gulp.task('webrtcdevelopmentjs',function() {
         .pipe(concat('webrtcdevelopment.js'))  
         .pipe(gulp.dest(folderPath+'minScripts/')); 
 });
-
 
 gulp.task('mainstyle',function() {
     console.log(" gulping main stylesheets css  ");
@@ -169,8 +220,24 @@ gulp.task('default', gulpSequence(
     'vendorjs',
     'drawjs' , 
     'drawcss',
+    'codejs',
+    'codecss',
+    'betawebrtcdevelopmentjs',
+    'mainstyle',
+    'webrtcdevelopmentcss',
+    'serverjs'
+)); 
+
+
+gulp.task('production', gulpSequence(
+    'vendorjs',
+    'drawjs' , 
+    'drawcss',
+    'codejs',
+    'codecss',
     'webrtcdevelopmentjs',
     'mainstyle',
     'webrtcdevelopmentcss',
     'serverjs'
 )); 
+

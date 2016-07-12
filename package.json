@@ -10,6 +10,7 @@
         "googleapis": "^3.1.0",
         "node-static": "^0.7.7",
         "socket.io": "0.9.*",
+        "socket.io-client":"*",
         "supervisor": "^0.10.0",
         "restify": "*"
     },

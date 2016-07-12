@@ -29,60 +29,51 @@ module.exports = function(app , properties) {
             if (!channels[data.channel]) {
                 initiatorChannel = data.channel;
             }
-            console.log("------------new channel------------- ", data.channel , " by " , data.sender);
+            console.log("------------new channel------------- ", data.channel," by " , data.sender);
             channels[data.channel] = {
                 channel: data.channel,
                 timestamp: new Date().toLocaleString(),
                 users:[data.sender],
-                status:"active",
-                endtimestamp:0
+                status:"waiting",
+                endtimestamp:0,
+                log:[new Date().toLocaleString()+":-channel created . User "+data.sender+" waiting "]
             };     
         });
 
         socket.on('join-channel', function (data) {  
-            console.log("------------join channel------------- ", data.channel , " by " , data.sender);
-            channels[data.channel].users.push(data.sender);    
+            console.log("------------join channel------------- ", data.channel," by " , data.sender);
+            channels[data.channel].users.push(data.sender); 
+            channels[data.channel].status=channels[data.channel].users.length + " active members";
+            channels[data.channel].log.push(new Date().toLocaleString()+":-User "+data.sender+" joined the channel ");    
+        });
+
+        socket.on('leave-channel', function(msg) {
+            console.log('leave-channel' , msg);
         });
 
         socket.on('presence', function (channel) {
             var isChannelPresent = !! channels[channel.channel];
-            console.log("presence for channel " ,isChannelPresent);
+            console.log("------------presence for channel------------ ",channel," is ",isChannelPresent);
             socket.emit('presence', isChannelPresent);
         });
 
         socket.on('disconnect', function (channel) {
+            console.log("disconnect",channel);
         });
 
         socket.on("admin_enquire",function(data){
             switch (data.ask){
                 case "channels":
-                    socket.emit('response_to_admin_enquire', {
-                        response:'channels',
-                        channels:channels,
-                        format:data.format
-                    });
+                    socket.emit('response_to_admin_enquire', module.getAllChannels(data.format));
                 break;
                 case "users":
-                    var users=[];
-                    console.log("Request for users by Admin");
-                    for (i in Object.keys(channels)) { 
-                        var key=Object.keys(channels)[i];
-                        for (j in channels[key].users) {
-                            users.push(channels[key].users[j]);
-                        }
-                    }
-                    console.log(users);
-                    socket.emit('response_to_admin_enquire', {
-                        response:'users',
-                        users:users,
-                        format:data.format
-                    });
+                    socket.emit('response_to_admin_enquire', module.getAllUsers(data.format));
                 break;
                 case "channel_clients":
-                    socket.emit('response_to_admin_enquire', io.of('/' + data.channel).clients());
+                    socket.emit('response_to_admin_enquire', module.getChannelClients(data.channel));
                 break;
                 default :
-                 socket.emit('response_to_admin_enquire', channels);
+                    socket.emit('response_to_admin_enquire', "no case matched ");
             }           
         });
     });
@@ -100,23 +91,83 @@ module.exports = function(app , properties) {
 
             socket.on('message', function (data) {
                 if (data.sender == sender) {
-                    if(!username) username = data.data.sender;                
+                    if(!username) username = data.data.sender;  
+                    console.log(data.data);              
                     socket.broadcast.emit('message', data.data);
+                    if(channels[channel]){
+                        channels[channel].log.push(new Date().toLocaleString()+":-user "+data.sender+" send message "+JSON.stringify(data.data));    
+                    }else if(data.data.left){
+                        /*channels[data.data.sessionid].users.pop(data.data.userid);*/ 
+                        
+                        var i = channels[data.data.sessionid].users.indexOf(data.data.userid);
+                        if(i != -1) {
+                            channels[data.data.sessionid].users.splice(i, 1);
+                        }
+                        
+                        channels[data.data.sessionid].log.push(new Date().toLocaleString()+":-user "+data.data.userid+" left ");         
+                        if( channels[data.data.sessionid].users.length ==0){
+                            channels[data.data.sessionid].status="inactive";
+                        }else{
+                            channels[data.data.sessionid].status=channels[data.data.sessionid].users.length + " active members";
+                        }
+                    }else{
+                        console.log("channels[channel] doesnt exist ");
+                    }
                 }
             });
             
-            socket.on('disconnect', function() {
+            socket.on('disconnect', function(data) {
+                console.log("disconnect inside new namespace -----",data);
                 if(username) {
+                    console.log("username " , username);
                     socket.broadcast.emit('user-left', username);
+                    channels[channel].log.push(new Date().toLocaleString()+":-user "+username+" left ");    
                     username = null;
+                }else{
+                    console.log("username not defined ");
                 }
             });
         });
     }
 
+    module.getAllChannels=function(format){
+        var output={
+                response:'channels',
+                channels:channels,
+                format:format
+            };
+        return output;
+    };
+
+    module.getAllUsers=function(format){
+        var users=[];
+        for (i in Object.keys(channels)) { 
+            var key=Object.keys(channels)[i];
+            for (j in channels[key].users) {
+                users.push(channels[key].users[j]);
+            }
+        }
+
+        var output={
+                response:'users',
+                users:users,
+                format:format
+            };
+        return output;
+    };
+
+    module.getChannelClients=function(channel){
+        
+        var output={
+                response:'users',
+                clients:io.of('/' + channel).clients(),
+                format:data.format
+            };
+        return output;
+    };
+
     console.log(" Socket.io env => "+ properties.enviornment+ " running at\n "+properties.httpsPort);
 
     return module;
 };
-
 
