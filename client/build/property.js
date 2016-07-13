@@ -2,7 +2,7 @@ props={
 	extensionID: "elfbfompfpakbefoaicaeoabnnoihoac",
 	serverNAME: "WebRTCDevelopemnet",
 	env: "local",
-	signaller: "https://localhost:8086/",
+	signaller: "https://"+location.hostname+":8086/",
     xirsys:{
         username:"satishdhote",
         secretkey:"07e291ca-c387-11e5-9e90-92cac6d3a4e7",
