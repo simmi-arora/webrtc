@@ -61,6 +61,7 @@ git clone https://github.com/altanai/webrtc.git webrtc
 ```
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.2/install.sh | bash
 . ~/.nvm/nvm.sh
+nvm install v5.0.0
 nvm use v5.0.0
 ```
 
@@ -77,11 +78,11 @@ It will read the package.json and update the dependencies in node_modules folder
 To change the ports for running the https server and rest server, goto env.json
 ```
 {       "hostname"      : "host",        
-		"enviornment"   : "local",        
-		"host"        	: "localhost",
-		"jsdebug"       :  true,          
-		"httpsPort"		:  8086,
-		"restPort"		:  8087,
+	"enviornment"   : "local",        
+	"host"        	: "localhost",
+	"jsdebug"       :  true,          
+	"httpsPort"	:  8086,
+	"restPort"	:  8087,
         "extensionID"   : "elfbfompfpakbefoaicaeoabnnoihoac"
 }
 ```
