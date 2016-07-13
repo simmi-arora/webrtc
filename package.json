@@ -33,7 +33,7 @@
   },
   "scripts": {
     "test": "npm install & gulp & node webrtcserver.js",
-    "start": "npm install & gulp & apidoc -v -i /home/altanai/webrtcWSwksppace/webrtcdevelopment/ -e node_modules/  -o client/build/api/doc & supervisor -i ./public/ webrtcserver.js"
+    "start": "npm install & gulp production & apidoc -v -i /home/altanai/webrtcWSwksppace/webrtcdevelopment/ -e node_modules/  -o client/build/api/doc & supervisor -i ./public/ webrtcserver.js"
   },
   "repository": {
     "type": "git",

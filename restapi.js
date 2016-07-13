@@ -12,7 +12,6 @@ module.exports = function(realtimecomm, options , app, properties) {
       }
     );
 
-
     function extracter(mixObj){
         console.log(mixObj);
 
