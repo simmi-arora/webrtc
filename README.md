@@ -59,7 +59,8 @@ git clone https://github.com/altanai/webrtc.git webrtc
 
 ##### 2. install nvm ( node version manager ) 
 ```
-sudo apt-get install nvm
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.2/install.sh | bash
+. ~/.nvm/nvm.sh
 nvm use v5.0.0
 ```
 
