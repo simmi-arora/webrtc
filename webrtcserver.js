@@ -3,23 +3,28 @@ var _static = require('node-static');
 var https = require('https');
 
 
-var property = require('./propertyWriter.js')(fs);
-/*property.writeEnv();*/
-var properties= JSON.parse(property.readEnv());
+var _properties = require('./env.js')(fs).readEnv();
+var properties= JSON.parse(_properties);
 
-var folderPath="";
+console.log(properties);
+
+var folderPath="", file="";
+
 if(properties.enviornment=="production"){
-  folderPath='.client/prod';
+  folderPath='./client/prod';
 }else if(properties.enviornment=="test"){
-  folderPath='.client/tests';
+  folderPath='./client/tests';
 }else{
-  folderPath='.client/build';
+  folderPath='./client/build';
 }
-var file = new _static.Server('./client/build', {
+
+console.log("Folder Path for this enviornment " , folderPath);
+
+  file = new _static.Server(folderPath, {
     cache: 3600,
     gzip: true,
     indexFile: "home.html"
-});
+  });
 
 var options = {
   key: fs.readFileSync('ssl_certs/server.key'),

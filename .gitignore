@@ -1,2 +1,4 @@
 node_modules
 aws
+client/build
+env.json

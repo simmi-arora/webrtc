@@ -27,16 +27,28 @@ module.exports = function(grunt) {
         watch: {
             files: ['<%= jshint.files %>'],
             tasks: ['jshint']
-        }
+        },
 
+        copy: {
+          main: {
+            files: [
+
+                // includes files within path and its sub-directories
+                {expand: true, src: ['client/build/minScripts/**'], dest: 'client/prod/minScripts/'},
+                {expand: true, src: ['client/build/api/**'], dest: 'client/prod/api/'},
+
+
+            ],
+          },
+        }
     });
 
-    // Load the plugin that provides the "uglify" task.
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
     // Default task(s).
     grunt.registerTask('default', ['jshint','uglify']);
-
+    grunt.registerTask('production', ['jshint','uglify','copy']);
 };
