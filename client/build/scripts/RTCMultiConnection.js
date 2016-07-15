@@ -1,8 +1,4 @@
-// Last time updated at Friday, January 29th, 2016, 11:21:18 AM 
 
-// Latest file can be found here: https://cdn.webrtc-experiment.com/RTCMultiConnection.js
-
-// _________________________
 // RTCMultiConnection-v2.2.2
 
 (function() {
@@ -10,7 +6,7 @@
     // RMC == RTCMultiConnection
     // usually page-URL is used as channel-id
     // you can always override it!
-    // www.RTCMultiConnection.org/docs/channel-id/
+
     window.RMCDefaultChannel = location.href.replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
 
     // www.RTCMultiConnection.org/docs/constructor/

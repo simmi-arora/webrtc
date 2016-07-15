@@ -208,15 +208,14 @@ $('document').ready(function(){
 
     var session ={
         sessionid : sessionid,
-        /*https://www.villageexperts.com:8084*/
-        socketAddr: "/",
+        socketAddr: props.signaller,
         turn:{
-                username:"satishdhote",
-                secretkey:"07e291ca-c387-11e5-9e90-92cac6d3a4e7",
-                domain:"ec2-54-193-124-35.us-west-1.compute.amazonaws.com",
-                application:"webrtc",
-                room:"main",
-                secure:1
+                username    : props.xirsys.username,
+                secretkey   : props.xirsys.secretkey,
+                domain      : props.xirsys.domain,
+                application : props.xirsys.application,
+                room        : props.xirsys.room,
+                secure      : props.xirsys.secure
             }
     };
 

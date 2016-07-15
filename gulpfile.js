@@ -34,7 +34,7 @@ gulp.task('vendorjs',function() {
         .pipe(gulp.dest(folderPath+'minScripts/')); 
 });
 
-/*gulp.task('screensharejs',function() {
+gulp.task('screensharejs',function() {
     console.log(" gulping screensharing  ");
     list=[ 
         "client/build/scripts/screensharing.js",
@@ -42,9 +42,9 @@ gulp.task('vendorjs',function() {
     console.log(list);
     gulp.src(list)
         .pipe(uglify())
-        .pipe(concat('screenshare.js'))  
+        .pipe(concat('webrtcdevelopment_screenshare.js'))  
         .pipe(gulp.dest(folderPath+'minScripts/')); 
-});*/
+});
 
 /*gulp.task('adminjs',function() {
     console.log(" gulping admin script  ");
@@ -122,9 +122,9 @@ gulp.task('codejs',function() {
 gulp.task('codecss',function() {
     console.log(" gulping main codecss  ");
     list=[ 
-    "client/build/codemirror/theme/mdn-like.css",
-    "client/build/codemirror/lib/codemirror.css",
-    "client/build/codemirror/style.css"
+        "client/build/codemirror/theme/mdn-like.css",
+        "client/build/codemirror/lib/codemirror.css",
+        "client/build/codemirror/style.css"
     ]; 
     console.log(list);
     gulp.src(list)
@@ -225,6 +225,7 @@ gulp.task('default', gulpSequence(
     'codejs',
     'codecss',
     'betawebrtcdevelopmentjs',
+    'screensharejs',
     'mainstyle',
     'webrtcdevelopmentcss',
     'serverjs'
@@ -238,6 +239,7 @@ gulp.task('production', gulpSequence(
     'codejs',
     'codecss',
     'webrtcdevelopmentjs',
+    'screensharejs',
     'mainstyle',
     'webrtcdevelopmentcss',
     'serverjs'

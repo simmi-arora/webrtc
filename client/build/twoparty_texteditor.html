@@ -305,14 +305,14 @@ $('document').ready(function(){
 
     var session ={
         sessionid : sessionid,
-        socketAddr: "https://localhost:8086/",
+        socketAddr: props.signaller,
         turn:{
-                username:"satishdhote",
-                secretkey:"07e291ca-c387-11e5-9e90-92cac6d3a4e7",
-                domain:"www.villageexperts.com",
-                application:"webrtc",
-                room:"service",
-                secure:1
+                username    : props.xirsys.username,
+                secretkey   : props.xirsys.secretkey,
+                domain      : props.xirsys.domain,
+                application : props.xirsys.application,
+                room        : props.xirsys.room,
+                secure      : props.xirsys.secure
             }
     };
 

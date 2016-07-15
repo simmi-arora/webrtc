@@ -30,7 +30,13 @@ DetectRTC.screen = {
         }
     },
     getChromeExtensionStatus: function (callback) {
-        var extensionid = 'elfbfompfpakbefoaicaeoabnnoihoac';
+        if(!props){
+            alert(" Please insert extensionId into the property File ");
+            return;
+        }
+        console.log(props);
+        var extensionid = props.extensionID;
+        
         var image = document.createElement('img');
         image.src = 'chrome-extension://' + extensionid + '/icon.png';
         image.onload = function () {
