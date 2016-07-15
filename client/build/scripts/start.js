@@ -26,9 +26,12 @@ var WebRTCdom= function(  _localObj , _remoteObj ){
 var WebRTCdev= function(session, incoming, outgoing, widgets){
     sessionid     = session.sessionid;
     socketAddr    = session.socketAddr;
-    turn          = session.turn;
+
+    console.log("session.hasOwnProperty('turn')" ,  session.hasOwnProperty('turn'));
+
+    turn          = (session.hasOwnProperty('turn')?session.turn:null);
     
-    if(turn ){
+    if(turn!=null ){
         getICEServer( turn.username ,turn.secretkey , turn.domain,
                         turn.application , turn.room , turn.secure); 
     }
@@ -690,7 +693,6 @@ if (navigator.mozGetUserMedia) {
 ************************************************************************************/
 // connecting to signaling medium
 // rtcMultiConnection.connect();
-
 opneWebRTC=function(){
     shownotification("Making a new session ");
     rtcMultiConnection.open();
@@ -718,41 +720,23 @@ ICE
 
 var iceServers=[];
 
-/*iceServers.push({
-    url: 'stun:stun.l.google.com:19302'
-});
-
-iceServers.push({
-    url: 'stun:stun.anyfirewall.com:3478'
-});
-
-iceServers.push({
-    url: 'turn:turn.bistri.com:80',
-    credential: 'homeo',
-    username: 'homeo'
-});
-
-iceServers.push({
-    url: 'turn:turn.anyfirewall.com:443?transport=tcp',
-    credential: 'webrtc',
-    username: 'webrtc'
-});*/
-
-/*var myVar = setInterval(startcall, 1000);*/
+var myVar = setInterval(startcall, 1000);
 
 function startcall() {
     //rtcMultiConnection.open();
 
     rtcMultiConnection= new RTCMultiConnection(sessionid);
-    if(turn){
-        /*
+    console.log("turn" , turn);
+    if(turn=='none'){
+        clearInterval(myVar);
+    }else{
         if(!webrtcdevIceServers) {
             return;
         }else{
-            clearInterval(myVar)
-        }*/
-        rtcMultiConnection.iceServers=webrtcdevIceServers; 
-    }    
+            clearInterval(myVar);
+        }
+        rtcMultiConnection.iceServers=webrtcdevIceServers;       
+    }  
 
     rtcMultiConnection.extra = {
         username: username,
@@ -1144,32 +1128,8 @@ function startcall() {
     if(screenshareobj.active){
 
         detectExtensionScreenshare(screenshareobj.extensionID);
-        webrtcdevScreenShare();
+        
 
-        var screenShareButton= document.createElement("span");
-        screenShareButton.className=screenshareobj.button.shareButton.class_off;
-        screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
-        screenShareButton.id="screenShareButton";
-        screenShareButton.onclick = function() {    
-            console.log("screenShareButton", screen);
-            if(screenShareButton.className==screenshareobj.button.shareButton.class_off){
-                screen.share();
-                screenShareButton.className=screenshareobj.button.shareButton.class_on;
-                screenShareButton.innerHTML=screenshareobj.button.shareButton.html_on;
-            }else if(screenShareButton.className==screenshareobj.button.shareButton.class_on){
-                screen.leave();
-                
-                var elem = document.getElementById("viewScreenShareButton");
-                elem.parentElement.removeChild(elem);
-                
-                screenShareButton.className=screenshareobj.button.shareButton.class_off;
-                screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
-            }
-        };
-
-        var li =document.createElement("li");
-        li.appendChild(screenShareButton);
-        document.getElementById("topIconHolder_ul").appendChild(li);
     }   
 
     if(reconnectobj.active){
@@ -1900,8 +1860,27 @@ function webrtcdevScreenShare(){
 function detectExtensionScreenshare(extensionID){
     var extensionid = extensionID;
     rtcMultiConnection.DetectRTC.screen.getChromeExtensionStatus(extensionid, function(status) {
+        console.log( "detectExtensionScreenshare " , status);
+        var screenShareButton;
         if(status == 'installed-enabled') {
-            // chrome extension is installed & enabled.
+            screenShareButton= document.createElement("span");
+            screenShareButton.className=screenshareobj.button.shareButton.class_off;
+            screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
+            screenShareButton.id="screenShareButton";
+            screenShareButton.onclick = function() {    
+                console.log("screenShareButton", screen);
+                if(screenShareButton.className==screenshareobj.button.shareButton.class_off){
+                    screen.share();
+                    screenShareButton.className=screenshareobj.button.shareButton.class_on;
+                    screenShareButton.innerHTML=screenshareobj.button.shareButton.html_on;
+                }else if(screenShareButton.className==screenshareobj.button.shareButton.class_on){
+                    screen.leave();
+                    var elem = document.getElementById("viewScreenShareButton");
+                    elem.parentElement.removeChild(elem);
+                    screenShareButton.className=screenshareobj.button.shareButton.class_off;
+                    screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
+                }
+            };
         }
         
         if(status == 'installed-disabled') {
@@ -1910,17 +1889,40 @@ function detectExtensionScreenshare(extensionID){
         
         if(status == 'not-installed') {
             // chrome extension is not installed
+            screenShareButton= document.createElement("span");
+            screenShareButton.className=screenshareobj.button.installButton.class_off;
+            screenShareButton.innerHTML=screenshareobj.button.installButton.html_off;
+            screenShareButton.id="screeninstallButton";
+            screenShareButton.onclick = function(e) {    
+                console.log("screeninstallButton");
+                chrome.webstore.install("https://chrome.google.com/webstore/detail/"+extensionID 
+                ,function(){
+                    console.log("Chrome extension inline installation - success");
+                },function (){
+                    console.log("Chrome extension inline installation - fail ");
+                });
+                // Prevent the opening of the Web Store page
+                e.preventDefault();
+            };
+            
         }
         
         if(status == 'not-chrome') {
             // using non-chrome browser
         }
+
+
+        var li =document.createElement("li");
+        li.appendChild(screenShareButton);
+        document.getElementById("topIconHolder_ul").appendChild(li);
+
+        webrtcdevScreenShare();
     });
 
     // if following function is defined, it will be called if screen capturing extension seems available
     rtcMultiConnection.DetectRTC.screen.onScreenCapturingExtensionAvailable = function() {
         // hide inline-install button
-        //alert("onScreenCapturingExtensionAvailable , hide inline installation button ");
+        // alert("onScreenCapturingExtensionAvailable , hide inline installation button ");
     };
 
     // a middle-agent between public API and the Signaler object
@@ -2326,8 +2328,6 @@ function detectExtensionScreenshare(extensionID){
     var isChrome = !!navigator.webkitGetUserMedia;
     var isMobileDevice = !!navigator.userAgent.match(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile/i);
 
-    /*var iceServers = webrtcdevIceServers;*/
-    /*var iceServers = rtcMultiConnection.iceServers;*/
     var iceServers=[];
 
     var optionalArgument = {
@@ -2531,12 +2531,19 @@ recordButton.onclick = function() {
 Canvas Record 
 *************************************************************************/
 
-
 function syncVideoScreenRecording(data , datatype , dataname ){
     rtcMultiConnection.send({type:datatype, message:data  , name : dataname});
 }
 
 function autorecordScreenVideo(){
+
+}
+
+/************************************************************************
+Track Call Record 
+*************************************************************************/
+
+function sendCallTraces(){
 
 }
 
@@ -2621,8 +2628,13 @@ function getICEServer(username , secretkey , domain , appname , roomname , secur
     var url = 'https://service.xirsys.com/ice';
     var xhr = createCORSRequest('POST', url);
     xhr.onload = function () {
-        webrtcdevIceServers=JSON.parse(xhr.responseText).d.iceServers;
-        console.log("iceserver got" ,webrtcdevIceServers );
+        console.log(xhr.responseText);
+        if(JSON.parse(xhr.responseText).d==null){
+            shownotification(" media not able to pass through "+ JSON.parse(xhr.responseText).e);
+        }else{
+            webrtcdevIceServers=JSON.parse(xhr.responseText).d.iceServers;
+            console.log("iceserver got" ,webrtcdevIceServers );
+        }
     };
     xhr.onerror = function () {
         console.error('Woops, there was an error making xhr request.');

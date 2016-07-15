@@ -1,4 +1,5 @@
 (function() {
+
     window.getScreenId = function(callback) {
         // for Firefox:
         // sourceId == 'firefox'

@@ -44,7 +44,7 @@ var latitude="" , longitude="" , operatingsystem="";
 
 /* webrtc session intilization */
 var autoload=true;
-var sessionid=null, socketAddr="/",turn , webrtcdevIceServers;
+var sessionid=null, socketAddr="/", turn=null , webrtcdevIceServers;
 /* iconsoming and outgoing call params */
 var incomingAudio =true , incomingVideo =true , incomingData = true;
 var outgoingAudio =true , outgoingVideo =true , outgoingData = true;
