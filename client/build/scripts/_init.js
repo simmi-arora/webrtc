@@ -20,19 +20,10 @@ var t = " ";
 var e= null;
 var n="tara181989@gmail.com";
 
-var usersList       = document.getElementById("userslist");
-var numbersOfUsers  = document.getElementById("numbersofusers");
-var usersContainer  = document.getElementById("usersContainer");
-
-var localUserId=null , remoteUserId=null;
-
-var card = document.getElementById('card');
+var selfuserid=null , remoteUserId=null;
 var containerDiv;
-var main = document.querySelector('#main');
-var smaller = document.querySelector('#smaller');
 var webcallpeers=[];
 var sessions = {};
-var whoIsTyping = document.querySelector("#who-is-typing");
 var repeatFlagShowButton =null, repeatFlagHideButton =null, repeatFlagRemoveButton=null ;
 
 /* DOM objects */
@@ -45,7 +36,8 @@ var latitude="" , longitude="" , operatingsystem="";
 /* webrtc session intilization */
 var autoload=true;
 var sessionid=null, socketAddr="/", turn=null , webrtcdevIceServers;
-/* iconsoming and outgoing call params */
+
+/* icoming and outgoing call params */
 var incomingAudio =true , incomingVideo =true , incomingData = true;
 var outgoingAudio =true , outgoingVideo =true , outgoingData = true;
 
