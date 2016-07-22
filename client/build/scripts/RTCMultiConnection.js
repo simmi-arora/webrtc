@@ -4261,7 +4261,7 @@
 
                 if (!this.connection) return;
 
-                log('setting remote description', sessionDescription.type, sessionDescription.sdp);
+                /*log('setting remote description', sessionDescription.type, sessionDescription.sdp);*/
 
                 var self = this;
                 this.connection.setRemoteDescription(
