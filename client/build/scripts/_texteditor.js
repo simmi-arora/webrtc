@@ -1,26 +1,25 @@
-function createTextEditorBtton(){
-	        var texteditorButton= document.createElement("span");
-        texteditorButton.className=texteditorobj.button.class_off ;
-        texteditorButton.innerHTML=texteditorobj.button.html_off;
+function createTextEditorButton(){
+    var texteditorButton= document.createElement("span");
+    texteditorButton.className=texteditorobj.button.class_off ;
+    texteditorButton.innerHTML=texteditorobj.button.html_off;
 
-        texteditorButton.onclick=function(){
-            if(texteditorButton.className==texteditorobj.button.class_off){
-                texteditorButton.className= texteditorobj.button.class_on ;
-                texteditorButton.innerHTML= texteditorobj.button.html_on;
-                startWebrtcdevTexteditorSync();
-                document.getElementById(texteditorobj.texteditorContainer).hidden=false;
-            }else if(texteditorButton.className==texteditorobj.button.class_on){
-                texteditorButton.className= texteditorobj.button.class_off ;
-                texteditorButton.innerHTML= texteditorobj.button.html_off;
-                stopWebrtcdevTexteditorSync();
-                document.getElementById(texteditorobj.texteditorContainer).hidden=true;
-            }
-        };
-        var li =document.createElement("li");
-        li.appendChild(texteditorButton);
-        document.getElementById("topIconHolder_ul").appendChild(li);
-
-
+    texteditorButton.onclick=function(){
+        if(texteditorButton.className==texteditorobj.button.class_off){
+            texteditorButton.className= texteditorobj.button.class_on ;
+            texteditorButton.innerHTML= texteditorobj.button.html_on;
+            startWebrtcdevTexteditorSync();
+            document.getElementById(texteditorobj.texteditorContainer).hidden=false;
+        }else if(texteditorButton.className==texteditorobj.button.class_on){
+            texteditorButton.className= texteditorobj.button.class_off ;
+            texteditorButton.innerHTML= texteditorobj.button.html_off;
+            stopWebrtcdevTexteditorSync();
+            document.getElementById(texteditorobj.texteditorContainer).hidden=true;
+        }
+    };
+    var li =document.createElement("li");
+    li.appendChild(texteditorButton);
+    document.getElementById("topIconHolder_ul").appendChild(li);
+}
         
 /*************************************************************************
 Text Editor

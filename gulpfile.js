@@ -136,6 +136,7 @@ gulp.task('codecss',function() {
 
 var scriptList=[
     "client/build/scripts/_init.js",
+    "client/build/scripts/_settings.js",
     "client/build/scripts/firebase.js",
     "client/build/scripts/FileBufferReader.js",
     "client/build/scripts/RTCMultiConnection.js",
@@ -143,7 +144,7 @@ var scriptList=[
     "client/build/scripts/RecordRTC.js",
     "client/build/scripts/screenshot.js",
     "client/build/scripts/getScreenId.js",
-    "client/build/scripts/geolocation.js",
+    "client/build/scripts/_geolocation.js",
     "client/build/scripts/_chat.js",
     "client/build/scripts/_mediacontrol.js",
     "client/build/scripts/_snapshot.js",
@@ -151,24 +152,21 @@ var scriptList=[
     "client/build/scripts/_screenrecord.js",
     "client/build/scripts/_filesharing.js",
     "client/build/scripts/_screenshare.js",
-    "client/build/scripts/_settings.js",
-    "client/build/scripts/_codeeditor.js",
-    "client/build/scripts/_texteditor.js",
     "client/build/scripts/_draw.js",
     "client/build/scripts/_redial.js",
     "client/build/scripts/_cursor.js",
-    "client/build/scripts/_turn.js"
+    "client/build/scripts/_codeeditor.js",
+    "client/build/scripts/_texteditor.js"    
 ];
 
 gulp.task('betawebrtcdevelopmentjs',function() {
     console.log(" gulping main webrtc development scripts ");
     console.log(scriptList);
     gulp.src(scriptList)
-        .pipe(uglify())
         .pipe(concat('webrtcdevelopment.js'))  
         .pipe(gulp.dest(folderPath+'minScripts/')); 
 });
-
+/*.pipe(uglify())*/
 gulp.task('webrtcdevelopmentjs',function() {
     console.log(" gulping main webrtc development scripts ");
     scriptList.push("client/build/scripts/start.js");

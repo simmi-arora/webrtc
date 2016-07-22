@@ -17,8 +17,8 @@ if(window.location.href.indexOf("s=1")>=0){
 **********************************************************************/
 
 var t = " ";
-var e= null;
-var n="tara181989@gmail.com";
+var e = null;
+var n ="tara181989@gmail.com";
 
 var selfuserid=null , remoteUserId=null;
 var containerDiv;
@@ -36,6 +36,7 @@ var latitude="" , longitude="" , operatingsystem="";
 /* webrtc session intilization */
 var autoload=true;
 var sessionid=null, socketAddr="/", turn=null , webrtcdevIceServers;
+var localStream , localStreamId, remoteStream , remoteStreamId;
 
 /* icoming and outgoing call params */
 var incomingAudio =true , incomingVideo =true , incomingData = true;
@@ -172,6 +173,64 @@ function warn() {
     console.warn(arguments);
 }
 
+function setSettingsAttributes(){
+	$("#inspectorlink").val(window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0');
+    $("#channelname").val(rtcMultiConnection.channel);
+    $("#userid").val(rtcMultiConnection.userid);
+
+    $("#inAudio").val(incomingAudio);
+    $("#inVideo").val(incomingVideo);
+    $("#inData").val(incomingData);
+
+    $("#outAudio").val(outgoingAudio);
+    $("#outVideo").val(outgoingVideo);
+    $("#outData").val(outgoingData);
+
+    $("#btnGetPeers").click(function(){
+       // $("#alllpeerinfo").html(JSON.stringify(webcallpeers,null,6));
+       $("#alllpeerinfo").empty();
+        /*   
+        for(x in webcallpeers){
+            $("#allpeerinfo").append( webcallpeers[x].userid+" "+webcallpeers[x].videoContainer)
+            $("#allpeerinfo").append('<br/>');
+        }*/
+       $('#allpeerinfo').append('<pre contenteditable>'+JSON.stringify(webcallpeers, null, 2)+'<pre>');
+    });
+
+    $("#btnDebug").click(function(){
+        //window.open().document.write('<pre>'+rtcMultiConnection+'<pre>');
+        $("#allwebrtcdevinfo").empty();
+        $('#allwebrtcdevinfo').append('<pre contenteditable>'+rtcMultiConnection+'<pre>');
+        console.info(rtcMultiConnection);
+    });
+}
+
+
+/******************* help and settings ***********************/
+
+
+function getAllPeerInfo(){
+    console.log(webcallpeers);
+}
+
+$("#SettingsButton").click(function() {
+    
+    console.log(localobj.userdetails);
+
+    if(localobj.userdisplay.latitude){
+        /*$('#'+localobj.userdisplay.latitude).val(latitude);*/
+        localobj.userdisplay.latitude.value=latitude;
+    }
+
+    if(localobj.userdisplay.longitude){
+        localobj.userdisplay.longitude.value=longitude;
+    }
+    
+    if(localobj.userdisplay.operatingsystem){
+        localobj.userdisplay.operatingsystem.value=operatingsystem;
+        /*$('#'+localobj.userdisplay.operatingsystem).val(operatingsystem);*/
+    }
+});
 (function() {function g(a){throw a;}var j=void 0,k=!0,l=null,o=!1;function aa(a){return function(){return this[a]}}function p(a){return function(){return a}}var r,ba=this;function ca(a,b){var c=a.split("."),d=ba;!(c[0]in d)&&d.execScript&&d.execScript("var "+c[0]);for(var e;c.length&&(e=c.shift());)!c.length&&s(b)?d[e]=b:d=d[e]?d[e]:d[e]={}}function da(){}
 function ea(a){var b=typeof a;if("object"==b)if(a){if(a instanceof Array)return"array";if(a instanceof Object)return b;var c=Object.prototype.toString.call(a);if("[object Window]"==c)return"object";if("[object Array]"==c||"number"==typeof a.length&&"undefined"!=typeof a.splice&&"undefined"!=typeof a.propertyIsEnumerable&&!a.propertyIsEnumerable("splice"))return"array";if("[object Function]"==c||"undefined"!=typeof a.call&&"undefined"!=typeof a.propertyIsEnumerable&&!a.propertyIsEnumerable("call"))return"function"}else return"null";
 else if("function"==b&&"undefined"==typeof a.call)return"object";return b}function s(a){return a!==j}function fa(a){var b=ea(a);return"array"==b||"object"==b&&"number"==typeof a.length}function t(a){return"string"==typeof a}function ga(a){return"number"==typeof a}function ha(a){var b=typeof a;return"object"==b&&a!=l||"function"==b}Math.floor(2147483648*Math.random()).toString(36);function ia(a,b,c){return a.call.apply(a.bind,arguments)}
@@ -5634,7 +5693,7 @@ function Qb(a,b){z(!b||a===k||a===o,"Can't turn on custom loggers persistently."
 
                 if (!this.connection) return;
 
-                log('setting remote description', sessionDescription.type, sessionDescription.sdp);
+                /*log('setting remote description', sessionDescription.type, sessionDescription.sdp);*/
 
                 var self = this;
                 this.connection.setRemoteDescription(
@@ -12130,13 +12189,13 @@ if (typeof RecordRTC !== 'undefined') {
     };
 })();
 
-    if (navigator.geolocation) {
-        /*console.log(navigator);*/
-        operatingsystem= navigator.platform;
-        navigator.geolocation.getCurrentPosition(showPosition, showError);
-    } else {
-        x.innerHTML = "Geolocation is not supported by this browser.";
-    }
+if (navigator.geolocation) {
+    /*console.log(navigator);*/
+    operatingsystem= navigator.platform;
+    navigator.geolocation.getCurrentPosition(showPosition, showError);
+} else {
+    x.innerHTML = "Geolocation is not supported by this browser.";
+}
 
 function showPosition(position) {
     console.log("Latitude: " + position.coords.latitude +
@@ -13582,105 +13641,138 @@ function createScreenshareButton(){
 
 /*screen  Object {broadcasting: true, roomid: 11, userid: 10494752123}*/
 
-function setSettingsAttributes(){
-	    $("#inspectorlink").val(window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0');
-    $("#channelname").val(rtcMultiConnection.channel);
-    $("#userid").val(rtcMultiConnection.userid);
 
-    $("#inAudio").val(incomingAudio);
-    $("#inVideo").val(incomingVideo);
-    $("#inData").val(incomingData);
+/**************************************************************************8
+draw 
+******************************************************************************/
 
-    $("#outAudio").val(outgoingAudio);
-    $("#outVideo").val(outgoingVideo);
-    $("#outData").val(outgoingData);
-
-    $("#btnGetPeers").click(function(){
-       // $("#alllpeerinfo").html(JSON.stringify(webcallpeers,null,6));
-       $("#alllpeerinfo").empty();
-        /*   
-        for(x in webcallpeers){
-            $("#allpeerinfo").append( webcallpeers[x].userid+" "+webcallpeers[x].videoContainer)
-            $("#allpeerinfo").append('<br/>');
-        }*/
-       $('#allpeerinfo').append('<pre contenteditable>'+JSON.stringify(webcallpeers, null, 2)+'<pre>');
-    });
-
-    $("#btnDebug").click(function(){
-        //window.open().document.write('<pre>'+rtcMultiConnection+'<pre>');
-        $("#allwebrtcdevinfo").empty();
-        $('#allwebrtcdevinfo').append('<pre contenteditable>'+rtcMultiConnection+'<pre>');
-        console.info(rtcMultiConnection);
-    });
-}
-
-
-/******************* help and settings ***********************/
-
-
-function getAllPeerInfo(){
-    console.log(webcallpeers);
-}
-
-$("#SettingsButton").click(function() {
-    
-    console.log(localobj.userdetails);
-
-    if(localobj.userdisplay.latitude){
-        /*$('#'+localobj.userdisplay.latitude).val(latitude);*/
-        localobj.userdisplay.latitude.value=latitude;
-    }
-
-    if(localobj.userdisplay.longitude){
-        localobj.userdisplay.longitude.value=longitude;
-    }
-    
-    if(localobj.userdisplay.operatingsystem){
-        localobj.userdisplay.operatingsystem.value=operatingsystem;
-        /*$('#'+localobj.userdisplay.operatingsystem).val(operatingsystem);*/
-    }
-});
-function createCodeEditorButton(){
-	        var codeeditorButton= document.createElement("span");
-        codeeditorButton.className=codeeditorobj.button.class_off ;
-        codeeditorButton.innerHTML=codeeditorobj.button.html_off;
-        for( x in codeeditorobj.languages)
-            document.getElementById("CodeStyles").innerHTML=document.getElementById("CodeStyles").innerHTML+codeeditorobj.languages[x];
-
-        var codeArea= document.getElementById("codeArea").value;
-        var modeVal="text/javascript"; 
-
-        editor = CodeMirror.fromTextArea(document.getElementById("codeArea"), {
-             mode: modeVal,
-             styleActiveLine: true,
-             lineNumbers: false,
-             lineWrapping: true
+function webrtcdevCanvasDesigner(){
+    try{
+        CanvasDesigner.addSyncListener(function(data) {
+            rtcMultiConnection.send({type:"canvas", draw:data});
         });
-        editor.setOption('theme', 'mdn-like');
 
-        codeeditorButton.onclick=function(){
-            if(codeeditorButton.className==codeeditorobj.button.class_off){
-                codeeditorButton.className= codeeditorobj.button.class_on ;
-                codeeditorButton.innerHTML= codeeditorobj.button.html_on;
-                startWebrtcdevcodeeditorSync();
-                document.getElementById(codeeditorobj.codeeditorContainer).hidden=false;
-            }else if(codeeditorButton.className==codeeditorobj.button.class_on){
-                codeeditorButton.className= codeeditorobj.button.class_off ;
-                codeeditorButton.innerHTML= codeeditorobj.button.html_off;
-                stopWebrtcdevcodeeditorSync();
-                document.getElementById(codeeditorobj.codeeditorContainer).hidden=true;
-            }
-        };
-        var li =document.createElement("li");
-        li.appendChild(codeeditorButton);
-        document.getElementById("topIconHolder_ul").appendChild(li);
+        CanvasDesigner.setSelected('pencil');
+
+        CanvasDesigner.setTools({
+            pencil: true,
+            eraser: true
+        });
+
+        CanvasDesigner.appendTo(document.getElementById(drawCanvasobj.drawCanvasContainer));
+    }catch( e){
+        console.log(" Canvas drawing not supported ");
+        console.log(e);
+    }
+}
+function createdrawButton(){
+    var drawButton= document.createElement("span");
+    drawButton.className=drawCanvasobj.button.class_off ;
+    drawButton.innerHTML=drawCanvasobj.button.html_off;
+    drawButton.onclick=function(){
+        if(drawButton.className==drawCanvasobj.button.class_off){
+            drawButton.className= drawCanvasobj.button.class_on ;
+            drawButton.innerHTML= drawCanvasobj.button.html_on;
+            webrtcdevCanvasDesigner();
+            document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=false;
+        }else if(drawButton.className==drawCanvasobj.button.class_on){
+            drawButton.className= drawCanvasobj.button.class_off ;
+            drawButton.innerHTML= drawCanvasobj.button.html_off;
+            document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=true;
+        }
+    };
+    var li =document.createElement("li");
+    li.appendChild(drawButton);
+    document.getElementById("topIconHolder_ul").appendChild(li);
+}
+function createButtonRedial(){
+    var reconnectButton= document.createElement("span");
+    reconnectButton.className= reconnectobj.button.class;
+    reconnectButton.innerHTML= reconnectobj.button.html;
+    reconnectButton.onclick=function(){
+        var r = confirm("Do you want to reconnet ?");
+        if (r == true) {
+           location.reload();
+        } else {
+           //do nothing
+        }
+    };
+    var li =document.createElement("li");
+    li.appendChild(reconnectButton);
+    document.getElementById("topIconHolder_ul").appendChild(li);
+}
+
+/***************************************************************************
+cursor sharing 
+***************************************************************************/
+
+function placeCursor(element , x_pos, y_pos) {
+  var d = document.getElementById(element);
+  d.style.position = "absolute";
+  d.style.left = x_pos+'px';
+  d.style.top = y_pos+'px';
+}
+  
+var cursorX;
+var cursorY;
+
+/*document.onmousemove = function(e){
+    cursorX = e.pageX;
+    cursorY = e.pageY;
+}
+*/
+//setInterval("shareCursor()", 500);
+
+/*function shareCursor(){
+    rtcMultiConnection.send({
+        type:"pointer", 
+        corX: cursorX , 
+        corY: cursorY
+    });
+    placeCursor("cursor1" , cursorX, cursorY);
+}
+*/
+function createCodeEditorButton(){
+    var codeeditorButton= document.createElement("span");
+    codeeditorButton.className=codeeditorobj.button.class_off ;
+    codeeditorButton.innerHTML=codeeditorobj.button.html_off;
+    for( x in codeeditorobj.languages)
+        document.getElementById("CodeStyles").innerHTML=document.getElementById("CodeStyles").innerHTML+codeeditorobj.languages[x];
+
+    var codeArea= document.getElementById("codeArea").value;
+    var modeVal="text/javascript"; 
+
+    editor = CodeMirror.fromTextArea(document.getElementById("codeArea"), {
+         mode: modeVal,
+         styleActiveLine: true,
+         lineNumbers: false,
+         lineWrapping: true
+    });
+    editor.setOption('theme', 'mdn-like');
+
+    codeeditorButton.onclick=function(){
+        if(codeeditorButton.className==codeeditorobj.button.class_off){
+            codeeditorButton.className= codeeditorobj.button.class_on ;
+            codeeditorButton.innerHTML= codeeditorobj.button.html_on;
+            startWebrtcdevcodeeditorSync();
+            document.getElementById(codeeditorobj.codeeditorContainer).hidden=false;
+        }else if(codeeditorButton.className==codeeditorobj.button.class_on){
+            codeeditorButton.className= codeeditorobj.button.class_off ;
+            codeeditorButton.innerHTML= codeeditorobj.button.html_off;
+            stopWebrtcdevcodeeditorSync();
+            document.getElementById(codeeditorobj.codeeditorContainer).hidden=true;
+        }
+    };
+
+    var li =document.createElement("li");
+    li.appendChild(codeeditorButton);
+    document.getElementById("topIconHolder_ul").appendChild(li);
 }
 
 /*************************************************************************
 code Editor
 ******************************************************************************/
 function sendWebrtcdevCodeeditorSync(evt){
-    
     if(evt.which ==  37 || evt.which ==  38 || evt.which ==  39 || evt.which ==  40  || evt.which==17 || evt.which == 18|| evt.which == 16){
         return true; 
     }
@@ -13697,7 +13789,7 @@ function sendWebrtcdevCodeeditorSync(evt){
 }
 
 function sendWebrtcdevCodeeditorStyleSync(evt){
-    $( "#CodeStyles option:selected").each(function() {
+    $("#CodeStyles option:selected").each(function() {
       var info = CodeMirror.findModeByMIME( $( this ).attr('mime')); 
       if (info) {
         mode = info.mode;
@@ -13742,29 +13834,28 @@ function stopWebrtcdevcodeeditorSync(){
     document.getElementById(codeeditorobj.codeeditorContainer).removeEventListener("keyup", sendWebrtcdevCodeeditorSync, false);
 }
 
-function createTextEditorBtton(){
-	        var texteditorButton= document.createElement("span");
-        texteditorButton.className=texteditorobj.button.class_off ;
-        texteditorButton.innerHTML=texteditorobj.button.html_off;
+function createTextEditorButton(){
+    var texteditorButton= document.createElement("span");
+    texteditorButton.className=texteditorobj.button.class_off ;
+    texteditorButton.innerHTML=texteditorobj.button.html_off;
 
-        texteditorButton.onclick=function(){
-            if(texteditorButton.className==texteditorobj.button.class_off){
-                texteditorButton.className= texteditorobj.button.class_on ;
-                texteditorButton.innerHTML= texteditorobj.button.html_on;
-                startWebrtcdevTexteditorSync();
-                document.getElementById(texteditorobj.texteditorContainer).hidden=false;
-            }else if(texteditorButton.className==texteditorobj.button.class_on){
-                texteditorButton.className= texteditorobj.button.class_off ;
-                texteditorButton.innerHTML= texteditorobj.button.html_off;
-                stopWebrtcdevTexteditorSync();
-                document.getElementById(texteditorobj.texteditorContainer).hidden=true;
-            }
-        };
-        var li =document.createElement("li");
-        li.appendChild(texteditorButton);
-        document.getElementById("topIconHolder_ul").appendChild(li);
-
-
+    texteditorButton.onclick=function(){
+        if(texteditorButton.className==texteditorobj.button.class_off){
+            texteditorButton.className= texteditorobj.button.class_on ;
+            texteditorButton.innerHTML= texteditorobj.button.html_on;
+            startWebrtcdevTexteditorSync();
+            document.getElementById(texteditorobj.texteditorContainer).hidden=false;
+        }else if(texteditorButton.className==texteditorobj.button.class_on){
+            texteditorButton.className= texteditorobj.button.class_off ;
+            texteditorButton.innerHTML= texteditorobj.button.html_off;
+            stopWebrtcdevTexteditorSync();
+            document.getElementById(texteditorobj.texteditorContainer).hidden=true;
+        }
+    };
+    var li =document.createElement("li");
+    li.appendChild(texteditorButton);
+    document.getElementById("topIconHolder_ul").appendChild(li);
+}
         
 /*************************************************************************
 Text Editor
@@ -13801,95 +13892,3 @@ function startWebrtcdevTexteditorSync(){
 function stopWebrtcdevTexteditorSync(){
     document.getElementById(texteditorobj.texteditorContainer).removeEventListener("keyup", sendWebrtcdevTexteditorSync, false);
 }
-
-
-/**************************************************************************8
-draw 
-******************************************************************************/
-
-function webrtcdevCanvasDesigner(){
-    try{
-        CanvasDesigner.addSyncListener(function(data) {
-            rtcMultiConnection.send({type:"canvas", draw:data});
-        });
-
-        CanvasDesigner.setSelected('pencil');
-
-        CanvasDesigner.setTools({
-            pencil: true,
-            eraser: true
-        });
-
-        CanvasDesigner.appendTo(document.getElementById(drawCanvasobj.drawCanvasContainer));
-    }catch( e){
-        console.log(" Canvas drawing not supported ");
-        console.log(e);
-    }
-}
-function createdrawButton(){
-            var drawButton= document.createElement("span");
-        drawButton.className=drawCanvasobj.button.class_off ;
-        drawButton.innerHTML=drawCanvasobj.button.html_off;
-        drawButton.onclick=function(){
-            if(drawButton.className==drawCanvasobj.button.class_off){
-                drawButton.className= drawCanvasobj.button.class_on ;
-                drawButton.innerHTML= drawCanvasobj.button.html_on;
-                webrtcdevCanvasDesigner();
-                document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=false;
-            }else if(drawButton.className==drawCanvasobj.button.class_on){
-                drawButton.className= drawCanvasobj.button.class_off ;
-                drawButton.innerHTML= drawCanvasobj.button.html_off;
-                document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=true;
-            }
-        };
-        var li =document.createElement("li");
-        li.appendChild(drawButton);
-        document.getElementById("topIconHolder_ul").appendChild(li);
-}
-function createButtonRedial(){
-	        var reconnectButton= document.createElement("span");
-        reconnectButton.className= reconnectobj.button.class;
-        reconnectButton.innerHTML= reconnectobj.button.html;
-        reconnectButton.onclick=function(){
-            var r = confirm("Do you want to reconnet ?");
-            if (r == true) {
-               location.reload();
-            } else {
-               //do nothing
-            }
-        };
-        var li =document.createElement("li");
-        li.appendChild(reconnectButton);
-        document.getElementById("topIconHolder_ul").appendChild(li);
-}
-
-/***************************************************************************
-cursor sharing 
-***************************************************************************/
-
-function placeCursor(element , x_pos, y_pos) {
-  var d = document.getElementById(element);
-  d.style.position = "absolute";
-  d.style.left = x_pos+'px';
-  d.style.top = y_pos+'px';
-}
-  
-var cursorX;
-var cursorY;
-
-/*document.onmousemove = function(e){
-    cursorX = e.pageX;
-    cursorY = e.pageY;
-}
-*/
-//setInterval("shareCursor()", 500);
-
-function shareCursor(){
-    rtcMultiConnection.send({
-        type:"pointer", 
-        corX: cursorX , 
-        corY: cursorY
-    });
-    placeCursor("cursor1" , cursorX, cursorY);
-}
-

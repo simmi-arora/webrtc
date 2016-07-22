@@ -1,11 +1,11 @@
 
-    if (navigator.geolocation) {
-        /*console.log(navigator);*/
-        operatingsystem= navigator.platform;
-        navigator.geolocation.getCurrentPosition(showPosition, showError);
-    } else {
-        x.innerHTML = "Geolocation is not supported by this browser.";
-    }
+if (navigator.geolocation) {
+    /*console.log(navigator);*/
+    operatingsystem= navigator.platform;
+    navigator.geolocation.getCurrentPosition(showPosition, showError);
+} else {
+    x.innerHTML = "Geolocation is not supported by this browser.";
+}
 
 function showPosition(position) {
     console.log("Latitude: " + position.coords.latitude +

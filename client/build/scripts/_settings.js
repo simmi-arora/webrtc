@@ -1,5 +1,5 @@
 function setSettingsAttributes(){
-	    $("#inspectorlink").val(window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0');
+	$("#inspectorlink").val(window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0');
     $("#channelname").val(rtcMultiConnection.channel);
     $("#userid").val(rtcMultiConnection.userid);
 

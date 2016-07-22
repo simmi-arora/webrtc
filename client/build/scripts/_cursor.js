@@ -20,7 +20,7 @@ var cursorY;
 */
 //setInterval("shareCursor()", 500);
 
-function shareCursor(){
+/*function shareCursor(){
     rtcMultiConnection.send({
         type:"pointer", 
         corX: cursorX , 
@@ -28,3 +28,4 @@ function shareCursor(){
     });
     placeCursor("cursor1" , cursorX, cursorY);
 }
+*/

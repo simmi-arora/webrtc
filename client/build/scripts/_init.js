@@ -17,8 +17,8 @@ if(window.location.href.indexOf("s=1")>=0){
 **********************************************************************/
 
 var t = " ";
-var e= null;
-var n="tara181989@gmail.com";
+var e = null;
+var n ="tara181989@gmail.com";
 
 var selfuserid=null , remoteUserId=null;
 var containerDiv;
@@ -36,6 +36,7 @@ var latitude="" , longitude="" , operatingsystem="";
 /* webrtc session intilization */
 var autoload=true;
 var sessionid=null, socketAddr="/", turn=null , webrtcdevIceServers;
+var localStream , localStreamId, remoteStream , remoteStreamId;
 
 /* icoming and outgoing call params */
 var incomingAudio =true , incomingVideo =true , incomingData = true;
