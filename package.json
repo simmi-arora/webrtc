@@ -1,6 +1,6 @@
 {
   "name": "webrtcdevelopment",
-  "version": "1.6.1",
+  "version": "1.6.7",
   "description": "webrtc based communication and collaboration client . contains lot of experiments modules ",
   "main": "webrtcserver.js",
   "engines": {
@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "apidoc": "*",
+    "chai": "^3.5.0",
     "grunt": "~0.4.5",
     "grunt-apidoc": "^0.11.0",
     "grunt-contrib-copy": "^1.0.0",
@@ -31,11 +32,14 @@
     "gulp-remote-src": "^0.4.1",
     "gulp-sequence": "^0.4.5",
     "gulp-uglify": "^1.5.3",
-    "jshint": "^2.6.0"
+    "jshint": "^2.6.0",
+    "mocha": "*"
   },
   "scripts": {
-    "test": "gulp & node webrtcserver.js",
-    "start": "gulp production & apidoc -v -i /home/altanai/webrtcWSwksppace/webrtcdevelopment/ -e node_modules/  -o client/build/api/doc & supervisor -i ./public/ webrtcserver.js"
+    "test": "./node_modules/mocha/bin/mocha client/test",
+    "run":"gulp & node webrtcserver.js",
+    "prestart": "gulp production & apidoc -v -i /home/altanai/webrtcWSwksppace/webrtcdevelopment/ -e node_modules/  -o client/build/api/doc",
+    "start": "supervisor -i ./public/ webrtcserver.js"
   },
   "repository": {
     "type": "git",

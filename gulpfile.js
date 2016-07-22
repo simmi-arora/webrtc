@@ -10,17 +10,19 @@ var exec  =require('child_process').exec;
 var remoteSrc = require('gulp-remote-src');
 
 var fs = require('fs');
-var property = require('./propertyWriter.js')(fs);
-/*property.writeEnv();*/
-var properties= JSON.parse(property.readEnv());
+var _properties = require('./env.js')(fs).readEnv();
+var properties= JSON.parse(_properties);
 
-var folderPath="";
+console.log(properties);
+
+var folderPath="", file="";
+
 if(properties.enviornment=="production"){
-  folderPath="client/prod/";
+  folderPath='client/prod/';
 }else if(properties.enviornment=="test"){
-  folderPath="client/tests/";
+  folderPath='client/tests/';
 }else{
-  folderPath="client/build/";
+  folderPath='client/build/';
 }
 
 gulp.task('vendorjs',function() {
@@ -66,7 +68,7 @@ gulp.task('serverjs',function() {
     ]; 
     console.log(list);
     gulp.src(list)
-        .pipe(uglify())
+        /*.pipe(uglify())*/
         .pipe(concat('webrtcdevelopmentServer.js'))  
         .pipe(gulp.dest(folderPath+'minScripts/')); 
 });
@@ -132,24 +134,36 @@ gulp.task('codecss',function() {
         .pipe(gulp.dest(folderPath+'minScripts/')); 
 });
 
+var scriptList=[
+    "client/build/scripts/_init.js",
+    "client/build/scripts/firebase.js",
+    "client/build/scripts/FileBufferReader.js",
+    "client/build/scripts/RTCMultiConnection.js",
+    "client/build/scripts/canvas-designer-widget.js",
+    "client/build/scripts/RecordRTC.js",
+    "client/build/scripts/screenshot.js",
+    "client/build/scripts/getScreenId.js",
+    "client/build/scripts/geolocation.js",
+    "client/build/scripts/_chat.js",
+    "client/build/scripts/_mediacontrol.js",
+    "client/build/scripts/_snapshot.js",
+    "client/build/scripts/_record.js",
+    "client/build/scripts/_screenrecord.js",
+    "client/build/scripts/_filesharing.js",
+    "client/build/scripts/_screenshare.js",
+    "client/build/scripts/_settings.js",
+    "client/build/scripts/_codeeditor.js",
+    "client/build/scripts/_texteditor.js",
+    "client/build/scripts/_draw.js",
+    "client/build/scripts/_redial.js",
+    "client/build/scripts/_cursor.js",
+    "client/build/scripts/_turn.js"
+];
+
 gulp.task('betawebrtcdevelopmentjs',function() {
     console.log(" gulping main webrtc development scripts ");
-    appJsList=[ 
-        "client/build/scripts/init.js",
-        "client/build/scripts/firebase.js",
-        "client/build/scripts/FileBufferReader.js",
-        "client/build/scripts/RTCMultiConnection.js",
-        "client/build/scripts/canvas-designer-widget.js",
-        "client/build/scripts/RecordRTC.js",
-        "client/build/scripts/screenshot.js",
-        "client/build/scripts/getScreenId.js",
-        "client/build/scripts/geolocation.js"
-        /*       
-        "client/build/scripts/start.js",
-        "client/build/scripts/admin.js"*/
-    ]; 
-    console.log(appJsList);
-    gulp.src(appJsList)
+    console.log(scriptList);
+    gulp.src(scriptList)
         .pipe(uglify())
         .pipe(concat('webrtcdevelopment.js'))  
         .pipe(gulp.dest(folderPath+'minScripts/')); 
@@ -157,21 +171,10 @@ gulp.task('betawebrtcdevelopmentjs',function() {
 
 gulp.task('webrtcdevelopmentjs',function() {
     console.log(" gulping main webrtc development scripts ");
-    appJsList=[ 
-        "client/build/scripts/init.js",
-        "client/build/scripts/firebase.js",
-        "client/build/scripts/FileBufferReader.js",
-        "client/build/scripts/RTCMultiConnection.js",
-        "client/build/scripts/canvas-designer-widget.js",
-        "client/build/scripts/RecordRTC.js",
-        "client/build/scripts/screenshot.js",
-        "client/build/scripts/getScreenId.js",
-        "client/build/scripts/geolocation.js",
-        "client/build/scripts/start.js",
-        "client/build/scripts/admin.js"
-    ]; 
-    console.log(appJsList);
-    gulp.src(appJsList)
+    scriptList.push("client/build/scripts/start.js");
+    scriptList.push("client/build/scripts/admin.js");    
+    console.log(scriptList);
+    gulp.src(scriptList)
         .pipe(uglify())
         .pipe(concat('webrtcdevelopment.js'))  
         .pipe(gulp.dest(folderPath+'minScripts/')); 
