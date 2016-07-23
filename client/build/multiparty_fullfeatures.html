@@ -210,9 +210,11 @@
     </div>
 
 </body>
+
+<script src="property.js"></script>
 <link rel=stylesheet href="minScripts/webrtcdevelopment.css">
 <script src="minScripts/webrtcdevelopment.js"></script>
-<!-- <script src="scripts/start.js"></script>  -->
+<script src="scripts/start.js"></script> 
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -392,7 +394,7 @@ $('document').ready(function(){
     var webrtcdevobj = new WebRTCdev ( 
         session,  incoming,  outgoing ,  widgets
     );
-    startcall();
+    startcall(webrtcdevobj);
 });
 </script>
 </html>

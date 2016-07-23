@@ -3,9 +3,9 @@
 screenshare
 ***************************************/
 
-function detectExtensionScreenshare(extensionID){
+function detectExtensionScreenshare(obj, extensionID){
     var extensionid = extensionID;
-    rtcMultiConnection.DetectRTC.screen.getChromeExtensionStatus(extensionid, function(status) {
+    obj.DetectRTC.screen.getChromeExtensionStatus(extensionid, function(status) {
         console.log( "detectExtensionScreenshare " , status);
 
         if(status == 'installed-enabled') {
