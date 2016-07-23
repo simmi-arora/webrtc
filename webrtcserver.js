@@ -41,9 +41,24 @@ var app = https.createServer(options, function(request, response){
 });
 app.listen(properties.httpsPort);
 
-var realtimecomm= require('./realtimecomm.js')(app, properties);
 
-var restapi= require('./restapi.js')(realtimecomm, options ,app, properties);
+var realtimecomm=require('./realtimecomm.js')(app, function(socket) {
+    try {
+        var params = socket.handshake.query;
+
+        if (!params.socketCustomEvent) {
+            params.socketCustomEvent = 'custom-message';
+        }
+
+        socket.on(params.socketCustomEvent, function(message) {
+            try {
+                socket.broadcast.emit(params.socketCustomEvent, message);
+            } catch (e) {}
+        });
+    } catch (e) {}
+});
+
+/*var restapi= require('./restapi.js')(realtimecomm, options ,app, properties);*/
 
 console.log("< ------------------------ HTTPS Server -------------------> ");
 console.log(" WebRTC server env => "+ properties.enviornment+ " running at\n "+properties.httpsPort+ "/\nCTRL + C to shutdown");

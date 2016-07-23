@@ -1,3 +1,10 @@
+/**********************************
+Reconnect 
+****************************************/
+/*
+add code hetre for redial 
+*/
+
 function createButtonRedial(){
     var reconnectButton= document.createElement("span");
     reconnectButton.className= reconnectobj.button.class;

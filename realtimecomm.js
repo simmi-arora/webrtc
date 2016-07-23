@@ -1,204 +1,463 @@
-module.exports = function(app , properties) {
-    
-    console.log("< ------------------------realtimecomm-------------------> ");
-    
-    var io = require('socket.io').listen(app, {
-        log: false,
-        origins: '*:*'
-    });
+module.exports = exports = function(app, socketCallback) {
+    var listOfUsers = {};
+    var shiftedModerationControls = {};
+    var ScalableBroadcast;
 
-    io.set('transports', [
-        'websocket'
-    ]);
 
-    var channels = {};
+    var channels = [];
     var users = {};
 
-    io.sockets.on('connection', function (socket) {
+    var io = require('socket.io');
 
-        var initiatorChannel = '';
-
-        if (!io.isConnected) {
-            io.isConnected = true;
-        }
-
-        socket.on('namespace',function(data){
-            users[data.sender]={
-                userid: data.sender,
-                join_timestamp: new Date().toLocaleString(),
-                status:"online"
-            }
-            onNewNamespace(data.channel, data.sender);
+    try {
+        io = io(app);
+        io.on('connection', onConnection);
+    } catch (e) {
+        io = io.listen(app, {
+            log: false,
+            origins: '*:*'
         });
 
-        socket.on('new-channel', function (data) {  
-            if (!channels[data.channel]) {
-                initiatorChannel = data.channel;
-            }
-            console.log("------------new channel------------- ", data.channel," by " , data.sender);
-            channels[data.channel] = {
-                channel: data.channel,
-                timestamp: new Date().toLocaleString(),
-                users:[data.sender],
-                status:"waiting",
-                endtimestamp:0,
-                log:[new Date().toLocaleString()+":-channel created . User "+data.sender+" waiting "]
-            };     
-        });
+        io.set('transports', [
+            'websocket', // 'disconnect' EVENT will work only with 'websocket'
+            'xhr-polling',
+            'jsonp-polling'
+        ]);
 
-        socket.on('join-channel', function (data) {  
-            console.log("------------join channel------------- ", data.channel," by " , data.sender);
-            channels[data.channel].users.push(data.sender); 
-            channels[data.channel].status=channels[data.channel].users.length + " active members";
-            channels[data.channel].log.push(new Date().toLocaleString()+":-User "+data.sender+" joined the channel ");    
-        });
-
-        socket.on('leave-channel', function(msg) {
-            console.log('leave-channel' , msg);
-        });
-
-        socket.on('presence', function (channel) {
-            var isChannelPresent = !! channels[channel.channel];
-            console.log("------------presence for channel------------ ",channel," is ",isChannelPresent);
-            socket.emit('presence', isChannelPresent);
-        });
-
-        socket.on('disconnect', function (channel) {
-            console.log("disconnect",channel);
-        });
-
-        socket.on("admin_enquire",function(data){
-            switch (data.ask){
-                case "channels":
-                    if(data.find){
-                        socket.emit('response_to_admin_enquire', module.getChannel(data.find,data.format));
-                    }else{
-                        socket.emit('response_to_admin_enquire', module.getAllChannels(data.format));
-                    }
-                break;
-                case "users":
-                    socket.emit('response_to_admin_enquire', module.getAllActiveUsers(data.format));
-                break;
-                case "channel_clients":
-                    socket.emit('response_to_admin_enquire', module.getChannelClients(data.channel));
-                break;
-                default :
-                    socket.emit('response_to_admin_enquire', "no case matched ");
-            }           
-        });
-    });
-
-    function onNewNamespace(channel, sender) {
-        console.log(" ---------------> onNewNamespace ", channel);
-
-        io.of('/' + channel).on('connection', function (socket) {
-            
-            var username;
-            if (io.isConnected) {
-                io.isConnected = false;
-                socket.emit('connect', true);
-            }
-
-            socket.on('message', function (data) {
-                if (data.sender == sender) {
-                    if(!username) username = data.data.sender;  
-                    console.log(data.data);              
-                    socket.broadcast.emit('message', data.data);
-                    if(channels[channel]){
-                        channels[channel].log.push(new Date().toLocaleString()+":-user "+data.sender+" send message "+JSON.stringify(data.data));    
-                    }else if(data.data.left){
-                        /*channels[data.data.sessionid].users.pop(data.data.userid);*/ 
-                        
-                        var i = channels[data.data.sessionid].users.indexOf(data.data.userid);
-                        if(i != -1) {
-                            channels[data.data.sessionid].users.splice(i, 1);
-                        }
-
-                        channels[data.data.sessionid].log.push(new Date().toLocaleString()+":-user "+data.data.userid+" left ");         
-                        if( channels[data.data.sessionid].users.length ==0){
-                            channels[data.data.sessionid].status="inactive";
-                        }else{
-                            channels[data.data.sessionid].status=channels[data.data.sessionid].users.length + " active members";
-                        }
-                    }else{
-                        console.log("channels[channel] doesnt exist ");
-                    }
-                }
-            });
-            
-            socket.on('disconnect', function(data) {
-                console.log("disconnect inside new namespace -----",data);
-                if(username) {
-                    console.log("username " , username);
-                    socket.broadcast.emit('user-left', username);
-                    channels[channel].log.push(new Date().toLocaleString()+":-user "+username+" left ");    
-                    username = null;
-                }else{
-                    console.log("username not defined ");
-                }
-            });
-        });
+        io.sockets.on('connection', onConnection);
     }
 
+    function appendUser(socket) {
+        var alreadyExists = listOfUsers[socket.userid];
+        var extra = {};
 
-    module.getAllChannels=function(format){
-        var output={
-                response:'channels',
-                channels:channels,
-                format:format
-            };
-        return output;
-    };
+        if (alreadyExists && alreadyExists.extra) {
+            extra = alreadyExists.extra;
+        }
 
-    module.getChannel=function(channelid , format){
+        listOfUsers[socket.userid] = {
+            socket: socket,
+            connectedWith: {},
+            isPublic: false, // means: isPublicModerator
+            extra: extra || {}
+        };
+    }
 
-        var output={
-                response:'users',
-                users:channels[channelid],
-                format:format
-            };
-        return output;
-    };
+    function onConnection(socket) {
+        var params = socket.handshake.query;
+        var socketMessageEvent = params.msgEvent || 'RTCMultiConnection-Message';
 
-    module.getAllActiveUsers=function(format){
-        var users=[];
-        for (i in Object.keys(channels)) { 
-            var key=Object.keys(channels)[i];
-            for (j in channels[key].users) {
-                users.push(channels[key].users[j]);
+        if (params.enableScalableBroadcast) {
+            if (!ScalableBroadcast) {
+                ScalableBroadcast = require('./Scalable-Broadcast.js');
+            }
+            ScalableBroadcast(socket, params.maxRelayLimitPerUser);
+        }
+
+        // temporarily disabled
+        if (false && !!listOfUsers[params.userid]) {
+            params.dontUpdateUserId = true;
+
+            var useridAlreadyTaken = params.userid;
+            params.userid = (Math.random() * 1000).toString().replace('.', '');
+            socket.emit('userid-already-taken', useridAlreadyTaken, params.userid);
+        }
+
+        socket.userid = params.userid;
+        appendUser(socket);
+
+        socket.on('extra-data-updated', function(extra) {
+            try {
+                if (!listOfUsers[socket.userid]) return;
+                listOfUsers[socket.userid].extra = extra;
+
+                for (var user in listOfUsers[socket.userid].connectedWith) {
+                    listOfUsers[user].socket.emit('extra-data-updated', socket.userid, extra);
+                }
+            } catch (e) {
+                pushLogs('extra-data-updated', e);
+            }
+        });
+
+        socket.on('become-a-public-moderator', function() {
+            try {
+                if (!listOfUsers[socket.userid]) return;
+                listOfUsers[socket.userid].isPublic = true;
+            } catch (e) {
+                pushLogs('become-a-public-moderator', e);
+            }
+        });
+
+        socket.on('dont-make-me-moderator', function() {
+            try {
+                if (!listOfUsers[socket.userid]) return;
+                listOfUsers[socket.userid].isPublic = false;
+            } catch (e) {
+                pushLogs('dont-make-me-moderator', e);
+            }
+        });
+
+        socket.on('get-public-moderators', function(userIdStartsWith, callback) {
+            try {
+                userIdStartsWith = userIdStartsWith || '';
+                var allPublicModerators = [];
+                for (var moderatorId in listOfUsers) {
+                    if (listOfUsers[moderatorId].isPublic && moderatorId.indexOf(userIdStartsWith) === 0 && moderatorId !== socket.userid) {
+                        var moderator = listOfUsers[moderatorId];
+                        allPublicModerators.push({
+                            userid: moderatorId,
+                            extra: moderator.extra
+                        });
+                    }
+                }
+
+                callback(allPublicModerators);
+            } catch (e) {
+                pushLogs('get-public-moderators', e);
+            }
+        });
+
+        socket.on('changed-uuid', function(newUserId, callback) {
+            callback = callback || function() {};
+
+            if (params.dontUpdateUserId) {
+                delete params.dontUpdateUserId;
+                return;
+            }
+
+            try {
+                if (listOfUsers[socket.userid] && listOfUsers[socket.userid].socket.id == socket.userid) {
+                    if (newUserId === socket.userid) return;
+
+                    var oldUserId = socket.userid;
+                    listOfUsers[newUserId] = listOfUsers[oldUserId];
+                    listOfUsers[newUserId].socket.userid = socket.userid = newUserId;
+                    delete listOfUsers[oldUserId];
+
+                    callback();
+                    return;
+                }
+
+                socket.userid = newUserId;
+                appendUser(socket);
+
+                callback();
+            } catch (e) {
+                pushLogs('changed-uuid', e);
+            }
+        });
+
+        socket.on('set-password', function(password) {
+            try {
+                if (listOfUsers[socket.userid]) {
+                    listOfUsers[socket.userid].password = password;
+                }
+            } catch (e) {
+                pushLogs('set-password', e);
+            }
+        });
+
+        socket.on('disconnect-with', function(remoteUserId, callback) {
+            try {
+                if (listOfUsers[socket.userid] && listOfUsers[socket.userid].connectedWith[remoteUserId]) {
+                    delete listOfUsers[socket.userid].connectedWith[remoteUserId];
+                    socket.emit('user-disconnected', remoteUserId);
+                }
+
+                if (!listOfUsers[remoteUserId]) return callback();
+
+                if (listOfUsers[remoteUserId].connectedWith[socket.userid]) {
+                    delete listOfUsers[remoteUserId].connectedWith[socket.userid];
+                    listOfUsers[remoteUserId].socket.emit('user-disconnected', socket.userid);
+                }
+                callback();
+            } catch (e) {
+                pushLogs('disconnect-with', e);
+            }
+        });
+
+        socket.on('close-entire-session', function(callback) {
+            try {
+                var connectedWith = listOfUsers[socket.userid].connectedWith;
+                Object.keys(connectedWith).forEach(function(key) {
+                    if (connectedWith[key] && connectedWith[key].emit) {
+                        try {
+                            connectedWith[key].emit('closed-entire-session', socket.userid, listOfUsers[socket.userid].extra);
+                        } catch (e) {}
+                    }
+                });
+
+                delete shiftedModerationControls[socket.userid];
+                callback();
+            } catch (e) {
+                pushLogs('close-entire-session', e);
+            }
+        });
+
+        socket.on('check-presence', function(userid, callback) {
+            if (userid === socket.userid && !!listOfUsers[userid]) {
+
+                callback(false, socket.userid, listOfUsers[userid].extra);
+                return;
+            }
+
+            var extra = {};
+            if (listOfUsers[userid]) {
+                extra = listOfUsers[userid].extra;
+            }
+
+            callback(!!listOfUsers[userid], userid, extra);
+
+        });
+
+        socket.on('register-channel', function(data, callback) {
+            channels.push(data.channel);
+            console.log("registered");
+        });
+
+        socket.on('presence', function(data, callback) {
+            console.log(channels);
+            console.log(data.channel);
+            console.log(channels.indexOf(data.channel));
+            if (channels.indexOf(data.channel)<0){
+                socket.emit("presence",false);
+            }else{
+                socket.emit("presence",true);
+            }
+        });
+
+        function onMessageCallback(message) {
+            try {
+                if (!listOfUsers[message.sender]) {
+                    socket.emit('user-not-found', message.sender);
+                    return;
+                }
+
+                if (!message.message.userLeft && !listOfUsers[message.sender].connectedWith[message.remoteUserId] && !!listOfUsers[message.remoteUserId]) {
+                    listOfUsers[message.sender].connectedWith[message.remoteUserId] = listOfUsers[message.remoteUserId].socket;
+                    listOfUsers[message.sender].socket.emit('user-connected', message.remoteUserId);
+
+                    if (!listOfUsers[message.remoteUserId]) {
+                        listOfUsers[message.remoteUserId] = {
+                            socket: null,
+                            connectedWith: {},
+                            isPublic: false,
+                            extra: {}
+                        };
+                    }
+
+                    listOfUsers[message.remoteUserId].connectedWith[message.sender] = socket;
+
+                    if (listOfUsers[message.remoteUserId].socket) {
+                        listOfUsers[message.remoteUserId].socket.emit('user-connected', message.sender);
+                    }
+                }
+
+                if (listOfUsers[message.sender].connectedWith[message.remoteUserId] && listOfUsers[socket.userid]) {
+                    message.extra = listOfUsers[socket.userid].extra;
+                    listOfUsers[message.sender].connectedWith[message.remoteUserId].emit(socketMessageEvent, message);
+                }
+            } catch (e) {
+                pushLogs('onMessageCallback', e);
             }
         }
 
-        var output={
-                response:'users',
-                users:users,
-                format:format
-            };
-        return output;
-    };
+        var numberOfPasswordTries = 0;
+        socket.on(socketMessageEvent, function(message, callback) {
+            if (message.remoteUserId && message.remoteUserId === socket.userid) {
+                // remoteUserId MUST be unique
+                return;
+            }
 
-    module.getUser=function(userid , format){
+            try {
+                if (message.remoteUserId && message.remoteUserId != 'system' && message.message.newParticipationRequest) {
+                    if (listOfUsers[message.remoteUserId] && listOfUsers[message.remoteUserId].password) {
+                        if (numberOfPasswordTries > 3) {
+                            socket.emit('password-max-tries-over', message.remoteUserId);
+                            return;
+                        }
 
-        var output={
-                response:'users',
-                users:(users[userid]?users[userid]:"notfound"),
-                format:format
-            };
-        return output;
-    };
+                        if (!message.password) {
+                            numberOfPasswordTries++;
+                            socket.emit('join-with-password', message.remoteUserId);
+                            return;
+                        }
 
-    module.getChannelClients=function(channel){
-        
-        var output={
-                response:'users',
-                clients:io.of('/' + channel).clients(),
-                format:data.format
-            };
-        return output;
-    };
+                        if (message.password != listOfUsers[message.remoteUserId].password) {
+                            numberOfPasswordTries++;
+                            socket.emit('invalid-password', message.remoteUserId, message.password);
+                            return;
+                        }
+                    }
+                }
 
-    console.log(" Socket.io env => "+ properties.enviornment+ " running at\n "+properties.httpsPort);
+                if (message.message.shiftedModerationControl) {
+                    if (!message.message.firedOnLeave) {
+                        onMessageCallback(message);
+                        return;
+                    }
+                    shiftedModerationControls[message.sender] = message;
+                    return;
+                }
 
-    return module;
+                // for v3 backward compatibility; >v3.3.3 no more uses below block
+                if (message.remoteUserId == 'system') {
+                    if (message.message.detectPresence) {
+                        if (message.message.userid === socket.userid) {
+                            callback(false, socket.userid);
+                            return;
+                        }
+
+                        callback(!!listOfUsers[message.message.userid], message.message.userid);
+                        return;
+                    }
+                }
+
+                if (!listOfUsers[message.sender]) {
+                    listOfUsers[message.sender] = {
+                        socket: socket,
+                        connectedWith: {},
+                        isPublic: false,
+                        extra: {}
+                    };
+                }
+
+                // if someone tries to join a person who is absent
+                if (message.message.newParticipationRequest) {
+                    var waitFor = 120; // 2 minutes
+                    var invokedTimes = 0;
+                    (function repeater() {
+                        invokedTimes++;
+                        if (invokedTimes > waitFor) {
+                            socket.emit('user-not-found', message.remoteUserId);
+                            return;
+                        }
+
+                        if (listOfUsers[message.remoteUserId] && listOfUsers[message.remoteUserId].socket) {
+                            onMessageCallback(message);
+                            return;
+                        }
+
+                        setTimeout(repeater, 1000);
+                    })();
+
+                    return;
+                }
+
+                onMessageCallback(message);
+            } catch (e) {
+                pushLogs('on-socketMessageEvent', e);
+            }
+        });
+
+        socket.on('disconnect', function() {
+            try {
+                delete socket.namespace.sockets[this.id];
+            } catch (e) {
+                pushLogs('disconnect', e);
+            }
+
+            try {
+                var message = shiftedModerationControls[socket.userid];
+
+                if (message) {
+                    delete shiftedModerationControls[message.userid];
+                    onMessageCallback(message);
+                }
+            } catch (e) {
+                pushLogs('disconnect', e);
+            }
+
+            try {
+                // inform all connected users
+                if (listOfUsers[socket.userid]) {
+                    for (var s in listOfUsers[socket.userid].connectedWith) {
+                        listOfUsers[socket.userid].connectedWith[s].emit('user-disconnected', socket.userid);
+
+                        if (listOfUsers[s] && listOfUsers[s].connectedWith[socket.userid]) {
+                            delete listOfUsers[s].connectedWith[socket.userid];
+                            listOfUsers[s].socket.emit('user-disconnected', socket.userid);
+                        }
+                    }
+                }
+            } catch (e) {
+                pushLogs('disconnect', e);
+            }
+
+            delete listOfUsers[socket.userid];
+        });
+
+        if (socketCallback) {
+            socketCallback(socket);
+        }
+    }
 };
 
+var enableLogs = false;
+
+try {
+    var _enableLogs = require('./config.json').enableLogs;
+
+    if (_enableLogs) {
+        enableLogs = true;
+    }
+} catch (e) {
+    enableLogs = false;
+}
+
+var fs = require('fs');
+
+function pushLogs() {
+    if (!enableLogs) return;
+
+    var logsFile = process.cwd() + '/logs.json';
+
+    var utcDateString = (new Date).toUTCString().replace(/ |-|,|:|\./g, '');
+
+    // uncache to fetch recent (up-to-dated)
+    uncache(logsFile);
+
+    var logs = {};
+
+    try {
+        logs = require(logsFile);
+    } catch (e) {}
+
+    if (arguments[1] && arguments[1].stack) {
+        arguments[1] = arguments[1].stack;
+    }
+
+    try {
+        logs[utcDateString] = JSON.stringify(arguments, null, '\t');
+        fs.writeFileSync(logsFile, JSON.stringify(logs, null, '\t'));
+    } catch (e) {
+        logs[utcDateString] = arguments.toString();
+    }
+}
+
+// removing JSON from cache
+function uncache(jsonFile) {
+    searchCache(jsonFile, function(mod) {
+        delete require.cache[mod.id];
+    });
+
+    Object.keys(module.constructor._pathCache).forEach(function(cacheKey) {
+        if (cacheKey.indexOf(jsonFile) > 0) {
+            delete module.constructor._pathCache[cacheKey];
+        }
+    });
+}
+
+function searchCache(jsonFile, callback) {
+    var mod = require.resolve(jsonFile);
+
+    if (mod && ((mod = require.cache[mod]) !== undefined)) {
+        (function run(mod) {
+            mod.children.forEach(function(child) {
+                run(child);
+            });
+
+            callback(mod);
+        })(mod);
+    }
+}
