@@ -11,6 +11,7 @@ DetectRTC.screen = {
         window.postMessage('get-sourceId', '*');
     },
     onMessageCallback: function (data) {
+
         // "cancel" button is clicked
         if (data == 'PermissionDeniedError') {
             DetectRTC.screen.chromeMediaSource = 'PermissionDeniedError';
@@ -25,18 +26,13 @@ DetectRTC.screen = {
 
         // extension shared temp sourceId
         if (data.sourceId) {
+            alert("data  sourceId");
             DetectRTC.screen.sourceId = data.sourceId;
             if (screenCallback) screenCallback(DetectRTC.screen.sourceId);
         }
     },
-    getChromeExtensionStatus: function (callback) {
-        if(!props){
-            alert(" Please insert extensionId into the property File ");
-            return;
-        }
-        console.log(props);
-        var extensionid = props.extensionID;
-        
+
+    getChromeExtensionStatus: function (extensionid, callback) {     
         var image = document.createElement('img');
         image.src = 'chrome-extension://' + extensionid + '/icon.png';
         image.onload = function () {
@@ -57,15 +53,21 @@ DetectRTC.screen = {
 };
 
 window.addEventListener('message', function (event) {
-    if (!event.data || !(typeof event.data == 'string' || event.data.sourceId || event.data.captureSourceId)) return;
-    if (event.data.captureSourceId) captureSourceId();
+    console.log(event); 
 
+    if (!event.data || !(typeof event.data == 'string' || event.data.sourceId || event.data.captureSourceId)) {
+        return;
+    }
+    if (event.data.captureSourceId) {
+        captureSourceId();
+    }
+    
     DetectRTC.screen.onMessageCallback(event.data);
 });
 
 function captureSourceId() {
-    // check if desktop-capture extension installed.
-    DetectRTC.screen.getChromeExtensionStatus(function (status) {
+    var extensionid=props.extensionID;
+    DetectRTC.screen.getChromeExtensionStatus(extensionid,function (status) {
         if (status != 'installed-enabled') {
             window.parent.postMessage({
                 chromeExtensionStatus: status

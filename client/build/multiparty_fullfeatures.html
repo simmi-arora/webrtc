@@ -238,7 +238,12 @@ $('document').ready(function(){
         localVideo: "localVideo",
         videoClass:"",
         userDisplay:false,
-        userMetaDisplay:false  
+        userMetaDisplay:false,
+        userdetails:{
+            username:"Expert",
+            usercolor: "Blue",
+            useremail: "abc@gmail.com"
+        }
     };
 
     var remote={
@@ -306,10 +311,16 @@ $('document').ready(function(){
                         }
                     }, 
         screenshare : {
-                        active:false,
+                        active:true,
                         screenshareContainer: "widget-screenshareContainer",
-                        extensionID: "elfbfompfpakbefoaicaeoabnnoihoac",
+                        extensionID: "jocjeccncphlagaegaljdbpcimoiogal",
                         button:{
+                            installButton:{
+                                class_on:"btn btn-warning glyphicon glyphicon-inbox topPanelButton",
+                                html_on:"Stop Install",
+                                class_off:"btn btn-success glyphicon glyphicon-inbox topPanelButton",
+                                html_off:"Install Screen Share"
+                            },
                             shareButton:{
                                 class_on:"btn btn-warning  glyphicon glyphicon-expand topPanelButton",
                                 html_on:"Stop Sharing",
@@ -329,9 +340,9 @@ $('document').ready(function(){
                         videoRecordContainer: true,
                         button:{
                             class_on:"pull-right glyphicon glyphicon-facetime-video btn btn-warning mediaButton",
-                            html_on:"Stop",
+                            html_on:"",
                             class_off:"pull-right glyphicon glyphicon-facetime-video btn btn-default mediaButton",
-                            html_off:"Record"
+                            html_off:""
                         }
                     },
         snapshot :{
@@ -339,7 +350,7 @@ $('document').ready(function(){
                         snapshotContainer: true,
                         button:{
                             class_on:"pull-right glyphicon glyphicon-camera btn btn-default mediaButton",
-                            html_on:"Snapshot"
+                            html_on:""
                         }
                     }, 
         drawCanvas  :{
@@ -375,17 +386,17 @@ $('document').ready(function(){
                     audio   :{
                             button:{
                                 class_on:"pull-right glyphicon glyphicon-volume-up btn btn-default mediaButton",
-                                html_on:"Audio is On",
+                                html_on:"",
                                 class_off:"pull-right glyphicon glyphicon-volume-off btn btn-danger mediaButton",
-                                html_off:"Audio is Off"
+                                html_off:""
                             }
                         },
                     video : {
                             button:{
                                 class_on:"pull-right glyphicon glyphicon-eye-open btn btn-default videoButtonClass mediaButton",
-                                html_on:"Video is On",
+                                html_on:"",
                                 class_off:"pull-right glyphicon glyphicon-eye-close  btn btn-danger videoButtonClass mediaButton",
-                                html_off:"Video is Off"
+                                html_off:"https://localhost:8086/multiparty_fullfeatures.html#3743150688569583"
                             }
                         }
                     }

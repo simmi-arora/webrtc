@@ -3,9 +3,39 @@
 screenshare
 ***************************************/
 
-function detectExtensionScreenshare(obj, extensionID){
+/*var DetectRTC = {};
+
+var screenCallback;
+
+DetectRTC.screen = {
+    
+    chromeMediaSource: null,
+    
+    getChromeExtensionStatus: function (extensionid, callback) {     
+        var image = document.createElement('img');
+        image.src = 'chrome-extension://' + extensionid + '/icon.png';
+        image.onload = function () {
+            DetectRTC.screen.chromeMediaSource = 'screen';
+            window.postMessage('are-you-there', '*');
+            setTimeout(function () {
+                if (DetectRTC.screen.chromeMediaSource == 'screen') {
+                    callback('installed-disabled');
+                } else{
+                    callback('installed-enabled');
+                }
+            }, 2000);
+        };
+        image.onerror = function () {
+            callback('not-installed');
+        };
+    }
+};
+*/
+
+function detectExtensionScreenshare(extensionID){
     var extensionid = extensionID;
-    obj.DetectRTC.screen.getChromeExtensionStatus(extensionid, function(status) {
+
+    DetectRTC.screen.getChromeExtensionStatus(extensionid, function(status) {
         console.log( "detectExtensionScreenshare " , status);
 
         if(status == 'installed-enabled') {
@@ -29,9 +59,9 @@ function detectExtensionScreenshare(obj, extensionID){
     });
 
     // if following function is defined, it will be called if screen capturing extension seems available
-    rtcMultiConnection.DetectRTC.screen.onScreenCapturingExtensionAvailable = function() {
+    DetectRTC.screen.onScreenCapturingExtensionAvailable = function() {
         // hide inline-install button
-        // alert("onScreenCapturingExtensionAvailable , hide inline installation button ");
+        alert("onScreenCapturingExtensionAvailable , hide inline installation button ");
     };
 
     // a middle-agent between public API and the Signaler object
@@ -53,9 +83,11 @@ function detectExtensionScreenshare(obj, extensionID){
         function captureUserMedia(callback, extensionAvailable) {
             getScreenId(function(error, sourceId, screen_constraints) {
                 navigator.getUserMedia(screen_constraints, function(stream) {
+
                     stream.onended = function() {
                         alert("ended screen");
                         if (self.onuserleft) self.onuserleft('self');
+                        changeScreenshareButtonStatus("on");
                     };
 
                     self.stream = stream;
@@ -92,7 +124,6 @@ function detectExtensionScreenshare(obj, extensionID){
         var Firefox_Screen_Capturing_Warning = 'Make sure that you are using Firefox Nightly and you enabled: media.getusermedia.screensharing.enabled flag from about:config page. You also need to add your domain in "media.getusermedia.screensharing.allowed_domains" flag.';
 
         this.sharescr = function(roomid) {
-            alert("share new screen");
             captureUserMedia(function() {
                 !signaler && initSignaler(roomid);
                 signaler.broadcast({
@@ -143,7 +174,7 @@ function detectExtensionScreenshare(obj, extensionID){
             if(message.roomid!=null && message.userid!=null){
                 screen_roomid =message.roomid;
                 screen_userid =message.userid;
-                shownotification(" Incoming shared screen ");
+                console.log("incoming shared screen");
             }
             if (message.roomid == roomid && message.broadcasting && !signaler.sentParticipationRequest){
                 screen.onscreen(message);
@@ -306,20 +337,28 @@ function detectExtensionScreenshare(obj, extensionID){
         };
 
         window.addEventListener('beforeunload', function() {
-            leaveRoom();
+            leaveScreenRoom();
         }, false);
 
         window.addEventListener('keyup', function(e) {
             if (e.keyCode == 116) {
-                leaveRoom();
+                leaveScreenRoom();
             }
         }, false);
 
-        function leaveRoom() {
+        function leaveScreenRoom() {
             signaler.signal({
                 leaving: true
             });
-            alert("Leaving");
+
+            /*           
+            rtcMultiConnection.removeStream({
+                screen: true,  // it will remove all screen streams
+                stop: true     // ask to stop old stream
+            });*/
+            
+            rtcMultiConnection.removeStream("screen"+rtcMultiConnection.channel);
+
             socket.emit("leave-channel", {
                 channel: rtcMultiConnection.channel,
                 sender: rtcMultiConnection.userid
@@ -333,9 +372,12 @@ function detectExtensionScreenshare(obj, extensionID){
 
             // if firebase; remove data from their servers
             if (window.Firebase) socket.remove();
+
+            changeScreenshareButtonStatus("on");
+            alert("Leaving");
         }
 
-        root.leave = leaveRoom;
+        root.leave = leaveScreenRoom;
 
         // signaling implementation
         // if no custom signaling channel is provided; use Firebase
@@ -596,7 +638,6 @@ function webrtcdevScreenShare(){
         screen = new Screen("screen"+rtcMultiConnection.channel);
 
         console.log("----------- screen" , screen);
-
         screen.onaddstream = function(e) {
             document.getElementById(screenshareobj.screenshareContainer).innerHTML="";
             document.getElementById(screenshareobj.screenshareContainer).appendChild(e.video);
@@ -608,9 +649,7 @@ function webrtcdevScreenShare(){
                     return n.on('message', callback);
                 };
             }
-
             createScreenViewButton();
-
         };
 
         screen.check();
@@ -700,12 +739,12 @@ function createScreenshareButton(){
             screenShareButton.className=screenshareobj.button.shareButton.class_on;
             screenShareButton.innerHTML=screenshareobj.button.shareButton.html_on;
         }else if(screenShareButton.className==screenshareobj.button.shareButton.class_on){
-            screen.leave();
             var elem = document.getElementById("viewScreenShareButton");
             elem.parentElement.removeChild(elem);
             screenShareButton.className=screenshareobj.button.shareButton.class_off;
             screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
             hideScreenViewButton();
+            screen.leaveScreenRoom();
         }
     };
     var li =document.createElement("li");
@@ -713,5 +752,18 @@ function createScreenshareButton(){
     document.getElementById("topIconHolder_ul").appendChild(li);
 }
 
-
+function changeScreenshareButtonStatus(status){
+    var screenShareButton= document.getElementById("screenShareButton");
+    if(status=="on"){
+            var elem = document.getElementById("viewScreenShareButton");
+            elem.parentElement.removeChild(elem);
+            screenShareButton.className=screenshareobj.button.shareButton.class_off;
+            screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
+            hideScreenViewButton();
+    }else if (status=="off"){
+            screen.sharescr();
+            screenShareButton.className=screenshareobj.button.shareButton.class_on;
+            screenShareButton.innerHTML=screenshareobj.button.shareButton.html_on;
+    }
+}
 /*screen  Object {broadcasting: true, roomid: 11, userid: 10494752123}*/

@@ -1,4 +1,4 @@
-function createSnapshotButton(controlBarName){
+function createSnapshotButton(controlBarName , streamid){
     var snapshotButton=document.createElement("div");
     snapshotButton.id=controlBarName+"snapshotButton";
     snapshotButton.setAttribute("title", "Snapshot");
@@ -34,7 +34,33 @@ function createSnapshotButton(controlBarName){
 /* *************************************8
 Snapshot
 ************************************************/
+function takeSnapshot(args) {
+    var userid = args.userid;
+    var connection = args.connection;
 
+    function _takeSnapshot(video) {
+        var canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth || video.clientWidth;
+        canvas.height = video.videoHeight || video.clientHeight;
+
+        var context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        connection.snapshots[userid] = canvas.toDataURL('image/png');
+        args.callback && args.callback(connection.snapshots[userid]);
+    }
+
+    if (args.mediaElement) return _takeSnapshot(args.mediaElement);
+
+    for (var stream in connection.streams) {
+        stream = connection.streams[stream];
+        if (stream.userid == userid && stream.stream && stream.stream.getVideoTracks && stream.stream.getVideoTracks().length) {
+            _takeSnapshot(stream.mediaElement);
+            continue;
+        }
+    }
+}
+    
 function syncSnapshot(datasnapshot , datatype , dataname ){
     rtcMultiConnection.send({
         type:datatype, 

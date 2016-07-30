@@ -56,3 +56,42 @@ function createVideoMuteButton(controlBarName){
     }; 
     return videoButton;
 }
+
+
+function waitForRemoteVideo(_remoteStream , _remoteVideo , _localVideo  , _miniVideo ) {
+    var videoTracks = _remoteStream.getVideoTracks();
+    if (videoTracks.length === 0 || _remoteVideo.currentTime > 0) {
+        transitionToActive(_remoteVideo ,_localVideo ,  _miniVideo);
+    } else {
+        setTimeout(function(){
+            waitForRemoteVideo(_remoteStream , _remoteVideo , _localVideo  , _miniVideo )
+        }, 100);
+    }
+}
+
+function transitionToActive(_remoteVideo ,_localVideo ,  _miniVideo) {
+    _remoteVideo.style.opacity = 1;
+    if(localVideo!=null){
+        setTimeout(function() {
+            _localVideo.src = '';
+        }, 500); 
+    }
+    if(miniVideo!=null){
+        setTimeout(function() {
+            _miniVideo.style.opacity = 1;
+        }, 1000); 
+    }
+}
+
+function transitionToWaiting() {
+    card.style.webkitTransform = 'rotateY(0deg)';
+    setTimeout(function() {
+        localVideo.src = miniVideo.src;
+        localVideo.muted = true;
+        miniVideo.src = '';
+        remoteVideo.src = '';
+        localVideo.style.opacity = 1;
+    }, 500);
+    miniVideo.style.opacity = 0;
+    remoteVideo.style.opacity = 0;
+}
