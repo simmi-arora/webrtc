@@ -1,4 +1,4 @@
-module.exports = exports = function(app, socketCallback) {
+module.exports = exports = function(app, properties, socketCallback) {
     var listOfUsers = {};
     var shiftedModerationControls = {};
     var ScalableBroadcast;
@@ -6,6 +6,7 @@ module.exports = exports = function(app, socketCallback) {
 
     var channels = [];
     var users = {};
+    var sessions = {};
 
     var io = require('socket.io');
 
@@ -196,7 +197,6 @@ module.exports = exports = function(app, socketCallback) {
 
         socket.on('check-presence', function(userid, callback) {
             if (userid === socket.userid && !!listOfUsers[userid]) {
-
                 callback(false, socket.userid, listOfUsers[userid].extra);
                 return;
             }
@@ -210,20 +210,55 @@ module.exports = exports = function(app, socketCallback) {
 
         });
 
-        socket.on('register-channel', function(data, callback) {
-            channels.push(data.channel);
-            console.log("registered");
+        socket.on('open-channel', function (data) {  
+            console.log("------------open channel------------- ", data.channel," by " , data.sender);
+            sessions[data.channel] = {
+                channel: data.channel,
+                timestamp: new Date().toLocaleString(),
+                users:[data.sender],
+                status:"waiting",
+                endtimestamp:0,
+                log:[new Date().toLocaleString()+":-channel created . User "+data.sender+" waiting "]
+            };   
+            socket.emit("opened-channel",true);  
+        });
+
+        socket.on('join-channel', function (data) {  
+            console.log("------------join channel------------- ", data.channel," by " , data.sender);
+            sessions[data.channel].users.push(data.sender); 
+            sessions[data.channel].status=sessions[data.channel].users.length + " active members";
+            sessions[data.channel].log.push(new Date().toLocaleString()+":-User "+data.sender+" joined the channel ");    
         });
 
         socket.on('presence', function(data, callback) {
-            console.log(channels);
-            console.log(data.channel);
-            console.log(channels.indexOf(data.channel));
+            console.log(data.channel, " ",channels.indexOf(data.channel));
             if (channels.indexOf(data.channel)<0){
+                channels.push(data.channel);
+                console.log("registered in channels " , channels);
                 socket.emit("presence",false);
             }else{
                 socket.emit("presence",true);
             }
+        });
+
+        socket.on("admin_enquire",function(data){
+            switch (data.ask){
+                case "channels":
+                    if(data.find){
+                        socket.emit('response_to_admin_enquire', module.getChannel(data.find,data.format));
+                    }else{
+                        socket.emit('response_to_admin_enquire', module.getAllChannels(data.format));
+                    }
+                break;
+                case "users":
+                    socket.emit('response_to_admin_enquire', module.getAllActiveUsers(data.format));
+                break;
+                case "channel_clients":
+                    socket.emit('response_to_admin_enquire', module.getChannelClients(data.channel));
+                break;
+                default :
+                    socket.emit('response_to_admin_enquire', "no case matched ");
+            }           
         });
 
         function onMessageCallback(message) {
@@ -391,6 +426,67 @@ module.exports = exports = function(app, socketCallback) {
             socketCallback(socket);
         }
     }
+
+
+    module.getAllChannels=function(format){
+        var output={
+                response:'channels',
+                channels:channels,
+                format:format
+            };
+        return output;
+    };
+
+    module.getChannel=function(channelid , format){
+
+        var output={
+                response:'users',
+                users:channels[channelid],
+                format:format
+            };
+        return output;
+    };
+
+    module.getAllActiveUsers=function(format){
+        var users=[];
+        for (i in Object.keys(channels)) { 
+            var key=Object.keys(channels)[i];
+            for (j in channels[key].users) {
+                users.push(channels[key].users[j]);
+            }
+        }
+
+        var output={
+                response:'users',
+                users:users,
+                format:format
+            };
+        return output;
+    };
+
+    module.getUser=function(userid , format){
+
+        var output={
+                response:'users',
+                users:(users[userid]?users[userid]:"notfound"),
+                format:format
+            };
+        return output;
+    };
+
+    module.getChannelClients=function(channel){
+        
+        var output={
+                response:'users',
+                clients:io.of('/' + channel).clients(),
+                format:data.format
+            };
+        return output;
+    };
+
+    console.log(" Socket.io env => "+ properties.enviornment+ " running at\n "+properties.httpsPort);
+
+    return module;
 };
 
 var enableLogs = false;

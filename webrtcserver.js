@@ -42,7 +42,7 @@ var app = https.createServer(options, function(request, response){
 app.listen(properties.httpsPort);
 
 
-var realtimecomm=require('./realtimecomm.js')(app, function(socket) {
+var realtimecomm=require('./realtimecomm.js')(app, properties , function(socket) {
     try {
         var params = socket.handshake.query;
 
