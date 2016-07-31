@@ -52,7 +52,7 @@ DetectRTC.screen = {
     }
 };
 
-window.addEventListener('message', function (event) {
+/*window.addEventListener('message', function (event) {
     console.log(event); 
 
     if (!event.data || !(typeof event.data == 'string' || event.data.sourceId || event.data.captureSourceId)) {
@@ -64,7 +64,7 @@ window.addEventListener('message', function (event) {
     
     DetectRTC.screen.onMessageCallback(event.data);
 });
-
+*/
 function captureSourceId() {
     var extensionid=props.extensionID;
     DetectRTC.screen.getChromeExtensionStatus(extensionid,function (status) {

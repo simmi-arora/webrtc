@@ -1823,6 +1823,7 @@
                 var that = this;
 
                 if (!isNull(data.size) && !isNull(data.type)) {
+
                     self.shareFile(data, remoteUserId);
                     return;
                 }
@@ -2218,6 +2219,7 @@
                 connection.onFileProgress(chunk);
             };
             connection.fbr.onBegin = function(file) {
+                alert("onbegin ");
                 connection.onFileStart(file);
             };
             connection.fbr.onEnd = function(file) {
@@ -5087,6 +5089,7 @@
 
             // www.RTCMultiConnection.org/docs/onFileStart/
             connection.onFileStart = function(file) {
+                alert("on file start ");
                 var div = document.createElement('div');
                 div.title = file.name;
                 div.innerHTML = '<label>0%</label> <progress></progress>';

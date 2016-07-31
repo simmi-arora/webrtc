@@ -1,8 +1,7 @@
-module.exports = exports = function(app, properties, socketCallback) {
+exports.realtimecomm  = function(app, properties, socketCallback) {
     var listOfUsers = {};
     var shiftedModerationControls = {};
     var ScalableBroadcast;
-
 
     var channels = [];
     var users = {};
@@ -483,13 +482,13 @@ module.exports = exports = function(app, properties, socketCallback) {
             };
         return output;
     };
-
+    console.log("----------------realtimecomm----------------------");
     console.log(" Socket.io env => "+ properties.enviornment+ " running at\n "+properties.httpsPort);
 
     return module;
 };
 
-var enableLogs = false;
+/*var enableLogs = false;
 
 try {
     var _enableLogs = require('./config.json').enableLogs;
@@ -556,10 +555,8 @@ function searchCache(jsonFile, callback) {
             callback(mod);
         })(mod);
     }
-}
-module.exports = function(realtimecomm, options , app, properties) {
-    
-    console.log("<------------------------ REST API-------------------> ");
+}*/
+exports.restapi = function(realtimecomm, options , app, properties) {
     var restify = require('restify');
     var server = restify.createServer(options);
 
@@ -732,6 +729,7 @@ module.exports = function(realtimecomm, options , app, properties) {
       console.log('%s listening at %s', server.name, server.url);
     });
 
+    console.log("----------------------REST APIs ----------------");
     console.log(" REST server env => "+ properties.enviornment+ " running at\n "+properties.restPort);
 
     return module;

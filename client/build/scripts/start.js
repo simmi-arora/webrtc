@@ -39,6 +39,7 @@ var WebRTCdom= function(  _localObj , _remoteObj ){
     }
 
     if(localobj.hasOwnProperty('userdetails')){
+        console.log("userdetails " , localobj.userdetails);
         username    = (localobj.userdetails.username == undefined ? "user": localobj.userdetails.username);
         usecolor    = localobj.userdetails.usercolor;
         useremail   = localobj.userdetails.useremail;
@@ -49,7 +50,7 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
     sessionid  = session.sessionid;
     socketAddr = session.socketAddr;
     turn    = (session.hasOwnProperty('turn')?session.turn:null);
-    console.log(widgets);
+    console.log("widgets ", widgets);
 
     if(turn!=null ){
         getICEServer( turn.username ,turn.secretkey , turn.domain,
@@ -186,7 +187,6 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
             rtcMultiConnection.onNewSession = function(event) {
                 /*  startsessionTimer();  */
                 console.log('rtcMultiConnection.onNewSession ......On open with : ', event);
-
             },
 
             rtcMultiConnection.onRequest = function(event) {
@@ -194,8 +194,6 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
                 rtcMultiConnection.accept(event)
             }, 
 
-            rtcMultiConnection.enableFileSharing = true , 
-            
             rtcMultiConnection.onmessage = function(e) {
                 if(e.data.typing){
                     void(whoIsTyping.innerHTML = e.extra.username + " is typing ...") ;
@@ -269,6 +267,12 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
                 rtcMultiConnection.sendCustomMessage(event)
             }, 
 
+            rtcMultiConnection.onEntireSessionClosed = function(event) {
+                rtcMultiConnection.attachStreams.forEach(function(stream) {
+                    stream.stop();
+                });   
+            },
+
             rtcMultiConnection.onclose = rtcMultiConnection.onleave = function(e) {
                 addNewMessage({
                     header: e.extra.username,
@@ -285,8 +289,8 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
                 }
             },
 
-            rtcMultiConnection.onFileStart = function(e) {
-
+            rtcMultiConnection.onFileStart = function(file) {
+                alert("File Start ");
                 addNewFileLocal({
                     userid : rtcMultiConnection.userid,
                     header: 'User local',
@@ -295,20 +299,17 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
                     callback: function(r) {        }
                 });
                 
-                addProgressHelper(e.uuid , e.userid , e.name , e.maxChunks,  "fileBoxClass");
+                addProgressHelper(file.uuid , file.userid , file.name , file.maxChunks,  "fileBoxClass");
             }, 
 
             rtcMultiConnection.onFileProgress = function(e) {
+                alert("File Progress ");
                 var r = progressHelper[e.uuid];
                 r && (r.progress.value = e.currentPosition || e.maxChunks || r.progress.max, updateLabel(r.progress, r.label))
             }, 
 
             rtcMultiConnection.onFileEnd = function(e) {
-                /*
-                if (!progressHelper[e.uuid]) {
-                    console.error("No such progress-helper element exists.", e);
-                    //return void console.error("No such progress-helper element exists.", e);
-                }*/
+                alert("File End ");
                 for(i in webcallpeers ){
                     if(webcallpeers[i].userid==e.userid){
                         webcallpeers[i].filearray.push(e.name);
@@ -319,9 +320,8 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
                 displayList(e.uuid , e.userid , e.url , e.name , e.type);
             };
 
-
             if(chatobj.active){
-                createChatButton();
+                createChatButton(chatobj);
             }
 
             if(screenrecordobj.active){
@@ -329,7 +329,6 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
             }
 
             if(screenshareobj.active){
-                console.log(screenshareobj);
                 detectExtensionScreenshare(screenshareobj.extensionID); 
             }   
 
@@ -338,7 +337,7 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
             }
 
             if(drawCanvasobj.active){
-                createdrawButton();
+                /*createdrawButton();*/
             }
 
             if(texteditorobj.active){
@@ -350,8 +349,9 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
             }
 
             if(fileshareobj.active){
-                alert("here");
                 rtcMultiConnection.enableFileSharing = true;
+                rtcMultiConnection.filesContainer = document.getElementById(fileshareobj.fileShareContainer);
+                createFileShareButton(fileshareobj);
             }
 
             if(selfuserid==null){
@@ -359,7 +359,7 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
                 console.log("selfuserid and call updatepeer info update for self ",selfuserid);
                 updatePeerInfo( selfuserid, "local" );
             }
-
+            
             var addr = "/";
             if(socketAddr!="/"){
                 addr = socketAddr;
@@ -392,13 +392,13 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
             */
 
             setSettingsAttributes();
-
         }
     };
 
 };
 
 function checkDevices(obj){
+    console.log(" obj.DetectRTC  " , obj.DetectRTC);
     if(obj.DetectRTC.hasMicrophone) {
         // seems current system has at least one audio input device
         console.log("has Microphone");
@@ -766,6 +766,10 @@ function updatePeerInfo(userid , type ){
     webcallpeers.push(peerInfo);
 }
 
+function showStatus(){
+    console.log(rtcMultiConnection);
+    console.log(webcallpeers);
+}
 
 /************************* ICE NAT TURN *******************************/
 

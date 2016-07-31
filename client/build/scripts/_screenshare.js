@@ -628,7 +628,6 @@ function detectExtensionScreenshare(extensionID){
         return sdp;
     }
 
-
     !window.getScreenId && loadScript('getScreenId.js');
 }
 
