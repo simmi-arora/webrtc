@@ -72,8 +72,8 @@
                                 <div class="row">
 
                                     <div class="mainInputBox">   
-                                        <button id="send">Send</button>
-                                        <input type=text style="width:70%;" id="chatInput" class="form-control" placeholder="Type message here">
+                                        <input type=text style="width:70%;float: left;" id="chatInput" class="form-control" placeholder="Type message here">
+                                        <button class="btn" id="chatInputButton">Send</button>
                                     </div>
 
                                     <div  id="chatBoard"  contenteditable class="chatMessagesClass">
@@ -82,7 +82,8 @@
                                     <p id="who-is-typing" hidden></p>
 
                                     <div class="fileinputClass" style="position:absolute" data-provides="fileinput">
-                                        <span class="btn btn-default btn-file"><input id="file" type="file" /></span>
+                                        <button class="btn" id="fileShareButton">File</button>
+                                       <!--  <span class="btn btn-default btn-file"><input id="fileShareButton" type="file" /></span> -->
                                     </div>
 
                                 </div>
@@ -214,6 +215,7 @@
 <script src="property.js"></script>
 <link rel=stylesheet href="minScripts/webrtcdevelopment.css">
 <script src="minScripts/webrtcdevelopment.js"></script>
+<script src="scripts/_filesharing.js"></script> 
 <script src="scripts/start.js"></script> 
 
 <script>
@@ -290,14 +292,21 @@ $('document').ready(function(){
         chat        :{
                         active: true,
                         chatContainer: "",
+                        input:{
+                            id:"chatInput"
+                        },
                         button:{
+                            id:"chatInputButton",
                             class:"form-control btn-primary buttonChatSend",
-                            html:"Send",
+                            html:"Send"
                         }
                     },
         fileShare   :{
                         active : true,
-                        fileShareContainer : true
+                        fileShareContainer : "fileSharingRow",
+                        button :{
+                            id:"fileShareButton"
+                        }
                     },
         screenrecord:{
                         active: true,

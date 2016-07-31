@@ -1,6 +1,4 @@
-module.exports = function(realtimecomm, options , app, properties) {
-    
-    console.log("<------------------------ REST API-------------------> ");
+exports.restapi = function(realtimecomm, options , app, properties) {
     var restify = require('restify');
     var server = restify.createServer(options);
 
@@ -173,6 +171,7 @@ module.exports = function(realtimecomm, options , app, properties) {
       console.log('%s listening at %s', server.name, server.url);
     });
 
+    console.log("----------------------REST APIs ----------------");
     console.log(" REST server env => "+ properties.enviornment+ " running at\n "+properties.restPort);
 
     return module;

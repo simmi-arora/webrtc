@@ -1,21 +1,20 @@
 /********************************************************************************8
         Chat
 **************************************************************************************/
-function createChatButton(){
-    var chatButton= document.getElementById("send");
-    chatButton.className=chatobj.button.class;
-    chatButton.innerHTML= chatobj.button.html;
+function createChatButton(chatobj){
+    var chatButton=document.getElementById(chatobj.button.id);
     chatButton.onclick=function(){
-        var chatInput=document.getElementById("chatInput");
+        var chatInput=document.getElementById(chatobj.input.id);
         sendChatMessage(chatInput.value);
         chatInput.value = "";
     }
 }
+
 function addMessageLineformat(messageDivclass, message , parent){
-        var n = document.createElement("div");
-        n.className = messageDivclass; 
-        n.innerHTML = message;
-        document.getElementById(parent).insertBefore(n, document.getElementById(parent).firstChild);
+    var n = document.createElement("div");
+    n.className = messageDivclass; 
+    n.innerHTML = message;
+    document.getElementById(parent).insertBefore(n, document.getElementById(parent).firstChild);
 }
 
 function addMessageBlockFormat(messageheaderDivclass , messageheader ,messageDivclass, message , parent){
@@ -47,11 +46,11 @@ function addNewMessagelocal(e) {
 
 function sendChatMessage(msg){
     addNewMessagelocal({
-                header: rtcMultiConnection.extra.username,
-                message: msg,
-                userinfo: getUserinfo(rtcMultiConnection.blobURLs[rtcMultiConnection.userid], "chat-message.png"),
-                color: rtcMultiConnection.extra.color
-            });
+        header: rtcMultiConnection.extra.username,
+        message: msg,
+        userinfo: getUserinfo(rtcMultiConnection.blobURLs[rtcMultiConnection.userid], "chat-message.png"),
+        color: rtcMultiConnection.extra.color
+    });
     rtcMultiConnection.send({type:"chat", message:msg });
 }
 
