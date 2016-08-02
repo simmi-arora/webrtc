@@ -5,7 +5,6 @@ var https = require('https');
 
 var _properties = require('./env.js')(fs).readEnv();
 var properties= JSON.parse(_properties);
-
 console.log(properties);
 
 var folderPath="", file="";
@@ -20,11 +19,11 @@ if(properties.enviornment=="production"){
 
 console.log("Folder Path for this enviornment " , folderPath);
 
-  file = new _static.Server(folderPath, {
-    cache: 3600,
-    gzip: true,
-    indexFile: "home.html"
-  });
+file = new _static.Server(folderPath, {
+  cache: 3600,
+  gzip: true,
+  indexFile: "home.html"
+});
 
 var options = {
   key: fs.readFileSync('ssl_certs/server.key'),
@@ -56,7 +55,9 @@ var realtimecomm= _realtimecomm(app, properties , function(socket) {
                 socket.broadcast.emit(params.socketCustomEvent, message);
             } catch (e) {}
         });
-    } catch (e) {}
+    }catch (e) {
+        console.error(e);
+    }
 });
 
 var _restapi= require('./client/build/minScripts/webrtcdevelopmentServer.js').restapi;

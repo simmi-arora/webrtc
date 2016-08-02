@@ -140,7 +140,6 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
             },
 
             rtcMultiConnection.onstream = function(event) {
-                console.log("OnStream ------------", event , webcallpeers ,webcallpeers.length);
                 var flagPeerExists=false;
                 var x=0;
                 for(x=0;x<webcallpeers.length; x++){
@@ -154,18 +153,13 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
                     updatePeerInfo(event.extra.uuid , "remote");
                 }
 
-                console.log(x , webcallpeers ,webcallpeers.length);
-                console.log(webcallpeers[x].userid==event.extra.uuid);
-
                 if(webcallpeers[x].userid==event.extra.uuid){
                     webcallpeers[x].name=event.type+"Video";
                     webcallpeers[x].stream=event.stream;
                     webcallpeers[x].streamid=event.stream.streamid;
-                    console.log(" ------------",x,"-----",webcallpeers[x]);
                     updateWebCallView(webcallpeers[x]);
                     return;
                 }
-
             }, 
 
             rtcMultiConnection.onstreamended = function(event) {
@@ -289,8 +283,16 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
                 }
             },
 
+            rtcMultiConnection.takeSnapshot = function(userid, callback) {
+                takeSnapshot({
+                    userid: userid,
+                    connection: connection,
+                    callback: callback
+                });
+            },
+
             rtcMultiConnection.onFileStart = function(file) {
-                alert("File Start ");
+                
                 addNewFileLocal({
                     userid : rtcMultiConnection.userid,
                     header: 'User local',
@@ -303,13 +305,13 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
             }, 
 
             rtcMultiConnection.onFileProgress = function(e) {
-                alert("File Progress ");
+
                 var r = progressHelper[e.uuid];
                 r && (r.progress.value = e.currentPosition || e.maxChunks || r.progress.max, updateLabel(r.progress, r.label))
             }, 
 
             rtcMultiConnection.onFileEnd = function(e) {
-                alert("File End ");
+
                 for(i in webcallpeers ){
                     if(webcallpeers[i].userid==e.userid){
                         webcallpeers[i].filearray.push(e.name);
@@ -564,7 +566,8 @@ control Buttons
 *******************************************************************/
 var arrFilesharingBoxes=[];
 
-function attachControlButtons( uuid  , videoElement, streamid , controlBarName , snapshotViewer){
+function attachControlButtons( uuid  , videoElement, stream, streamid , 
+    controlBarName , snapshotViewer){
     var controlBar= document.createElement("div");
     controlBar.id=controlBarName;
     controlBar.setAttribute("style","float:left;margin-left: 20px;");
@@ -581,7 +584,7 @@ function attachControlButtons( uuid  , videoElement, streamid , controlBarName ,
         controlBar.appendChild(createSnapshotButton(controlBarName , streamid));
     }
     if(videoRecordobj.active){
-        controlBar.appendChild(createRecordButton(controlBarName));
+        controlBar.appendChild(createRecordButton(controlBarName, streamid, stream));
     }
 
     var nameBox=document.createElement("span");
@@ -603,6 +606,7 @@ function updateWebCallView(peerInfo){
             localVideo.setAttribute("style","width: 100%!important");
             attachControlButtons( webcallpeers[0].userid,
                 localVideo , 
+                webcallpeers[0].stream,
                 webcallpeers[0].streamid ,
                 webcallpeers[0].controlBarName,
                 webcallpeers[0].fileSharingContainer);
@@ -624,14 +628,15 @@ function updateWebCallView(peerInfo){
             /*adding local video to index 0 */
             if( remoteVideos[0].played.length==0 ){
                 reattachMediaStream(remoteVideos[0], localVideo);
-                remoteVideos[0].id=webcallpeers[0].videoContainer;
+                remoteVideos[0].id = webcallpeers[0].videoContainer;
                 remoteVideos[0].muted =   true;
                 remoteVideos[0].setAttribute("style","border: 5px solid #0087ff");
 
                 //if(miniVideo.parentNode.querySelector("#"+webcallpeers[0].controlBarName)!=null){
                 attachControlButtons( webcallpeers[0].userid,
                     remoteVideos[0], 
-                    webcallpeers[0].streamid ,
+                    webcallpeers[0].stream,
+                    webcallpeers[0].streamid,
                     webcallpeers[0].controlBarName,
                     webcallpeers[0].fileSharingContainer); 
 
@@ -667,7 +672,8 @@ function updateWebCallView(peerInfo){
 
         attachMediaStream(remoteVideos[vi], webcallpeers[pi].stream);
         attachControlButtons(webcallpeers[pi].userid,
-            remoteVideos[vi] , 
+            remoteVideos[vi] ,
+            webcallpeers[pi].stream, 
             webcallpeers[pi].streamid ,
             webcallpeers[pi].controlBarName,
             webcallpeers[pi].fileSharingContainer); 
@@ -741,8 +747,10 @@ function startcall(obj){
 function updatePeerInfo(userid , type ){
     console.log("updating peerInfo: " , userid , type);
     for(x in webcallpeers){
-        console.log(webcallpeers[x].userid);
-        if(webcallpeers[x].userid==userid) return;
+        if(webcallpeers[x].userid==userid) {
+            console.log("UserID is already existing , webcallpeers");
+            return;
+        }
     }
 
     peerInfo={ 
