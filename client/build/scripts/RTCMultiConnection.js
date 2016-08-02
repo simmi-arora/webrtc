@@ -2219,7 +2219,6 @@
                 connection.onFileProgress(chunk);
             };
             connection.fbr.onBegin = function(file) {
-                alert("onbegin ");
                 connection.onFileStart(file);
             };
             connection.fbr.onEnd = function(file) {
@@ -2240,9 +2239,10 @@
                 if (remoteUserId) {
                     arrayOfUsers = [remoteUserId];
                 }
-
+                
                 arrayOfUsers.forEach(function(participant) {
-                    connection.fbr.getNextChunk(uuid, function(nextChunk) {
+                    console.log("readAsArrayBuffer 1 " , uuid); 
+                    connection.fbr.getNextChunk(uuid, function(nextChunk) { 
                         connection.peers[participant].channels.forEach(function(channel) {
                             channel.send(nextChunk);
                         });
@@ -2250,7 +2250,7 @@
                 });
             }, {
                 userid: connection.userid,
-                // extra: connection.extra,
+                extra: connection.extra,
                 chunkSize: isFirefox ? 15 * 1000 : connection.chunkSize || 0
             });
         };
@@ -5089,7 +5089,6 @@
 
             // www.RTCMultiConnection.org/docs/onFileStart/
             connection.onFileStart = function(file) {
-                alert("on file start ");
                 var div = document.createElement('div');
                 div.title = file.name;
                 div.innerHTML = '<label>0%</label> <progress></progress>';

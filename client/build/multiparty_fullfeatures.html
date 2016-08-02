@@ -28,7 +28,6 @@
             </div>
         </div>
 
-
         <!-- ............. ................... alerts......................... -->
         
         <div class="row" id="alertBox" hidden="true"></div>
@@ -45,6 +44,9 @@
         </div>
 
         <div id="widget-locationContainer" class="row secondPanelClass" hidden style="margin-top:40px"> 
+        </div>
+
+        <div id="widget-logsContainer" class="row secondPanelClass" hidden style="margin-top:40px">
         </div>
 
         <!-- .......................... Row 2 ................................ -->
@@ -215,7 +217,7 @@
 <script src="property.js"></script>
 <link rel=stylesheet href="minScripts/webrtcdevelopment.css">
 <script src="minScripts/webrtcdevelopment.js"></script>
-<script src="scripts/_filesharing.js"></script> 
+
 <script src="scripts/start.js"></script> 
 
 <script>
@@ -307,6 +309,10 @@ $('document').ready(function(){
                         button :{
                             id:"fileShareButton"
                         }
+                    },
+        location    :{
+                         active : false
+
                     },
         screenrecord:{
                         active: true,

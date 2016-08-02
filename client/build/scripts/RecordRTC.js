@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2016-05-11 3:47:57 AM UTC
+// Last time updated: 2016-06-24 10:56:24 PM UTC
 
 // Open-Sourced: https://github.com/muaz-khan/RecordRTC
 
@@ -24,7 +24,7 @@
  *     type: 'video' // audio or video or gif or canvas
  * });
  *
- * // or, you can even use keyword "new"
+ * // or, you can also use the "new" keyword
  * var recordRTC = new RecordRTC(mediaStream[, config]);
  * @see For further information:
  * @see {@link https://github.com/muaz-khan/RecordRTC|RecordRTC Source Code}
@@ -107,7 +107,7 @@ function RecordRTC(mediaStream, config) {
             _callback();
         }
 
-        function _callback() {
+        function _callback(__blob) {
             for (var item in mediaRecorder) {
                 if (self) {
                     self[item] = mediaRecorder[item];
@@ -119,6 +119,15 @@ function RecordRTC(mediaStream, config) {
             }
 
             var blob = mediaRecorder.blob;
+
+            if (!blob) {
+                if (__blob) {
+                    mediaRecorder.blob = blob = __blob;
+                } else {
+                    throw 'Recording failed.';
+                }
+            }
+
             if (callback) {
                 var url = URL.createObjectURL(blob);
                 callback(url);
@@ -157,7 +166,7 @@ function RecordRTC(mediaStream, config) {
             return console.warn(WARNING);
         }
 
-        // not all libs yet having  this method
+        // not all libs have this method yet
         mediaRecorder.resume();
 
         if (!config.disableLogs) {
@@ -178,7 +187,7 @@ function RecordRTC(mediaStream, config) {
 
         if (!blob) {
             if (!config.disableLogs) {
-                console.warn('Blob encoder did not yet finished its job.');
+                console.warn('Blob encoder did not finish its job yet.');
             }
 
             setTimeout(function() {
@@ -228,7 +237,7 @@ function RecordRTC(mediaStream, config) {
 
     var returnObject = {
         /**
-         * This method starts recording. It doesn't take any argument.
+         * This method starts recording. It doesn't take any arguments.
          * @method
          * @memberof RecordRTC
          * @instance
@@ -238,7 +247,7 @@ function RecordRTC(mediaStream, config) {
         startRecording: startRecording,
 
         /**
-         * This method stops recording. It takes single "callback" argument. It is suggested to get blob or URI in the callback to make sure all encoders finished their jobs.
+         * This method stops recording. It takes a single "callback" argument. It is suggested to get blob or URI in the callback to make sure all encoders finished their jobs.
          * @param {function} callback - This callback function is invoked after completion of all encoding jobs.
          * @method
          * @memberof RecordRTC
@@ -282,12 +291,12 @@ function RecordRTC(mediaStream, config) {
         initRecorder: initRecorder,
 
         /**
-         * This method initializes the recording process.
+         * This method sets the recording duration.
          * @method
          * @memberof RecordRTC
          * @instance
          * @example
-         * recordRTC.initRecorder();
+         * recordRTC.setRecordingDuration();
          */
         setRecordingDuration: function(milliseconds, callback) {
             if (typeof milliseconds === 'undefined') {
@@ -350,7 +359,7 @@ function RecordRTC(mediaStream, config) {
         },
 
         /**
-         * This method returns DataURL. It takes single "callback" argument.
+         * This method returns the DataURL. It takes a single "callback" argument.
          * @param {function} callback - DataURL is passed back over this callback.
          * @method
          * @memberof RecordRTC
@@ -365,7 +374,7 @@ function RecordRTC(mediaStream, config) {
         getDataURL: getDataURL,
 
         /**
-         * This method returns Virutal/Blob URL. It doesn't take any argument.
+         * This method returns the Virutal/Blob URL. It doesn't take any arguments.
          * @method
          * @memberof RecordRTC
          * @instance
@@ -383,7 +392,7 @@ function RecordRTC(mediaStream, config) {
         },
 
         /**
-         * This method saves blob/file into disk (by inovking save-as dialog). It takes single (optional) argument i.e. FileName
+         * This method saves the blob/file to disk (by invoking save-as dialog). It takes a single (optional) argument i.e. FileName
          * @method
          * @memberof RecordRTC
          * @instance
@@ -401,7 +410,7 @@ function RecordRTC(mediaStream, config) {
         },
 
         /**
-         * This method gets blob from indexed-DB storage. It takes single "callback" argument.
+         * This method gets a blob from indexed-DB storage. It takes a single "callback" argument.
          * @method
          * @memberof RecordRTC
          * @instance
@@ -419,7 +428,7 @@ function RecordRTC(mediaStream, config) {
         },
 
         /**
-         * This method appends prepends array of webp images to the recorded video-blob. It takes an "array" object.
+         * This method appends an array of webp images to the recorded video-blob. It takes an "array" object.
          * @type {Array.<Array>}
          * @param {Array} arrayOfWebPImages - Array of webp images.
          * @method
@@ -514,7 +523,7 @@ function RecordRTC(mediaStream, config) {
         return returnObject;
     }
 
-    // if someone wanna use RecordRTC with "new" keyword.
+    // if someone wants to use RecordRTC with the "new" keyword.
     for (var prop in returnObject) {
         this[prop] = returnObject[prop];
     }
@@ -773,7 +782,7 @@ function GetRecorderType(mediaStream, config) {
 // MRecordRTC.js
 
 /**
- * MRecordRTC runs top over {@link RecordRTC} to bring multiple recordings in single place, by providing simple API.
+ * MRecordRTC runs on top of {@link RecordRTC} to bring multiple recordings in a single place, by providing simple API.
  * @summary MRecordRTC stands for "Multiple-RecordRTC".
  * @license {@link https://github.com/muaz-khan/RecordRTC#license|MIT}
  * @author {@link http://www.MuazKhan.com|Muaz Khan}
@@ -816,7 +825,7 @@ function MRecordRTC(mediaStream) {
     };
 
     /**
-     * This property can be used to set recording type e.g. audio, or video, or gif, or canvas.
+     * This property can be used to set the recording type e.g. audio, or video, or gif, or canvas.
      * @property {object} mediaType - {audio: true, video: true, gif: true}
      * @memberof MRecordRTC
      * @example
@@ -849,12 +858,12 @@ function MRecordRTC(mediaStream) {
         };
 
         if (typeof mediaType.audio !== 'function' && isMediaRecorderCompatible() && mediaStream.getAudioTracks && !mediaStream.getAudioTracks().length) {
-            // Firefox is supporting both audio/video in single blob
+            // Firefox supports both audio/video in single blob
             mediaType.audio = false;
         }
 
         if (typeof mediaType.video !== 'function' && isMediaRecorderCompatible() && mediaStream.getVideoTracks && !mediaStream.getVideoTracks().length) {
-            // Firefox is supporting both audio/video in single blob
+            // Firefox supports both audio/video in single blob
             mediaType.video = false;
         }
 
@@ -899,7 +908,7 @@ function MRecordRTC(mediaStream) {
                     newStream.addTrack(videoTrack);
 
                     if (recorderType && recorderType === WhammyRecorder) {
-                        // Firefox is NOT supporting webp-encoding yet
+                        // Firefox does NOT support webp-encoding yet
                         recorderType = MediaStreamRecorder;
                     }
                 } else {
@@ -956,8 +965,8 @@ function MRecordRTC(mediaStream) {
     };
 
     /**
-     * This method stop recording.
-     * @param {function} callback - Callback function is invoked when all encoders finish their jobs.
+     * This method stops recording.
+     * @param {function} callback - Callback function is invoked when all encoders finished their jobs.
      * @method
      * @memberof MRecordRTC
      * @example
@@ -990,8 +999,50 @@ function MRecordRTC(mediaStream) {
     };
 
     /**
+     * This method pauses recording.
+     * @method
+     * @memberof MRecordRTC
+     * @example
+     * recorder.pauseRecording();
+     */
+    this.pauseRecording = function() {
+        if (this.audioRecorder) {
+            this.audioRecorder.pauseRecording();
+        }
+
+        if (this.videoRecorder) {
+            this.videoRecorder.pauseRecording();
+        }
+
+        if (this.gifRecorder) {
+            this.gifRecorder.pauseRecording();
+        }
+    };
+
+    /**
+     * This method resumes recording.
+     * @method
+     * @memberof MRecordRTC
+     * @example
+     * recorder.resumeRecording();
+     */
+    this.resumeRecording = function() {
+        if (this.audioRecorder) {
+            this.audioRecorder.resumeRecording();
+        }
+
+        if (this.videoRecorder) {
+            this.videoRecorder.resumeRecording();
+        }
+
+        if (this.gifRecorder) {
+            this.gifRecorder.resumeRecording();
+        }
+    };
+
+    /**
      * This method can be used to manually get all recorded blobs.
-     * @param {function} callback - All recorded blobs are passed back to "callback" function.
+     * @param {function} callback - All recorded blobs are passed back to the "callback" function.
      * @method
      * @memberof MRecordRTC
      * @example
@@ -1028,7 +1079,7 @@ function MRecordRTC(mediaStream) {
 
     /**
      * This method can be used to manually get all recorded blobs' DataURLs.
-     * @param {function} callback - All recorded blobs' DataURLs are passed back to "callback" function.
+     * @param {function} callback - All recorded blobs' DataURLs are passed back to the "callback" function.
      * @method
      * @memberof MRecordRTC
      * @example
@@ -1107,7 +1158,7 @@ function MRecordRTC(mediaStream) {
     };
 
     /**
-     * This method can be used to invoke save-as dialog for all recorded blobs.
+     * This method can be used to invoke a save-as dialog for all recorded blobs.
      * @param {object} args - {audio: 'audio-name', video: 'video-name', gif: 'gif-name'}
      * @method
      * @memberof MRecordRTC
@@ -1625,7 +1676,11 @@ function MediaStreamRecorder(mediaStream, config) {
 
         // starting a recording session; which will initiate "Reading Thread"
         // "Reading Thread" are used to prevent main-thread blocking scenarios
-        mediaRecorder = new MediaRecorder(mediaStream, recorderHints);
+        try {
+            mediaRecorder = new MediaRecorder(mediaStream, recorderHints);
+        } catch (e) {
+            mediaRecorder = new MediaRecorder(mediaStream);
+        }
 
         if ('canRecordMimeType' in mediaRecorder && mediaRecorder.canRecordMimeType(config.mimeType) === false) {
             if (!config.disableLogs) {
@@ -1728,7 +1783,13 @@ function MediaStreamRecorder(mediaStream, config) {
             return;
         }
 
-        this.recordingCallback = callback || function() {};
+        this.recordingCallback = function(blob) {
+            mediaRecorder = null;
+
+            if (callback) {
+                callback(blob);
+            }
+        };
 
         // mediaRecorder.state === 'recording' means that media recorder is associated with "session"
         // mediaRecorder.state === 'stopped' means that media recorder is detached from the "session" ... in this case; "session" will also be deleted.
@@ -2396,7 +2457,7 @@ if (typeof RecordRTC !== 'undefined') {
 
 function CanvasRecorder(htmlElement, config) {
     if (typeof html2canvas === 'undefined' && htmlElement.nodeName.toLowerCase() !== 'canvas') {
-        throw 'Please link: //cdn.webrtc-experiment.com/screenshot.js';
+        throw 'Please link: https://cdn.webrtc-experiment.com/screenshot.js';
     }
 
     config = config || {};
@@ -2412,29 +2473,35 @@ function CanvasRecorder(htmlElement, config) {
         }
     });
 
-    if (!!window.webkitRTCPeerConnection || !!window.webkitGetUserMedia) {
+    var _isChrome = (!!window.webkitRTCPeerConnection || !!window.webkitGetUserMedia) && !!window.chrome;
+
+    var chromeVersion = 50;
+    var matchArray = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
+    if (_isChrome && matchArray && matchArray[2]) {
+        chromeVersion = parseInt(matchArray[2], 10);
+    }
+
+    if (_isChrome && chromeVersion < 52) {
         isCanvasSupportsStreamCapturing = false;
     }
 
-    var globalCanvas, globalContext, mediaStreamRecorder;
+    var globalCanvas, mediaStreamRecorder;
 
     if (isCanvasSupportsStreamCapturing) {
         if (!config.disableLogs) {
             console.debug('Your browser supports both MediRecorder API and canvas.captureStream!');
         }
 
-        globalCanvas = document.createElement('canvas');
-
-        globalCanvas.width = htmlElement.clientWidth || window.innerWidth;
-        globalCanvas.height = htmlElement.clientHeight || window.innerHeight;
-
-        globalCanvas.style = 'top: -9999999; left: -99999999; visibility:hidden; position:absoluted; display: none;';
-        (document.body || document.documentElement).appendChild(globalCanvas);
-
-        globalContext = globalCanvas.getContext('2d');
+        if (htmlElement instanceof HTMLCanvasElement) {
+            globalCanvas = htmlElement;
+        } else if (htmlElement instanceof CanvasRenderingContext2D) {
+            globalCanvas = htmlElement.canvas;
+        } else {
+            throw 'Please pass either HTMLCanvasElement or CanvasRenderingContext2D.';
+        }
     } else if (!!navigator.mozGetUserMedia) {
         if (!config.disableLogs) {
-            alert('Canvas recording is NOT supported in Firefox.');
+            console.error('Canvas recording is NOT supported in Firefox.');
         }
     }
 
@@ -2456,9 +2523,9 @@ function CanvasRecorder(htmlElement, config) {
             if ('captureStream' in globalCanvas) {
                 canvasMediaStream = globalCanvas.captureStream(25); // 25 FPS
             } else if ('mozCaptureStream' in globalCanvas) {
-                canvasMediaStream = globalCanvas.captureStream(25);
+                canvasMediaStream = globalCanvas.mozCaptureStream(25);
             } else if ('webkitCaptureStream' in globalCanvas) {
-                canvasMediaStream = globalCanvas.captureStream(25);
+                canvasMediaStream = globalCanvas.webkitCaptureStream(25);
             }
 
             try {
@@ -2497,7 +2564,9 @@ function CanvasRecorder(htmlElement, config) {
         var framesLength = whammy.frames.length;
         whammy.frames.forEach(function(frame, idx) {
             var framesRemaining = framesLength - idx;
-            document.title = framesRemaining + '/' + framesLength + ' frames remaining';
+            if (!config.disableLogs) {
+                console.debug(framesRemaining + '/' + framesLength + ' frames remaining');
+            }
 
             if (config.onEncodingCallback) {
                 config.onEncodingCallback(framesRemaining, framesLength);
@@ -2507,7 +2576,9 @@ function CanvasRecorder(htmlElement, config) {
             whammy.frames[idx].image = webp;
         });
 
-        document.title = 'Generating WebM';
+        if (!config.disableLogs) {
+            console.debug('Generating WebM');
+        }
 
         callback();
     };
@@ -2528,15 +2599,7 @@ function CanvasRecorder(htmlElement, config) {
         var that = this;
 
         if (isCanvasSupportsStreamCapturing && mediaStreamRecorder) {
-            var slef = this;
-            mediaStreamRecorder.stop(function() {
-                for (var prop in mediaStreamRecorder) {
-                    self[prop] = mediaStreamRecorder[prop];
-                }
-                if (callback) {
-                    callback(that.blob);
-                }
-            });
+            mediaStreamRecorder.stop(callback);
             return;
         }
 
@@ -2550,7 +2613,9 @@ function CanvasRecorder(htmlElement, config) {
              * });
              */
             whammy.compile(function(blob) {
-                document.title = 'Recording finished!';
+                if (!config.disableLogs) {
+                    console.debug('Recording finished!');
+                }
 
                 that.blob = blob;
 

@@ -6,7 +6,8 @@ var progressHelper = {};
 
 function createFileShareButton(fileshareobj){
     var button= document.getElementById(fileshareobj.button.id);
-/*  button.onchange=function(){
+    /*  
+    button.onchange=function(){
         var file = this.files[0];
         console.log(file);
         console.log(rtcMultiConnection.peers.getLength(), " " , rtcMultiConnection.peers.getAllParticipants());
@@ -22,6 +23,7 @@ function createFileShareButton(fileshareobj){
     };
 }
 function sendFile(file){
+    console.log(rtcMultiConnection);
     rtcMultiConnection.send(file);
     console.log(file);
 }
