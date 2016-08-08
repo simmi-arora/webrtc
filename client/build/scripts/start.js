@@ -73,7 +73,7 @@ var WebRTCdev= function(session, widgets){
     if(widgets){
 
         if(widgets.debug)           debug           = widgets.debug;
-        
+
         if(widgets.chat)            chatobj         = widgets.chat;
 
         if(widgets.fileShare)       fileshareobj    = widgets.fileShare;
@@ -349,7 +349,7 @@ var WebRTCdev= function(session, widgets){
             }
 
             if(drawCanvasobj.active){
-                createdrawButton();
+                /*createdrawButton();*/
             }
 
             if(texteditorobj.active){
@@ -562,10 +562,10 @@ function attachControlButtons( userid  , vid ,  peerinfo){
     controlBar.setAttribute("style","float:left;margin-left: 20px;");
     if(muteobj.active){
         if(muteobj.audio){
-            controlBar.appendChild(createAudioMuteButton(controlBarName));
+            controlBar.appendChild(createAudioMuteButton(controlBarName , peerinfo));
         }
         if(muteobj.video){
-            controlBar.appendChild(createVideoMuteButton(controlBarName));        
+            controlBar.appendChild(createVideoMuteButton(controlBarName , peerinfo));        
         }
     }
     if(snapshotobj.active){

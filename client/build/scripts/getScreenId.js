@@ -24,7 +24,9 @@
             if (event.data.chromeMediaSourceId) {
                 if (event.data.chromeMediaSourceId === 'PermissionDeniedError') {
                     callback('permission-denied');
-                } else callback(null, event.data.chromeMediaSourceId, getScreenConstraints(null, event.data.chromeMediaSourceId));
+                } else{
+                    callback(null, event.data.chromeMediaSourceId, getScreenConstraints(null, event.data.chromeMediaSourceId));
+                }
             }
 
             if (event.data.chromeExtensionStatus) {
