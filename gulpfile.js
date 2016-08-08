@@ -151,7 +151,7 @@ var scriptList=[
     "client/build/scripts/_record.js",
     "client/build/scripts/_screenrecord.js",
     "client/build/scripts/_filesharing.js",
-    "client/build/scripts/_draw.js",
+    /*"client/build/scripts/_draw.js",*/
     "client/build/scripts/_redial.js",
     "client/build/scripts/_cursor.js",
     "client/build/scripts/_codeeditor.js",
@@ -159,7 +159,7 @@ var scriptList=[
     "client/build/scripts/_mediahandler.js",
     "client/build/scripts/screensharing.js",
     "client/build/scripts/_screenshare.js",
-    "client/build/scripts/getScreenId.js"
+    /*"client/build/scripts/getScreenId.js"*/
 
 ];
 
@@ -249,4 +249,3 @@ gulp.task('production', gulpSequence(
     'webrtcdevelopmentcss',
     'serverjs'
 )); 
-

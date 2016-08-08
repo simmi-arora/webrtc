@@ -1,4 +1,4 @@
-function createAudioMuteButton(controlBarName){
+function createAudioMuteButton(controlBarName , peerinfo){
     var audioButton=document.createElement("span");
     audioButton.id=controlBarName+"audioButton";
     audioButton.setAttribute("data-val","mute");
@@ -10,14 +10,14 @@ function createAudioMuteButton(controlBarName){
     audioButton.innerHTML=muteobj.audio.button.html_on;
     audioButton.onclick = function() {
         if(audioButton.className == muteobj.audio.button.class_on ){
-            rtcMultiConnection.streams[streamid].mute({
+            peerinfo.stream.mute({
                 audio: !0
             });
             audioButton.className=muteobj.audio.button.class_off;
             audioButton.innerHTML=muteobj.audio.button.html_off;
         } 
         else{            
-            rtcMultiConnection.streams[streamid].unmute({
+            peerinfo.stream.unmute({
                 audio: !0
             });
             audioButton.className=muteobj.audio.button.class_on;
@@ -28,7 +28,7 @@ function createAudioMuteButton(controlBarName){
     return audioButton;
 }
 
-function createVideoMuteButton(controlBarName){
+function createVideoMuteButton(controlBarName , peerinfo){
     var videoButton=document.createElement("span");
     videoButton.id=controlBarName+"videoButton";
     videoButton.setAttribute("title", "Toggle Video");
@@ -39,14 +39,14 @@ function createVideoMuteButton(controlBarName){
     videoButton.innerHTML=muteobj.video.button.html_on;     
     videoButton.onclick= function(event) {
         if(videoButton.className == muteobj.video.button.class_on ){
-            rtcMultiConnection.streams[streamid].mute({
+            peerinfo.stream.mute({
                 video: !0
             });
             videoButton.innerHTML=muteobj.video.button.html_off;
             videoButton.className=muteobj.video.button.class_off;   
         } 
         else{ 
-            rtcMultiConnection.streams[streamid].unmute({
+            peerinfo.stream.unmute({
                 video: !0
             });
             videoButton.innerHTML=muteobj.video.button.html_on;
