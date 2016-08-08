@@ -1,23 +1,23 @@
 var socket ;;
 var webrtcdevDataObj;
 var usersDataObj;
+var channelsFeed= document.getElementById("channelsFeed");
 
 var WebRTCdevadmin= function(signaller){
     socket= io.connect(signaller);
     socket.on('response_to_admin_enquire', function(message) {
+
         switch (message.response){
             case "channels":
                 webrtcdevDataObj=message.channels;
                 if(message.format=="list"){
-                    clearList("listArea");
+                    clearList("channellistArea");
                     for (i in Object.keys(webrtcdevDataObj)) { 
-                        drawList("listArea" , Object.keys(webrtcdevDataObj)[i]);
+                        /*drawList("channellistArea" , Object.keys(webrtcdevDataObj)[i]);*/
+                        drawList("channellistArea" , webrtcdevDataObj[i]);
                     }
                 }else if(message.format=="table"){
                     drawTable("webrtcdevTableBody",webrtcdevDataObj);
-                }else if(message.format=="json"){
-                    webrtcdevDataObj=message.channels;
-                    document.getElementById("channelsFeed").innerHTML=JSON.stringify(webrtcdevDataObj, null, 4);
                 }else{
                     console.error("format not specified ");
                 }
@@ -33,8 +33,12 @@ var WebRTCdevadmin= function(signaller){
                 }
             break;
 
+            case "all":
+                channelsFeed.innerHTML=JSON.stringify(message.channels, null, 4);
+            break;
+
             default :
-                console.log("unrecognizable response from siagnaller ");
+                console.log("unrecognizable response from signaller " , message);
         }
     });
 };
@@ -77,7 +81,7 @@ $('#channels_table').click(function () {
 
 $('#channels_json').click(function () {
     socket.emit('admin_enquire', {
-        ask:'channels',
+        ask:'all',
         format: 'json'
     });
 });

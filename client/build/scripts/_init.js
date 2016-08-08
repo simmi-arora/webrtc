@@ -26,8 +26,8 @@ var webcallpeers=[];
 var sessions = {};
 var repeatFlagShowButton =null, repeatFlagHideButton =null, repeatFlagRemoveButton=null ;
 
-/* DOM objects */
-var localVideo =null, miniVideo=null, remoteVideos=[];
+/* DOM objects for single user video , user in conf and all other users*/
+var localVideo=null, selfVideo=null, remoteVideos=[];
 var localobj , remoteobj;
 
 var username="" , useremail="" , usercolor="" ;
@@ -41,6 +41,8 @@ var localStream , localStreamId, remoteStream , remoteStreamId;
 /* icoming and outgoing call params */
 var incomingAudio =true , incomingVideo =true , incomingData = true;
 var outgoingAudio =true , outgoingVideo =true , outgoingData = true;
+
+var debug=false;
 
 var chatobj=false , chatContainer= null;
 

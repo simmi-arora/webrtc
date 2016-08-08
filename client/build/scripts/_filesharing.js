@@ -72,7 +72,7 @@ function simulateClick(buttonName){
     return true;
 }
 
-function displayList(uuid , userid , fileurl , filename , filetype ){
+function displayList(uuid , _userid , fileurl , filename , filetype ){
 
     var elementList=null , elementPeerList=null , listlength=null;
     var elementDisplay=null, elementPeerDisplay=null ;
@@ -80,20 +80,19 @@ function displayList(uuid , userid , fileurl , filename , filetype ){
     var downloadButton,removeButton;
     var showDownloadButton=true , showRemoveButton=true; 
     for(i in webcallpeers ){
-        if(webcallpeers[i].userid==userid){
+        if(webcallpeers[i].userid==_userid || rtcMultiConnection.channel==_userid){
            elementList=webcallpeers[i].fileListContainer;
            elementDisplay= webcallpeers[i].fileSharingContainer;
            listlength=webcallpeers[i].filearray.length;
-           console.log("Self shared file ");
-          
+           console.log("Self shared file " , filename);
         }else{
-            console.log("Peer shared file ");
             elementPeerList= webcallpeers[i].fileListContainer;
             elementPeerDisplay= webcallpeers[i].fileSharingContainer;
+            console.log("Peer shared file " , filename );
         }
     }
 
-    if(selfuserid==userid){
+    if(selfuserid==_userid){
         showDownloadButton=false;
     }else{
         showRemoveButton=false;
@@ -268,7 +267,7 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
 function displayFile( uuid , _userid , _fileurl , _filename , _filetype ){
     var element=null;
     for(i in webcallpeers ){
-        if(webcallpeers[i].userid==_userid)
+        if(webcallpeers[i].userid==_userid || rtcMultiConnection.channel==_userid)
            element=webcallpeers[i].fileSharingContainer;
     }
     console.log(" Display File ---------" ,_userid ," ||", _filename , "||", _filetype ,"||", element);
@@ -317,11 +316,11 @@ function removeFile(element){
     document.getElementById(element).hidden=true;
 }
 
-function createFileSharingDiv(i){
+function createFileSharingDiv(peerinfo){
     /*--------------------------------add for File Share --------------------*/
     var fileSharingBox=document.createElement("div");
     fileSharingBox.className= "col-sm-6 fileViewing1Box";
-    fileSharingBox.id=webcallpeers[i].fileSharingSubContents.fileSharingBox;
+    fileSharingBox.id=peerinfo.fileSharingSubContents.fileSharingBox;
 
     var fileControlBar=document.createElement("p");
     fileControlBar.appendChild(document.createTextNode("File Viewer"));
@@ -329,40 +328,46 @@ function createFileSharingDiv(i){
     var minButton= document.createElement("span");
     minButton.className="btn btn-default glyphicon glyphicon-import closeButton";
     minButton.innerHTML="Minimize";
-    minButton.id=webcallpeers[i].fileSharingSubContents.minButton;
+    minButton.id=peerinfo.fileSharingSubContents.minButton;
     minButton.setAttribute("lastClickedBy" ,'');
     minButton.onclick=function(){
-        resizeFV(webcallpeers[i].userid, minButton.id , arrFilesharingBoxes);
+        resizeFV(peerinfo.userid, minButton.id , arrFilesharingBoxes);
     }
 
     var maxButton= document.createElement("span");
     maxButton.className= "btn btn-default glyphicon glyphicon-export closeButton";
     maxButton.innerHTML="Maximize";
-    maxButton.id=webcallpeers[i].fileSharingSubContents.maxButton;
+    maxButton.id=peerinfo.fileSharingSubContents.maxButton;
     maxButton.setAttribute("lastClickedBy" ,'');
     maxButton.onclick=function(){
-        maxFV(webcallpeers[i].userid, maxButton.id , arrFilesharingBoxes , webcallpeers[i].fileSharingSubContents.fileSharingBox);
+        maxFV(peerinfo.userid, maxButton.id , arrFilesharingBoxes , peerinfo.fileSharingSubContents.fileSharingBox);
     }
 
     var closeButton= document.createElement("span");
     closeButton.className="btn btn-default glyphicon glyphicon-remove closeButton";
     closeButton.innerHTML="Close";
-    closeButton.id=webcallpeers[i].fileSharingSubContents.closeButton;
+    closeButton.id=peerinfo.fileSharingSubContents.closeButton;
     closeButton.setAttribute("lastClickedBy" ,'');
     closeButton.onclick=function(){
-        closeFV(webcallpeers[i].userid, closeButton.id , webcallpeers[i].fileSharingContainer);
+        closeFV(peerinfo.userid, closeButton.id , peerinfo.fileSharingContainer);
     }
 
     fileControlBar.appendChild(minButton);
     fileControlBar.appendChild(maxButton);
     fileControlBar.appendChild(closeButton);
 
-    var fileSharingContainer= document.createElement("div");
-    fileSharingContainer.className="filesharingWidget";
-    fileSharingContainer.id=webcallpeers[i].fileSharingContainer;
+    var fileSharingContainer = document.createElement("div");
+    fileSharingContainer.className ="filesharingWidget";
+    fileSharingContainer.id =peerinfo.fileSharingContainer;
 
     var fillerArea=document.createElement("p");
     fillerArea.className="filler";
+
+    if(debug){
+        var nameBox=document.createElement("span");
+        nameBox.innerHTML=fileSharingContainer.id; 
+        fileSharingBox.appendChild(nameBox);
+    }
 
     fileSharingBox.appendChild(fileControlBar);
     fileSharingBox.appendChild(fileSharingContainer);
@@ -385,9 +390,15 @@ function createFileSharingDiv(i){
     fileListingControlBar.appendChild(fileHelpButton);
 
     var fileListingContainer= document.createElement("div");
-    fileListingContainer.id=webcallpeers[i].fileListContainer;
+    fileListingContainer.id=peerinfo.fileListContainer;
 
     var fileProgress = document.createElement("div");
+
+    if(debug){
+        var nameBox=document.createElement("span");
+        nameBox.innerHTML=fileListingContainer.id; 
+        fileListingBox.appendChild(nameBox);
+    }
 
     fileListingBox.appendChild(fileListingControlBar);
     fileListingBox.appendChild(fileListingContainer);

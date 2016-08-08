@@ -41,7 +41,8 @@ var app = https.createServer(options, function(request, response){
 app.listen(properties.httpsPort);
 
 
-var _realtimecomm=require('./client/build/minScripts/webrtcdevelopmentServer.js').realtimecomm;
+/*var _realtimecomm=require('./client/build/minScripts/webrtcdevelopmentServer.js').realtimecomm;*/
+var _realtimecomm=require('./realtimecomm.js').realtimecomm;
 var realtimecomm= _realtimecomm(app, properties , function(socket) {
     try {
         var params = socket.handshake.query;
@@ -65,20 +66,3 @@ var restapi=_restapi(realtimecomm, options ,app, properties);
 
 console.log("< ------------------------ HTTPS Server -------------------> ");
 console.log(" WebRTC server env => "+ properties.enviornment+ " running at\n "+properties.httpsPort+ "/\nCTRL + C to shutdown");
-
-/*var options = {
-  host: 'https://docs.google.com/spreadsheets/d/1ora3ej7ySrrIxijjTqKI97KGxtn0ah4xyYjF6gVtsjs/',
-  port: 80,
-  path: 'pub?gid=0&single=true&output=csv',
-  method: 'POST'
-};
-
-https.request(options, function(res) {
-  console.log('STATUS: ' + res.statusCode);
-  console.log('HEADERS: ' + JSON.stringify(res.headers));
-  res.setEncoding('utf8');
-  res.on('data', function (chunk) {
-    console.log('BODY: ' + chunk);
-  });
-}).end();
-*/

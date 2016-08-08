@@ -2,7 +2,7 @@
 <head>
     <title>WebRTC Call</title>
     <meta name="google-site-verification" content="8NqEkVsX8mkRCn13Qov4K0njgF0T6t97_a-NZNIXkpE" />
-    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/elfbfompfpakbefoaicaeoabnnoihoac">
+    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/jocjeccncphlagaegaljdbpcimoiogal">
     <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel=stylesheet href="minScripts/webrtcdevelopment_header.css">
@@ -21,8 +21,8 @@
                     <li hidden> <span id="username" class="userName" hidden>a</span></li>
                     <li hidden> <span id="numbersofusers" class="numbers-of-users" hidden></span></li>
                     
-                    <li> <span id="HelpButton" class="btn btn-info glyphicon glyphicon-question-sign topPanelButton" data-toggle="modal" data-target="#helpModal" > Help </span> </li>
-                    <li> <span id="SettingsButton" class="btn btn-info glyphicon glyphicon-exclamation-sign topPanelButton" data-toggle="modal" data-target="#settingsModal" > Settings </span> </li>
+                    <li> <span id="HelpButton" class="btn-sm btn-info glyphicon glyphicon-question-sign topPanelButton" data-toggle="modal" data-target="#helpModal" > Help </span> </li>
+                    <li> <span id="SettingsButton" class="btn-sm btn-info glyphicon glyphicon-exclamation-sign topPanelButton" data-toggle="modal" data-target="#settingsModal" > Settings </span> </li>
                     <!-- <li id="timerli" hidden> Time Remaining <span id="countdownMinutes">3</span>:<span id="countdownSecond">60</span></li>  -->
                 </ul>
             </div>
@@ -30,7 +30,7 @@
 
         <!-- ............. ................... alerts......................... -->
         
-        <div class="row" id="alertBox" hidden="true"></div>
+        <div class="row alertDiv" id="alertBox" hidden="true"></div>
 
         <!-- .......................... Row 1 widgets ......................... -->
         
@@ -55,19 +55,19 @@
                 <div class="row users-container merge" id="usersContainer" >
 
                         <!-- when no remote -->
-                        <div id="local" class="row" hidden>
-                            <div class="col-sm-4 merge"> </div>
-                            <div class="col-sm-4 merge"> <video name="localVideo" autoplay="autoplay" muted="true" /></div>
-                            <div class="col-sm-4 merge"> </div>
+                        <div id="singleVideoContainer" class="row" hidden>
+                            <div class="col-sm-2 merge" > Waiting  ! </div>
+                            <div class="col-sm-8 merge "> <video name="myAloneVideo" autoplay="autoplay" muted="true" /></div>
+                            <div class="col-sm-2 merge" > You are the only one in the session ...</div>
                         </div>
 
                         <!-- when remote is connected -->
-                        <div id ="remote" class="row" style="display:inline" hidden>
-                            <div class="col-sm-4 merge" class="leftVideoClass" id="leftVideo">
-                                <video name="video1" autoplay="autoplay" muted="true" />
+                        <div id ="confVideoContainer"  class="row" style="display:inline" >
+                            <div class="col-sm-4 merge" class="leftVideoClass" id="userVideo">
+                                <video name="myConferenceVideo" autoplay="autoplay" muted="true" />
                             </div>
 
-                            <div class="col-sm-4 merge" class="rightVideoClass" id="rightVideo">
+                            <div class="col-sm-4 merge" class="rightVideoClass" id="othersVideo" hidden>
                             </div>
 
                             <div class="col-sm-4 merge "  style="height:100%" id="chatbox" >
@@ -90,7 +90,6 @@
 
                                 </div>
                             </div>
-                            
                         </div>
                 </div>
             </div> 
@@ -209,7 +208,6 @@
               </div>
             </div>
         </div>
-
     </div>
 
 </body>
@@ -239,8 +237,9 @@ $('document').ready(function(){
     var webrtcdomobj;
 
     var local={
-        localVideo: "localVideo",
+        video: "myAloneVideo",
         videoClass:"",
+        videoContainer : "singleVideoContainer",
         userDisplay:false,
         userMetaDisplay:false,
         userdetails:{
@@ -251,16 +250,19 @@ $('document').ready(function(){
     };
 
     var remote={
-        remotearr: ["video1"],
+        videoarr: ["myConferenceVideo"],
         remoteVideoCount: "unlimited",
-        remoteVideoContainer : "rightVideo",
+        dynamicVideos:{
+            container: "othersVideo"
+        } 
+        videoContainer : "confVideoContainer",
         videoClass:"",
         userDisplay:false,
-        userMetaDisplay:false    
+        userMetaDisplay:false
     };
 
     webrtcdomobj= new WebRTCdom(
-        local,remote
+        local,remote, incoming, outgoing
     );
 
     var session ={
@@ -379,14 +381,7 @@ $('document').ready(function(){
                         }
                     }, 
         texteditor  :{
-                        active: true,
-                        texteditorContainer: "widget-texteditorContainer",
-                        button:{
-                            class_on:"btn btn-warning glyphicon glyphicon-edit topPanelButton",
-                            html_on:"close Text",
-                            class_off:"btn btn-success glyphicon glyphicon-edit topPanelButton",
-                            html_off:"Text"
-                        }
+                        active: false
                     },                   
         reconnect   :{
                         active: true,
@@ -418,7 +413,7 @@ $('document').ready(function(){
     };
 
     var webrtcdevobj = new WebRTCdev ( 
-        session,  incoming,  outgoing ,  widgets
+        session, widgets
     );
     startcall(webrtcdevobj);
 });

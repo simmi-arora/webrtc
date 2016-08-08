@@ -48,7 +48,7 @@ function detectExtensionScreenshare(extensionID){
         
         if(status == 'not-installed') {
             // chrome extension is not installed
-            createScreenInstallButton();
+            createScreenInstallButton(extensionID);
         }
         
         if(status == 'not-chrome') {
@@ -704,14 +704,14 @@ function hideScreenViewButton(){
     document.getElementById("viewScreenShareButton").hidden=true;
 }
 
-function createScreenInstallButton(){
+function createScreenInstallButton(extensionID){
     var screenShareButton= document.createElement("span");
         screenShareButton.className=screenshareobj.button.installButton.class_off;
         screenShareButton.innerHTML=screenshareobj.button.installButton.html_off;
         screenShareButton.id="screeninstallButton";
         screenShareButton.onclick = function(e) {    
-            chrome.webstore.install("https://chrome.google.com/webstore/detail/"+extensionID 
-            ,function(){
+            chrome.webstore.install("https://chrome.google.com/webstore/detail/"+extensionID,
+            function(){
                 console.log("Chrome extension inline installation - success");
                 screenShareButton.hidden=true;
                 createScreenshareButton();

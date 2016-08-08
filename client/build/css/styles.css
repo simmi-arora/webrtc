@@ -28,7 +28,7 @@
     float: left;
     display: block;
     cursor: pointer;
-    padding: 0 23px
+    padding: 0 5px
 }
 #topIconHolder ul li a {
     color: #fff;
@@ -146,9 +146,9 @@
     font-size: 20px;
     font-weight: 700
 }
-.glyphicon {
+/*.glyphicon {
     line-height: 38px!important
-}
+}*/
 #fullScreen {
     display: none;
     position: relative;
@@ -394,6 +394,11 @@ video {
 }
 
 
+.alertDiv{
+  position: absolute;
+  width:80%;
+  z-index: 2;
+}
 
 #local {
     -webkit-backface-visibility: hidden;
