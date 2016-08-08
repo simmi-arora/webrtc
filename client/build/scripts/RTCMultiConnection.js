@@ -230,6 +230,7 @@
         };
 
         connection.open = function(localUserid, isPublicModerator) {
+            
             var oldUserId = connection.userid;
             connection.userid = connection.sessionid = localUserid || connection.sessionid;
             connection.userid += '';
@@ -301,7 +302,7 @@
                 connection.broadcasters = newArray;
                 keepNextBroadcasterOnServer();
             }
-        }
+        };
 
         connection.rejoin = function(connectionDescription) {
             if (connection.isInitiator || !connectionDescription || !Object.keys(connectionDescription).length) {
@@ -394,6 +395,7 @@
                     return;
                 }
 
+                console.log(connectionDescription);
                 mPeer.onNegotiationNeeded(connectionDescription);
                 cb();
             });

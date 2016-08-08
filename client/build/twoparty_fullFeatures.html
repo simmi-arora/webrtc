@@ -1,16 +1,16 @@
 <html lang=en>
-
 <head>
     <title>WebRTC Call</title>
     <meta name="google-site-verification" content="8NqEkVsX8mkRCn13Qov4K0njgF0T6t97_a-NZNIXkpE" />
-    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/elfbfompfpakbefoaicaeoabnnoihoac">
+    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/jocjeccncphlagaegaljdbpcimoiogal">
     <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel=stylesheet href="minScripts/webrtcdevelopment_header.css">
     <script src="minScripts/webrtcdevelopment_header.js"> </script>
+    
 </head>
 
-<body id="pagebody" class="bodyWhole" style=" background: #2e6da4">
+<body id="pagebody">
 
     <div  id="elementToShare" class="container-fluid">
 
@@ -28,20 +28,25 @@
             </div>
         </div>
 
-
-        <!-- .............alerts................. -->
+        <!-- ............. ................... alerts......................... -->
         
-        <div class="row" id="alertBox" hidden="true"></div>
+        <div class="row alertDiv" id="alertBox" hidden="true"></div>
 
-        <!-- .......................... Row 1 ................................ -->
+        <!-- .......................... Row 1 widgets ......................... -->
         
         <div id="widget-drawContainer" class="row secondPanelClass" hidden style="margin-top:40px"> 
         </div>
+
+        <textarea id="widget-texteditorContainer" class="row secondPanelClass" hidden style="margin-top:40px; height: 300px; width: 700px;"> 
+        </textarea> 
 
         <div id="widget-screenshareContainer" class="row secondPanelClass" hidden style="margin-top:40px"> 
         </div>
 
         <div id="widget-locationContainer" class="row secondPanelClass" hidden style="margin-top:40px"> 
+        </div>
+
+        <div id="widget-logsContainer" class="row secondPanelClass" hidden style="margin-top:40px">
         </div>
 
         <!-- .......................... Row 2 ................................ -->
@@ -50,23 +55,28 @@
                 <div class="row users-container merge" id="usersContainer" >
 
                         <!-- when no remote -->
-                        <div id="local" class="row" hidden>
-                            <div class="col-sm-4 merge"> </div>
-                            <div class="col-sm-4 merge"> <video name="localVideo" autoplay="autoplay" muted="true" /></div>
-                            <div class="col-sm-4 merge"> </div>
+                        <div id="singleVideoContainer" class="row" hidden>
+                            <div class="col-sm-2 merge text-success" > Waiting  ! </div>
+                            <div class="col-sm-8 merge "> <video name="myAloneVideo" autoplay="autoplay" muted="true" /></div>
+                            <div class="col-sm-2 merge text-info" > You are the only one in the session ...</div>
                         </div>
 
                         <!-- when remote is connected -->
-                        <div id ="remote" class="row" style="display:inline" hidden>
-                            <div class="col-sm-4 merge" class="leftVideoClass" id="leftVideo">
-                                <video name="video1" autoplay="autoplay" muted="true" />
+                        <div id ="confVideoContainer"  class="row" hidden >
+                            <div class="col-sm-4 merge" class="leftVideoClass" id="userVideo">
+                                <video name="myConferenceVideo" autoplay="autoplay" muted="true" />
                             </div>
-                            <div class="col-sm-4 merge "  style="height:100%" id="chatbox" >
+
+                            <div class="col-sm-4 merge" class="rightVideoClass" id="othersVideo">
+                                <video name="otherConferenceVideo" autoplay="autoplay" />
+                            </div>
+
+                            <div class="col-sm-4 merge" style="height:100%" id="chatbox" >
                                 <div class="row">
 
                                     <div class="mainInputBox">   
-                                        <button id="send">Send</button>
-                                        <input type=text style="width:70%;" id="chatInput" class="form-control" placeholder="Type message here">
+                                        <input type=text style="width:70%;float: left;" id="chatInput" class="form-control" placeholder="Type message here">
+                                        <button class="btn" id="chatInputButton">Send</button>
                                     </div>
 
                                     <div  id="chatBoard"  contenteditable class="chatMessagesClass">
@@ -75,13 +85,11 @@
                                     <p id="who-is-typing" hidden></p>
 
                                     <div class="fileinputClass" style="position:absolute" data-provides="fileinput">
-                                        <span class="btn btn-default btn-file"><input id="file" type="file" /></span>
+                                        <button class="btn" id="fileShareButton">File</button>
+                                       <!--  <span class="btn btn-default btn-file"><input id="fileShareButton" type="file" /></span> -->
                                     </div>
 
                                 </div>
-                            </div>
-                            <div class="col-sm-4 merge" class="rightVideoClass" id="rightVideo">
-                                <video name="video2" autoplay="autoplay"></video>
                             </div>
                         </div>
                 </div>
@@ -106,12 +114,12 @@
             </div>
         </div>
 
-        <!-- ....................................................................... -->
+        <!-- ............................Cursors resting position .................. -->
 
         <div id="cursor1" class="cursor1Class" style="width:0"></div>
         <div id="cursor2" class="cursor2Class" style="width:0"></div>
     
-        <!--modal help -->
+        <!-- ............................ modal help ............................... -->
         <div class="modal fade" id="helpModal" role="dialog">
             <div class="modal-dialog modal-lg">
               <div class="modal-content">
@@ -129,7 +137,7 @@
             </div>
         </div>
 
-        <!--modal settings -->
+        <!--  ............................ modal settings .......................... -->
         <div class="modal fade" id="settingsModal" role="dialog">
             <div class="modal-dialog modal-lg">
               <div class="modal-content">
@@ -144,39 +152,6 @@
                     Inspectore <input class="form-control" type="text" id="inspectorlink" readonly><br/>
                     Channel <input class="form-control" type="text" id="channelname" readonly> <br/>
                     User Id <input class="form-control" type="text" id="userid" readonly> <br/>
-
-                    <div class="row">
-                        <h2>User Details</h2>
-                        <div style="display: inline-flex;">
-                            <div>Name</div> <input class="form-control" type="text" id="usernameText" style="width:100px" readonly><br/>
-                        </div>
-                        
-                        <div style="display: inline-flex;">
-                            <div>Email</div> <input class="form-control" type="text" id="useremailText" style="width:100px" readonly><br/>
-                        </div>
-
-                        <div style="display: inline-flex;">
-                            <div>Color</div> <input class="form-control" type="text" id="usercolorText" style="width:100px" readonly><br/>
-                        </div>
-
-                    </div>
-                    <div class="row">
-                        <div style="display: inline-flex;">
-                            <div>Local Time </div> <input class="form-control" type="text" id="localtimeText" style="width:100px" readonly><br/>
-                        </div>
-                        
-                        <div style="display: inline-flex;">
-                            <div>Latitude</div> <input class="form-control" type="text" id="latitudeText" style="width:100px" readonly><br/>
-                        </div>
-
-                        <div style="display: inline-flex;">
-                            <div>Longtitude</div> <input class="form-control" type="text" id="longitudeText" style="width:100px" readonly><br/>
-                        </div>
-
-                        <div style="display: inline-flex;">
-                            Operating System<input class="form-control" type="text" id="operatingsystemText" style="width:100px" readonly><br/>
-                        </div>
-                    </div>
 
                     <div class="row">
                         <h2>Outgoing</h2>
@@ -195,6 +170,7 @@
                         <div style="display: inline-flex;">
                             Screen <input class="form-control" type="text" id="inScreen" style="width:100px" readonly><br/>
                         </div>
+
                     </div>
 
                     <div class="row">
@@ -233,14 +209,16 @@
               </div>
             </div>
         </div>
-
     </div>
 
 </body>
+
 <script src="property.js"></script>
 <link rel=stylesheet href="minScripts/webrtcdevelopment.css">
 <script src="minScripts/webrtcdevelopment.js"></script>
-<script src="scripts/start.js"></script>
+<script src="scripts/timer.js"></script> 
+<script src="scripts/start.js"></script> 
+
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -254,97 +232,37 @@
 
 <script>
 $('document').ready(function(){
-    sessionid= init(true);
+    sessionid = init(true);
 
     var searchParams = new URLSearchParams(window.location);
-    var role="participant",out_A=true, out_V=true ;
-
     var webrtcdomobj;
 
-    if(searchParams.get('audio')=="0"){
-        out_A=false;
-    }
+    var local={
+        video: "myAloneVideo",
+        videoClass:"",
+        videoContainer : "singleVideoContainer",
+        userDisplay:false,
+        userMetaDisplay:false,
+        userdetails:{
+            username:"Expert",
+            usercolor: "Blue",
+            useremail: "abc@gmail.com"
+        }
+    };
 
-    if(searchParams.get('video')=="0"){
-        out_V=false;
-    }
+    var remote={
+        videoarr: ["myConferenceVideo", "otherConferenceVideo"],
+        videoClass:"",
+        maxAllowed: "2",
+        videoContainer : "confVideoContainer",
+        userDisplay:false,
+        userMetaDisplay:false,
+        dynamicVideos: false   
+    };
 
-    if(searchParams.get('name')){
-        username=searchParams.get('name');
-    }
-
-    if(searchParams.get('email')){
-        useremail=searchParams.get('email');
-    }
-
-    if(searchParams.get('color')){
-        usercolor=searchParams.get('color');
-    }
-
-    var local={} , remote={};
-
-    if(searchParams.get('role')=="inspector"){
-        role=searchParams.get('role');
-
-        local={
-            localVideo: null,
-            videoClass:"",
-            userdetails:{
-                name  : username,
-                email : useremail, 
-                color : usercolor
-            }
-        };
-
-        remote={
-            remotearr: ["video1" , "video2"],
-            videoClass:"",
-            userdetails:{
-                name  : "",
-                email : "", 
-                color : ""
-            } 
-        };
-
-        webrtcdomobj= new WebRTCdom(
-            local, remote
-        );    
-        
-        sessionid = sessionid.substring(0,sessionid.indexOf("appname") );
-    }else{
-        local={
-            localVideo: "localVideo",
-            videoClass:"",
-            userdetails:{
-                name  : username,
-                email : useremail, 
-                color : usercolor
-            },
-            userdisplay:{
-                ip          : false,
-                city        : false,
-                country     : false,
-                localtime   : false,
-                latitude    : latitudeText,
-                longitude   : longitudeText,
-                opratingsystem: operatingsystemText
-            }  
-        };
-
-        remote={
-            remotearr: ["video1" , "video2"],
-            videoClass:"",
-            userdetails:{
-                name  : "",
-                email : "", 
-                color : ""
-            }   
-        };
-
-        webrtcdomobj= new WebRTCdom(
-            local,remote
-        );
-    } 
+    webrtcdomobj= new WebRTCdom(
+        local,remote, incoming, outgoing
+    );
 
     var session ={
         sessionid : sessionid,
@@ -358,33 +276,58 @@ $('document').ready(function(){
                 secure      : props.xirsys.secure
             }
     };
-
+    
     var incoming={
-        audio: true,
-        video: true,
-        data: true,
+        audio:  true,
+        video:  true,
+        data:   true,
         screen: true
     };
 
     var outgoing={
-        audio: out_A,
-        video: out_V,
-        data: true,
+        audio:  true,
+        video:  true,
+        data:   true,
         screen: true
     };
 
     var widgets={
+        debug      : true,
+        timer      :{
+                        active:true,
+                        type: "backward",
+                        upperlimit: {
+                            hour:0 , 
+                            min: 3 , 
+                            sec: 0 
+                        },
+                        span:{
+                            id:"timerDiv",
+                            class:""
+                        }
+                    },
         chat        :{
                         active: true,
                         chatContainer: "",
+                        input:{
+                            id:"chatInput"
+                        },
                         button:{
+                            id:"chatInputButton",
                             class:"form-control btn-primary buttonChatSend",
-                            html:"Send",
+                            html:"Send"
                         }
                     },
         fileShare   :{
                         active : true,
-                        fileShareContainer : true
+                        fileShareContainer : "fileSharingRow",
+                        button :{
+                            id:"fileShareButton"
+                        }
+                    },
+        location    :{
+                         active : false
+
                     },
         screenrecord:{
                         active: true,
@@ -400,7 +343,7 @@ $('document').ready(function(){
         screenshare : {
                         active:true,
                         screenshareContainer: "widget-screenshareContainer",
-                        extensionID: "elfbfompfpakbefoaicaeoabnnoihoac",
+                        extensionID: "jocjeccncphlagaegaljdbpcimoiogal",
                         button:{
                             installButton:{
                                 class_on:"btn btn-warning glyphicon glyphicon-inbox topPanelButton",
@@ -427,9 +370,9 @@ $('document').ready(function(){
                         videoRecordContainer: true,
                         button:{
                             class_on:"pull-right glyphicon glyphicon-facetime-video btn btn-warning mediaButton",
-                            html_on:"Stop",
+                            html_on:"",
                             class_off:"pull-right glyphicon glyphicon-facetime-video btn btn-default mediaButton",
-                            html_off:"Record"
+                            html_off:""
                         }
                     },
         snapshot :{
@@ -437,7 +380,7 @@ $('document').ready(function(){
                         snapshotContainer: true,
                         button:{
                             class_on:"pull-right glyphicon glyphicon-camera btn btn-default mediaButton",
-                            html_on:"Snapshot"
+                            html_on:""
                         }
                     }, 
         drawCanvas  :{
@@ -450,6 +393,9 @@ $('document').ready(function(){
                             html_off:"Draw"
                         }
                     }, 
+        texteditor  :{
+                        active: false
+                    },                   
         reconnect   :{
                         active: true,
                         button:{
@@ -463,24 +409,24 @@ $('document').ready(function(){
                     audio   :{
                             button:{
                                 class_on:"pull-right glyphicon glyphicon-volume-up btn btn-default mediaButton",
-                                html_on:"Audio is On",
+                                html_on:"",
                                 class_off:"pull-right glyphicon glyphicon-volume-off btn btn-danger mediaButton",
-                                html_off:"Audio is Off"
+                                html_off:""
                             }
                         },
                     video : {
                             button:{
                                 class_on:"pull-right glyphicon glyphicon-eye-open btn btn-default videoButtonClass mediaButton",
-                                html_on:"Video is On",
+                                html_on:"",
                                 class_off:"pull-right glyphicon glyphicon-eye-close  btn btn-danger videoButtonClass mediaButton",
-                                html_off:"Video is Off"
+                                html_off:"https://localhost:8086/multiparty_fullfeatures.html#3743150688569583"
                             }
                         }
                     }
     };
 
     var webrtcdevobj = new WebRTCdev ( 
-        session,  incoming,  outgoing ,  widgets
+        session, widgets
     );
     startcall(webrtcdevobj);
 });

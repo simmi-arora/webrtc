@@ -20,42 +20,7 @@ var whoIsTyping = document.querySelector("#who-is-typing");
 
 var sessions = {};
 
-var WebRTCdom= function(  _localObj , _remoteObj ){
-
-    localobj=_localObj;
-    var _local=_localObj.localVideo;
-    var _localVideoClass=_localObj.videoClass;
-
-    remoteobj=_remoteObj;
-    var _remotearr=_remoteObj.remotearr;
-    var _remotearrClass= _remoteObj.videoClass;
-
-    if(_local!=null){
-        localVideo = document.getElementsByName(_local)[0];    
-    }
-
-    for(var x=0;x<_remotearr.length;x++){
-        remoteVideos.push(document.getElementsByName(_remotearr[x])[0]);    
-    }
-
-    if(localobj.hasOwnProperty('userdetails')){
-        console.log("userdetails " , localobj.userdetails);
-        username    = (localobj.userdetails.username == undefined ? "user": localobj.userdetails.username);
-        usecolor    = localobj.userdetails.usercolor;
-        useremail   = localobj.userdetails.useremail;
-    }
-};
-
-var WebRTCdev= function(session, incoming, outgoing, widgets){
-    sessionid  = session.sessionid;
-    socketAddr = session.socketAddr;
-    turn    = (session.hasOwnProperty('turn')?session.turn:null);
-    console.log("widgets ", widgets);
-
-    if(turn!=null ){
-        getICEServer( turn.username ,turn.secretkey , turn.domain,
-                        turn.application , turn.room , turn.secure); 
-    }
+var WebRTCdom= function(  _localObj , _remoteObj , incoming, outgoing){
 
     if(incoming){
         incomingAudio = incoming.audio ; 
@@ -69,9 +34,47 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
         outgoingData  = outgoing.data ;
     }
 
+    /* When user is single */
+    localobj=_localObj;
+    localVideo = localobj.video;
+
+    /* when user is in conference */
+    remoteobj=_remoteObj;
+    var _remotearr=_remoteObj.videoarr;
+
+    /* first video container in remotearr belonsg to user */
+    if(outgoingVideo){
+        selfVideo = _remotearr[0];
+    }
+    /* create arr for remote peers viseo */
+    for(var x=1;x<_remotearr.length;x++){
+        remoteVideos.push(_remotearr[x]);    
+    }
+
+    if(localobj.hasOwnProperty('userdetails')){
+        console.log("userdetails " , localobj.userdetails);
+        username    = (localobj.userdetails.username == undefined ? "user": localobj.userdetails.username);
+        usecolor    = localobj.userdetails.usercolor;
+        useremail   = localobj.userdetails.useremail;
+    }
+};
+
+var WebRTCdev= function(session, widgets){
+    sessionid  = session.sessionid;
+    socketAddr = session.socketAddr;
+    turn    = (session.hasOwnProperty('turn')?session.turn:null);
+    console.log("widgets ", widgets);
+
+    if(turn!=null ){
+        getICEServer( turn.username ,turn.secretkey , turn.domain,
+                        turn.application , turn.room , turn.secure); 
+    }
+
     if(widgets){
 
-        if(widgets.chat)            chatobj         = widgets.chat
+        if(widgets.debug)           debug           = widgets.debug;
+        
+        if(widgets.chat)            chatobj         = widgets.chat;
 
         if(widgets.fileShare)       fileshareobj    = widgets.fileShare;
 
@@ -92,6 +95,8 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
         if(widgets.codeeditor)      codeeditorobj   = widgets.codeeditor;
 
         if(widgets.mute)            muteobj         = widgets.mute;
+
+        if(widgets.timer)           timer           = widgets.timer;
     }
 
     return {
@@ -108,7 +113,6 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
             }  
 
             checkDevices(rtcMultiConnection);
-
             rtcMultiConnection.extra = {
                 uuid :userid,
                 username: username,
@@ -124,10 +128,10 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
             rtcMultiConnection.customStreams = {}, 
             rtcMultiConnection.autoCloseEntireSession = !1, 
             rtcMultiConnection.autoTranslateText = !1, 
-            rtcMultiConnection.maxParticipantsAllowed = 4, 
+            rtcMultiConnection.maxParticipantsAllowed = remoteobj.maxAllowed, 
             rtcMultiConnection.setDefaultEventsForMediaElement = !1,
             rtcMultiConnection.blobURLs = {},
-             
+ 
             rtcMultiConnection.session = {
                 video: incomingVideo,
                 audio: incomingAudio,
@@ -172,10 +176,16 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
             },
 
             rtcMultiConnection.onopen = function(event) {
-                /*  startsessionTimer();  */
-                console.log('rtcMultiConnection.onopen ......On open with : ', event);
-                updatePeerInfo(event.extra.uuid , "remote");
-                shownotification(event.extra.username + " joined channel ");
+                if(timer)
+                   startsessionTimer(timer);
+
+                if(webcallpeers.length<=remoteobj.maxAllowed){
+                    console.log('rtcMultiConnection.onopen ......On open with : ', event);
+                    updatePeerInfo(event.extra.uuid , "remote");
+                    shownotification(event.extra.username + " joined channel ");
+                }else{
+                    shownotification("Another user is trying to join this channel but max count [ "+remoteobj.maxAllowed +" ] is reached");
+                }
             },
 
             rtcMultiConnection.onNewSession = function(event) {
@@ -339,7 +349,7 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
             }
 
             if(drawCanvasobj.active){
-                /*createdrawButton();*/
+                createdrawButton();
             }
 
             if(texteditorobj.active){
@@ -379,14 +389,20 @@ var WebRTCdev= function(session, incoming, outgoing, widgets){
             });
 
             socket.on("presence", function(event) {
+                console.log("PRESENCE -----------> ", event);
                 event ?  joinWebRTC(rtcMultiConnection.channel, selfuserid) 
                 : opneWebRTC(rtcMultiConnection.channel, selfuserid);
             });  
 
             socket.on("opened-channel",function(event) {
-               if(event) connectWebRTC(rtcMultiConnection.channel, selfuserid); 
+                console.log("opened-channel" , event);
+               if(event) connectWebRTC("open" , rtcMultiConnection.channel, selfuserid); 
             });
 
+            socket.on("joined-channel",function(event) {
+                console.log("joined-channel" , event);
+               if(event) connectWebRTC("join" , rtcMultiConnection.channel, selfuserid); 
+            });
             /*
             socket.on("joined-channel",function(event) {
                if(event) changeUserid(selfuserid); 
@@ -503,37 +519,6 @@ function bytesToSize(e) {
     return Math.round(e / Math.pow(1024, n), 2) + " " + t[n]
 }
 
-
-/**************************************************8
-Timer 
-***************************************************/
-function startsessionTimer(){
-    var cd = $('#countdownSecond');
-    var cdm = $('#countdownMinutes');
-    var c = parseInt(cd.text(),10);
-    var m =  parseInt(cdm.text(),10);
-    //alert(" Time for session validy is "+m +" minutes :"+ c+ " seconds");
-    timer(cd , c , cdm ,  m);  
-}
-
-function timer(cd , c , cdm , m ){
-    console.log(m);
-    var interv = setInterval(function() {
-        c--;
-        cd.html(c);
-
-        if (c == 0) {
-            c = 60;
-            m--;  
-            $('#countdownMinutes').html(m);
-            if(m<0)  {
-                clearInterval(interv); 
-                //alert("time over");
-            }                     
-        }
-    }, 1000);
-}
-
 /***************************************************
 video handling 
 *********************************************************/
@@ -564,14 +549,17 @@ function createVideoContainer(e, style, callback) {
 /************************************
 control Buttons 
 *******************************************************************/
-var arrFilesharingBoxes=[];
 
-function attachControlButtons( uuid  , videoElement, stream, streamid , 
-    controlBarName , snapshotViewer){
+function attachControlButtons( userid  , vid ,  peerinfo){
+
+    var stream = peerinfo.stream;
+    var streamid = peerinfo.streamid;
+    var controlBarName =  peerinfo.controlBarName;
+    var snapshotViewer =  peerinfo.fileSharingContainer ;
+
     var controlBar= document.createElement("div");
-    controlBar.id=controlBarName;
+    controlBar.id = controlBarName;
     controlBar.setAttribute("style","float:left;margin-left: 20px;");
-    controlBar.name= streamid;
     if(muteobj.active){
         if(muteobj.audio){
             controlBar.appendChild(createAudioMuteButton(controlBarName));
@@ -581,118 +569,89 @@ function attachControlButtons( uuid  , videoElement, stream, streamid ,
         }
     }
     if(snapshotobj.active){
-        controlBar.appendChild(createSnapshotButton(controlBarName , streamid));
+        controlBar.appendChild(createSnapshotButton(controlBarName , peerinfo));
     }
     if(videoRecordobj.active){
         controlBar.appendChild(createRecordButton(controlBarName, streamid, stream));
     }
 
-    var nameBox=document.createElement("span");
-    nameBox.innerHTML=uuid;
-    controlBar.appendChild(nameBox);
+    if(debug){
+        var nameBox=document.createElement("span");
+        nameBox.innerHTML=userid;
+        controlBar.appendChild(nameBox);  
+    }
 
-    videoElement.parentNode.appendChild(controlBar);        
+    vid.parentNode.appendChild(controlBar);        
 }
 
 function updateWebCallView(peerInfo){
     if(peerInfo.vid.indexOf("videolocal") > -1){
-        $("#local").show();
-        $("#remote").hide();
+        $("#"+localobj.videoContainer).show();
+        $("#"+remoteobj.videoContainer).hide();
         if(localVideo){
-            attachMediaStream(localVideo, webcallpeers[0].stream);
-            localVideo.muted = true;
-            localVideo.id= webcallpeers[0].userid;
-            localVideo.style.opacity = 1;
-            localVideo.setAttribute("style","width: 100%!important");
-            attachControlButtons( webcallpeers[0].userid,
-                localVideo , 
-                webcallpeers[0].stream,
-                webcallpeers[0].streamid ,
-                webcallpeers[0].controlBarName,
-                webcallpeers[0].fileSharingContainer);
+            var vid = document.getElementsByName(localVideo)[0];
+            vid.muted = true;
+            vid.style.opacity = 1;
+            vid.setAttribute("style","width: 100%!important");
+            attachMediaStream(vid, peerInfo.stream);
         }
     }else if(peerInfo.vid.indexOf("videoremote") > -1) {
-        var pi = 0;
-        var vi = 0;
 
-        $("#local").hide();
-        $("#remote").show();
+        $("#"+localobj.videoContainer).hide();
+        $("#"+remoteobj.videoContainer).show();
     
-        for(x in webcallpeers)
-            arrFilesharingBoxes.push(webcallpeers[x].fileSharingSubContents.fileSharingBox);
-
-        /*
-        handling local video transistion to active 
-        */
+        /* handling local video transistion to active */
         if( outgoingVideo ){
-            /*adding local video to index 0 */
-            if( remoteVideos[0].played.length==0 ){
-                reattachMediaStream(remoteVideos[0], localVideo);
-                remoteVideos[0].id = webcallpeers[0].videoContainer;
-                remoteVideos[0].muted =   true;
-                remoteVideos[0].setAttribute("style","border: 5px solid #0087ff");
+            /*chk if local video is added to conf , else adding local video to index 0 */
+            var selfvid = document.getElementsByName(selfVideo)[0];
+            var localvid = document.getElementsByName(localVideo)[0];
 
-                //if(miniVideo.parentNode.querySelector("#"+webcallpeers[0].controlBarName)!=null){
-                attachControlButtons( webcallpeers[0].userid,
-                    remoteVideos[0], 
-                    webcallpeers[0].stream,
-                    webcallpeers[0].streamid,
-                    webcallpeers[0].controlBarName,
-                    webcallpeers[0].fileSharingContainer); 
-
-                if(remoteVideos[0].hidden){
-                    remoteVideos[0].hidden=false;
-                }
+            if(selfvid.played.length==0){
+                if(localvid.played.lebth>0)
+                    reattachMediaStream(selfvid, localvid);
+                else
+                    attachMediaStream(selfvid, webcallpeers[0].stream);
+                selfvid.id = webcallpeers[0].videoContainer;
+                selfvid.muted = true;
+                selfvid.setAttribute("style","border: 5px solid #0087ff");
+                attachControlButtons( selfvid.id, selfvid, webcallpeers[0]); 
 
                 if(fileshareobj.active){
-                    createFileSharingDiv(0);
+                    createFileSharingDiv(webcallpeers[0]);
                 }
             }
-            vi++;
-            pi++;
-        }else{
-            pi++;
         }
 
-        /*get the next empty empty index of video and pointer in video array */
-        for(var v=vi;v< remoteVideos.length;v++){
+        /*get the next empty index of video and pointer in video array */
+        var vi=0;
+        for(var v=0;v<remoteVideos.length;v++){
             if(remoteVideos[v].src){
                 vi++;
-                pi++;
             }
         }
 
-        if(remoteobj.remoteVideoCount=="unlimited"){
+        var remvid;
+        if(remoteobj.maxAllowed=="unlimited"){
             var video = document.createElement('video');
-            video.setAttribute("style","border: 5px solid #4bce50");
             video.autoplay="autoplay";
             remoteVideos[vi]=video;
-            document.getElementById(remoteobj.remoteVideoContainer).appendChild(video);
+            document.getElementById(remoteobj.videoContainer).appendChild(video);
+            remvid=remoteVideos[vi];
+        }else{
+            remvid=document.getElementsByName(remoteVideos[vi])[0];
+            console.log("remote video not unlimited " , remoteVideos[vi]);
         }
 
-        attachMediaStream(remoteVideos[vi], webcallpeers[pi].stream);
-        attachControlButtons(webcallpeers[pi].userid,
-            remoteVideos[vi] ,
-            webcallpeers[pi].stream, 
-            webcallpeers[pi].streamid ,
-            webcallpeers[pi].controlBarName,
-            webcallpeers[pi].fileSharingContainer); 
-
-        if(outgoingVideo)
-            waitForRemoteVideo(webcallpeers[pi].stream , remoteVideos[vi] , localVideo  , remoteVideos[0] );
-        else
-            waitForRemoteVideo(webcallpeers[pi].stream , remoteVideos[vi] , null  , null );
-
-        if(remoteVideos[vi].hidden){
-            remoteVideos[vi].hidden=false;
-        }
+        attachMediaStream(remvid, peerInfo.stream);
+        remvid.id = peerInfo.videoContainer;
+        remvid.setAttribute("style","border: 5px solid #4bce50");
+        attachControlButtons(remvid.id, remvid, peerInfo); 
 
         if(fileshareobj.active){
-            createFileSharingDiv(pi);
+            createFileSharingDiv(peerInfo);
         }
     }
 }
-
 
 /********************************************************************************** 
         Session call 
@@ -704,21 +663,30 @@ changeUserid=function(userid){
 opneWebRTC=function(channel , userid){
     rtcMultiConnection.open(channel);
     socket.emit("open-channel", {
-        channel: channel,
-        sender: userid
+        channel    : channel,
+        sender     : userid,
+        maxAllowed : remoteobj.maxAllowed
     });
     shownotification(" Making a new session ");
 }
 
-connectWebRTC=function(channel , userid){
-    rtcMultiConnection.connect(channel);
-    /*changeUserid(userid);*/
-    shownotification("Connected ");
+connectWebRTC=function(type, channel , userid){
+    if(type=="open"){
+        rtcMultiConnection.connect(channel);
+        /*changeUserid(userid);*/
+        shownotification("Connected to new channel");
+    }else if(type=="join"){
+        rtcMultiConnection.join(channel);
+        /*changeUserid(userid);*/
+        shownotification("Connected with existing channel");
+    }else{
+        shownotification("Connection type not found");
+    }
+
 }
 
 joinWebRTC=function(channel , userid){
     shownotification("Joining an existing session ");
-    rtcMultiConnection.join(channel);
     socket.emit("join-channel", {
         channel: channel,
         sender: userid
@@ -820,14 +788,13 @@ function getICEServer(username , secretkey , domain , appname , roomname , secur
 }
 
 function attachMediaStream(element, stream) {
-    console.log(element);
-    
-    if (typeof element.srcObject !== 'undefined') {
-        element.srcObject = stream;
-    }else if (typeof element.src !== 'undefined') {
+    console.log("element.src", typeof element.srcObject, typeof element.src );
+    if (typeof element.src == 'string') {
         element.src = URL.createObjectURL(stream);
-    } else{
-         console.log('Error attaching stream to element.' , element , stream);
+    }else if (typeof element.srcObject == 'object') {
+        element.srcObject = stream;
+    }else{
+        console.log('Error attaching stream to element.' , element , stream);
     }
 }
 

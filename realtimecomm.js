@@ -3,7 +3,8 @@ exports.realtimecomm  = function(app, properties, socketCallback) {
     var shiftedModerationControls = {};
     var ScalableBroadcast;
 
-    var channels = [];
+    var webrtcdevchannels = [];
+    var channels=[];
     var users = {};
     var sessions = {};
 
@@ -211,32 +212,46 @@ exports.realtimecomm  = function(app, properties, socketCallback) {
 
         socket.on('open-channel', function (data) {  
             console.log("------------open channel------------- ", data.channel," by " , data.sender);
-            sessions[data.channel] = {
+
+            if (channels.indexOf(data.channel)<0){
+                channels.push(data.channel);
+                console.log("registered new in channels " , channels);
+            }else{
+                console.log("channel already exists channels " , channels);
+            }
+
+            webrtcdevchannels[data.channel] = {
                 channel: data.channel,
                 timestamp: new Date().toLocaleString(),
+                maxAllowed: data.maxAllowed,
                 users:[data.sender],
                 status:"waiting",
                 endtimestamp:0,
                 log:[new Date().toLocaleString()+":-channel created . User "+data.sender+" waiting "]
             };   
+            console.log("information added to channel" , webrtcdevchannels);
             socket.emit("opened-channel",true);  
         });
 
         socket.on('join-channel', function (data) {  
-            console.log("------------join channel------------- ", data.channel," by " , data.sender);
-            sessions[data.channel].users.push(data.sender); 
-            sessions[data.channel].status=sessions[data.channel].users.length + " active members";
-            sessions[data.channel].log.push(new Date().toLocaleString()+":-User "+data.sender+" joined the channel ");    
+            var isallowed=(webrtcdevchannels[data.channel].users.length < webrtcdevchannels[data.channel].maxAllowed);
+            console.log("------------join channel------------- ", data.channel," by " , data.sender , " isallowed " , isallowed);
+            if(isallowed){
+                webrtcdevchannels[data.channel].users.push(data.sender); 
+                webrtcdevchannels[data.channel].status=webrtcdevchannels[data.channel].users.length + " active members";
+                webrtcdevchannels[data.channel].log.push(new Date().toLocaleString()+":-User "+data.sender+" joined the channel ");  
+                socket.emit("joined-channel",true);
+            }else{
+                socket.emit("joined-channel",false);
+            }  
         });
 
         socket.on('presence', function(data, callback) {
-            console.log(data.channel, " ",channels.indexOf(data.channel));
-            if (channels.indexOf(data.channel)<0){
-                channels.push(data.channel);
-                console.log("registered in channels " , channels);
-                socket.emit("presence",false);
-            }else{
+            console.log(" Presence Check index of " , data.channel);
+            if (webrtcdevchannels[data.channel]){
                 socket.emit("presence",true);
+            }else{
+                socket.emit("presence",false);
             }
         });
 
@@ -426,13 +441,30 @@ exports.realtimecomm  = function(app, properties, socketCallback) {
         }
     }
 
+    module.getAll=function(format){
+        var channels=[];
+        for (i in webrtcdevchannels) { 
+            channels.push(webrtcdevchannels[i]);
+        }
+        var output={
+            response:'channels',
+            channels: channels,
+            format:format
+        };
+        return output;
+    };
+
 
     module.getAllChannels=function(format){
+        var sessions=[];
+        for (i in Object.keys(webrtcdevchannels)) { 
+            sessions.push(Object.keys(webrtcdevchannels)[i]);
+        }
         var output={
-                response:'channels',
-                channels:channels,
-                format:format
-            };
+            response:'all',
+            channels: sessions,
+            format:format
+        };
         return output;
     };
 
@@ -440,7 +472,7 @@ exports.realtimecomm  = function(app, properties, socketCallback) {
 
         var output={
                 response:'users',
-                users:channels[channelid],
+                users:webrtcdevchannels[channelid],
                 format:format
             };
         return output;
@@ -448,10 +480,10 @@ exports.realtimecomm  = function(app, properties, socketCallback) {
 
     module.getAllActiveUsers=function(format){
         var users=[];
-        for (i in Object.keys(channels)) { 
-            var key=Object.keys(channels)[i];
-            for (j in channels[key].users) {
-                users.push(channels[key].users[j]);
+        for (i in Object.keys(webrtcdevchannels)) { 
+            var key=Object.keys(webrtcdevchannels)[i];
+            for (j in webrtcdevchannels[key].users) {
+                users.push(webrtcdevchannels[key].users[j]);
             }
         }
 
