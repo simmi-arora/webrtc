@@ -7,7 +7,7 @@ var sourceId;
 var isFirefox = typeof window.InstallTrigger !== 'undefined';
 var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
 var isChrome = !!window.chrome && !isOpera;
-navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+/*navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;*/
 /*var isFirefox = !!navigator.mozGetUserMedia;
 var isChrome = !!navigator.webkitGetUserMedia;*/
 var isMobileDevice = !!navigator.userAgent.match(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile/i);
@@ -16,15 +16,20 @@ var iceServers=[];
 
 var signaler,screen, roomid;
 
+function getToken() {
+    return Math.round(Math.random() * 9999999999) + 9999999999;
+}
+
+
 function webrtcdevScreenShare(){
 
     try{
-        roomid= "screenshare"+"_"+(Math.random() * 100).toString().replace('.', '')+"_"+rtcMultiConnection.channel;
+        roomid= "screenshare"+"_"+getToken()+"_"+rtcMultiConnection.channel;
         screen = new Screen(roomid);
 
         screen.openSignalingChannel = function(callback) {
             var n = io.connect("/"+rtcMultiConnection.channel);
-            n.channel = rtcMultiConnection.channel;
+            n.channel = roomid;
             return n.on('message', callback);
         };
 
@@ -38,7 +43,14 @@ function webrtcdevScreenShare(){
             createScreenViewButton();
         };
 
-        screen.check();
+        /*screen.check();*/
+
+        screen.onscreen = function(screen) {
+            alert("onscreen  "+screen);
+            if (self.detectedRoom) return;
+            self.detectedRoom = true;
+            self.view(screen);
+        };
 
         screen.onuserleft = function(userid) {
             document.getElementById(screenshareobj.screenshareContainer).hidden=true;
@@ -50,13 +62,7 @@ function webrtcdevScreenShare(){
         };
 
         console.log("----------- screen" , screen);
-        /*
-        screen.onscreen = function(screen) {
-            alert("onscreen  1"+screen);
-            if (self.detectedRoom) return;
-            self.detectedRoom = true;
-            self.view(screen);
-        };*/
+
     }catch(e){
         console.log("------------screenshare not supported ", e);
         $("#screenShareButton").hide();
@@ -527,10 +533,10 @@ function Signaler(root, roomid) {
             stop: true     // ask to stop old stream
         });*/
         
-        rtcMultiConnection.removeStream("screen"+rtcMultiConnection.channel);
+        rtcMultiConnection.removeStream(roomid);
 
         socket.emit("leave-channel", {
-            channel: rtcMultiConnection.channel,
+            channel: roomid,
             sender: rtcMultiConnection.userid
         });
 
@@ -549,318 +555,194 @@ function Signaler(root, roomid) {
 
     root.leave = leaveScreenRoom;
 
-    // signaling implementation
-    // if no custom signaling channel is provided; use Firebase
-    if (!root.openSignalingChannel) {
-        if (!window.Firebase) throw 'You must link <https://cdn.firebase.com/v0/firebase.js> file.';
+    // custom signaling implementations
+    // e.g. WebSocket, Socket.io, SignalR, WebSycn, XMLHttpRequest, Long-Polling etc.
+    socket = root.openSignalingChannel(function(message) {
+        message = JSON.parse(message);
 
-        // Firebase is capable to store data in JSON format
-        // root.transmitOnce = true;
-        socket = new window.Firebase('https://' + (root.firebase || 'signaling') + '.firebaseIO.com/' + root.channel);
-        socket.on('child_added', function(snap) {
-            var data = snap.val();
+        var isRemoteMessage = false;
+        if (typeof userid === 'number' && parseInt(message.userid) != userid) {
+            isRemoteMessage = true;
+        }
+        if (typeof userid === 'string' && message.userid + '' != userid) {
+            isRemoteMessage = true;
+        }
 
-            var isRemoteMessage = false;
-            if (typeof userid === 'number' && parseInt(data.userid) != userid) {
-                isRemoteMessage = true;
-            }
-            if (typeof userid === 'string' && data.userid + '' != userid) {
-                isRemoteMessage = true;
-            }
-
-            if (isRemoteMessage) {
-                if (data.to) {
-                    if (typeof userid == 'number') data.to = parseInt(data.to);
-                    if (typeof userid == 'string') data.to = data.to + '';
-                }
-
-                if (!data.leaving) signaler.onmessage(data);
-                else {
-                    numberOfParticipants--;
-                    if (root.onNumberOfParticipantsChnaged) {
-                        root.onNumberOfParticipantsChnaged(numberOfParticipants);
-                    }
-
-                    root.onuserleft(data.userid);
-                }
+        if (isRemoteMessage) {
+            if (message.to) {
+                if (typeof userid == 'number') message.to = parseInt(message.to);
+                if (typeof userid == 'string') message.to = message.to + '';
             }
 
-            // we want socket.io behavior; 
-            // that's why data is removed from firebase servers 
-            // as soon as it is received
-            // data.userid != userid && 
-            if (isRemoteMessage) snap.ref().remove();
-        });
-
-        // method to signal the data
-        this.signal = function(data) {
-            data.userid = userid;
-            socket.push(data);
-        };
-    } else {
-        // custom signaling implementations
-        // e.g. WebSocket, Socket.io, SignalR, WebSycn, XMLHttpRequest, Long-Polling etc.
-        socket = root.openSignalingChannel(function(message) {
-            message = JSON.parse(message);
-
-            var isRemoteMessage = false;
-            if (typeof userid === 'number' && parseInt(message.userid) != userid) {
-                isRemoteMessage = true;
+            if (!message.leaving) signaler.onmessage(message);
+            else {
+                root.onuserleft(message.userid);
+                numberOfParticipants--;
+                if (root.onNumberOfParticipantsChnaged) root.onNumberOfParticipantsChnaged(numberOfParticipants);
             }
-            if (typeof userid === 'string' && message.userid + '' != userid) {
-                isRemoteMessage = true;
-            }
+        }
+    });
 
-            if (isRemoteMessage) {
-                if (message.to) {
-                    if (typeof userid == 'number') message.to = parseInt(message.to);
-                    if (typeof userid == 'string') message.to = message.to + '';
-                }
+    // method to signal the data
+    this.signal = function(data) {
+        data.userid = userid;
+        socket.send(JSON.stringify(data));
+    };
 
-                if (!message.leaving) signaler.onmessage(message);
-                else {
-                    root.onuserleft(message.userid);
-                    numberOfParticipants--;
-                    if (root.onNumberOfParticipantsChnaged) root.onNumberOfParticipantsChnaged(numberOfParticipants);
-                }
-            }
-        });
-
-        // method to signal the data
-        this.signal = function(data) {
-            data.userid = userid;
-            socket.send(JSON.stringify(data));
-        };
-    }
 }
 
 
 
-    var optionalArgument = {
-        optional: [{
-            DtlsSrtpKeyAgreement: true
-        }]
-    };
+var optionalArgument = {
+    optional: [{
+        DtlsSrtpKeyAgreement: true
+    }]
+};
 
-    function getToken() {
-        return Math.round(Math.random() * 9999999999) + 9999999999;
+
+function getIceServersAsArray(iceServers){
+    if (!isNull(iceServers)) {
+        console.log(toStr(iceServers));
+        var iceTransports='all';
+        var iceCandidates = this.rtcMultiConnection.candidates;
+
+        var stun = iceCandidates.stun;
+        var turn = iceCandidates.turn;
+        var host = iceCandidates.host;
+
+        if (!isNull(iceCandidates.reflexive)) stun = iceCandidates.reflexive;
+        if (!isNull(iceCandidates.relay)) turn = iceCandidates.relay;
+
+        if (!host && !stun && turn) {
+            iceTransports = 'relay';
+        } else if (!host && !stun && !turn) {
+            iceTransports = 'none';
+        }
+
+        this.iceServers = {
+            iceServers: iceServers,
+            iceTransports: iceTransports
+        };
+    } else {
+        iceServers = null;
     }
 
-    function getIceServersAsArray(iceServers){
-        if (!isNull(iceServers)) {
-            console.log(toStr(iceServers));
-            var iceTransports='all';
-            var iceCandidates = this.rtcMultiConnection.candidates;
+    console.log('ScreenSharing --> rtc-configuration', toStr(this.iceServers));    
 
-            var stun = iceCandidates.stun;
-            var turn = iceCandidates.turn;
-            var host = iceCandidates.host;
+    return this.iceServers;
+}
 
-            if (!isNull(iceCandidates.reflexive)) stun = iceCandidates.reflexive;
-            if (!isNull(iceCandidates.relay)) turn = iceCandidates.relay;
+function onSdpSuccess() {}
 
-            if (!host && !stun && turn) {
-                iceTransports = 'relay';
-            } else if (!host && !stun && !turn) {
-                iceTransports = 'none';
-            }
+function onSdpError(e) {
+    console.error('sdp error:', e);
+}
 
-            this.iceServers = {
-                iceServers: iceServers,
-                iceTransports: iceTransports
-            };
-        } else {
-            iceServers = null;
-        }
-
-        console.log('ScreenSharing --> rtc-configuration', toStr(this.iceServers));    
-
-        return this.iceServers;
+var offerConstraints = {
+    optional: [],
+    mandatory: {
+        OfferToReceiveAudio: false,
+        OfferToReceiveVideo: false
     }
+};
+var Offer = {
+    createOffer: function(config) {
+        iceServers=getIceServersAsArray(webrtcdevIceServers);
+        var peer = new RTCPeerConnection(iceServers, optionalArgument);
 
-    function onSdpSuccess() {}
+        peer.addStream(config.stream);
+        peer.onicecandidate = function(event) {
+            if (event.candidate) config.onicecandidate(event.candidate, config.to);
+        };
 
-    function onSdpError(e) {
-        console.error('sdp error:', e);
+        peer.createOffer(function(sdp) {
+            sdp.sdp = setBandwidth(sdp.sdp);
+            peer.setLocalDescription(sdp);
+            config.onsdp(sdp, config.to);
+        }, onSdpError, offerConstraints);
+
+        this.peer = peer;
+
+        return this;
+    },
+    setRemoteDescription: function(sdp) {
+        console.log("Screen share-->setting Offer remote descriptions", sdp.sdp);
+        this.peer.setRemoteDescription(new RTCSessionDescription(sdp), onSdpSuccess, onSdpError);
+    },
+    addIceCandidate: function(candidate) {
+        console.log("Screen share-->adding ice", candidate.candidate);
+        this.peer.addIceCandidate(new RTCIceCandidate({
+            sdpMLineIndex: candidate.sdpMLineIndex,
+            candidate: candidate.candidate
+        }));
     }
+};
 
-    var offerConstraints = {
-        optional: [],
-        mandatory: {
-            OfferToReceiveAudio: false,
-            OfferToReceiveVideo: false
-        }
-    };
-    var Offer = {
-        createOffer: function(config) {
-            iceServers=getIceServersAsArray(webrtcdevIceServers);
-            var peer = new RTCPeerConnection(iceServers, optionalArgument);
+var answerConstraints = {
+    optional: [],
+    mandatory: {
+        OfferToReceiveAudio: false,
+        OfferToReceiveVideo: true
+    }
+};
+var Answer = {
+    createAnswer: function(config) {
+        iceServers=getIceServersAsArray(webrtcdevIceServers);
+        var peer = new RTCPeerConnection(iceServers, optionalArgument);
 
-            peer.addStream(config.stream);
-            peer.onicecandidate = function(event) {
-                if (event.candidate) config.onicecandidate(event.candidate, config.to);
-            };
+        peer.onaddstream = function(event) {
+            config.onaddstream(event.stream, config.to);
+        };
+        peer.onicecandidate = function(event) {
+            if (event.candidate) config.onicecandidate(event.candidate, config.to);
+        };
 
-            peer.createOffer(function(sdp) {
-                sdp.sdp = setBandwidth(sdp.sdp);
-                peer.setLocalDescription(sdp);
-                config.onsdp(sdp, config.to);
-            }, onSdpError, offerConstraints);
+        peer.setRemoteDescription(new RTCSessionDescription(config.sdp), onSdpSuccess, onSdpError);
+        peer.createAnswer(function(sdp) {
+            sdp.sdp = setBandwidth(sdp.sdp);
+            peer.setLocalDescription(sdp);
+            config.onsdp(sdp, config.to);
+        }, onSdpError, answerConstraints);
 
-            this.peer = peer;
+        this.peer = peer;
+        return this;
+    },
+    addIceCandidate: function(candidate) {
+        this.peer.addIceCandidate(new RTCIceCandidate({
+            sdpMLineIndex: candidate.sdpMLineIndex,
+            candidate: candidate.candidate
+        }));
+    }
+};
 
-            return this;
-        },
-        setRemoteDescription: function(sdp) {
-            console.log("Screen share-->setting Offer remote descriptions", sdp.sdp);
-            this.peer.setRemoteDescription(new RTCSessionDescription(sdp), onSdpSuccess, onSdpError);
-        },
-        addIceCandidate: function(candidate) {
-            console.log("Screen share-->adding ice", candidate.candidate);
-            this.peer.addIceCandidate(new RTCIceCandidate({
-                sdpMLineIndex: candidate.sdpMLineIndex,
-                candidate: candidate.candidate
-            }));
-        }
-    };
+function setBandwidth(sdp) {
+    if (isFirefox) return sdp;
+    if (isMobileDevice) return sdp;
 
-    var answerConstraints = {
-        optional: [],
-        mandatory: {
-            OfferToReceiveAudio: false,
-            OfferToReceiveVideo: true
-        }
-    };
-    var Answer = {
-        createAnswer: function(config) {
-            iceServers=getIceServersAsArray(webrtcdevIceServers);
-            var peer = new RTCPeerConnection(iceServers, optionalArgument);
+    // https://cdn.rawgit.com/muaz-khan/RTCMultiConnection/master/RTCMultiConnection-v3.0/dev/BandwidthHandler.js
+    if (typeof BandwidthHandler !== 'undefined') {
+        window.isMobileDevice = isMobileDevice;
+        window.isFirefox = isFirefox;
 
-            peer.onaddstream = function(event) {
-                config.onaddstream(event.stream, config.to);
-            };
-            peer.onicecandidate = function(event) {
-                if (event.candidate) config.onicecandidate(event.candidate, config.to);
-            };
+        var bandwidth = {
+            screen: 300, // 300kbits minimum
+            video: 256 // 256kbits (both min-max)
+        };
+        var isScreenSharing = false;
 
-            peer.setRemoteDescription(new RTCSessionDescription(config.sdp), onSdpSuccess, onSdpError);
-            peer.createAnswer(function(sdp) {
-                sdp.sdp = setBandwidth(sdp.sdp);
-                peer.setLocalDescription(sdp);
-                config.onsdp(sdp, config.to);
-            }, onSdpError, answerConstraints);
-
-            this.peer = peer;
-            return this;
-        },
-        addIceCandidate: function(candidate) {
-            this.peer.addIceCandidate(new RTCIceCandidate({
-                sdpMLineIndex: candidate.sdpMLineIndex,
-                candidate: candidate.candidate
-            }));
-        }
-    };
-
-    function setBandwidth(sdp) {
-        if (isFirefox) return sdp;
-        if (isMobileDevice) return sdp;
-
-        // https://cdn.rawgit.com/muaz-khan/RTCMultiConnection/master/RTCMultiConnection-v3.0/dev/BandwidthHandler.js
-        if (typeof BandwidthHandler !== 'undefined') {
-            window.isMobileDevice = isMobileDevice;
-            window.isFirefox = isFirefox;
-
-            var bandwidth = {
-                screen: 300, // 300kbits minimum
-                video: 256 // 256kbits (both min-max)
-            };
-            var isScreenSharing = false;
-
-            sdp = BandwidthHandler.setApplicationSpecificBandwidth(sdp, bandwidth, isScreenSharing);
-            sdp = BandwidthHandler.setVideoBitrates(sdp, {
-                min: bandwidth.video,
-                max: bandwidth.video
-            });
-            return sdp;
-        }
-
-        // removing existing bandwidth lines
-        sdp = sdp.replace(/b=AS([^\r\n]+\r\n)/g, '');
-
-        // "300kbit/s" for screen sharing
-        sdp = sdp.replace(/a=mid:video\r\n/g, 'a=mid:video\r\nb=AS:300\r\n');
-
+        sdp = BandwidthHandler.setApplicationSpecificBandwidth(sdp, bandwidth, isScreenSharing);
+        sdp = BandwidthHandler.setVideoBitrates(sdp, {
+            min: bandwidth.video,
+            max: bandwidth.video
+        });
         return sdp;
     }
 
-    /*!window.getScreenId && loadScript('getScreenId.js');*/
+    // removing existing bandwidth lines
+    sdp = sdp.replace(/b=AS([^\r\n]+\r\n)/g, '');
 
-/*screen  Object {broadcasting: true, roomid: 11, userid: 10494752123}*/
+    // "300kbit/s" for screen sharing
+    sdp = sdp.replace(/a=mid:video\r\n/g, 'a=mid:video\r\nb=AS:300\r\n');
 
-/*function getScreenConstraints() {
-    var firefoxScreenConstraints = {
-        mozMediaSource: 'window',
-        mediaSource: 'window'
-    };
-    
-    if(isFirefox) return callback(null, firefoxScreenConstraints);
-
-    // this statement defines getUserMedia constraints
-    // that will be used to capture content of screen
-    var screen_constraints = {
-        mandatory: {
-            chromeMediaSource: chromeMediaSource,
-            maxWidth: screen.width > 1920 ? screen.width : 1920,
-            maxHeight: screen.height > 1080 ? screen.height : 1080
-        },
-        optional: []
-    };
-
-    // this statement verifies chrome extension availability
-    // if installed and available then it will invoke extension API
-    // otherwise it will fallback to command-line based screen capturing API
-    if (chromeMediaSource == 'desktop' && !sourceId) {
-        getSourceId(function() {
-            screen_constraints.mandatory.chromeMediaSourceId = sourceId;
-            return (sourceId == 'PermissionDeniedError' ? sourceId : null, screen_constraints);
-        });
-        return;
-    }
-
-    // this statement sets gets 'sourceId" and sets "chromeMediaSourceId" 
-    if (chromeMediaSource == 'desktop') {
-        screen_constraints.mandatory.chromeMediaSourceId = sourceId;
-    }
-
-    // now invoking native getUserMedia API
-    return screen_constraints;
-}*/
-
-/*var DetectRTC = {};
-
-var screenCallback;
-
-DetectRTC.screen = {
-    
-    chromeMediaSource: null,
-    
-    getChromeExtensionStatus: function (extensionid, callback) {     
-        var image = document.createElement('img');
-        image.src = 'chrome-extension://' + extensionid + '/icon.png';
-        image.onload = function () {
-            DetectRTC.screen.chromeMediaSource = 'screen';
-            window.postMessage('are-you-there', '*');
-            setTimeout(function () {
-                if (DetectRTC.screen.chromeMediaSource == 'screen') {
-                    callback('installed-disabled');
-                } else{
-                    callback('installed-enabled');
-                }
-            }, 2000);
-        };
-        image.onerror = function () {
-            callback('not-installed');
-        };
-    }
-};
-*/
+    return sdp;
+}

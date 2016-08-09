@@ -349,7 +349,7 @@ var WebRTCdev= function(session, widgets){
             }
 
             if(drawCanvasobj.active){
-                /*createdrawButton();*/
+                createdrawButton();
             }
 
             if(texteditorobj.active){
