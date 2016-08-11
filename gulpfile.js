@@ -158,7 +158,7 @@ var scriptList=[
     "client/build/scripts/_texteditor.js",
     "client/build/scripts/_mediahandler.js",
     "client/build/scripts/screensharing.js",
-    /*"client/build/scripts/_screenshare.js"*/
+    "client/build/scripts/_screenshare.js"
     /*"client/build/scripts/getScreenId.js"*/
 
 ];

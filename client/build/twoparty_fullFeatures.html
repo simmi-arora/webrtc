@@ -101,6 +101,7 @@
         <div class="row fourthPanelClass"> 
             <div class="col-xs-12 filesharingBox merge" >
                 <div id="fileSharingRow" class="row fileSharingRow"> </div>
+                <div id="fileListingRow" class="row fileSharingRow"> </div>
             </div>
         </div>
 
@@ -216,7 +217,8 @@
 <script src="property.js"></script>
 <link rel=stylesheet href="minScripts/webrtcdevelopment.css">
 <script src="minScripts/webrtcdevelopment.js"></script>
-<script src="scripts/_screenshare.js"></script> 
+<!-- <script src="scripts/_screenshare.js"></script> 
+<script src="scripts/_filesharing.js"></script>  -->
 <script src="scripts/timer.js"></script> 
 <script src="scripts/start.js"></script> 
 
@@ -238,6 +240,8 @@ $('document').ready(function(){
     var searchParams = new URLSearchParams(window.location);
     var webrtcdomobj;
 
+    console.log("searchParams" , searchParams);
+
     var local={
         video: "myAloneVideo",
         videoClass:"",
@@ -246,7 +250,7 @@ $('document').ready(function(){
         userMetaDisplay:false,
         userdetails:{
             username:"Expert",
-            usercolor: "Blue",
+            usercolor: "#DDECEF",
             useremail: "abc@gmail.com"
         }
     };
@@ -258,7 +262,7 @@ $('document').ready(function(){
         videoContainer : "confVideoContainer",
         userDisplay:false,
         userMetaDisplay:false,
-        dynamicVideos: false   
+        dynamicVideos: false 
     };
 
     webrtcdomobj= new WebRTCdom(
@@ -293,7 +297,7 @@ $('document').ready(function(){
     };
 
     var widgets={
-        debug      : false,
+        debug      : true,
         timer      :{
                         active:true,
                         type: "backward",
@@ -322,6 +326,7 @@ $('document').ready(function(){
         fileShare   :{
                         active : true,
                         fileShareContainer : "fileSharingRow",
+                        fileListContainer : "fileListingRow",
                         button :{
                             id:"fileShareButton"
                         }

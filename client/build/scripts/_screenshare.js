@@ -3,7 +3,7 @@
 screenshare
 ***************************************/
 var chromeMediaSource = 'screen';
-var sourceId;
+var sourceId , screen_constraints , screenStreamId;
 var isFirefox = typeof window.InstallTrigger !== 'undefined';
 var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
 var isChrome = !!window.chrome && !isOpera;
@@ -12,11 +12,8 @@ var isChrome = !!window.chrome && !isOpera;
 var isChrome = !!navigator.webkitGetUserMedia;*/
 var isMobileDevice = !!navigator.userAgent.match(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile/i);
 
-var screen_constraints;
 var connection ;
-
 var DetectRTC = {};
-
 var screenCallback;
 
 DetectRTC.screen = {
@@ -97,8 +94,27 @@ var iceServers=[];
 var signaler,screen, roomid;
 
 /*getSourceId(shareScreen);*/
+function webrtcdevPrepareScreenShare(){
 
-function shareScreen(chromeMediaSourceId){
+    roomid= "screenshare"+"_"+rtcMultiConnection.channel;
+    connection  = new RTCMultiConnection();
+    connection.socketURL = "https://"+location.hostname+":8086/";
+    connection.socketMessageEvent = 'screen-sharing-demo';
+
+    connection.session = {
+        screen: true,
+        oneway: true
+    };
+
+    connection.sdpConstraints.mandatory = {
+        OfferToReceiveAudio: false,
+        OfferToReceiveVideo: false
+    };
+
+    console.log("webrtcdevPrepareScreenShare connection -> " , connection);
+}
+
+function webrtcdevScreenConstraints(chromeMediaSourceId){
     screen_constraints = {
         audio: false,
         video: {
@@ -118,57 +134,57 @@ function shareScreen(chromeMediaSourceId){
         callback(false, screen_constraints);
         return;
     };
-    
-    roomid= "screenshare"+"_"+rtcMultiConnection.channel;
+}
+
+function webrtcdevSharescreen(roomid) {
+
+    /*
+    connection.addStream({
+        screen: true,
+        oneway: true
+    });*/
+    connection.videosContainer = document.getElementById(screenshareobj.screenshareContainer);
+    connection.onstream = function(event) {
+        console.log(" on stream in _screenshare :" , event);
+        if(event.stream.isScreen){
+            screenStreamId= event.streamid;
+            connection.videosContainer.appendChild(event.mediaElement);
+            connection.videosContainer.hidden=false;
+            event.mediaElement.play();
+            setTimeout(function() {
+                event.mediaElement.play();
+            }, 5000);
+        }
+    };
+
+    connection.open(roomid, function() {
+        shownotification(" Making a new session "+roomid);
+        rtcMultiConnection.send({
+            type:"screenshare", 
+            message:roomid
+        });
+    });
+
+    /*
     connection.openOrJoin(roomid, function(isRoomExists, roomid) {
         if(!isRoomExists) {
             console.log("room doesnt exists ");
         }
-    });
+    });*/
 }
 
-function stopShareScreen(){
+function webrtcdevViewscreen(roomid){
+    connection.join(roomid);
+}
+
+function webrtcdevStopShareScreen(){
+    /*
     connection.removeStream({
         screen: true,  // it will remove all screen streams
         stop: true     // ask to stop old stream
-    });
-}
-
-function sharescr(roomid) {
-
-    connection.addStream({
-        screen: true,
-        oneway: true
-    });
-
-    connection.videosContainer = document.getElementById(screenshareobj.screenshareContainer);
-    connection.onstream = function(event) {
-        connection.videosContainer.appendChild(event.mediaElement);
-        connection.videosContainer.hidden=false;
-        event.mediaElement.play();
-        setTimeout(function() {
-            event.mediaElement.play();
-        }, 5000);
-    };
-}
-
-function webrtcdevScreenShare(){
-    alert("WebRTC Dev Screen Share ");
-
-    connection  = new RTCMultiConnection(rtcMultiConnection.channel);
-    connection.socketURL = "https://"+location.hostname+":8086/";
-    connection.socketMessageEvent = 'screen-sharing-demo';
-
-    connection.session = {
-        screen: true,
-        oneway: true
-    };
-
-    connection.sdpConstraints.mandatory = {
-        OfferToReceiveAudio: false,
-        OfferToReceiveVideo: false
-    };
-
+    });*/
+    connection.removeStream(screenStreamId);
+    connection.videosContainer.hidden=true;
 }
 
 function createScreenViewButton(){
@@ -178,6 +194,7 @@ function createScreenViewButton(){
     viewScreenShareButton.id="viewScreenShareButton";
     viewScreenShareButton.onclick = function() {
         if(viewScreenShareButton.className==screenshareobj.button.viewButton.class_off){
+            webrtcdevViewscreen(roomid);
             document.getElementById(screenshareobj.screenshareContainer).hidden=false;
             viewScreenShareButton.className=screenshareobj.button.viewButton.class_on;
             viewScreenShareButton.innerHTML=screenshareobj.button.viewButton.html_on;
@@ -195,6 +212,11 @@ function createScreenViewButton(){
 
 function hideScreenViewButton(){
     document.getElementById("viewScreenShareButton").hidden=true;
+}
+
+function removeScreenViewButton(){
+    var elem = document.getElementById("viewScreenShareButton");
+    elem.parentElement.removeChild(elem);
 }
 
 function createScreenInstallButton(extensionID){
@@ -227,36 +249,20 @@ function createScreenshareButton(){
     screenShareButton.id="screenShareButton";
     screenShareButton.onclick = function(event) {    
         if(screenShareButton.className==screenshareobj.button.shareButton.class_off){
-            sharescr(roomid);
+            webrtcdevSharescreen(roomid);
+            createScreenViewButton();
             screenShareButton.className=screenshareobj.button.shareButton.class_on;
             screenShareButton.innerHTML=screenshareobj.button.shareButton.html_on;
         }else if(screenShareButton.className==screenshareobj.button.shareButton.class_on){
-            var elem = document.getElementById("viewScreenShareButton");
-            elem.parentElement.removeChild(elem);
+            webrtcdevStopShareScreen();
+            removeScreenViewButton();
             screenShareButton.className=screenshareobj.button.shareButton.class_off;
             screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
-            hideScreenViewButton();
-            screen.leaveScreenRoom();
         }
     };
     var li =document.createElement("li");
     li.appendChild(screenShareButton);
     document.getElementById("topIconHolder_ul").appendChild(li);
-}
-
-function changeScreenshareButtonStatus(status){
-    var screenShareButton= document.getElementById("screenShareButton");
-    if(status=="on"){
-        var elem = document.getElementById("viewScreenShareButton");
-        elem.parentElement.removeChild(elem);
-        screenShareButton.className=screenshareobj.button.shareButton.class_off;
-        screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
-        hideScreenViewButton();
-    }else if (status=="off"){
-        screen.sharescr(roomid);
-        screenShareButton.className=screenshareobj.button.shareButton.class_on;
-        screenShareButton.innerHTML=screenshareobj.button.shareButton.html_on;
-    }
 }
 
 window.addEventListener('message', onScreenshareExtensionCallback);
@@ -272,38 +278,7 @@ function onScreenshareExtensionCallback(event){
         if (event.data.sourceId === 'PermissionDeniedError') {
             console.log('permission-denied');
         } else{
-            shareScreen(event.data.sourceId);
+            webrtcdevScreenConstraints(event.data.sourceId);
         }
     }
-}
-
-function detectExtensionScreenshare(extensionID){
-    var extensionid = extensionID;
-
-    DetectRTC.screen.getChromeExtensionStatus(extensionid, function(status) {
-        console.log( "detectExtensionScreenshare for ", extensionID, " -> " , status);
-
-        if(status == 'installed-enabled') {
-            createScreenshareButton();
-        }
-        
-        if(status == 'installed-disabled') {
-            // chrome extension is installed but disabled.
-            shownotification("chrome extension is installed but disabled.");
-            createScreenshareButton();
-        }
-        
-        if(status == 'not-installed') {
-            // chrome extension is not installed
-            createScreenInstallButton(extensionID);
-        }
-        
-        if(status == 'not-chrome') {
-            // using non-chrome browser
-        }
-
-        webrtcdevScreenShare();
-    });
-
-
 }

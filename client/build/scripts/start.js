@@ -53,9 +53,6 @@ var WebRTCdom= function(  _localObj , _remoteObj , incoming, outgoing){
 
     if(localobj.hasOwnProperty('userdetails')){
         console.log("userdetails " , localobj.userdetails);
-        username    = (localobj.userdetails.username == undefined ? "user": localobj.userdetails.username);
-        usecolor    = localobj.userdetails.usercolor;
-        useremail   = localobj.userdetails.useremail;
     }
 };
 
@@ -115,11 +112,10 @@ var WebRTCdev= function(session, widgets){
             checkDevices(rtcMultiConnection);
             rtcMultiConnection.extra = {
                 uuid :userid,
-                username: username,
-                color: useremail,
-                useredisplayListmail: usercolor
+                name: localobj.userdetails.username,
+                color: localobj.userdetails.usercolor,
+                email: localobj.userdetails.useremail
             },
-
             rtcMultiConnection.channel=sessionid,
             rtcMultiConnection.userid = userid,
             rtcMultiConnection.preventSSLAutoAllowed = false,
@@ -154,7 +150,7 @@ var WebRTCdev= function(session, widgets){
                 }
 
                 if(!flagPeerExists){
-                    updatePeerInfo(event.extra.uuid , "remote");
+                    updatePeerInfo(event.extra.uuid , "Peer" , "#BFD9DA" , "", "remote");
                 }
 
                 if(webcallpeers[x].userid==event.extra.uuid){
@@ -181,7 +177,7 @@ var WebRTCdev= function(session, widgets){
 
                 if(webcallpeers.length<=remoteobj.maxAllowed){
                     console.log('rtcMultiConnection.onopen ......On open with : ', event);
-                    updatePeerInfo(event.extra.uuid , "remote");
+                    updatePeerInfo(event.extra.uuid ,"Peer" , "#BFD9DA" , "", "remote");
                     shownotification(event.extra.username + " joined channel ");
                 }else{
                     shownotification("Another user is trying to join this channel but max count [ "+remoteobj.maxAllowed +" ] is reached");
@@ -205,6 +201,10 @@ var WebRTCdev= function(session, widgets){
                     void(whoIsTyping.innerHTML = "");
                 }else{
                     switch(e.data.type){
+                        case "screenshare":
+                            shownotification("screen is getting shared "+ e.data.message);
+                            createScreenViewButton();
+                        break;
                         case "chat":
                             whoIsTyping.innerHTML = "";
                             addNewMessage({
@@ -367,9 +367,13 @@ var WebRTCdev= function(session, widgets){
             }
 
             if(selfuserid==null){
-                selfuserid = rtcMultiConnection.userid;
+                selfuserid   = rtcMultiConnection.userid;
+                selfusername = (localobj.userdetails.username  == undefined ? "user": localobj.userdetails.username);
+                selfcolor    = (localobj.userdetails.usercolor == undefined ? "user": localobj.userdetails.usercolor);
+                selfemail    = (localobj.userdetails.useremail == undefined ? "user": localobj.userdetails.useremail);
+
                 console.log("selfuserid and call updatepeer info update for self ",selfuserid);
-                updatePeerInfo( selfuserid, "local" );
+                updatePeerInfo( selfuserid, selfusername ,selfcolor, selfemail, "local" );
             }
             
             var addr = "/";
@@ -544,8 +548,6 @@ function createVideoContainer(e, style, callback) {
     if (callback) callback(div);
 }
 
-
-
 /************************************
 control Buttons 
 *******************************************************************/
@@ -592,7 +594,7 @@ function updateWebCallView(peerInfo){
             var vid = document.getElementsByName(localVideo)[0];
             vid.muted = true;
             vid.style.opacity = 1;
-            vid.setAttribute("style","width: 100%!important");
+            vid.setAttribute("style","width: 90%!important; border: 5px solid "+peerInfo.color);
             attachMediaStream(vid, peerInfo.stream);
         }
     }else if(peerInfo.vid.indexOf("videoremote") > -1) {
@@ -613,7 +615,7 @@ function updateWebCallView(peerInfo){
                     attachMediaStream(selfvid, webcallpeers[0].stream);
                 selfvid.id = webcallpeers[0].videoContainer;
                 selfvid.muted = true;
-                selfvid.setAttribute("style","border: 5px solid #0087ff");
+                selfvid.setAttribute("style","border: 5px solid "+webcallpeers[0].color);
                 attachControlButtons( selfvid.id, selfvid, webcallpeers[0]); 
 
                 if(fileshareobj.active){
@@ -644,7 +646,7 @@ function updateWebCallView(peerInfo){
 
         attachMediaStream(remvid, peerInfo.stream);
         remvid.id = peerInfo.videoContainer;
-        remvid.setAttribute("style","border: 5px solid #4bce50");
+        remvid.setAttribute("style","border: 5px solid "+peerInfo.color);
         attachControlButtons(remvid.id, remvid, peerInfo); 
 
         if(fileshareobj.active){
@@ -712,7 +714,7 @@ function startcall(obj){
     }
 }
 
-function updatePeerInfo(userid , type ){
+function updatePeerInfo(userid , username , usecolor , useremail,  type ){
     console.log("updating peerInfo: " , userid , type);
     for(x in webcallpeers){
         if(webcallpeers[x].userid==userid) {
@@ -726,6 +728,9 @@ function updatePeerInfo(userid , type ){
         videoHeight : null,
         videoClassName: null,
         userid : userid , 
+        name  :  username,
+        color : usecolor,
+        email : useremail,
         fileSharingContainer : "widget-filesharing-container"+userid,
         fileSharingSubContents:{
             fileSharingBox: "widget-filesharing-box"+userid,
@@ -801,4 +806,37 @@ function attachMediaStream(element, stream) {
 
 function reattachMediaStream(to, from) {
     to.src = from.src;
+}
+
+
+/**************************************************************
+Screenshare 
+****************************************************************/
+
+function detectExtensionScreenshare(extensionID){
+
+    rtcMultiConnection.getChromeExtensionStatus(extensionID, function(status) {
+        console.log( "detectExtensionScreenshare for ", extensionID, " -> " , status);
+
+        if(status == 'installed-enabled') {
+            createScreenshareButton();
+        }
+        
+        if(status == 'installed-disabled') {
+            // chrome extension is installed but disabled.
+            shownotification("chrome extension is installed but disabled.");
+            createScreenshareButton();
+        }
+        
+        if(status == 'not-installed') {
+            // chrome extension is not installed
+            createScreenInstallButton(extensionID);
+        }
+        
+        if(status == 'not-chrome') {
+            // using non-chrome browser
+        }
+
+        webrtcdevPrepareScreenShare();
+    });
 }

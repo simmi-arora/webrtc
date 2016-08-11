@@ -236,7 +236,6 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
     }else if(filetype.indexOf("video")>-1){
         console.log("videoRecording " , fileurl);
         var video = document.createElement("video");
-        console.log(fileurl);
         /*            
         try{
             if(fileurl.video!=undefined ){
@@ -316,14 +315,17 @@ function removeFile(element){
     document.getElementById(element).hidden=true;
 }
 
-function createFileSharingDiv(peerinfo){
+
+function createFileSharingBox(peerinfo, parent){
+
     /*--------------------------------add for File Share --------------------*/
     var fileSharingBox=document.createElement("div");
     fileSharingBox.className= "col-sm-6 fileViewing1Box";
+    fileSharingBox.setAttribute("style","background-color:"+peerinfo.color);
     fileSharingBox.id=peerinfo.fileSharingSubContents.fileSharingBox;
 
     var fileControlBar=document.createElement("p");
-    fileControlBar.appendChild(document.createTextNode("File Viewer"));
+    fileControlBar.appendChild(document.createTextNode("File Viewer for "+ peerinfo.name));
 
     var minButton= document.createElement("span");
     minButton.className="btn btn-default glyphicon glyphicon-import closeButton";
@@ -373,12 +375,16 @@ function createFileSharingDiv(peerinfo){
     fileSharingBox.appendChild(fileSharingContainer);
     fileSharingBox.appendChild(fillerArea);
 
-    document.getElementById("fileSharingRow").appendChild(fileSharingBox);
+    parent.appendChild(fileSharingBox);
+}
 
-    /*--------------------------------add for File List --------------------*/
+function createFileListingBox(peerinfo, parent){
+
+   /*--------------------------------add for File List --------------------*/
 
     var fileListingBox= document.createElement("div");
     fileListingBox.className="col-sm-6  filesharing1Box";
+    fileListingBox.setAttribute("style","background-color:"+peerinfo.color);
 
     var fileListingControlBar=document.createElement("p");
 
@@ -404,7 +410,16 @@ function createFileSharingDiv(peerinfo){
     fileListingBox.appendChild(fileListingContainer);
     fileListingBox.appendChild(fileProgress);
 
-    document.getElementById("fileListingRow").appendChild(fileListingBox);
+    parent.appendChild(fileListingBox);
+}
+
+function createFileSharingDiv(peerinfo){
+
+    var parentFileShareContainer = document.getElementById(fileshareobj.fileShareContainer);
+    createFileSharingBox(peerinfo , parentFileShareContainer);
+
+    var parentFileListContainer = document.getElementById(fileshareobj.fileListContainer);
+    createFileListingBox(peerinfo , parentFileListContainer);
 }
 
 /* ************* file sharing container button functions --------------- */
