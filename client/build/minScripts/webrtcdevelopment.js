@@ -15826,59 +15826,6 @@ if (navigator.mozGetUserMedia) {
 
 
 
-var DetectRTC = {};
-
-var screenCallback;
-
-DetectRTC.screen = {
-    
-    chromeMediaSource: 'screen',
-
-    getSourceId: function (callback) {
-        screenCallback = callback;
-        window.postMessage('get-sourceId', '*');
-    },
-    onMessageCallback: function (data) {
-
-        // "cancel" button is clicked
-        if (data == 'PermissionDeniedError') {
-            DetectRTC.screen.chromeMediaSource = 'PermissionDeniedError';
-            if (screenCallback) return screenCallback('PermissionDeniedError');
-            else throw new Error('PermissionDeniedError');
-        }
-
-        // extension notified his presence
-        if (data == 'rtcmulticonnection-extension-loaded') {
-            DetectRTC.screen.chromeMediaSource = 'desktop';
-        }
-
-        // extension shared temp sourceId
-        if (data.sourceId) {
-            alert("data  sourceId");
-            DetectRTC.screen.sourceId = data.sourceId;
-            if (screenCallback) screenCallback(DetectRTC.screen.sourceId);
-        }
-    },
-
-    getChromeExtensionStatus: function (extensionid, callback) {     
-        var image = document.createElement('img');
-        image.src = 'chrome-extension://' + extensionid + '/icon.png';
-        image.onload = function () {
-            DetectRTC.screen.chromeMediaSource = 'screen';
-            window.postMessage('are-you-there', '*');
-            setTimeout(function () {
-                if (DetectRTC.screen.chromeMediaSource == 'screen') {
-                    callback('installed-disabled');
-                } else{
-                    callback('installed-enabled');
-                }
-            }, 2000);
-        };
-        image.onerror = function () {
-            callback('not-installed');
-        };
-    }
-};
 
 /*window.addEventListener('message', function (event) {
     console.log(event); 
@@ -15893,20 +15840,4 @@ DetectRTC.screen = {
     DetectRTC.screen.onMessageCallback(event.data);
 });
 */
-function captureSourceId() {
-    var extensionid=props.extensionID;
-    DetectRTC.screen.getChromeExtensionStatus(extensionid,function (status) {
-        if (status != 'installed-enabled') {
-            window.parent.postMessage({
-                chromeExtensionStatus: status
-            }, '*');
-            return;
-        }
 
-        DetectRTC.screen.getSourceId(function (sourceId) {
-            window.parent.postMessage({
-                chromeMediaSourceId: sourceId
-            }, '*');
-        });
-    });
-}

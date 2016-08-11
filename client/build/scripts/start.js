@@ -561,10 +561,10 @@ function attachControlButtons( userid  , vid ,  peerinfo){
     controlBar.id = controlBarName;
     controlBar.setAttribute("style","float:left;margin-left: 20px;");
     if(muteobj.active){
-        if(muteobj.audio){
+        if(muteobj.audio.active){
             controlBar.appendChild(createAudioMuteButton(controlBarName , peerinfo));
         }
-        if(muteobj.video){
+        if(muteobj.video.active){
             controlBar.appendChild(createVideoMuteButton(controlBarName , peerinfo));        
         }
     }
