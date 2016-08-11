@@ -1,5 +1,5 @@
 props={
-	extensionID: "jocjeccncphlagaegaljdbpcimoiogal",
+	extensionID: "elfbfompfpakbefoaicaeoabnnoihoac",
 	serverNAME: "WebRTCDevelopemnet",
 	env: "local",
 	signaller: "https://"+location.hostname+":8086/",

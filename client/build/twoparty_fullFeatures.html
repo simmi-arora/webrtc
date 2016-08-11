@@ -2,7 +2,7 @@
 <head>
     <title>WebRTC Call</title>
     <meta name="google-site-verification" content="8NqEkVsX8mkRCn13Qov4K0njgF0T6t97_a-NZNIXkpE" />
-    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/jocjeccncphlagaegaljdbpcimoiogal">
+    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/elfbfompfpakbefoaicaeoabnnoihoac">
     <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel=stylesheet href="minScripts/webrtcdevelopment_header.css">
@@ -343,7 +343,7 @@ $('document').ready(function(){
         screenshare : {
                         active:true,
                         screenshareContainer: "widget-screenshareContainer",
-                        extensionID: "jocjeccncphlagaegaljdbpcimoiogal",
+                        extensionID: props.extensionID,
                         button:{
                             installButton:{
                                 class_on:"btn btn-warning glyphicon glyphicon-inbox topPanelButton",
@@ -407,6 +407,7 @@ $('document').ready(function(){
         mute        :{
                     active: true,
                     audio   :{
+                            active: true,
                             button:{
                                 class_on:"pull-right glyphicon glyphicon-volume-up btn btn-default mediaButton",
                                 html_on:"",
@@ -415,6 +416,7 @@ $('document').ready(function(){
                             }
                         },
                     video : {
+                            active: true,
                             button:{
                                 class_on:"pull-right glyphicon glyphicon-eye-open btn btn-default videoButtonClass mediaButton",
                                 html_on:"",
