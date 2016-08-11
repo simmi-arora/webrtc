@@ -30,7 +30,7 @@ var repeatFlagShowButton =null, repeatFlagHideButton =null, repeatFlagRemoveButt
 var localVideo=null, selfVideo=null, remoteVideos=[];
 var localobj , remoteobj;
 
-var username="" , useremail="" , usercolor="" ;
+var selfusername="" , selfemail="" , selfcolor="" ;
 var latitude="" , longitude="" , operatingsystem="";
 
 /* webrtc session intilization */
