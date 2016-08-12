@@ -46,10 +46,14 @@ var WebRTCdom= function(  _localObj , _remoteObj , incoming, outgoing){
     if(outgoingVideo){
         selfVideo = _remotearr[0];
     }
-    /* create arr for remote peers viseo */
-    for(var x=1;x<_remotearr.length;x++){
-        remoteVideos.push(_remotearr[x]);    
+
+    /* create arr for remote peers videos */
+    if(!remoteobj.dynamicVideos){
+        for(var x=1;x<_remotearr.length;x++){
+            remoteVideos.push(_remotearr[x]);    
+        }
     }
+
 
     if(localobj.hasOwnProperty('userdetails')){
         console.log("userdetails " , localobj.userdetails);
@@ -364,25 +368,27 @@ var WebRTCdev= function(session, widgets){
                 : opneWebRTC(rtcMultiConnection.channel, selfuserid);
             });
 
-            socket.on("opened-channel",function(event) {
+            socket.on("open-channel-resp",function(event) {
                 console.log("opened-channel" , event);
                if(event) connectWebRTC("open" , rtcMultiConnection.channel, selfuserid, []); 
             });
 
-            socket.on("joined-channel",function(event) {
+            socket.on("join-channel-resp",function(event) {
                 console.log("joined-channel" , event ,"existing memebers ", event.users);
                 if(event.status)
                     connectWebRTC("join" , rtcMultiConnection.channel, selfuserid , event.users); 
+                else
+                    shownotification(event.msgtype+" : "+ event.message);
             });
 
             socket.on("channel-event",function(event) {
                 console.log("channel-event" , event);
-                alert("channel-event"+event.type);
                 if(event.type=="new-join"){
-                    if(webcallpeers.length<=remoteobj.maxAllowed){
+                    if(event.status){
                         updatePeerInfo(event.data.sender ,"Peer" , "#BFD9DA" , "", "remote");
+                        shownotification(event.type);
                     }else{
-                        shownotification("Another user is trying to join this channel but max count [ "+remoteobj.maxAllowed +" ] is reached");
+                        shownotification(event.msgtype+" : "+ event.message);
                     }
                 }
             });
@@ -669,7 +675,6 @@ connectWebRTC=function(type, channel , userid , remoteUsers){
     if(selfuserid == null){
         selfuserid = rtcMultiConnection.userid;
         updatePeerInfo( selfuserid, selfusername ,selfcolor, selfemail, "local" );
-        alert(tempuserid+ " "+selfuserid);
         if(tempuserid!=selfuserid)
             socket.emit("update-channel", {
                 type    : "change-userid",
@@ -683,13 +688,7 @@ connectWebRTC=function(type, channel , userid , remoteUsers){
     }
 
     for (x in remoteUsers){
-        if(webcallpeers.length<=remoteobj.maxAllowed){
-            console.log("Adding existing users to webcallpeers", remoteUsers[x]);
-            if(remoteUsers[x])
-                updatePeerInfo(remoteUsers[x] ,"Peer" , "#BFD9DA" , "", "remote");
-        }else{
-            shownotification("Another user is trying to join this channel but max count [ "+remoteobj.maxAllowed +" ] is reached");
-        }
+        updatePeerInfo(remoteUsers[x] ,"Peer" , "#BFD9DA" , "", "remote");
     }
 
 }
