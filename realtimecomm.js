@@ -230,11 +230,14 @@ exports.realtimecomm  = function(app, properties, socketCallback) {
                 log:[new Date().toLocaleString()+":-channel created . User "+data.sender+" waiting "]
             };   
             console.log("information added to channel" , webrtcdevchannels);
-            socket.emit("opened-channel",true);  
+            socket.emit("open-channel-resp",true);  
         });
 
         socket.on('join-channel', function (data) {  
-            var isallowed=(webrtcdevchannels[data.channel].users.length < webrtcdevchannels[data.channel].maxAllowed);
+            var isallowed=false;
+            if(webrtcdevchannels[data.channel].users.length < webrtcdevchannels[data.channel].maxAllowed || webrtcdevchannels[data.channel].maxAllowed=="unlimited")
+                isallowed=true;
+
             console.log("------------join channel------------- ", data.channel," by " , data.sender , " isallowed " , isallowed);
             if(isallowed){
                 webrtcdevchannels[data.channel].users.push(data.sender); 
@@ -244,14 +247,30 @@ exports.realtimecomm  = function(app, properties, socketCallback) {
                     status:true,
                     users:webrtcdevchannels[data.channel].users
                 }
-                socket.emit("joined-channel",jevent);
+                socket.emit("join-channel-resp",jevent);
+
                 var cevent={
+                    status:true,
                     type:"new-join", 
+                    msgtype: "success",
                     data:data
                 }
                 socket.broadcast.emit('channel-event', cevent);
             }else{
-                socket.emit("joined-channel",false);
+                var jevent={
+                    status:false,
+                    msgtype: "error",
+                    msg: "Sorry cant join this channel"
+                }
+                socket.emit("join-channel-resp",jevent);
+
+                var cevent={
+                    status:true,
+                    type:"new-join", 
+                    msgtype: "error",
+                    msg: "Another user is trying to join this channel but max count [ "+webrtcdevchannels[data.channel].maxAllowed +" ] is reached"
+                }
+                socket.broadcast.emit('channel-event', cevent);
             }  
         });
 
