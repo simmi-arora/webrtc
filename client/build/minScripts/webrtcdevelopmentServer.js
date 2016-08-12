@@ -241,6 +241,7 @@ exports.realtimecomm  = function(app, properties, socketCallback) {
                 webrtcdevchannels[data.channel].status=webrtcdevchannels[data.channel].users.length + " active members";
                 webrtcdevchannels[data.channel].log.push(new Date().toLocaleString()+":-User "+data.sender+" joined the channel ");  
                 socket.emit("joined-channel",true);
+                socket.broadcast.emit('new-join', data);
             }else{
                 socket.emit("joined-channel",false);
             }  
