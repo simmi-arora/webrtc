@@ -6,14 +6,6 @@ var progressHelper = {};
 
 function createFileShareButton(fileshareobj){
     var button= document.getElementById(fileshareobj.button.id);
-    /*  
-    button.onchange=function(){
-        var file = this.files[0];
-        console.log(file);
-        console.log(rtcMultiConnection.peers.getLength(), " " , rtcMultiConnection.peers.getAllParticipants());
-        rtcMultiConnection.send(file);
-        sendChatMessage("File is shared :"+file.name);
-    }*/
     button.onclick = function() {
         var fileSelector = new FileSelector();
         fileSelector.selectSingleFile(function(file) {
@@ -23,9 +15,19 @@ function createFileShareButton(fileshareobj){
     };
 }
 function sendFile(file){
-    console.log(rtcMultiConnection);
+    /*
+    addNewFileLocal({
+        userid : selfuserid,
+        header: 'User local',
+        message: 'File shared',
+        userinfo: getUserinfo(rtcMultiConnection.blobURLs[rtcMultiConnection.userid], "images/share-files.png"),
+        callback: function(r) {   
+            console.log(r);
+            shownotification("Sharing File "+file.name);
+        }
+    });*/
     rtcMultiConnection.send(file);
-    console.log(file);
+    console.log("sendFile : " ,file);
 }
 
 function addProgressHelper(uuid , userid , filename , fileSize,  progressHelperclassName ){
@@ -48,14 +50,16 @@ function addProgressHelper(uuid , userid , filename , fileSize,  progressHelperc
 }
 
 function addNewFileLocal(e) {
-    console.log("add new message ", e);
+    console.log("addNewFileLocal message ", e);
     if ("" != e.message && " " != e.message) {
+        alert("addNewFileLocal");
     }
 }
 
 function addNewFileRemote(e) {
-    console.log("add new message ", e);
+    console.log("addNewFileRemote message ", e);
     if ("" != e.message && " " != e.message) {
+        alert("addNewFileRemote");
     }
 }
 
@@ -72,42 +76,29 @@ function simulateClick(buttonName){
     return true;
 }
 
-function displayList(uuid , _userid , fileurl , filename , filetype ){
+function displayList(uuid , peerinfo , fileurl , filename , filetype ){
 
-    var elementList=null , elementPeerList=null , listlength=null;
-    var elementDisplay=null, elementPeerDisplay=null ;
-
-    var downloadButton,removeButton;
     var showDownloadButton=true , showRemoveButton=true; 
-    for(i in webcallpeers ){
-        if(webcallpeers[i].userid==_userid || rtcMultiConnection.channel==_userid){
-           elementList=webcallpeers[i].fileListContainer;
-           elementDisplay= webcallpeers[i].fileSharingContainer;
-           listlength=webcallpeers[i].filearray.length;
-           console.log("Self shared file " , filename);
-        }else{
-            elementPeerList= webcallpeers[i].fileListContainer;
-            elementPeerDisplay= webcallpeers[i].fileSharingContainer;
-            console.log("Peer shared file " , filename );
-        }
-    }
 
-    if(selfuserid==_userid){
-        showDownloadButton=false;
+    var elementList=peerinfo.fileListContainer;
+    var elementDisplay=peerinfo.fileSharingContainer;
+    var listlength=peerinfo.filearray.length;
+
+    if(peerinfo.name=="localVideo"){
+        showRemoveButton=false;
     }else{
         showRemoveButton=false;
     }
 
     var name = document.createElement("div");
     name.innerHTML = listlength +"   " + filename ;
+    name.title=filetype +" shared by " +peerinfo.name ;  
     name.id="name"+filename;
 
-    if(showDownloadButton){
-        downloadButton = document.createElement("div");
-        downloadButton.setAttribute("class" , "btn btn-primary");
-        downloadButton.setAttribute("style", "color:white");
-        downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '" style="color:white" > Download </a>';
-    }
+    var downloadButton = document.createElement("div");
+    downloadButton.setAttribute("class" , "btn btn-primary");
+    downloadButton.setAttribute("style", "color:white");
+    downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '" style="color:white" > Download </a>';
 
     var showButton = document.createElement("div");
     showButton.id= "showButton"+filename;
@@ -152,61 +143,60 @@ function displayList(uuid , _userid , fileurl , filename , filetype ){
     };
 
 
-    if(showRemoveButton){
-        removeButton = document.createElement("div");
-        removeButton.id= "removeButton"+filename;
-        removeButton.setAttribute("class" , "btn btn-primary");
-        removeButton.innerHTML='remove';
-        removeButton.onclick=function(event){
-            if(repeatFlagRemoveButton != filename){
-                hideFile(uuid , elementDisplay , fileurl , filename , filetype);
-                var tobeHiddenElement = event.target.parentNode.id;
-                rtcMultiConnection.send({
-                    type:"shareFileRemove", 
-                    _element: tobeHiddenElement,
-                    _filename : filename
-                });  
-                removeFile(tobeHiddenElement);
-                repeatFlagRemoveButton=filename;
-            }else if(repeatFlagRemoveButton == filename){
-                repeatFlagRemoveButton= "";
-            }  
-        };
-    }
+    var removeButton = document.createElement("div");
+    removeButton.id= "removeButton"+filename;
+    removeButton.setAttribute("class" , "btn btn-primary");
+    removeButton.innerHTML='remove';
+    removeButton.onclick=function(event){
+        if(repeatFlagRemoveButton != filename){
+            hideFile(uuid , elementDisplay , fileurl , filename , filetype);
+            var tobeHiddenElement = event.target.parentNode.id;
+            rtcMultiConnection.send({
+                type:"shareFileRemove", 
+                _element: tobeHiddenElement,
+                _filename : filename
+            });  
+            removeFile(tobeHiddenElement);
+            repeatFlagRemoveButton=filename;
+        }else if(repeatFlagRemoveButton == filename){
+            repeatFlagRemoveButton= "";
+        }  
+    };
 
-    var r;
-    if(fileshareobj.active && document.getElementById(elementList)!=null){
+    var parentdom , filedom ;
+    parentdom = (document.getElementById(elementList)?document.getElementById(elementList):document.body);
+    filedom=document.createElement("div") ;
+
+    if(fileshareobj.active){
+        /*
         switch(filetype) {
             case "imagesnapshot":
-                r=document.createElement("div");
-                r.id=filename;
-                document.getElementById(elementList).appendChild(r);
+                filedom.id=filename;
             break;
             case "videoRecording":
-                r=document.createElement("div");
-                r.id=filename;  
-                document.getElementById(elementList).appendChild(r);         
+                filedom.id=filename;        
             break;
             case "videoScreenRecording":
-                r=document.createElement("div");
-                r.id=filename;  
-                document.getElementById(elementList).appendChild(r);         
+                filedom.id=filename;        
             break;
             default:
-                r = progressHelper[uuid].div;
-        }
-    }else{
-        r=document.createElement("div");
-        r.id=filename;
-        document.body.appendChild(r);
+                filedom = progressHelper[uuid].div;
+        }*/
+        filedom.id=filename;
+        filedom.innerHTML="";
+        filedom.appendChild(name);
+        if(showDownloadButton) 
+            filedom.appendChild(downloadButton);
+        filedom.appendChild(showButton);
+        filedom.appendChild(hideButton);
+        if(showRemoveButton) 
+            filedom.appendChild(removeButton);
+
+        parentdom.appendChild(filedom);
     }
 
-    r.innerHTML="";
-    r.appendChild(name);
-    if(showDownloadButton) r.appendChild(downloadButton);
-    r.appendChild(showButton);
-    r.appendChild(hideButton);
-     if(showRemoveButton) r.appendChild(removeButton);
+
+
 }
 
 function getFileElementDisplayByType(filetype , fileurl , filename){
@@ -263,18 +253,18 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
     return  elementDisplay
 }
 
-function displayFile( uuid , _userid , _fileurl , _filename , _filetype ){
-    var element=null;
-    for(i in webcallpeers ){
-        if(webcallpeers[i].userid==_userid || rtcMultiConnection.channel==_userid)
-           element=webcallpeers[i].fileSharingContainer;
-    }
-    console.log(" Display File ---------" ,_userid ," ||", _filename , "||", _filetype ,"||", element);
-    if($('#'+ element).length > 0){
+function displayFile( uuid , peerinfo , _fileurl , _filename , _filetype ){
+    var elementDisplay = peerinfo.fileSharingContainer;
+    var parentdom , filedom ;
+    parentdom = (document.getElementById(elementDisplay)?document.getElementById(elementDisplay):document.body);
+    filedom=getFileElementDisplayByType(_filetype , _fileurl , _filename);
+    parentdom.innerHTML="";
+    parentdom.appendChild(filedom);
+    /*
+    if($('#'+ parentdom).length > 0)
         $("#"+element).html(getFileElementDisplayByType(_filetype , _fileurl , _filename));
-    }else{
-        $( "body" ).append(getFileElementDisplayByType(_filetype , _fileurl , _filename));
-    }
+    else
+        $("body").append(getFileElementDisplayByType(_filetype , _fileurl , _filename));*/
 }
 
 function syncButton(buttonId){

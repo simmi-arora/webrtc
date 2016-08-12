@@ -98,7 +98,7 @@ function webrtcdevPrepareScreenShare(){
 
     roomid= "screenshare"+"_"+rtcMultiConnection.channel;
     connection  = new RTCMultiConnection();
-    connection.socketURL = "https://"+location.hostname+":8086/";
+    connection.socketURL = socketAddr;
     connection.socketMessageEvent = 'screen-sharing-demo';
 
     connection.session = {

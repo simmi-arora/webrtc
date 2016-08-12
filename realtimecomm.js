@@ -240,10 +240,33 @@ exports.realtimecomm  = function(app, properties, socketCallback) {
                 webrtcdevchannels[data.channel].users.push(data.sender); 
                 webrtcdevchannels[data.channel].status=webrtcdevchannels[data.channel].users.length + " active members";
                 webrtcdevchannels[data.channel].log.push(new Date().toLocaleString()+":-User "+data.sender+" joined the channel ");  
-                socket.emit("joined-channel",true);
+                var jevent={
+                    status:true,
+                    users:webrtcdevchannels[data.channel].users
+                }
+                socket.emit("joined-channel",jevent);
+                var cevent={
+                    type:"new-join", 
+                    data:data
+                }
+                socket.broadcast.emit('channel-event', cevent);
             }else{
                 socket.emit("joined-channel",false);
             }  
+        });
+
+        socket.on('update-channel',function(data){
+             console.log("------------update channel------------- ", data.channel," by " , data.sender," -> ", data );
+            switch (data.type){
+                case "change-userid":
+                    var index=webrtcdevchannels[data.channel].users.indexOf(data.extra.old);
+                    console.log("old userid" , webrtcdevchannels[data.channel].users[index]);
+                    webrtcdevchannels[data.channel].users[index]=data.extra.new;
+                    console.log("changed userid" , webrtcdevchannels[data.channel].users);
+                break;
+                default:
+                    console.log("do nothing ");
+            }
         });
 
         socket.on('presence', function(data, callback) {

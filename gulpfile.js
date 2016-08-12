@@ -136,6 +136,7 @@ gulp.task('codecss',function() {
 
 var scriptList=[
     "client/build/scripts/_init.js",
+    "client/build/scripts/_detectRTC.js",
     "client/build/scripts/_settings.js",
     "client/build/scripts/firebase.js",
     "client/build/scripts/FileProgressBarHandler",
@@ -150,7 +151,7 @@ var scriptList=[
     "client/build/scripts/_snapshot.js",
     "client/build/scripts/_record.js",
     "client/build/scripts/_screenrecord.js",
-    "client/build/scripts/_filesharing.js",
+    /*"client/build/scripts/_filesharing.js",*/
     "client/build/scripts/_draw.js",
     "client/build/scripts/_redial.js",
     "client/build/scripts/_cursor.js",
@@ -158,9 +159,8 @@ var scriptList=[
     "client/build/scripts/_texteditor.js",
     "client/build/scripts/_mediahandler.js",
     "client/build/scripts/screensharing.js",
-    "client/build/scripts/_screenshare.js"
-    /*"client/build/scripts/getScreenId.js"*/
-
+    "client/build/scripts/_screenshare.js",
+    "client/build/scripts/timer.js"
 ];
 
 gulp.task('betawebrtcdevelopmentjs',function() {
