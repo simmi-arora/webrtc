@@ -1,4 +1,4 @@
-function createRecordButton(controlBarName, streamid, stream){
+function createRecordButton(controlBarName,peerinfo, streamid, stream){
     var recordButton=document.createElement("div");
     recordButton.id=controlBarName+"recordButton";
     recordButton.setAttribute("title", "Record");
@@ -11,11 +11,11 @@ function createRecordButton(controlBarName, streamid, stream){
         if(recordButton.className==videoRecordobj.button.class_on){
             recordButton.className=videoRecordobj.button.class_off;
             recordButton.innerHTML=videoRecordobj.button.html_off;
-            stopRecord(streamid, stream);
+            stopRecord(peerinfo, streamid, stream);
         }else if(recordButton.className==videoRecordobj.button.class_off){
             recordButton.className=videoRecordobj.button.class_on;
             recordButton.innerHTML=videoRecordobj.button.html_on;
-            startRecord(streamid, stream);
+            startRecord(peerinfo, streamid, stream);
         }
     };  
 
@@ -25,7 +25,7 @@ function createRecordButton(controlBarName, streamid, stream){
 
 var listOfRecorders = {};
 
-function startRecord(streamid, stream){
+function startRecord(peerinfo , streamid, stream){
     var recorder = RecordRTC(stream, {
         type: 'video',
         recorderType: MediaStreamRecorder
@@ -34,7 +34,7 @@ function startRecord(streamid, stream){
     listOfRecorders[streamid] = recorder;
 }
 
-function stopRecord(streamid , stream){
+function stopRecord(peerinfo , streamid , stream){
     /*var streamid = prompt('Enter stream-id');*/
 
     if(!listOfRecorders[streamid]) {
@@ -45,26 +45,21 @@ function stopRecord(streamid , stream){
     recorder.stopRecording(function() {
         var blob = recorder.getBlob();
 
-/*        window.open( URL.createObjectURL(blob) );
-
+        /*        
+        window.open( URL.createObjectURL(blob) );
         // or upload to server
         var formData = new FormData();
         formData.append('file', blob);
         $.post('/server-address', formData, serverCallback);*/
     
-        for(i in webcallpeers ){
-            if(webcallpeers[i].userid==rtcMultiConnection.userid){
-                var recordVideoname = "recordedvideo"+ new Date().getTime();
-                webcallpeers[i].filearray.push(recordVideoname);
-                var numFile= document.createElement("div");
-                numFile.value= webcallpeers[i].filearray.length;
-                var fileurl=URL.createObjectURL(blob);
+        var recordVideoname = "recordedvideo"+ new Date().getTime();
+        peerinfo.filearray.push(recordVideoname);
+        var numFile= document.createElement("div");
+        numFile.value= peerinfo.filearray.length;
+        var fileurl=URL.createObjectURL(blob);
 
-                displayList(rtcMultiConnection.uuid , rtcMultiConnection.userid  ,fileurl , recordVideoname , "videoRecording");
-                displayFile(rtcMultiConnection.uuid , rtcMultiConnection.userid , fileurl , recordVideoname , "videoRecording");
-
-            }
-        }
+        displayList(rtcMultiConnection.uuid , peerinfo  ,fileurl , recordVideoname , "videoRecording");
+        displayFile(rtcMultiConnection.uuid , peerinfo , fileurl , recordVideoname , "videoRecording");
     });
 }
 

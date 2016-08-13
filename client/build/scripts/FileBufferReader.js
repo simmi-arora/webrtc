@@ -202,7 +202,8 @@ function FileBufferReaderHelper() {
                 processChunk(event.data);
             };
 
-            webWorker.postMessage(options);
+            /*webWorker.postMessage(options);*/
+            webWorker.postMessage(JSON.parse(JSON.stringify(options)));
         } else {
             fileReaderWrapper(options, processChunk);
 
@@ -248,7 +249,7 @@ function FileBufferReaderHelper() {
             lastModifiedDate: !!file.lastModifiedDate ? file.lastModifiedDate.toString() : '',
             start: true,
             extra: options.extra || options,
-            url: URL.createObjectURL(file)
+            url: ((typeof file)=="URL"? file : URL.createObjectURL(file))
         });
 
         var blob, reader = new FileReader();

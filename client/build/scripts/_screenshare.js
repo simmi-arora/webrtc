@@ -106,6 +106,7 @@ function webrtcdevPrepareScreenShare(){
         oneway: true
     };
 
+    connection.iceServers=rtcMultiConnection.iceServers;
     connection.sdpConstraints.mandatory = {
         OfferToReceiveAudio: false,
         OfferToReceiveVideo: false

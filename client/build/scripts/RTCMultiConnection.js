@@ -2237,7 +2237,6 @@
 
             connection.fbr.readAsArrayBuffer(file, function(uuid) {
                 var arrayOfUsers = connection.getAllParticipants();
-
                 if (remoteUserId) {
                     arrayOfUsers = [remoteUserId];
                 }
@@ -2246,6 +2245,7 @@
                     console.log("readAsArrayBuffer 1 " , uuid); 
                     connection.fbr.getNextChunk(uuid, function(nextChunk) { 
                         connection.peers[participant].channels.forEach(function(channel) {
+                            console.log("channel send ", nextChunk);
                             channel.send(nextChunk);
                         });
                     }, participant);
@@ -5088,9 +5088,10 @@
     var FileProgressBarHandler = (function() {
         function handle(connection) {
             var progressHelper = {};
-
+            alert("FileProgressBarHandler");
             // www.RTCMultiConnection.org/docs/onFileStart/
             connection.onFileStart = function(file) {
+                alert("onFilestart");
                 var div = document.createElement('div');
                 div.title = file.name;
                 div.innerHTML = '<label>0%</label> <progress></progress>';
