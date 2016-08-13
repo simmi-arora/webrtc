@@ -25,10 +25,10 @@ function createSnapshotButton(controlBarName , peerinfo){
 
             if(fileshareobj.active){
                 syncSnapshot(datasnapshot , "imagesnapshot" , snapshotname );
-                displayList(peerinfo.uuid , peerinfo.userid ,datasnapshot , snapshotname, "imagesnapshot");
-                displayFile(peerinfo.uuid , peerinfo.userid, datasnapshot , snapshotname, "imagesnapshot");
+                displayList(peerinfo.uuid , peerinfo ,datasnapshot , snapshotname, "imagesnapshot");
+                displayFile(peerinfo.uuid , peerinfo, datasnapshot , snapshotname, "imagesnapshot");
             }else{
-                displayFile(peerinfo.uuid , peerinfo.userid, datasnapshot , snapshotname, "imagesnapshot");
+                displayFile(peerinfo.uuid , peerinfo, datasnapshot , snapshotname, "imagesnapshot");
             } 
         });         
     };

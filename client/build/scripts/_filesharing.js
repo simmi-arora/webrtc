@@ -15,19 +15,23 @@ function createFileShareButton(fileshareobj){
     };
 }
 function sendFile(file){
-    /*
+        
     addNewFileLocal({
         userid : selfuserid,
         header: 'User local',
         message: 'File shared',
-        userinfo: getUserinfo(rtcMultiConnection.blobURLs[rtcMultiConnection.userid], "images/share-files.png"),
+        userinfo: getUserinfo(rtcMultiConnection.blobURLs[selfuserid], "images/share-files.png"),
         callback: function(r) {   
             console.log(r);
             shownotification("Sharing File "+file.name);
         }
-    });*/
+    });
     rtcMultiConnection.send(file);
-    console.log("sendFile : " ,file);
+    /*  
+    rtcMultiConnection.send({
+        doYouWannaReceiveThisFile: true,
+        fileName: file.size + file.name
+    });*/
 }
 
 function addProgressHelper(uuid , userid , filename , fileSize,  progressHelperclassName ){
@@ -77,7 +81,7 @@ function simulateClick(buttonName){
 }
 
 function displayList(uuid , peerinfo , fileurl , filename , filetype ){
-
+    console.log("DisplayList peerinfo->",peerinfo);
     var showDownloadButton=true , showRemoveButton=true; 
 
     var elementList=peerinfo.fileListContainer;
@@ -194,9 +198,6 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
 
         parentdom.appendChild(filedom);
     }
-
-
-
 }
 
 function getFileElementDisplayByType(filetype , fileurl , filename){
@@ -254,6 +255,7 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
 }
 
 function displayFile( uuid , peerinfo , _fileurl , _filename , _filetype ){
+    console.log("displayFile peerinfo->",peerinfo);
     var elementDisplay = peerinfo.fileSharingContainer;
     var parentdom , filedom ;
     parentdom = (document.getElementById(elementDisplay)?document.getElementById(elementDisplay):document.body);

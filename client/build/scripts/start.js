@@ -138,7 +138,6 @@ var WebRTCdev= function(session, widgets){
                 OfferToReceiveAudio: !0,
                 OfferToReceiveVideo: !0
             },
-
             /*
             rtcMultiConnection.onNewParticipant = function(participantId, userPreferences) {
                 console.log("onNewParticipant" ,participantId ,userPreferences);
@@ -149,7 +148,6 @@ var WebRTCdev= function(session, widgets){
                 }
                 rtcMultiConnection.acceptParticipationRequest(participantId, userPreferences);
             };*/
-
             rtcMultiConnection.onstream = function(event) {
                 console.log(" onstream ", event);
                 alert("on stream ");
@@ -159,6 +157,11 @@ var WebRTCdev= function(session, widgets){
                 peerinfo.streamid=event.stream.streamid;
                 updateWebCallView(peerinfo);
             }, 
+
+            rtcMultiConnection.onUserIdAlreadyTaken = function(useridAlreadyTaken, yourNewUserId) {
+                // seems room is already opened
+                connection.join(useridAlreadyTaken);
+            };
 
             rtcMultiConnection.onstreamended = function(event) {
                 event.isScreen ? $("#" + event.userid + "_screen").remove() : $("#" + event.userid).remove()
@@ -198,26 +201,29 @@ var WebRTCdev= function(session, widgets){
                             createScreenViewButton();
                         break;
                         case "chat":
-                            whoIsTyping.innerHTML = "";
+                            whoIsTyping.innerHTML = e.extra.username;
                             addNewMessage({
                                 header: e.extra.username,
                                 message: e.data.message,
                                 userinfo: getUserinfo(rtcMultiConnection.blobURLs[e.userid], "chat-message.png"),
                                 color: e.extra.color
                             }); 
-                            void(document.title = e.data.message);
+                            /*void(document.title = e.data.message);*/
                         break;
                         case "imagesnapshot":
-                            displayList( null , e.userid , e.data.message , e.data.name , "imagesnapshot" );
-                            displayFile( null , e.userid , e.data.message , e.data.name , "imagesnapshot");
+                            var peerinfo=findPeerInfo( e.userid );
+                            displayList( null , peerinfo , e.data.message , e.data.name , "imagesnapshot" );
+                            displayFile( null , peerinfo , e.data.message , e.data.name , "imagesnapshot");
                         break;
                         case "videoRecording":
-                            displayList( null , e.userid , e.data.message , e.data.name , "videoRecording" );
-                            displayFile( null , e.userid , e.data.message , e.data.name , "videoRecording");
+                            var peerinfo=findPeerInfo( e.userid );
+                            displayList( null , peerinfo , e.data.message , e.data.name , "videoRecording" );
+                            displayFile( null , peerinfo , e.data.message , e.data.name , "videoRecording");
                         break;
                         case "videoScreenRecording":
-                            displayList( null , e.userid , e.data.message , e.data.name , "videoScreenRecording" );
-                            displayFile( null , e.userid , e.data.message , e.data.name , "videoScreenRecording");
+                            var peerinfo=findPeerInfo( e.userid );
+                            displayList( null , peerinfo , e.data.message , e.data.name , "videoScreenRecording" );
+                            displayFile( null , peerinfo , e.data.message , e.data.name , "videoScreenRecording");
                         break;
                         case "file":
                             addNewMessage({
@@ -246,7 +252,6 @@ var WebRTCdev= function(session, widgets){
                                 buttonElement.click();
                             }
                         break;
-
                         default:
                             console.log(" unrecognizable message from peer  ",e);
                         break;
@@ -342,6 +347,7 @@ var WebRTCdev= function(session, widgets){
 
             if(fileshareobj.active){
                 rtcMultiConnection.enableFileSharing = true;
+                /*setFileProgressBarHandlers(rtcMultiConnection);*/
                 rtcMultiConnection.filesContainer = document.getElementById(fileshareobj.fileShareContainer);
                 createFileShareButton(fileshareobj);
             }
@@ -562,7 +568,7 @@ function attachControlButtons( vid ,  peerinfo){
         controlBar.appendChild(createSnapshotButton(controlBarName , peerinfo));
     }
     if(videoRecordobj.active){
-        controlBar.appendChild(createRecordButton(controlBarName, streamid, stream));
+        controlBar.appendChild(createRecordButton(controlBarName, peerinfo, streamid, stream ));
     }
 
     if(debug){
