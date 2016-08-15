@@ -139,7 +139,7 @@ var scriptList=[
     "client/build/scripts/_detectRTC.js",
     "client/build/scripts/_settings.js",
     "client/build/scripts/firebase.js",
-    /*"client/build/scripts/FileBufferReader.js",*/
+    "client/build/scripts/FileBufferReader.js",
     "client/build/scripts/MediaStreamRecorder.js",
     "client/build/scripts/RecordRTC.js",
     "client/build/scripts/screenshot.js",

@@ -143,9 +143,9 @@ function webrtcdevSharescreen(roomid) {
     connection.onstream = function(event) {
         console.log(" on stream in _screenshare :" , event);
         if(event.stream.isScreen){
+            createScreenViewButton();
             screenStreamId= event.streamid;
             connection.videosContainer.appendChild(event.mediaElement);
-            connection.videosContainer.hidden=false;
             event.mediaElement.play();
             setTimeout(function() {
                 event.mediaElement.play();
@@ -155,6 +155,8 @@ function webrtcdevSharescreen(roomid) {
 
     connection.onstreamended = function(event) {
         console.log(" onstreamended in _screenshare :" , event);
+        connection.removeStream(screenStreamId);
+        connection.videosContainer.hidden=true;
     };
 
     connection.open(roomid, function() {
@@ -164,13 +166,6 @@ function webrtcdevSharescreen(roomid) {
             message:roomid
         });
     });
-
-    /*
-    connection.openOrJoin(roomid, function(isRoomExists, roomid) {
-        if(!isRoomExists) {
-            console.log("room doesnt exists ");
-        }
-    });*/
 }
 
 function webrtcdevViewscreen(roomid){
@@ -185,16 +180,19 @@ function webrtcdevStopShareScreen(){
     });*/
     connection.removeStream(screenStreamId);
     connection.videosContainer.hidden=true;
+    removeScreenViewButton();
 }
 
 function createScreenViewButton(){
+    if(document.getElementById("viewScreenShareButton"))
+        return;
     var viewScreenShareButton= document.createElement("span");
-    viewScreenShareButton.className=screenshareobj.button.viewButton.class_on;
-    viewScreenShareButton.innerHTML=screenshareobj.button.viewButton.html_on;;
+    viewScreenShareButton.className=screenshareobj.button.viewButton.class_off;
+    viewScreenShareButton.innerHTML=screenshareobj.button.viewButton.html_off;;
     viewScreenShareButton.id="viewScreenShareButton";
+    webrtcdevViewscreen(roomid);
     viewScreenShareButton.onclick = function() {
         if(viewScreenShareButton.className==screenshareobj.button.viewButton.class_off){
-            webrtcdevViewscreen(roomid);
             document.getElementById(screenshareobj.screenshareContainer).hidden=false;
             viewScreenShareButton.className=screenshareobj.button.viewButton.class_on;
             viewScreenShareButton.innerHTML=screenshareobj.button.viewButton.html_on;
@@ -208,10 +206,6 @@ function createScreenViewButton(){
     var li =document.createElement("li");
     li.appendChild(viewScreenShareButton);
     document.getElementById("topIconHolder_ul").appendChild(li);
-}
-
-function hideScreenViewButton(){
-    document.getElementById("viewScreenShareButton").hidden=true;
 }
 
 function removeScreenViewButton(){
@@ -250,12 +244,10 @@ function createScreenshareButton(){
     screenShareButton.onclick = function(event) {    
         if(screenShareButton.className==screenshareobj.button.shareButton.class_off){
             webrtcdevSharescreen(roomid);
-            createScreenViewButton();
             screenShareButton.className=screenshareobj.button.shareButton.class_on;
             screenShareButton.innerHTML=screenshareobj.button.shareButton.html_on;
         }else if(screenShareButton.className==screenshareobj.button.shareButton.class_on){
             webrtcdevStopShareScreen();
-            removeScreenViewButton();
             screenShareButton.className=screenshareobj.button.shareButton.class_off;
             screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
         }

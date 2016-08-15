@@ -116,7 +116,7 @@ var WebRTCdev= function(session, widgets){
                 window.clearInterval(repeatInitilization);
             }  
 
-            checkDevices(rtcMultiConnection);
+            /*checkDevices(rtcMultiConnection);*/
             rtcMultiConnection.extra = {
                 uuid : userid,
                 name : localobj.userdetails.username,
@@ -132,7 +132,6 @@ var WebRTCdev= function(session, widgets){
             rtcMultiConnection.autoCloseEntireSession = !1, 
             rtcMultiConnection.autoTranslateText = !1, 
             rtcMultiConnection.maxParticipantsAllowed = remoteobj.maxAllowed, 
-            rtcMultiConnection.setDefaultEventsForMediaElement = !1,
             rtcMultiConnection.blobURLs = {},
 
             /*
@@ -146,8 +145,6 @@ var WebRTCdev= function(session, widgets){
                 rtcMultiConnection.acceptParticipationRequest(participantId, userPreferences);
             };*/
             rtcMultiConnection.onstream = function(event) {
-                console.log(" onstream ", event);
-                alert("on stream ");
                 var peerinfo=findPeerInfo(event.userid);
                 peerinfo.type=event.type;
                 peerinfo.stream=event.stream;
@@ -682,7 +679,7 @@ connectWebRTC=function(type, channel , userid , remoteUsers){
         OfferToReceiveAudio: !0,
         OfferToReceiveVideo: !0
     }
-    
+
     if(selfuserid == null){
         selfuserid = rtcMultiConnection.userid;
         updatePeerInfo( selfuserid, selfusername ,selfcolor, selfemail, "local" );
