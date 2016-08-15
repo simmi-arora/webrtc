@@ -71,23 +71,10 @@
                                 <video name="otherConferenceVideo" autoplay="autoplay" />
                             </div>
 
-                            <div class="col-sm-4 merge" style="height:100%" id="chatbox" >
-                                <div class="row">
+                            <div class="col-sm-4 merge" style="height:100%"  >
+                                <div class="row" id="chatContainer">
 
-                                    <div class="mainInputBox">   
-                                        <input type=text style="width:70%;float: left;" id="chatInput" class="form-control" placeholder="Type message here">
-                                        <button class="btn" id="chatInputButton">Send</button>
-                                    </div>
 
-                                    <div  id="chatBoard"  contenteditable class="chatMessagesClass">
-                                        <div id="all-messages" style="padding:5px;"></div>
-                                    </div>
-                                    <p id="who-is-typing" hidden></p>
-
-                                    <div class="fileinputClass" style="position:absolute" data-provides="fileinput">
-                                        <button class="btn" id="fileShareButton">File</button>
-                                       <!--  <span class="btn btn-default btn-file"><input id="fileShareButton" type="file" /></span> -->
-                                    </div>
 
                                 </div>
                             </div>
@@ -208,9 +195,10 @@
 
 <script src="property.js"></script>
 <link rel=stylesheet href="minScripts/webrtcdevelopment.css">
+<script src="scripts/FileBufferReader.js",></script>
 <script src="minScripts/webrtcdevelopment.js"></script>
 <!-- <script src="scripts/_screenshare.js"></script>--> 
-<!-- <script src="scripts/_filesharing.js"></script>   -->
+<script src="scripts/_filesharing.js"></script>  
 <script src="scripts/start.js"></script> 
 
 <script>
@@ -249,7 +237,7 @@ $('document').ready(function(){
     var remote={
         videoarr: ["myConferenceVideo", "otherConferenceVideo"],
         videoClass:"",
-        maxAllowed: "2",
+        maxAllowed: "6",
         videoContainer : "confVideoContainer",
         userDisplay:false,
         userMetaDisplay:false,
@@ -302,24 +290,30 @@ $('document').ready(function(){
                             class:""
                         }
                     },
-        chat        :{
+        chat    :{
                         active: true,
-                        chatContainer: "",
-                        input:{
-                            id:"chatInput"
-                        },
+                        chatContainer: "chatContainer",
+                        button:{
+                            class_on:"btn btn-warning glyphicon glyphicon-font topPanelButton",
+                            html_on:"Chat",
+                            class_off:"btn btn-success glyphicon glyphicon-font topPanelButton",
+                            html_off:"Chat"
+                        }
+
+                        /*                      
                         button:{
                             id:"chatInputButton",
                             class:"form-control btn-primary buttonChatSend",
                             html:"Send"
-                        }
-                    },
+                        }*/
+                },
         fileShare   :{
                         active : true,
                         fileShareContainer : "fileSharingRow",
                         fileListContainer : "fileListingRow",
-                        button :{
-                            id:"fileShareButton"
+                        button:{
+                            class:"btn btn-success glyphicon glyphicon-file topPanelButton",
+                            html:"File"
                         }
                     },
         location    :{
@@ -330,9 +324,9 @@ $('document').ready(function(){
                         autoscreenrecord:false,
                         screenrecordContainer: null,
                         button:{
-                            class_on:"btn btn-warning glyphicon glyphicon-refresh topPanelButton",
+                            class_on:"btn btn-warning glyphicon glyphicon-film topPanelButton",
                             html_on:"Stop",
-                            class_off:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
+                            class_off:"btn btn-success glyphicon glyphicon-film topPanelButton",
                             html_off:"Record"
                         }
                     }, 
@@ -400,7 +394,7 @@ $('document').ready(function(){
                             resyncfiles:false
                         }
                     }, 
-        mute        :{
+        mute    :{
                     active: true,
                     audio   :{
                             active: false,
@@ -420,7 +414,7 @@ $('document').ready(function(){
                                 html_off:""
                             }
                         }
-                    }
+                }
     };
 
     var webrtcdevobj = new WebRTCdev ( 

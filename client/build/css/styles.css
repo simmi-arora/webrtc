@@ -91,6 +91,11 @@
     padding-right: 80px;
 }
 
+.chatInput{
+    width:70%;
+    float: left;
+}
+
 .chatusername {
     font-size: 13px;
     color: #9D0C0C;

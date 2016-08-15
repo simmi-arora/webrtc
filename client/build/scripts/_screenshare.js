@@ -7,14 +7,13 @@ var sourceId , screen_constraints , screenStreamId;
 var isFirefox = typeof window.InstallTrigger !== 'undefined';
 var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
 var isChrome = !!window.chrome && !isOpera;
-/*navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;*/
-/*var isFirefox = !!navigator.mozGetUserMedia;
-var isChrome = !!navigator.webkitGetUserMedia;*/
 var isMobileDevice = !!navigator.userAgent.match(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile/i);
 
 var connection ;
 var DetectRTC = {};
 var screenCallback;
+var iceServers=[];
+var signaler,screen,roomid;
 
 DetectRTC.screen = {
     
@@ -89,10 +88,6 @@ function captureSourceId() {
     });
 }
 
-var iceServers=[];
-
-var signaler,screen, roomid;
-
 /*getSourceId(shareScreen);*/
 function webrtcdevPrepareScreenShare(){
 
@@ -156,6 +151,10 @@ function webrtcdevSharescreen(roomid) {
                 event.mediaElement.play();
             }, 5000);
         }
+    };
+
+    connection.onstreamended = function(event) {
+        console.log(" onstreamended in _screenshare :" , event);
     };
 
     connection.open(roomid, function() {
