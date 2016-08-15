@@ -2,12 +2,51 @@
         Chat
 **************************************************************************************/
 function createChatButton(chatobj){
-    var chatButton=document.getElementById(chatobj.button.id);
+
+    /*
+    <p id="who-is-typing" hidden></p>
+    */
+    var mainInputBox=document.createElement("div");
+
+    var chatInput= document.createElement("input");
+    chatInput.setAttribute("type", "text");
+    chatInput.className= "form-control";
+    chatInput.id="chatInput";
+
+    var chatButton= document.createElement("span");
+    chatButton.className= "btn";
+    chatButton.innerHTML= "Enter";
     chatButton.onclick=function(){
-        var chatInput=document.getElementById(chatobj.input.id);
+        var chatInput=document.getElementById("chatInput");
         sendChatMessage(chatInput.value);
         chatInput.value = "";
     }
+    
+    mainInputBox.appendChild(chatInput);
+    mainInputBox.appendChild(chatButton);
+    document.getElementById(chatobj.chatContainer).appendChild(mainInputBox);
+
+
+    var chatBoard=document.createElement("div");
+    chatBoard.className="chatMessagesClass";
+    chatBoard.contenteditable=true;
+    chatBoard.id="chatBoard";
+    document.getElementById(chatobj.chatContainer).appendChild(chatBoard);
+
+    var button= document.createElement("span");
+    button.className= chatobj.button.class_off;
+    button.innerHTML= chatobj.button.html_off;
+    button.onclick = function() {
+        if(button.className==button.button.class_off){
+            chatobj.chatContainer.hidden=true;
+        }else if(button.className==button.button.class_on){
+            chatobj.chatContainer=false;
+        }
+    };
+
+    var li =document.createElement("li");
+    li.appendChild(button);
+    document.getElementById("topIconHolder_ul").appendChild(li);
 }
 
 function addMessageLineformat(messageDivclass, message , parent){
@@ -34,13 +73,13 @@ function addMessageBlockFormat(messageheaderDivclass , messageheader ,messageDiv
 
 function addNewMessage(e) {
     if ("" != e.message && " " != e.message) {
-        addMessageLineformat("user-activity user-activity-right remoteMessageClass" , e.message , "all-messages");
+        addMessageLineformat("user-activity user-activity-right remoteMessageClass" , e.message , "chatBoard");
     }
 }
 
 function addNewMessagelocal(e) {
     if ("" != e.message && " " != e.message) {
-        addMessageLineformat("user-activity user-activity-right localMessageClass" , e.message , "all-messages");
+        addMessageLineformat("user-activity user-activity-right localMessageClass" , e.message , "chatBoard");
     }
 }
 

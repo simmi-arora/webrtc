@@ -21,7 +21,7 @@ function createScreenRecordButton(){
     var recordButton= document.createElement("span");
     recordButton.className= screenrecordobj.button.class_off ;
     recordButton.innerHTML= screenrecordobj.button.html_off;
-    recordButton .onclick = function() {
+    recordButton.onclick = function() {
         if(recordButton.className==screenrecordobj.button.class_off){
             recordButton.className= screenrecordobj.button.class_on ;
             recordButton.innerHTML= screenrecordobj.button.html_on;

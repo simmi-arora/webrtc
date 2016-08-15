@@ -134,10 +134,7 @@ var WebRTCdev= function(session, widgets){
             rtcMultiConnection.maxParticipantsAllowed = remoteobj.maxAllowed, 
             rtcMultiConnection.setDefaultEventsForMediaElement = !1,
             rtcMultiConnection.blobURLs = {},
-            rtcMultiConnection.sdpConstraints.mandatory = {
-                OfferToReceiveAudio: !0,
-                OfferToReceiveVideo: !0
-            },
+
             /*
             rtcMultiConnection.onNewParticipant = function(participantId, userPreferences) {
                 console.log("onNewParticipant" ,participantId ,userPreferences);
@@ -326,6 +323,7 @@ var WebRTCdev= function(session, widgets){
             }
 
             if(screenshareobj.active){
+                alert("screenshare");
                 detectExtensionScreenshare(screenshareobj.extensionID); 
             }   
 
@@ -535,12 +533,12 @@ function createVideoContainer(e, style, callback) {
 
 /************************************
 control Buttons 
-*******************************************************************/
+*******************************************/
 function attachUserDetails(vid,peerinfo){
     var nameBox=document.createElement("span");
     nameBox.className="well well-sm";
     nameBox.setAttribute("style","background-color:"+ peerinfo.color);
-    nameBox.innerHTML=peerinfo.name;
+    nameBox.innerHTML=peerinfo.name+"<br/>";
 
     /*vid.parentNode.appendChild(nameBox); */
     vid.parentNode.insertBefore(nameBox, vid.parentNode.firstChild);
@@ -672,12 +670,19 @@ connectWebRTC=function(type, channel , userid , remoteUsers){
     }else{
         shownotification("Connection type not found");
     }
-    alert("get user media ");
+    
+    alert("get user media invokeGetUserMedia");
     rtcMultiConnection.session = {
         video: incomingVideo,
         audio: incomingAudio,
         data:  incomingData
     }
+
+    rtcMultiConnection.sdpConstraints.mandatory = {
+        OfferToReceiveAudio: !0,
+        OfferToReceiveVideo: !0
+    }
+    
     if(selfuserid == null){
         selfuserid = rtcMultiConnection.userid;
         updatePeerInfo( selfuserid, selfusername ,selfcolor, selfemail, "local" );

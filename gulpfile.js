@@ -139,12 +139,10 @@ var scriptList=[
     "client/build/scripts/_detectRTC.js",
     "client/build/scripts/_settings.js",
     "client/build/scripts/firebase.js",
-    /*"client/build/scripts/FileProgressBarHandler",*/
-    "client/build/scripts/FileBufferReader.js",
+    /*"client/build/scripts/FileBufferReader.js",*/
     "client/build/scripts/MediaStreamRecorder.js",
     "client/build/scripts/RecordRTC.js",
     "client/build/scripts/screenshot.js",
-    "client/build/scripts/RTCMultiConnection.js",
     "client/build/scripts/_geolocation.js",
     "client/build/scripts/_chat.js",
     "client/build/scripts/_mediacontrol.js",
@@ -158,9 +156,9 @@ var scriptList=[
     "client/build/scripts/_codeeditor.js",
     "client/build/scripts/_texteditor.js",
     "client/build/scripts/_mediahandler.js",
-    /*"client/build/scripts/screensharing.js",*/
     "client/build/scripts/_screenshare.js",
-    "client/build/scripts/timer.js"
+    "client/build/scripts/timer.js",
+    "client/build/scripts/RTCMultiConnection.js"
 ];
 
 gulp.task('betawebrtcdevelopmentjs',function() {
