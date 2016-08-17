@@ -49,10 +49,7 @@
     transform: rotate(-30deg)
 }
 
-#time{
-  color: #000;
-  background-color: #blue;
-}
+
 
 .video {
     position: absolute;
@@ -91,10 +88,6 @@
     padding-right: 80px;
 }
 
-.chatInput{
-    width:70%;
-    float: left;
-}
 
 .chatusername {
     font-size: 13px;
@@ -226,65 +219,14 @@ video {
     font-size: 13px;
 }
 
-.filesharing1Box{
-    background-color: #9999FF;
-    color: #968787;
-}
-
-#file-progress1{
-    color:#FFF;
-    height:20px;
-}
-
-.filesharing2Box{
-    background-color: #666699;
-    color: #968787;
-}
-
-#file-progress2{
-    color:#FFF;
-    height:20px
-}
 
 .viewerIframeClass{
     width:100%;
     height: 100%;
 }
-.cursor1Class{
-    box-sizing: border-box; 
-    -moz-box-sizing: border-box
-    width: 0px !important;
-    border-bottom: 20px solid #9999FF;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-}
 
-.cursor2Class{
-    box-sizing: border-box; 
-    -moz-box-sizing: border-box
-    width: 0px !important;
-    border-bottom: 20px solid #666699;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-}
 
-#timerli{
-    background-color: #55D1F5;
-    color: white;
-    size: 14;
-    font-size: 20;
-    font-weight: bold;
-}
-#countdownMinutes{
-  background-color: white;
-    color: #616150;
-    padding: 4px 4px 4px 4px;
-}
-#countdownSecond{
-  background-color: white;
-    color: #616150;
-    padding: 4px 4px 4px 4px;
-}
+
 
 .userName{
   color: #000;
@@ -298,38 +240,21 @@ video {
   color:#FFF
 }
 
-.countdown{
-  color: #000
+
+
+
+.drawContainerClass{
+    border: 5px solid #777;
 }
 
-.chatBox{
-    background-color: rgba(85, 209, 245, 0.39);
-    height: 30%;
+.texteditorContainerClass{
+    border: 5px solid #777;
+}
 
+.locationContainerClass{
+    border: 5px solid #777;
 }
-#chatBox{
-        padding: 10px 56px 10px 10px;
-}
-/*.chatBoard{
-    width: 100%;
-    border: 0px;
-}
-*/
-.buttonChatSend{
-    margin-right: 20px;
-    float:right;
-    width:20%;
-}
-.chatMessagesClass{
-    overflow-y: scroll;
-        width: 76%;
-/*    height:80%;
-    width: 100%;*/
-}
-.mainInputBox{
-    width:100%;
-    height:10%;
-}
+
 .drawBox{
     height: 30%;
 }
@@ -341,12 +266,6 @@ video {
     /*left: 10%;*/
 }
 
-.filesharingBox{
-    color: #A28686;
-    font-size: 20px;
-    padding-top: 0px !important;
-    margin-top: -33px !important;
-}
 
 .snapshotButton{
     color: black; 
@@ -369,12 +288,7 @@ video {
     width: 90%;"
 }
 
-.fileinputClass{
-    background: transparent;
-    border: none;
-    bottom: 10px;
-    position: fixed;
-}
+
 
 .local-media,
 .remote-media {
@@ -458,37 +372,6 @@ video {
     margin-top: -20px;
 }
 
-.filesharingWidget{
-    overflow: auto;
-}
-
-.fileSharingRow{
-   /* min-height: 200px;*/
-}
-
-.iframeClassfileviewer{
-    width: 69%;
-    border: 0;
-    border-left: 1px solid black;
-    height: inherit;
-}
-
-.fileBoxClass{
-    padding: 10px 10px 10px 10px;
-    background: rgba(255, 255, 255, 0.39);
-    margin-bottom: 2px;
-    margin-top: 2px;
-}   
-
-.fileViewing1Box{
-    background-color: #9999FF;
-    color: #968787;
-}
-
-.fileViewing2Box{
-    background-color: #666699;
-    color: #968787;
-}
 .filler{
     height:40px;
 }
@@ -496,14 +379,4 @@ video {
 .mediaButton{
         padding: 4px;
     line-height: 20px!important;
-}
-
-.screenshareVideoClass{
-    transform: rotateY(180deg);
-    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
-    -moz-transform:rotateY(180deg); /* Firefox */
-}
-
-#controlminiVideo{
-        float: left;
 }

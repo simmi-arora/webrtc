@@ -1,7 +1,7 @@
+/**************************************************************
+Screenshare 
+****************************************************************/
 
-/****************************************8
-screenshare
-***************************************/
 var chromeMediaSource = 'screen';
 var sourceId , screen_constraints , screenStreamId;
 var isFirefox = typeof window.InstallTrigger !== 'undefined';
@@ -273,4 +273,32 @@ function onScreenshareExtensionCallback(event){
             webrtcdevScreenConstraints(event.data.sourceId);
         }
     }
+}
+
+function detectExtensionScreenshare(extensionID){
+
+    rtcMultiConnection.getChromeExtensionStatus(extensionID, function(status) {
+        console.log( "detectExtensionScreenshare for ", extensionID, " -> " , status);
+
+        if(status == 'installed-enabled') {
+            createScreenshareButton();
+        }
+        
+        if(status == 'installed-disabled') {
+            // chrome extension is installed but disabled.
+            shownotification("chrome extension is installed but disabled.");
+            createScreenshareButton();
+        }
+        
+        if(status == 'not-installed') {
+            // chrome extension is not installed
+            createScreenInstallButton(extensionID);
+        }
+        
+        if(status == 'not-chrome') {
+            // using non-chrome browser
+        }
+
+        webrtcdevPrepareScreenShare();
+    });
 }

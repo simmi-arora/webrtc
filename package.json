@@ -1,6 +1,6 @@
 {
   "name": "webrtcdevelopment",
-  "version": "1.6.29",
+  "version": "1.6.30",
   "description": "webrtc based communication and collaboration client . contains lot of experiments modules ",
   "main": "webrtcserver.js",
   "engines": {
@@ -11,7 +11,8 @@
     "node-static": "^0.7.7",
     "socket.io": "0.9.*",
     "supervisor": "^0.10.0",
-    "restify": "*"
+    "restify": "*",
+    "log":"*"
   },
   "devDependencies": {
     "apidoc": "*",

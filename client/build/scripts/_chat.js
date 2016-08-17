@@ -10,11 +10,11 @@ function createChatButton(chatobj){
 
     var chatInput= document.createElement("input");
     chatInput.setAttribute("type", "text");
-    chatInput.className= "form-control";
+    chatInput.className= "form-control chatInputClass";
     chatInput.id="chatInput";
 
     var chatButton= document.createElement("span");
-    chatButton.className= "btn";
+    chatButton.className= "btn btn-primary";
     chatButton.innerHTML= "Enter";
     chatButton.onclick=function(){
         var chatInput=document.getElementById("chatInput");
@@ -22,10 +22,14 @@ function createChatButton(chatobj){
         chatInput.value = "";
     }
     
+    var whoTyping= document.createElement("div");
+    whoTyping.className= "whoTypingClass";
+    whoTyping.id="whoTyping";
+
     mainInputBox.appendChild(chatInput);
     mainInputBox.appendChild(chatButton);
+    mainInputBox.appendChild(whoTyping);
     document.getElementById(chatobj.chatContainer).appendChild(mainInputBox);
-
 
     var chatBoard=document.createElement("div");
     chatBoard.className="chatMessagesClass";
@@ -47,6 +51,10 @@ function createChatButton(chatobj){
     var li =document.createElement("li");
     li.appendChild(button);
     document.getElementById("topIconHolder_ul").appendChild(li);
+}
+
+function updateWhotyping(data){
+    document.getElementById("whoTyping").innerHTML=data;
 }
 
 function addMessageLineformat(messageDivclass, message , parent){

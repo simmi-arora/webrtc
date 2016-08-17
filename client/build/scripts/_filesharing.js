@@ -5,14 +5,6 @@ File sharing
 var progressHelper = {};
 
 function createFileShareButton(fileshareobj){
-/*    var button= document.getElementById(fileshareobj.button.id);
-    button.onclick = function() {
-        var fileSelector = new FileSelector();
-        fileSelector.selectSingleFile(function(file) {
-            sendFile(file);
-        });
-    };*/
-
     var button= document.createElement("span");
     button.setAttribute("data-provides","fileinput");
     button.className= fileshareobj.button.class;

@@ -18,9 +18,6 @@
         <div class="row topPanelClass" >    
             <div id="topIconHolder" >
                 <ul id="topIconHolder_ul">
-                    <li hidden> <span id="username" class="userName" hidden>a</span></li>
-                    <li hidden> <span id="numbersofusers" class="numbers-of-users" hidden></span></li>
-                    
                     <li> <span id="HelpButton" class="btn btn-info glyphicon glyphicon-question-sign topPanelButton" data-toggle="modal" data-target="#helpModal" > Help </span> </li>
                     <li> <span id="SettingsButton" class="btn btn-info glyphicon glyphicon-exclamation-sign topPanelButton" data-toggle="modal" data-target="#settingsModal" > Settings </span> </li>
                     <!-- <li id="timerli" hidden> Time Remaining <span id="countdownMinutes">3</span>:<span id="countdownSecond">60</span></li>  -->
@@ -34,16 +31,16 @@
 
         <!-- .......................... Row 1 widgets ......................... -->
         
-        <div id="widget-drawContainer" class="row secondPanelClass" hidden style="margin-top:40px"> 
+        <div id="widget-drawContainer" class="row secondPanelClass drawContainerClass" hidden style="margin-top:40px"> 
         </div>
 
-        <textarea id="widget-texteditorContainer" class="row secondPanelClass" hidden style="margin-top:40px; height: 300px; width: 700px;"> 
+        <textarea id="widget-texteditorContainer" class="row secondPanelClass texteditorContainerClass" hidden style="margin-top:40px; height: 300px; width: 700px;"> 
         </textarea> 
 
         <div id="widget-screenshareContainer" class="row secondPanelClass" hidden style="margin-top:40px"> 
         </div>
 
-        <div id="widget-locationContainer" class="row secondPanelClass" hidden style="margin-top:40px"> 
+        <div id="widget-locationContainer" class="row secondPanelClass locationContainerClass" hidden style="margin-top:40px"> 
         </div>
 
         <div id="widget-logsContainer" class="row secondPanelClass" hidden style="margin-top:40px">
@@ -71,9 +68,8 @@
                                 <video name="otherConferenceVideo" autoplay="autoplay" />
                             </div>
 
-                            <div class="col-sm-4 merge" style="height:100%"  >
-                                <div class="row" id="chatContainer">
-                                </div>
+                            <div class="col-sm-4 merge">
+                                <div class="row" id="chatContainer"></div>
                             </div>
                         </div>
                 </div>
@@ -304,6 +300,10 @@ $('document').ready(function(){
                         button:{
                             class:"btn btn-success glyphicon glyphicon-file topPanelButton",
                             html:"File"
+                        },
+                        props:{
+                            fileShare:divided,
+                            fileList:divided
                         }
                     },
         location    :{

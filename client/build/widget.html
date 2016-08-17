@@ -4,14 +4,12 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0, user-scalable=no">
-
-  <link href="minScripts/drawBoardCss.css" rel="stylesheet">
+  	<link href="minScripts/drawBoardCss.css" rel="stylesheet">
 </head>
 <body>
-
-	<section class="design-surface" style="width:100% ; height: 100%">
-		<canvas id="temp-canvas" ></canvas>
-		<canvas id="main-canvas" ></canvas>
+	<section id="drawBox" class="design-surface" >
+		<canvas id="temp-canvas"></canvas>
+		<canvas id="main-canvas"></canvas>
 	</section>
 
 	<section id="tool-box" class="tool-box" style="height: 250px">
@@ -32,7 +30,6 @@
 		<canvas id="additional" width="40" height="40" style="display:none"></canvas>
 	</section>
 
-
 	<section id="arc-range-container" class="arc-range-container" style="display:none" >
 		<input id="arc-range" class="arc-range" type="text" value="2">
 		<input type="checkbox" id="is-clockwise" checked="" class="allow-select">
@@ -40,7 +37,6 @@
 		<div class="arc-range-container-guide">Use arrow keys ↑↓</div>
 	</section>
 	
-
 	<section class="code-container">
 		<textarea id="code-text" class="code-text allow-select"></textarea>
 	</section>
@@ -81,7 +77,6 @@
 		
 		<div id="colors-done" class="done">Done</div>
 	</section>
-
 
 	<section id="copy-container" class="context-popup">
 		<div>

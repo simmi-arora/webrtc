@@ -11,12 +11,7 @@ var usersList       = document.getElementById("userslist");
 var numbersOfUsers  = document.getElementById("numbersofusers");
 var usersContainer  = document.getElementById("usersContainer");
 
-var card = document.getElementById('card');
-var main = document.querySelector('#main');
-var smaller = document.querySelector('#smaller');
 var tempuserid = guid();
-
-var whoIsTyping = document.querySelector("#who-is-typing");
 
 var sessions = {};
 
@@ -118,7 +113,7 @@ var WebRTCdev= function(session, widgets){
 
             /*checkDevices(rtcMultiConnection);*/
             rtcMultiConnection.extra = {
-                uuid : userid,
+                uuid : tempuserid,
                 name : localobj.userdetails.username,
                 color: localobj.userdetails.usercolor,
                 email: localobj.userdetails.useremail
@@ -131,9 +126,9 @@ var WebRTCdev= function(session, widgets){
             rtcMultiConnection.customStreams = {}, 
             rtcMultiConnection.autoCloseEntireSession = !1, 
             rtcMultiConnection.autoTranslateText = !1, 
-            rtcMultiConnection.maxParticipantsAllowed = remoteobj.maxAllowed, 
+            rtcMultiConnection.maxParticipantsAllowed = (remoteobj.maxAllowed=="unlimited"?256:remoteobj.maxAllowed), 
             rtcMultiConnection.blobURLs = {},
-
+            rtcMultiConnection.dontCaptureUserMedia = true,
             /*
             rtcMultiConnection.onNewParticipant = function(participantId, userPreferences) {
                 console.log("onNewParticipant" ,participantId ,userPreferences);
@@ -185,9 +180,9 @@ var WebRTCdev= function(session, widgets){
             rtcMultiConnection.onmessage = function(e) {
                 console.log(" on message ", e);
                 if(e.data.typing){
-                    void(whoIsTyping.innerHTML = e.extra.username + " is typing ...") ;
+                    updateWhotyping(e.extra.name + " is typing ...") ;
                 }else if(e.data.stoppedTyping){
-                    void(whoIsTyping.innerHTML = "");
+                    updateWhotyping("");
                 }else{
                     switch(e.data.type){
                         case "screenshare":
@@ -195,14 +190,13 @@ var WebRTCdev= function(session, widgets){
                             createScreenViewButton();
                         break;
                         case "chat":
-                            whoIsTyping.innerHTML = e.extra.username;
+                            updateWhotyping(e.extra.name+ " has send message");
                             addNewMessage({
-                                header: e.extra.username,
+                                header: e.extra.name,
                                 message: e.data.message,
                                 userinfo: getUserinfo(rtcMultiConnection.blobURLs[e.userid], "chat-message.png"),
                                 color: e.extra.color
                             }); 
-                            /*void(document.title = e.data.message);*/
                         break;
                         case "imagesnapshot":
                             var peerinfo=findPeerInfo( e.userid );
@@ -320,7 +314,6 @@ var WebRTCdev= function(session, widgets){
             }
 
             if(screenshareobj.active){
-                alert("screenshare");
                 detectExtensionScreenshare(screenshareobj.extensionID); 
             }   
 
@@ -626,7 +619,7 @@ function updateWebCallView(peerInfo){
             var video = document.createElement('video');
             video.autoplay="autoplay";
             remoteVideos[vi]=video;
-            document.getElementById(remoteobj.videoContainer).appendChild(video);
+            document.getElementById(remoteobj.dynamicVideos.videoContainer).appendChild(video);
             remvid=remoteVideos[vi];
         }else{
             remvid=document.getElementsByName(remoteVideos[vi])[0];
@@ -649,6 +642,7 @@ function updateWebCallView(peerInfo){
 ************************************************************************************/
 opneWebRTC=function(channel , userid){
     rtcMultiConnection.open(channel);
+    alert(remoteobj.maxAllowed);
     socket.emit("open-channel", {
         channel    : channel,
         sender     : tempuserid,
@@ -667,8 +661,13 @@ connectWebRTC=function(type, channel , userid , remoteUsers){
     }else{
         shownotification("Connection type not found");
     }
-    
-    alert("get user media invokeGetUserMedia");
+
+    void(document.title = channel);
+
+    rtcMultiConnection.dontCaptureUserMedia = false,
+
+    rtcMultiConnection.getUserMedia();
+
     rtcMultiConnection.session = {
         video: incomingVideo,
         audio: incomingAudio,
@@ -719,11 +718,9 @@ leaveWebRTC=function(){
     shownotification("Leaving the session ");
 }
 
-/*********************************************8
-ICE
-**************************************************/
 
-var iceServers=[];
+
+
 var repeatInitilization = null;
 
 function startcall(obj){
@@ -789,91 +786,3 @@ function showStatus(){
     console.log(webcallpeers);
 }
 
-/************************* ICE NAT TURN *******************************/
-
-function createCORSRequest(method, url) {
-    var xhr = new XMLHttpRequest();
-    if ("withCredentials" in xhr) {
-        xhr.open(method, url, true);
-    } else if (typeof XDomainRequest != "undefined") {
-        xhr = new XDomainRequest();
-        xhr.open(method, url);
-    } else {
-        xhr = null;
-    }
-    return xhr;
-}
-
-function getICEServer(username , secretkey , domain , appname , roomname , secure){
-    console.log(" TURN -------------" , username , secretkey , domain , appname , roomname , secure);
-    var url = 'https://service.xirsys.com/ice';
-    var xhr = createCORSRequest('POST', url);
-    xhr.onload = function () {
-        console.log(xhr.responseText);
-        if(JSON.parse(xhr.responseText).d==null){
-            webrtcdevIceServers="err";
-            shownotification(" media not able to pass through "+ JSON.parse(xhr.responseText).e);
-        }else{
-            webrtcdevIceServers=JSON.parse(xhr.responseText).d.iceServers;
-            console.log("iceserver got" ,webrtcdevIceServers );
-        }
-    };
-    xhr.onerror = function () {
-        console.error('Woops, there was an error making xhr request.');
-    };
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
-    /* xhr.send('ident=muazkh&secret=59d93f26-5b89-11e5-babe-d61aeb366a63&domain=webrtcexperiment-webrtc.netdna-ssl.com&application=default&room=default&secure=1');*/
-    xhr.send('ident='+username+'&secret='+secretkey +
-        '&domain='+domain +'&application='+appname+
-        '&room='+ roomname+'&secure='+secure);
-}
-
-function attachMediaStream(element, stream) {
-    console.log("element.src", typeof element.srcObject, typeof element.src );
-    if (typeof element.src == 'string') {
-        element.src = URL.createObjectURL(stream);
-    }else if (typeof element.srcObject == 'object') {
-        element.srcObject = stream;
-    }else{
-        console.log('Error attaching stream to element.' , element , stream);
-    }
-}
-
-
-function reattachMediaStream(to, from) {
-    to.src = from.src;
-}
-
-
-/**************************************************************
-Screenshare 
-****************************************************************/
-
-function detectExtensionScreenshare(extensionID){
-
-    rtcMultiConnection.getChromeExtensionStatus(extensionID, function(status) {
-        console.log( "detectExtensionScreenshare for ", extensionID, " -> " , status);
-
-        if(status == 'installed-enabled') {
-            createScreenshareButton();
-        }
-        
-        if(status == 'installed-disabled') {
-            // chrome extension is installed but disabled.
-            shownotification("chrome extension is installed but disabled.");
-            createScreenshareButton();
-        }
-        
-        if(status == 'not-installed') {
-            // chrome extension is not installed
-            createScreenInstallButton(extensionID);
-        }
-        
-        if(status == 'not-chrome') {
-            // using non-chrome browser
-        }
-
-        webrtcdevPrepareScreenShare();
-    });
-}
