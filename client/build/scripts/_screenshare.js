@@ -247,9 +247,9 @@ function createScreenshareButton(){
             screenShareButton.className=screenshareobj.button.shareButton.class_on;
             screenShareButton.innerHTML=screenshareobj.button.shareButton.html_on;
         }else if(screenShareButton.className==screenshareobj.button.shareButton.class_on){
-            webrtcdevStopShareScreen();
             screenShareButton.className=screenshareobj.button.shareButton.class_off;
             screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
+            webrtcdevStopShareScreen();
         }
     };
     var li =document.createElement("li");

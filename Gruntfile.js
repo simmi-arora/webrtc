@@ -32,12 +32,9 @@ module.exports = function(grunt) {
         copy: {
           main: {
             files: [
-
                 // includes files within path and its sub-directories
                 {expand: true, src: ['client/build/minScripts/**'], dest: 'client/prod/minScripts/'},
                 {expand: true, src: ['client/build/api/**'], dest: 'client/prod/api/'},
-
-
             ],
           },
         }
