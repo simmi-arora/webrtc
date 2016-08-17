@@ -39,23 +39,19 @@ function sendFile(file){
 
 }
 
-function addProgressHelper(uuid , userid , filename , fileSize,  progressHelperclassName ){
-    for(i in webcallpeers ){
-        if(webcallpeers[i].userid==userid){
-            var n = document.createElement("div");
-            n.title = filename,
-            n.id = uuid+ filename,
-            n.setAttribute("class", progressHelperclassName),
-            n.innerHTML = "<label>0%</label><progress></progress>", 
-            document.getElementById(webcallpeers[i].fileListContainer).appendChild(n),              
-            progressHelper[uuid] = {
-                div: n,
-                progress: n.querySelector("progress"),
-                label: n.querySelector("label")
-            }, 
-            progressHelper[uuid].progress.max = fileSize;
-        }
-    }
+function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelperclassName ){
+    var progressDiv = document.createElement("div");
+    progressDiv.title = filename,
+    progressDiv.id = uuid+ filename,
+    progressDiv.setAttribute("class", progressHelperclassName),
+    progressDiv.innerHTML = "<label>0%</label><progress></progress>", 
+    document.getElementById(peerinfo.fileList.container).appendChild(progressDiv),              
+    progressHelper[uuid] = {
+        div: progressDiv,
+        progress: progressDiv.querySelector("progress"),
+        label: progressDiv.querySelector("label")
+    }, 
+    progressHelper[uuid].progress.max = fileSize;
 }
 
 function addNewFileLocal(e) {
@@ -261,12 +257,16 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
 
 function displayFile( uuid , peerinfo , _fileurl , _filename , _filetype ){
     console.log("displayFile peerinfo->",peerinfo);
-    var elementDisplay = peerinfo.fileSharingContainer;
-    var parentdom , filedom ;
-    parentdom = (document.getElementById(elementDisplay)?document.getElementById(elementDisplay):document.body);
-    filedom=getFileElementDisplayByType(_filetype , _fileurl , _filename);
-    parentdom.innerHTML="";
-    parentdom.appendChild(filedom);
+
+    var parentdom =  document.getElementById(peerinfo.fileShare.container);
+    var filedom=getFileElementDisplayByType(_filetype , _fileurl , _filename);
+    if(parentdom){
+        parentdom.innerHTML="";
+        parentdom.appendChild(filedom);
+    }else{
+        document.body.appendChild(filedom);
+    }
+
     /*
     if($('#'+ parentdom).length > 0)
         $("#"+element).html(getFileElementDisplayByType(_filetype , _fileurl , _filename));
@@ -315,19 +315,22 @@ function removeFile(element){
 
 function createFileSharingBox(peerinfo, parent){
 
-    /*--------------------------------add for File Share --------------------*/
+    if(document.getElementById(peerinfo.fileShare.outerbox))
+        return;
+
     var fileSharingBox=document.createElement("div");
     fileSharingBox.className= "col-sm-6 fileViewing1Box";
     fileSharingBox.setAttribute("style","background-color:"+peerinfo.color);
-    fileSharingBox.id=peerinfo.fileSharingSubContents.fileSharingBox;
+    fileSharingBox.id=peerinfo.fileShare.outerbox;
 
+    /*--------------------------------add for File Share control Bar--------------------*/
     var fileControlBar=document.createElement("p");
     fileControlBar.appendChild(document.createTextNode("File Viewer for "+ peerinfo.name));
 
     var minButton= document.createElement("span");
     minButton.className="btn btn-default glyphicon glyphicon-import closeButton";
     minButton.innerHTML="Minimize";
-    minButton.id=peerinfo.fileSharingSubContents.minButton;
+    minButton.id=peerinfo.fileShare.minButton;
     minButton.setAttribute("lastClickedBy" ,'');
     minButton.onclick=function(){
         resizeFV(peerinfo.userid, minButton.id , arrFilesharingBoxes);
@@ -336,40 +339,41 @@ function createFileSharingBox(peerinfo, parent){
     var maxButton= document.createElement("span");
     maxButton.className= "btn btn-default glyphicon glyphicon-export closeButton";
     maxButton.innerHTML="Maximize";
-    maxButton.id=peerinfo.fileSharingSubContents.maxButton;
+    maxButton.id=peerinfo.fileShare.maxButton;
     maxButton.setAttribute("lastClickedBy" ,'');
     maxButton.onclick=function(){
-        maxFV(peerinfo.userid, maxButton.id , arrFilesharingBoxes , peerinfo.fileSharingSubContents.fileSharingBox);
+        maxFV(peerinfo.userid, maxButton.id , arrFilesharingBoxes , peerinfo.fileShare.outerbox);
     }
 
     var closeButton= document.createElement("span");
     closeButton.className="btn btn-default glyphicon glyphicon-remove closeButton";
     closeButton.innerHTML="Close";
-    closeButton.id=peerinfo.fileSharingSubContents.closeButton;
+    closeButton.id=peerinfo.fileShare.closeButton;
     closeButton.setAttribute("lastClickedBy" ,'');
     closeButton.onclick=function(){
-        closeFV(peerinfo.userid, closeButton.id , peerinfo.fileSharingContainer);
+        closeFV(peerinfo.userid, closeButton.id , peerinfo.fileShare.container);
     }
 
     fileControlBar.appendChild(minButton);
     fileControlBar.appendChild(maxButton);
     fileControlBar.appendChild(closeButton);
 
-    var fileSharingContainer = document.createElement("div");
-    fileSharingContainer.className ="filesharingWidget";
-    fileSharingContainer.id =peerinfo.fileSharingContainer;
+    /*--------------------------------add for File Share Container--------------------*/
+    var fileShareContainer = document.createElement("div");
+    fileShareContainer.className ="filesharingWidget";
+    fileShareContainer.id =peerinfo.fileShare.container;
 
     var fillerArea=document.createElement("p");
     fillerArea.className="filler";
 
     if(debug){
         var nameBox=document.createElement("span");
-        nameBox.innerHTML=fileSharingContainer.id; 
+        nameBox.innerHTML="<br/>"+fileShareContainer.id+"<br/>"; 
         fileSharingBox.appendChild(nameBox);
     }
 
     fileSharingBox.appendChild(fileControlBar);
-    fileSharingBox.appendChild(fileSharingContainer);
+    fileSharingBox.appendChild(fileShareContainer);
     fileSharingBox.appendChild(fillerArea);
 
     parent.appendChild(fileSharingBox);
@@ -377,34 +381,40 @@ function createFileSharingBox(peerinfo, parent){
 
 function createFileListingBox(peerinfo, parent){
 
-   /*--------------------------------add for File List --------------------*/
+    if(document.getElementById(peerinfo.fileList.outerbox))
+        return;
 
     var fileListingBox= document.createElement("div");
     fileListingBox.className="col-sm-6  filesharing1Box";
+    fileListingBox.id=peerinfo.fileList.outerbox;
     fileListingBox.setAttribute("style","background-color:"+peerinfo.color);
 
-    var fileListingControlBar=document.createElement("p");
+
+    /*--------------------------------add for File List control Bar--------------------*/
+
+    var fileListControlBar=document.createElement("p");
 
     var fileHelpButton= document.createElement("span");
     fileHelpButton.className="btn btn-default glyphicon glyphicon-question-sign closeButton";
     fileHelpButton.innerHTML="Help";
 
-    fileListingControlBar.appendChild(document.createTextNode("List of Uploaded Files"));
-    fileListingControlBar.appendChild(fileHelpButton);
+    fileListControlBar.appendChild(document.createTextNode("List of Uploaded Files"));
+    fileListControlBar.appendChild(fileHelpButton);
 
-    var fileListingContainer= document.createElement("div");
-    fileListingContainer.id=peerinfo.fileListContainer;
+   /*--------------------------------add for File List Container--------------------*/
+    var fileListContainer= document.createElement("div");
+    fileListContainer.id=peerinfo.fileList.container;
 
     var fileProgress = document.createElement("div");
 
     if(debug){
         var nameBox=document.createElement("span");
-        nameBox.innerHTML=fileListingContainer.id; 
+        nameBox.innerHTML=fileListContainer.id; 
         fileListingBox.appendChild(nameBox);
     }
 
-    fileListingBox.appendChild(fileListingControlBar);
-    fileListingBox.appendChild(fileListingContainer);
+    fileListingBox.appendChild(fileListControlBar);
+    fileListingBox.appendChild(fileListContainer);
     fileListingBox.appendChild(fileProgress);
 
     parent.appendChild(fileListingBox);

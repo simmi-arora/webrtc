@@ -263,13 +263,13 @@ var WebRTCdev= function(session, widgets){
 
             rtcMultiConnection.onclose = rtcMultiConnection.onleave = function(e) {
                 addNewMessage({
-                    header: e.extra.username,
-                    message: e.extra.username + " left session.",
+                    header: e.extra.name,
+                    message: e.extra.name + " left session.",
                     userinfo: getUserinfo(rtcMultiConnection.blobURLs[e.userid], "info.png"),
                     color: e.extra.color
                 }), 
                 
-                shownotification(e.extra.username + " left the conversation.");
+                shownotification(e.extra.name + " left the conversation.");
                 //rtcMultiConnection.playRoleOfInitiator()
                 for(x in webcallpeers){
                     if(webcallpeers[x].userid=e.userid)
@@ -286,8 +286,9 @@ var WebRTCdev= function(session, widgets){
             },
 
             rtcMultiConnection.onFileStart = function(file) {
-                alert("on File start "+ file.name);
-                addProgressHelper(file.uuid , file.userid , file.name , file.maxChunks,  "fileBoxClass");
+                console.log("on File start "+ file.name);
+                var peerinfo=findPeerInfo(file.userid);
+                addProgressHelper(file.uuid , peerinfo , file.name , file.maxChunks,  "fileBoxClass");
             }, 
 
             rtcMultiConnection.onFileProgress = function(e) {
@@ -296,8 +297,7 @@ var WebRTCdev= function(session, widgets){
             }, 
 
             rtcMultiConnection.onFileEnd = function(file) {
-                console.log("onFileEnd" ,file);
-                alert("On file End || userid "+ file.userid );
+                console.log("On file End "+ file.name );
                 var peerinfo=findPeerInfo(file.userid);
                 if(peerinfo!=null)
                     peerinfo.filearray.push(file.name);
@@ -307,6 +307,7 @@ var WebRTCdev= function(session, widgets){
 
             if(chatobj.active){
                 createChatButton(chatobj);
+                createChatBox(chatobj);
             }
 
             if(screenrecordobj.active){
@@ -642,7 +643,6 @@ function updateWebCallView(peerInfo){
 ************************************************************************************/
 opneWebRTC=function(channel , userid){
     rtcMultiConnection.open(channel);
-    alert(remoteobj.maxAllowed);
     socket.emit("open-channel", {
         channel    : channel,
         sender     : tempuserid,
@@ -748,18 +748,41 @@ function updatePeerInfo(userid , username , usecolor , useremail,  type ){
         name  :  username,
         color : usecolor,
         email : useremail,
-        fileSharingContainer : "widget-filesharing-container"+userid,
-        fileSharingSubContents:{
-            fileSharingBox: "widget-filesharing-box"+userid,
-            minButton: "widget-filesharing-minbutton"+userid,
-            maxButton: "widget-filesharing-maxbutton"+userid,
-            closeButton: "widget-filesharing-closebutton"+userid
-        },
-        fileListContainer : "widget-filelisting-container"+userid,
         controlBarName: "control-video"+userid,
         filearray : [],
         vid : "video"+type+"_"+userid
     };
+
+    if(fileshareobj.props.fileShare=="single"){
+        peerInfo.fileShare={
+            outerbox: "widget-filesharing-box",
+            container : "widget-filesharing-container",
+            minButton: "widget-filesharing-minbutton",
+            maxButton: "widget-filesharing-maxbutton",
+            closeButton: "widget-filesharing-closebutton"
+        };
+    }else{
+        peerInfo.fileShare={
+            outerbox: "widget-filesharing-box"+userid,
+            container : "widget-filesharing-container"+userid,
+            minButton: "widget-filesharing-minbutton"+userid,
+            maxButton: "widget-filesharing-maxbutton"+userid,
+            closeButton: "widget-filesharing-closebutton"+userid
+        };
+    }
+
+    if(fileshareobj.props.fileList=="single"){
+        peerInfo.fileList={
+            outerbox: "widget-filelisting-box",
+            container : "widget-filelisting-container"
+        };
+    }else{
+        peerInfo.fileList={
+            outerbox: "widget-filelisting-box"+userid,
+            container : "widget-filelisting-container"+userid
+        };
+    }
+
     console.log("updated peerInfo: " ,peerInfo);
     webcallpeers.push(peerInfo);
 }

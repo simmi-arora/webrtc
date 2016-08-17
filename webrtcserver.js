@@ -1,7 +1,6 @@
 var fs = require('fs');
 var _static = require('node-static');
 var https = require('https');
-
 var Log = require('log')
   , log = new Log('info');
 

@@ -2,16 +2,40 @@
         Chat
 **************************************************************************************/
 function createChatButton(chatobj){
+    var button= document.createElement("span");
+    button.className= chatobj.button.class_on;
+    button.innerHTML= chatobj.button.html_on;
+    button.onclick = function() {
+        if(button.className==chatobj.button.class_off){
+            document.getElementById(chatobj.chatContainer).hidden=true;
+            button.className=chatobj.button.class_on;
+            button.innerHTML= chatobj.button.html_on;
+        }else if(button.className==chatobj.button.class_on){
+            document.getElementById(chatobj.chatContainer).hidden=false;
+            button.className=chatobj.button.class_off;
+            button.innerHTML= chatobj.button.html_off;
+        }
+    };
 
-    /*
-    <p id="who-is-typing" hidden></p>
-    */
+    var li =document.createElement("li");
+    li.appendChild(button);
+    document.getElementById("topIconHolder_ul").appendChild(li);
+}
+
+function createChatBox(chatobj){
+
     var mainInputBox=document.createElement("div");
 
     var chatInput= document.createElement("input");
     chatInput.setAttribute("type", "text");
     chatInput.className= "form-control chatInputClass";
     chatInput.id="chatInput";
+    chatInput.onkeypress=function(e){
+        if (e.keyCode == 13) {
+            sendChatMessage(chatInput.value);
+            chatInput.value = "";
+        }
+    };
 
     var chatButton= document.createElement("span");
     chatButton.className= "btn btn-primary";
@@ -37,20 +61,6 @@ function createChatButton(chatobj){
     chatBoard.id="chatBoard";
     document.getElementById(chatobj.chatContainer).appendChild(chatBoard);
 
-    var button= document.createElement("span");
-    button.className= chatobj.button.class_off;
-    button.innerHTML= chatobj.button.html_off;
-    button.onclick = function() {
-        if(button.className==button.button.class_off){
-            chatobj.chatContainer.hidden=true;
-        }else if(button.className==button.button.class_on){
-            chatobj.chatContainer=false;
-        }
-    };
-
-    var li =document.createElement("li");
-    li.appendChild(button);
-    document.getElementById("topIconHolder_ul").appendChild(li);
 }
 
 function updateWhotyping(data){

@@ -69,7 +69,7 @@
                             </div>
 
                             <div class="col-sm-4 merge">
-                                <div class="row" id="chatContainer"></div>
+                                <div class="row chatContainerClass" id="chatContainer"></div>
                             </div>
                         </div>
                 </div>
@@ -188,10 +188,7 @@
 
 <script src="property.js"></script>
 <link rel=stylesheet href="minScripts/webrtcdevelopment.css">
-<!-- <script src="scripts/FileBufferReader.js",></script> -->
 <script src="minScripts/webrtcdevelopment.js"></script>
- <script src="scripts/_screenshare.js"></script> 
-<!-- <script src="scripts/_filesharing.js"></script>   -->
 <script src="scripts/start.js"></script> 
 
 <script>
@@ -237,6 +234,20 @@ $('document').ready(function(){
         dynamicVideos: false 
     };
 
+    var incoming={
+        audio:  true,
+        video:  true,
+        data:   true,
+        screen: true
+    };
+
+    var outgoing={
+        audio:  true,
+        video:  true,
+        data:   true,
+        screen: true
+    };
+
     webrtcdomobj= new WebRTCdom(
         local,remote, incoming, outgoing
     );
@@ -254,19 +265,6 @@ $('document').ready(function(){
             }
     };
     
-    var incoming={
-        audio:  true,
-        video:  true,
-        data:   true,
-        screen: true
-    };
-
-    var outgoing={
-        audio:  true,
-        video:  true,
-        data:   true,
-        screen: true
-    };
 
     var widgets={
         debug      : true,
@@ -302,8 +300,8 @@ $('document').ready(function(){
                             html:"File"
                         },
                         props:{
-                            fileShare:divided,
-                            fileList:divided
+                            fileShare:"divided",
+                            fileList:"divided"
                         }
                     },
         location    :{
