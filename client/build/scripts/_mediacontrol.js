@@ -95,3 +95,19 @@ function transitionToWaiting() {
     miniVideo.style.opacity = 0;
     remoteVideo.style.opacity = 0;
 }
+
+function attachMediaStream(element, stream) {
+    console.log("element.src", typeof element.srcObject, typeof element.src );
+    if (typeof element.src == 'string') {
+        element.src = URL.createObjectURL(stream);
+    }else if (typeof element.srcObject == 'object') {
+        element.srcObject = stream;
+    }else{
+        console.log('Error attaching stream to element.' , element , stream);
+    }
+}
+
+
+function reattachMediaStream(to, from) {
+    to.src = from.src;
+}

@@ -143,10 +143,10 @@ var scriptList=[
     "client/build/scripts/MediaStreamRecorder.js",
     "client/build/scripts/RecordRTC.js",
     "client/build/scripts/screenshot.js",
+    "client/build/scripts/_snapshot.js",
     "client/build/scripts/_geolocation.js",
     "client/build/scripts/_chat.js",
     "client/build/scripts/_mediacontrol.js",
-    "client/build/scripts/_snapshot.js",
     "client/build/scripts/_record.js",
     "client/build/scripts/_screenrecord.js",
     "client/build/scripts/_filesharing.js",
@@ -157,6 +157,7 @@ var scriptList=[
     "client/build/scripts/_texteditor.js",
     "client/build/scripts/_mediahandler.js",
     "client/build/scripts/_screenshare.js",
+    "client/build/scripts/_turn.js",
     "client/build/scripts/timer.js",
     "client/build/scripts/RTCMultiConnection.js"
 ];
@@ -201,7 +202,12 @@ gulp.task('webrtcdevelopmentcss',function() {
     console.log(" gulping custom stylesheets css  ");
     cssList=[
       "client/build/css/Style.css",
-      "client/build/css/styles.css"
+      "client/build/css/styles.css",
+      "client/build/css/chat.css",
+      "client/build/css/cursor.css",
+      "client/build/css/timer.css",
+      "client/build/css/filesharing.css",
+      "client/build/css/screenshare.css"
     ];
     console.log(cssList);
     gulp.src(cssList)

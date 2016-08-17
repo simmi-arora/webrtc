@@ -18,12 +18,8 @@
         <div class="row topPanelClass" >    
             <div id="topIconHolder" >
                 <ul id="topIconHolder_ul">
-                    <li hidden> <span id="username" class="userName" hidden>a</span></li>
-                    <li hidden> <span id="numbersofusers" class="numbers-of-users" hidden></span></li>
-                    
                     <li hidden> <span id="HelpButton" class="btn btn-info glyphicon glyphicon-question-sign topPanelButton" data-toggle="modal" data-target="#helpModal" > Help </span> </li>
                     <li hidden> <span id="SettingsButton" class="btn btn-info glyphicon glyphicon-exclamation-sign topPanelButton" data-toggle="modal" data-target="#settingsModal" > Settings </span> </li>
-
                 </ul>
             </div>
         </div>
@@ -72,29 +68,16 @@
             </div>
 
             <!-- when remote is connected -->
-            <div id ="confVideoContainer" class="conatiner" style="display: inline;" >
+            <div id ="confVideoContainer" class="conatiner" hidden>
                 <div class="col-sm-4 merge" class="leftVideoClass" id="userVideo">
                     <video name="myConferenceVideo" autoplay="autoplay" muted="true" />
                 </div>
 
-                <div class="col-sm-4 merge" class="rightVideoClass" id="othersVideo" hidden>
+                <div class="col-sm-4 merge" class="rightVideoClass" id="othersVideo" >
                 </div>
 
-                <div class="col-sm-4 merge"  style="height:100%" id="chatbox" >
-                    <div class="row">
-
-                        <div class="mainInputBox">   
-                            <input type=text style="width:70%;float: left;" id="chatInput" class="form-control" placeholder="Type message here">
-                            <button class="btn" id="chatInputButton">Send</button>
-                            <button class="btn" id="fileShareButton">File</button>
-                        </div>
-
-                        <div  id="chatBoard" contenteditable class="chatMessagesClass">
-                            <div id="all-messages" style="padding:5px;"></div>
-                        </div>
-                        <p id="who-is-typing" hidden></p>
-
-                    </div>
+                <div class="col-sm-4 merge">
+                    <div class="row" id="chatContainer"></div>
                 </div>
 
             </div>
@@ -238,18 +221,21 @@ $('document').ready(function(){
         userMetaDisplay:false,
         userdetails:{
             username:"Expert",
-            usercolor: "Blue",
+            usercolor: "gray",
             useremail: "abc@gmail.com"
         }
     };
 
     var remote={
         videoarr: ["myConferenceVideo"],
-        remoteVideoCount: "unlimited",
-        videoContainer : "othersVideo",
+        maxAllowed: "unlimited",
+        videoContainer : "confVideoContainer",
         videoClass:"",
         userDisplay:false,
-        userMetaDisplay:false    
+        userMetaDisplay:false,
+        dynamicVideos: {
+            videoContainer:"othersVideo"
+        }
     };
 
     var incoming={
@@ -284,7 +270,6 @@ $('document').ready(function(){
             }
     };
 
-
     var arrLang=    [ '<option mime="text/x-csrc" mode="clike" value="1">C</option>',
                      '<option mime="text/x-c++src" mode="clike" value="2">C++</option>' ,
                      '<option mime="text/css" mode="css" value="4">CSS</option> ',
@@ -294,23 +279,27 @@ $('document').ready(function(){
                      '<option mime="text/javascript" mode="javascript" value="16">Javascript</option>',  
                      '<option mime="application/json" mode="javascript" value="17">JSON</option> ']
     var widgets={
-        chat        :{
+        chat    :{
                         active: true,
-                        chatContainer: "",
-                        input:{
-                            id:"chatInput"
-                        },
+                        chatContainer: "chatContainer",
                         button:{
-                            id:"chatInputButton",
-                            class:"form-control btn-primary buttonChatSend",
-                            html:"Send"
+                            class_on:"btn btn-warning glyphicon glyphicon-font topPanelButton",
+                            html_on:"Chat",
+                            class_off:"btn btn-success glyphicon glyphicon-font topPanelButton",
+                            html_off:"Chat"
                         }
-                    },
+                },
         fileShare   :{
                         active : true,
                         fileShareContainer : "fileSharingRow",
-                        button :{
-                            id:"fileShareButton"
+                        fileListContainer : "fileListingRow",
+                        button:{
+                            class:"btn btn-success glyphicon glyphicon-file topPanelButton",
+                            html:"File"
+                        },
+                        props:{
+                            fileShare:single,
+                            fileList:single
                         }
                     },
         screenrecord:{
@@ -324,25 +313,6 @@ $('document').ready(function(){
                             html_off:"Record"
                         }
                     }, 
-        screenshare : {
-                        active:false,
-                        screenshareContainer: "widget-screenshareContainer",
-                        extensionID: props.extensionID,
-                        button:{
-                            shareButton:{
-                                class_on:"btn btn-warning  glyphicon glyphicon-expand topPanelButton",
-                                html_on:"Stop Sharing",
-                                class_off:"btn btn-success glyphicon glyphicon-expand topPanelButton",
-                                html_off:"ScreenShare"
-                            },
-                            viewButton:{
-                                class_on:"btn btn-warning  glyphicon glyphicon-expand topPanelButton",
-                                html_on:"Stop Viewing",
-                                class_off:"btn btn-success glyphicon glyphicon-expand topPanelButton",
-                                html_off:"View Screen"
-                            }
-                        }
-                    },
         videoRecord :{
                         active: true,
                         videoRecordContainer: true,
@@ -360,9 +330,6 @@ $('document').ready(function(){
                             class_on:"pull-right glyphicon glyphicon-camera btn btn-default mediaButton",
                             html_on:"Snapshot"
                         }
-                    }, 
-        drawCanvas  :{
-                        active: false
                     }, 
         texteditor  :{
                         active: true,
@@ -384,13 +351,28 @@ $('document').ready(function(){
                             class_off:"btn btn-success glyphicon glyphicon-align-left topPanelButton",
                             html_off:"Coder"
                         }
-                    },     
-        reconnect   :{
-                        active: false
-                    }, 
-        mute        :{
-                    active: false
-                    }
+                    },
+        mute    :{
+                    active: true,
+                    audio   :{
+                            active: true,
+                            button:{
+                                class_on:"pull-right glyphicon glyphicon-volume-up btn btn-default mediaButton",
+                                html_on:"Audio",
+                                class_off:"pull-right glyphicon glyphicon-volume-off btn btn-danger mediaButton",
+                                html_off:"Audio"
+                            }
+                        },
+                    video : {
+                            active: true,
+                            button:{
+                                class_on:"pull-right glyphicon glyphicon-eye-open btn btn-default videoButtonClass mediaButton",
+                                html_on:"Video",
+                                class_off:"pull-right glyphicon glyphicon-eye-close  btn btn-danger videoButtonClass mediaButton",
+                                html_off:"Video"
+                            }
+                        }
+                }
     };
 
     var webrtcdevobj = new WebRTCdev ( 

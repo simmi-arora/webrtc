@@ -1,0 +1,25 @@
+#time{
+  color: #000;
+  background-color: #blue;
+}
+
+#timerli{
+    background-color: #55D1F5;
+    color: white;
+    size: 14;
+    font-size: 20;
+    font-weight: bold;
+}
+#countdownMinutes{
+  background-color: white;
+    color: #616150;
+    padding: 4px 4px 4px 4px;
+}
+#countdownSecond{
+  background-color: white;
+    color: #616150;
+    padding: 4px 4px 4px 4px;
+}
+.countdown{
+  color: #000
+}

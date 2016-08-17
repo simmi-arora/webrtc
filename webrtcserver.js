@@ -2,6 +2,8 @@ var fs = require('fs');
 var _static = require('node-static');
 var https = require('https');
 
+var Log = require('log')
+  , log = new Log('info');
 
 var _properties = require('./env.js')(fs).readEnv();
 var properties= JSON.parse(_properties);
@@ -43,7 +45,7 @@ app.listen(properties.httpsPort);
 
 /*var _realtimecomm=require('./client/build/minScripts/webrtcdevelopmentServer.js').realtimecomm;*/
 var _realtimecomm=require('./realtimecomm.js').realtimecomm;
-var realtimecomm= _realtimecomm(app, properties , function(socket) {
+var realtimecomm= _realtimecomm(app, properties , log, function(socket) {
     try {
         var params = socket.handshake.query;
 

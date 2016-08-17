@@ -1,3 +1,18 @@
+function fitToContainer(parent , canvas){
+  // Make it visually fill the positioned parent
+/*  canvas.style.width ='100%';
+  canvas.style.height='100%';*/
+
+  // ...then set the internal size to match
+  canvas.width  = parent.offsetWidth;
+  canvas.height = parent.offsetHeight;
+}
+
+var parent = document.getElementById("drawBox");
+fitToContainer(parent, document.getElementById("main-canvas"));
+fitToContainer(parent, document.getElementById("temp-canvas"));
+
+/*-----------------------------------------------*/
 
 var is = {
     isLine: false,
@@ -48,24 +63,17 @@ var points = [],
 
 function getContext(id) {
     var canv = find(id),
-        ctx = canv.getContext('2d');
-    /*    
-    canv.setAttribute('width', "500px");
-    canv.setAttribute('height', "300px");
-    */
-
+    ctx = canv.getContext('2d');
     ctx.lineWidth = lineWidth;
     ctx.strokeStyle = strokeStyle;
     ctx.fillStyle = fillStyle;
     ctx.font = font;
-
     return ctx;
 }
 
 
 var context = getContext('main-canvas'),
     tempContext = getContext('temp-canvas');
-
 
 var common = {
 
@@ -416,7 +424,6 @@ var common = {
     }
 
     // -------------------------------------------------------------
-
 };
 
 // -------------------------------------------------------------
@@ -479,3 +486,4 @@ function paste() {
 }
 
 // -------------------------------------------------------------
+

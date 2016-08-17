@@ -1,4 +1,4 @@
-exports.realtimecomm  = function(app, properties, socketCallback) {
+exports.realtimecomm  = function(app, properties, log, socketCallback) {
     var listOfUsers = {};
     var shiftedModerationControls = {};
     var ScalableBroadcast;
@@ -212,7 +212,7 @@ exports.realtimecomm  = function(app, properties, socketCallback) {
 
         socket.on('open-channel', function (data) {  
             console.log("------------open channel------------- ", data.channel," by " , data.sender);
-
+            log.debug("------------open channel------------- ", data.channel," by " , data.sender);
             if (channels.indexOf(data.channel)<0){
                 channels.push(data.channel);
                 console.log("registered new in channels " , channels);
@@ -239,6 +239,7 @@ exports.realtimecomm  = function(app, properties, socketCallback) {
                 isallowed=true;
 
             console.log("------------join channel------------- ", data.channel," by " , data.sender , " isallowed " , isallowed);
+            log.debug("------------join channel------------- ", data.channel," by " , data.sender , " isallowed " , isallowed);
             if(isallowed){
                 webrtcdevchannels[data.channel].users.push(data.sender); 
                 webrtcdevchannels[data.channel].status=webrtcdevchannels[data.channel].users.length + " active members";
