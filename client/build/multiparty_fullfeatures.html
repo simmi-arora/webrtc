@@ -141,8 +141,13 @@
 
                 <div class="modal-body">
                   <div id="settingsContainer">
+                    <h4> URL to be Shared </h4>
+                    Listen-In <input class="form-control" type="text" id="inspectorlink" readonly><br/>
+                    Partner  <input class="form-control" type="text" id="partnername"><button class="btn" id="btnAddPartner">Add</button>
+                    <input class="form-control" type="text" id="partnerlink" readonly><br/>
+                    <hr>
 
-                    Inspectore <input class="form-control" type="text" id="inspectorlink" readonly><br/>
+                    <h4>Session Information </h4>
                     Channel <input class="form-control" type="text" id="channelname" readonly> <br/>
                     User Id <input class="form-control" type="text" id="userid" readonly> <br/>
 
@@ -163,7 +168,6 @@
                         <div style="display: inline-flex;">
                             Screen <input class="form-control" type="text" id="inScreen" style="width:100px" readonly><br/>
                         </div>
-
                     </div>
 
                     <div class="row">
@@ -185,14 +189,14 @@
                         </div>                    
                     </div>                    
 
+                    <hr>
                     <div class="row">
-                         <button class="btn" id="btnGetPeers">Get Peers Info</button>
-                         <button class="btn" id="btnDebug">Debug</button>
+                        <button class="btn" id="btnGetPeers">Get Peers Info</button>
+                        <button class="btn" id="btnDebug">Debug</button>
                     </div> 
 
                     <div id="allpeerinfo" style="text-align: left;"></div>
                     <div id="allwebrtcdevinfo" style="text-align: left;"></div>
-
 
                   </div>
                 </div>

@@ -327,6 +327,7 @@
             return connection.dontCaptureUserMedia || isData(session) ? void callback() : void ((session.audio || session.video || session.screen) && (session.screen ? connection.getScreenConstraints(function(error, screen_constraints) {
                 if (error)
                     throw error;
+                alert("connection get user media screen_constraints");
                 connection.invokeGetUserMedia({
                     audio: isAudioPlusTab(connection) ? getAudioScreenConstraints(screen_constraints) : !1,
                     video: screen_constraints,
@@ -1981,13 +1982,14 @@
             }, 2e3)
         }
     }
-    function getSourceId(callback, audioPlusTab) {
+/*  function getSourceId(callback, audioPlusTab) {
+        alert(" rtc getSourceId");
         if (!callback)
             throw '"callback" parameter is mandatory.';
         return sourceId ? (callback(sourceId),
         void (sourceId = null )) : (screenCallback = callback,
         audioPlusTab ? void window.postMessage("audio-plus-tab", "*") : void window.postMessage("get-sourceId", "*"))
-    }
+    }*/
     function getChromeExtensionStatus(extensionid, callback) {
         if (2 != arguments.length && (callback = extensionid,
         extensionid = window.RMCExtensionID || "ajhifddimkapgcifgcodmmfdlknahffk"),
