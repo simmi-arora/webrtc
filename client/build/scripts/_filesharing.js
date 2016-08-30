@@ -26,7 +26,8 @@ function sendFile(file){
         
     rtcMultiConnection.send(file);
 
-/*    addNewFileLocal({
+    /*    
+    addNewFileLocal({
         userid : selfuserid,
         header: 'User local',
         message: 'File shared',
@@ -41,8 +42,8 @@ function sendFile(file){
 
 function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelperclassName ){
     var progressDiv = document.createElement("div");
-    progressDiv.title = filename,
-    progressDiv.id = uuid+ filename,
+    progressDiv.id = filename,
+    progressDiv.title = uuid + filename,
     progressDiv.setAttribute("class", progressHelperclassName),
     progressDiv.innerHTML = "<label>0%</label><progress></progress>", 
     document.getElementById(peerinfo.fileList.container).appendChild(progressDiv),              
@@ -85,10 +86,11 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     console.log("DisplayList peerinfo->",peerinfo);
     var showDownloadButton=true , showRemoveButton=true; 
 
-    var elementList=peerinfo.fileListContainer;
-    var elementDisplay=peerinfo.fileSharingContainer;
+    var elementList= peerinfo.fileList.container;
+    var elementDisplay= peerinfo.fileShare.container;
     var listlength=peerinfo.filearray.length;
 
+    alert("displayList-> elementDisplay"+elementDisplay);
     if(peerinfo.name=="localVideo"){
         showRemoveButton=false;
     }else{
@@ -115,7 +117,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
             rtcMultiConnection.send({
                 type:"shareFileShow", 
                 _uuid: uuid , 
-                _element: elementPeerDisplay,
+                _element: elementDisplay,
                 _fileurl : fileurl, 
                 _filename : filename, 
                 _filetype : filetype
@@ -130,13 +132,13 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     hideButton.id= "hideButton"+filename;
     hideButton.setAttribute("class" , "btn btn-primary");
     hideButton.innerHTML='hide';
-    hideButton.onclick=function(){
+    hideButton.onclick=function(event){
         if(repeatFlagHideButton != filename){
             hideFile(uuid , elementDisplay , fileurl , filename , filetype);
             rtcMultiConnection.send({
                 type:"shareFileHide", 
                 _uuid: uuid , 
-                _element: elementPeerDisplay,
+                _element: elementDisplay,
                 _fileurl : fileurl, 
                 _filename : filename, 
                 _filetype : filetype
@@ -169,36 +171,44 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     };
 
     var parentdom , filedom ;
-    parentdom = (document.getElementById(elementList)?document.getElementById(elementList):document.body);
-    filedom=document.createElement("div") ;
-
-    if(fileshareobj.active){
-        /*
-        switch(filetype) {
-            case "imagesnapshot":
-                filedom.id=filename;
-            break;
-            case "videoRecording":
-                filedom.id=filename;        
-            break;
-            case "videoScreenRecording":
-                filedom.id=filename;        
-            break;
-            default:
-                filedom = progressHelper[uuid].div;
-        }*/
-        filedom.id=filename;
-        filedom.innerHTML="";
-        filedom.appendChild(name);
-        if(showDownloadButton) 
-            filedom.appendChild(downloadButton);
-        filedom.appendChild(showButton);
-        filedom.appendChild(hideButton);
-        if(showRemoveButton) 
-            filedom.appendChild(removeButton);
+    
+    if(document.getElementById(filename)){
+        filedom = document.getElementById(filename);
+        if(fileshareobj.active){
+            filedom.innerHTML="";
+            filedom.appendChild(name);
+            if(showDownloadButton) 
+                filedom.appendChild(downloadButton);
+            filedom.appendChild(showButton);
+            filedom.appendChild(hideButton);
+            if(showRemoveButton) 
+                filedom.appendChild(removeButton);
+        }
+    }else{
+        /* if the progress bar area dodont exist */
+        if(document.getElementById(elementList)){
+            parentdom = document.getElementById(elementList);
+            filedom = document.createElement("div") ;
+        }else{
+            parentdom = document.body;
+            filedom = document.createElement("div") ;
+        }
+        if(fileshareobj.active){
+            filedom.id=filename;
+            filedom.innerHTML="";
+            filedom.appendChild(name);
+            if(showDownloadButton) 
+                filedom.appendChild(downloadButton);
+            filedom.appendChild(showButton);
+            filedom.appendChild(hideButton);
+            if(showRemoveButton) 
+                filedom.appendChild(removeButton);
+        }
 
         parentdom.appendChild(filedom);
-    }
+
+    } 
+
 }
 
 function getFileElementDisplayByType(filetype , fileurl , filename){
@@ -297,12 +307,13 @@ function syncButton(buttonId){
 
 function showFile( uuid , element , fileurl , filename , filetype ){
     $("#"+element).html( getFileElementDisplayByType(filetype , fileurl , filename));
+    alert("file shown in " + element);
 }
 
 function hideFile( uuid , element , fileurl , filename , filetype ){
     if($("#"+element).has("#display"+filename)){
-        document.getElementById(element).innerHTML="";
         console.log("hidefile " ,filename , " from " , element);
+        document.getElementById(element).innerHTML="";
     }else{
         console.log(" file is not displayed to hide  ");
     }

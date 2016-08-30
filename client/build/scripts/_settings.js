@@ -1,15 +1,17 @@
 function setSettingsAttributes(){
 	$("#inspectorlink").val(window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0');
+    
     $("#channelname").val(rtcMultiConnection.channel);
     $("#userid").val(rtcMultiConnection.userid);
 
-    $("#inAudio").val(incomingAudio);
-    $("#inVideo").val(incomingVideo);
-    $("#inData").val(incomingData);
+    /*$("#inAudio").val(incomingAudio);*/
+    $("#inAudio").prop('checked', incomingAudio);
+    $("#inVideo").prop('checked',incomingVideo);
+    $("#inData").prop('checked',incomingData);
 
-    $("#outAudio").val(outgoingAudio);
-    $("#outVideo").val(outgoingVideo);
-    $("#outData").val(outgoingData);
+    $("#outAudio").prop('checked',outgoingAudio);
+    $("#outVideo").prop('checked',outgoingVideo);
+    $("#outData").prop('checked',outgoingData);
 
     $("#btnGetPeers").click(function(){
        // $("#alllpeerinfo").html(JSON.stringify(webcallpeers,null,6));
@@ -30,6 +32,9 @@ function setSettingsAttributes(){
     });
 }
 
+function AddPartner(){
+    $("#partnerlink").val(window.location+'?appname=webrtcwebcall&role=peer&audio=1&video=1&name='+$("#partnername").val());
+}
 
 /******************* help and settings ***********************/
 
