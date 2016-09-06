@@ -141,9 +141,19 @@
 
                                 <div style="display: inline-flex;" style=" float: left;padding-left: 100px; padding-bottom: 10px;">
                                     <div>Partner</div> 
-                                    <input class="form-control" type="text" id="partnername" style="width:200px"><br/>
-                                    <button class="btn" id="btnAddPartner" onclick="AddPartner()">Add</button>
-                                    <br/><input class="form-control" type="text" id="partnerlink" readonly><br/>
+                                    <div class="display: inline-flex;">
+                                        <div class="row">
+                                            <input class="form-control" type="text" style="width:500px" id="partnername">
+                                            <button class="btn" id="btnAddPartner" onclick="AddPartner()">Add</button><br/>
+                                        </div>
+                                        <div class="row">
+                                            <input class="form-control" type="text" style="width:500px" id="partnerlink" readonly>
+                                            <button class="btn" id="btnEmailPartner" onclick="EmailPartnerLink()">Email</button>
+                                            <button class="btn" id="btnEmailPartner" onclick="ClipboardCopyPartnerLink()">Copy to Clipboard</button>
+                                            <button class="btn" id="btnEmailPartner" onclick="sharePartnerLink()">Share</button>
+                                        </div>
+                                    </div>
+
                                 </div>                         
                             </div>
 
@@ -215,6 +225,28 @@ $('document').ready(function(){
     sessionid = init(true);
 
     var searchParams = new URLSearchParams(window.location);
+    var role="participant",out_A=true, out_V=true ;
+
+    if(searchParams.get('audio')=="0"){
+        out_A=false;
+    }
+
+    if(searchParams.get('video')=="0"){
+        out_V=false;
+    }
+
+    if(searchParams.get('name')){
+        username=searchParams.get('name');
+    }else{
+        username="Expert";
+    }
+
+    if(searchParams.get('email')){
+        useremail=searchParams.get('email');
+    }else{
+        useremail="abc@gmail.com";
+    }
+
     var webrtcdomobj;
 
     console.log("searchParams" , searchParams);
@@ -226,9 +258,9 @@ $('document').ready(function(){
         userDisplay:false,
         userMetaDisplay:false,
         userdetails:{
-            username:"Expert",
+            username: username,
             usercolor: "#DDECEF",
-            useremail: "abc@gmail.com"
+            useremail: useremail
         }
     };
 
@@ -257,7 +289,7 @@ $('document').ready(function(){
     };
 
     webrtcdomobj= new WebRTCdom(
-        local,remote, incoming, outgoing
+        local, remote, incoming, outgoing
     );
 
     var session ={

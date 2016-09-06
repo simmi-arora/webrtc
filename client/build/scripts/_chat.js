@@ -57,7 +57,7 @@ function createChatBox(chatobj){
 
     var chatBoard=document.createElement("div");
     chatBoard.className="chatMessagesClass";
-    chatBoard.contenteditable=true;
+    chatBoard.setAttribute("contenteditable",true);
     chatBoard.id="chatBoard";
     document.getElementById(chatobj.chatContainer).appendChild(chatBoard);
 
@@ -70,7 +70,7 @@ function updateWhotyping(data){
 function addMessageLineformat(messageDivclass, message , parent){
     var n = document.createElement("div");
     n.className = messageDivclass; 
-    n.innerHTML = message;
+    n.innerHTML =  replaceURLWithHTMLLinks(message);
     document.getElementById(parent).insertBefore(n, document.getElementById(parent).firstChild);
 }
 
@@ -109,6 +109,12 @@ function sendChatMessage(msg){
         color: rtcMultiConnection.extra.color
     });
     rtcMultiConnection.send({type:"chat", message:msg });
+}
+
+
+function replaceURLWithHTMLLinks(text) {
+  var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+  return text.replace(exp,"<a href='$1'>$1</a>"); 
 }
 
 /*$("#chatInput").keypress(function(e) {
