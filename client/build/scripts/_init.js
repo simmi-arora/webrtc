@@ -76,7 +76,8 @@ function init(autoload){
 	        location.href = location.href.split('#')[0] + '#' + (Math.random() * 100).toString().replace('.', '');
 	        location.reload();
 	}else if(autoload && location.hash.replace('#', '').length){
-		ssid=location.href.replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
+		/*ssid=location.href.replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');*/
+        ssid=(location.href.substring(0,location.href.indexOf('?'))).replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
 	}else{
 	    ssid=prompt("Enter session ", "");
 	}

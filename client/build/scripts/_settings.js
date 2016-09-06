@@ -36,6 +36,9 @@ function AddPartner(){
     $("#partnerlink").val(window.location+'?appname=webrtcwebcall&role=peer&audio=1&video=1&name='+$("#partnername").val());
 }
 
+function EmailPartnerLink(){
+    window.open('mailto:test@example.com?subject=subject&body=body');
+}
 /******************* help and settings ***********************/
 
 

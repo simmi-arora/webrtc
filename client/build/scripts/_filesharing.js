@@ -90,7 +90,6 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     var elementDisplay= peerinfo.fileShare.container;
     var listlength=peerinfo.filearray.length;
 
-    alert("displayList-> elementDisplay"+elementDisplay);
     if(peerinfo.name=="localVideo"){
         showRemoveButton=false;
     }else{
@@ -307,7 +306,6 @@ function syncButton(buttonId){
 
 function showFile( uuid , element , fileurl , filename , filetype ){
     $("#"+element).html( getFileElementDisplayByType(filetype , fileurl , filename));
-    alert("file shown in " + element);
 }
 
 function hideFile( uuid , element , fileurl , filename , filetype ){
@@ -344,7 +342,7 @@ function createFileSharingBox(peerinfo, parent){
     minButton.id=peerinfo.fileShare.minButton;
     minButton.setAttribute("lastClickedBy" ,'');
     minButton.onclick=function(){
-        resizeFV(peerinfo.userid, minButton.id , arrFilesharingBoxes);
+        resizeFV(peerinfo.userid, minButton.id , peerinfo.fileShare.outerbox);
     }
 
     var maxButton= document.createElement("span");
@@ -353,7 +351,7 @@ function createFileSharingBox(peerinfo, parent){
     maxButton.id=peerinfo.fileShare.maxButton;
     maxButton.setAttribute("lastClickedBy" ,'');
     maxButton.onclick=function(){
-        maxFV(peerinfo.userid, maxButton.id , arrFilesharingBoxes , peerinfo.fileShare.outerbox);
+        maxFV(peerinfo.userid, maxButton.id  , peerinfo.fileShare.outerbox);
     }
 
     var closeButton= document.createElement("span");
@@ -454,24 +452,23 @@ function resizeFV(userid,  buttonId , arrFilesharingBoxes){
     syncButton(buttonId);
 }
 
-function minFV(userid, buttonId , arrFilesharingBoxes){
-    for ( x in arrFilesharingBoxes){
-        document.getElementById(arrFilesharingBoxes[x]).hidden=false;
-        document.getElementById(arrFilesharingBoxes[x]).style.width="50%";
-        document.getElementById(arrFilesharingBoxes[x]).style.height="10%";
-    }
+function minFV(userid, buttonId , selectedFileSharingBox){
+    document.getElementById(selectedFileSharingBox).hidden=false;
+    document.getElementById(selectedFileSharingBox).style.width="50%";
+    document.getElementById(selectedFileSharingBox).style.height="10%";
     syncButton(buttonId);
 }
 
-function maxFV(userid,  buttonId , arrFilesharingBoxes, selectedFileSharingBox){
-    for ( x in arrFilesharingBoxes){
-        if(arrFilesharingBoxes[x]==selectedFileSharingBox){
-            document.getElementById(arrFilesharingBoxes[x]).hidden=false;
-            document.getElementById(arrFilesharingBoxes[x]).style.width="100%";
+function maxFV(userid,  buttonId ,  selectedFileSharingBox){
+    for(x in webcallpeers){
+        if(webcallpeers[x].fileShare.outerbox==selectedFileSharingBox) {
+            document.getElementById(selectedFileSharingBox).hidden=false;
+            document.getElementById(selectedFileSharingBox).style.width="100%";
         }else{
-            document.getElementById(arrFilesharingBoxes[x]).hidden=true;
-            document.getElementById(arrFilesharingBoxes[x]).style.width="0%";
+            document.getElementById(webcallpeers[x].fileShare.outerbox).hidden=true;
+            document.getElementById(webcallpeers[x].fileShare.outerbox).style.width="0%";
         }
     }
+
     syncButton(buttonId);  
 }

@@ -380,7 +380,7 @@ var WebRTCdev= function(session, widgets){
                 console.log("channel-event" , event);
                 if(event.type=="new-join"){
                     if(event.status){
-                        updatePeerInfo(event.data.sender ,"Peer" , "#BFD9DA" , "", "remote");
+                        updatePeerInfo(event.data.sender ,event.data.extra.name , "#BFD9DA" , event.data.extra.email, "remote");
                         shownotification(event.type);
                     }else{
                         shownotification(event.msgtype+" : "+ event.message);
