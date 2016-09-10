@@ -753,35 +753,40 @@ function updatePeerInfo(userid , username , usecolor , useremail,  type ){
         vid : "video"+type+"_"+userid
     };
 
-    if(fileshareobj.props.fileShare=="single"){
-        peerInfo.fileShare={
-            outerbox: "widget-filesharing-box",
-            container : "widget-filesharing-container",
-            minButton: "widget-filesharing-minbutton",
-            maxButton: "widget-filesharing-maxbutton",
-            closeButton: "widget-filesharing-closebutton"
-        };
-    }else{
-        peerInfo.fileShare={
-            outerbox: "widget-filesharing-box"+userid,
-            container : "widget-filesharing-container"+userid,
-            minButton: "widget-filesharing-minbutton"+userid,
-            maxButton: "widget-filesharing-maxbutton"+userid,
-            closeButton: "widget-filesharing-closebutton"+userid
-        };
+    if(fileshareobj.active){
+
+        if(fileshareobj.props.fileShare=="single"){
+            peerInfo.fileShare={
+                outerbox: "widget-filesharing-box",
+                container : "widget-filesharing-container",
+                minButton: "widget-filesharing-minbutton",
+                maxButton: "widget-filesharing-maxbutton",
+                closeButton: "widget-filesharing-closebutton"
+            };
+        }else{
+            peerInfo.fileShare={
+                outerbox: "widget-filesharing-box"+userid,
+                container : "widget-filesharing-container"+userid,
+                minButton: "widget-filesharing-minbutton"+userid,
+                maxButton: "widget-filesharing-maxbutton"+userid,
+                closeButton: "widget-filesharing-closebutton"+userid
+            };
+        }
+
+        if(fileshareobj.props.fileList=="single"){
+            peerInfo.fileList={
+                outerbox: "widget-filelisting-box",
+                container : "widget-filelisting-container"
+            };
+        }else{
+            peerInfo.fileList={
+                outerbox: "widget-filelisting-box"+userid,
+                container : "widget-filelisting-container"+userid
+            };
+        }
+
     }
 
-    if(fileshareobj.props.fileList=="single"){
-        peerInfo.fileList={
-            outerbox: "widget-filelisting-box",
-            container : "widget-filelisting-container"
-        };
-    }else{
-        peerInfo.fileList={
-            outerbox: "widget-filelisting-box"+userid,
-            container : "widget-filelisting-container"+userid
-        };
-    }
 
     console.log("updated peerInfo: " ,peerInfo);
     webcallpeers.push(peerInfo);

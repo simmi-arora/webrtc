@@ -40,3 +40,8 @@ function timer(cd , c , cdm , m ){
         }
     }, 1000);
 }
+
+function getDate(){
+    var now = new Date();
+    return now;
+}

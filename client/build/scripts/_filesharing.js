@@ -444,11 +444,10 @@ function closeFV(userid,  buttonId , selectedFileSharingBox){
     syncButton(buttonId);
 }
 
-function resizeFV(userid,  buttonId , arrFilesharingBoxes){
-    for ( x in arrFilesharingBoxes){
-        document.getElementById(arrFilesharingBoxes[x]).hidden=false;
-        document.getElementById(arrFilesharingBoxes[x]).style.width="50%";   
-    }
+function resizeFV(userid,  buttonId , selectedFileSharingBox){
+
+    document.getElementById(selectedFileSharingBox).hidden=false;
+    document.getElementById(selectedFileSharingBox).style.width="50%";   
     syncButton(buttonId);
 }
 
