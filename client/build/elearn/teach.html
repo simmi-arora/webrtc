@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="altanai">
+    <link href="css/mainstyle.css" rel="stylesheet">
+    <title>WebRTC Call</title>
+    <meta name="google-site-verification" content="8NqEkVsX8mkRCn13Qov4K0njgF0T6t97_a-NZNIXkpE" />
+    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/jpcjjkpbiepbmhklnjoahacppaemhmpd">
+    <link rel=stylesheet href="../minScripts/webrtcdevelopment_header.css">
+    <script src="../minScripts/webrtcdevelopment_header.js"> </script>
+</head>
+<style>
+.over-lap {display: block !important}
+
+/*------------STYLE RULES ONLY FOR RTC-VIDEO PAGE-START---------*/
+
+.right-section{background:#fff;border-radius:30px;padding:20px 0px 0px;border:1px solid #F00;margin-top:20px;position:relative}
+.main-block{width:95%;margin:auto;}
+.time-function {
+    background: #000 none repeat scroll 0 0;
+    border-radius: 5px;
+    color: #fff;
+    font-family: Helvetica;
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding: 7px 0;
+    text-align: center;
+    width: 100%;
+}
+.panel-seassion{position:relative;}
+.btn-modify-video.focus, .btn-modify-video:focus, .btn-modify-video:hover {color: #748970;}
+.btn-modify-video {background: rgba(0,0,0,0);border: 0px;padding: 0px;color: #f60000;font-size: 22px;}
+.bg-ssion{border-radius:10px;background:#ffda96;padding:5px 0px}
+.seassion-text{color:#000;font-weight:bold;margin:0px;line-height:30px;font-size:18px}
+.arrow {border-radius: 50%;display: inline-block;height: auto;left: -20px;position: absolute;text-align: center;top: 0;font-size: 22px;color:#F00;}
+.video-block{width:100%;}
+.video-part{background: #e61339;}
+.video-header{background:#e61339;color:#ffff00;margin:0;padding:5px 0px;text-align:center;font-size:16px;font-weight:bold;}
+.controler-video {margin: 0;padding: 3px 0 9px;position:relative;}
+.btn-modify-video2.focus, .btn-modify-video2:focus, .btn-modify-video2:hover {color: #eaff00;}
+.btn-modify-video2 {background: rgba(0,0,0,0);border: 0px;padding: 0px;color: #fff;font-size: 18px;}
+.message-sent{border-radius:10px;background:#09F;padding:4px 0px;}
+.send-mesg{background:#efbf00;color:#fff;border-radius:8px;padding:2px 0px 3px 5px;height:auto;border:0px;}
+.send-mesg:focus{box-shadow:0px;}
+.send-mesg::-moz-placeholder{color:#FFF;}
+.online-pro-pict img {height: auto;width: 100%;}
+.sent-message-block{margin:3px 0px;height:300px;overflow-x: scroll;overflow-x: -moz-hidden-unscrollable;}
+.online-pro-pict {border: 1px solid #CCC;border-radius: 50%;margin: 7px;overflow: hidden;}
+.online-chat-text span, .online-chat-text-reply span {color:#333;display: inherit;font-size: 10px;margin-top: 5px;}
+.online-chat-text {background:#fdd1c6;padding:5px;color:#000;margin:10px 0px 0px 0px;font-family:Helvetica;font-size:13px;font-weight:bold;
+border-radius:5px}
+.online-chat-text-reply {background:#c44b31;padding:5px;color:#fff;margin:10px 0px 0px 0px;font-family:Helvetica;font-size:13px;font-weight:bold;
+border-radius:5px}
+.chat-text-area {margin: 5px 0px;}
+.chating-area {background: #fb9b85;overflow-x: scroll;}
+.video-part-2{background:#FF0;}
+.video-header-2{background:#FF0;color:#000;margin:0;padding:5px 0px;text-align:center;font-size:16px;font-weight:bold;}
+.btn-modify-video-3.focus, .btn-modify-video-3:focus, .btn-modify-video-3:hover {color:#FF0000;}
+.btn-modify-video-3{background: rgba(0,0,0,0);border: 0px;padding: 0px;color: #000;font-size: 18px;}
+.screen-share{border-radius:10px;padding:5px 5px;background:#e2f0d9;margin:5px 0px;border:1px solid #F00;}
+.red-bg{background:#e61339 ;border-top-left-radius:10px;border-bottom-left-radius:10px;}
+.seceen-btn{background:#0033CC;color:#fff;border-radius:8px;border:0px;}
+.seceen-btn:hover{background:#0CF;color:#fff;border-radius:8px;border:0px;}
+.seceen-btn-2{background:#999900;color:#fff;border-radius:8px;border:0px;}
+.seceen-btn-2:hover{background:#9C0;color:#fff;border-radius:8px;border:0px;}
+.yellow-bg{background:#FF0;border-top-left-radius:10px;border-bottom-left-radius:10px;margin:5px 0px}
+.yellow-bg-2{background:#FF0;border-top-left-radius:5px;border-top-right-radius:5px;margin:5px 0px 0 0;color:#000;padding:5px 0px}
+.yellow-bg-2 .fa{color:#000;}
+.red-bg-2{background:#e61339 ;border-top-left-radius:5px;border-top-right-radius:5px;margin:5px 0px 0 0;color:#fff;padding:5px 0px}
+.red-bg-2 .fa{color:#fff;}
+
+
+.panel-seassion table {font-size: 10px;}
+.btn-modify-chat {
+  background: rgba(0,0,0,0);
+  border: 0px;
+  color: #666;
+  font-size: 16px;
+  padding: 3px 0px
+}
+.btn-modify-chat .fa {
+  line-height: 19px;
+  margin: 0;
+  padding: 0;
+}
+.icon-markup-block{background:#f3f3f3;border-radius:5px;margin:5px 0px;}
+.block-one {
+  border: 1px solid #fff;
+}
+.block-two {
+  
+  padding-top: 0px;
+  
+}
+.inner-block {
+  background: #fff;
+  height: 1670px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  position:relative;
+}
+.button-corner
+{}
+td span .fa {
+    cursor: pointer;
+}
+.fileUpload {
+    border-radius: 10px;
+    margin:0px;
+    overflow: hidden;
+    position: relative;
+    width: 150px;
+}
+.fileUpload input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+.bg-red{background:#ff6600;color:#fff;}
+.table-section {
+  font-size:12px;}
+.border-radius {
+    border-radius: 15px;
+    overflow: hidden;
+  margin:5px 0px;
+}
+.button-corner {
+    float: right;
+    margin-right: 5px;
+  cursor:pointer;
+}
+.btn.btn-info.recannect{font-size:15px;font-weight:bold;text-transform:uppercase; }
+.btn.btn-info.recannect > span {
+    background:#0099FF;
+    border-radius: 3px;
+    color:#FFF;
+    height: 34px;
+    left:16px;
+    line-height: 34px;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 34px;
+  
+}
+.btn.btn-info.recannect:hover span {background:#03F;}
+/*------------STYLE RULES ONLY FOR RTC-VIDEO PAGE-END---------*/
+
+</style>
+<body class="bodybg">
+
+<div class="container-fluid header-part">
+  <div class="row">
+    <div class="col-md-12 text-center">
+      <div class="logo"> <img src="images/logo.png" alt="logo" > </div>
+      <div class="over-lap">
+        <div class="profile pull-left"> <img src="images/img-3.jpg" class="img-responsive"> </div>
+        <div class="pull-right">
+          <p id="loginname" class="loginname">...</p>
+          <button class="btn btn-info bg-blue">Logout</button>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row alertDiv" id="alertBox" hidden="true"></div>
+
+<section class="video-section">
+  <div class="container-fluid">
+    <div class="row">
+      <div  class="col-md-9" style="padding-right:0px;">
+        <div id="fileSharingRow" style="margin: 10px;">
+
+          <!--
+            <div class="col-xs-6" style="padding:0;">
+              <div class="inner-block">
+                <div class="button-corner">
+                  <span  data-placement="bottom" data-toggle="tooltip" title="minimize"><i class="fa fa-minus-square"></i></span>
+                  <span  data-placement="bottom" data-toggle="tooltip" title="maxsimize"><i class="fa fa-external-link-square"></i></span>
+                  <span  data-placement="bottom" data-toggle="tooltip" title="close"><i class="fa fa-times-circle"></i></span>
+                </div>
+              </div>
+            </div>
+  
+            <div class="col-xs-6" style="padding-right:0px;">
+              <div class="inner-block">
+                <div class="button-corner">
+                <span  data-placement="bottom" data-toggle="tooltip" title="minimize"><i class="fa fa-minus-square"></i></span>
+                <span  data-placement="bottom" data-toggle="tooltip" title="maxsimize"><i class="fa fa-external-link-square"></i></span>
+                <span  data-placement="bottom" data-toggle="tooltip" title="close"><i class="fa fa-times-circle"></i></span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="clearfix"></div> -->
+
+        </div>
+      </div>
+      <div class="col-md-3" style="padding-right:0px;">
+      <div class="right-section">
+      <div class="main-block">
+      <div class="panel-seassion">
+          <div class="col-xs-6">
+            <p id="currentTimeArea" class="time-function" data-placement="top" data-toggle="tooltip" title="Current Local Time"></p>
+          </div>
+          <div class="col-xs-6">
+            <p id="currentTimeZoneArea" class="time-function" data-placement="top" data-toggle="tooltip" title="Time Zone"></p>
+          </div>
+          <div class="col-xs-6">
+            <p class="time-function" data-placement="top" data-toggle="tooltip" title="Elapsed Time ">12:15 mins</p>
+          </div>
+          <div class="col-xs-6">
+            <p class="time-function" data-placement="top" data-toggle="tooltip" title="Alloted Time">45:00 mins</p>
+          </div>
+          <div class="col-xs-6">
+            <p class="time-function" data-placement="top" data-toggle="tooltip" title="Current Session Charges">$14.80</p>
+          </div>
+          <div class="col-xs-6">
+            <p class="time-function" data-placement="top" data-toggle="tooltip" title="Session Allocated Charges">$150.00</p>
+          </div>
+
+          <div class="col-md-12" style="margin-bottom:10px">
+            <button id="reconnectBtn" class="btn btn-info form-control recannect" data-placement="left" data-toggle="tooltip" title="ONLY for use if session gets disconnected">
+                <span><i class="fa fa-link" aria-hidden="true"></i></span>Reconnect
+            </button>
+          </div>
+          <div class="clearfix"></div>
+          </div>
+
+      <div class="panel-seassion">
+          <div class="bg-ssion">
+              <div class="col-xs-6 text-center"><p class="seassion-text">Session</p></div>
+         
+              <div class="col-xs-3 text-center">
+                <button class="btn btn-modify-video" data-toggle="tooltip" data-placement="bottom" title="Record"><i class="fa fa-stop"></i></button>
+              </div>
+
+              <div class="col-xs-3 text-center border-right">
+                <button class="btn btn-modify-video" data-toggle="tooltip" data-placement="bottom" title="Stop"><i class="fa fa-circle"></i></button>
+              </div>
+
+              <div class="clearfix"></div>
+          </div>
+      </div>
+
+        <!-- when no remote -->
+        <div id="singleVideoContainer" class="row" hidden>
+            <video name="myAloneVideo" autoplay="autoplay" muted="true" />
+        </div>
+
+        <!-- when remotes are connected -->
+        <div id="confVideoContainer">
+            <div class="panel-seassion border-radius">
+              <div class="video-part">
+
+                <div class="block-section">
+                  <video class="video-block" controls src="#" name="myConferenceVideo"></video>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="panel-seassion border-radius" style="background:#fb9b85;">
+                <div class="message-sent">
+                    <div id="chatInputText" class="col-xs-8 text-center" style="padding:0px 2px">
+                        <input type="text" class="form-control send-mesg" placeholder="Send Message">
+                    </div>
+             
+                    <div id="chatSendButton" class="col-xs-2 text-center" style="padding:0px 2px">
+                        <button class="btn btn-modify-video2" data-toggle="tooltip" data-placement="bottom" title="Sent"><i class="fa fa-paper-plane"></i></button>
+                    </div>
+                
+                    <div class="col-xs-2 text-center" style="padding:0px 2px">
+                        <button class="btn btn-modify-video2" data-toggle="tooltip" data-placement="bottom" title="Minimize"><i class="fa fa-minus-square"></i></button>
+                    </div>
+                    
+                    <div class="clearfix"></div>
+                </div>
+              <div class="sent-message-block">
+              
+              <div class="panel-seassion">
+                <div class="chating-area" id="chatContainer">
+                </div>
+              </div>
+              
+              </div>
+            </div>
+
+            <div class="panel-seassion border-radius">
+                <div class="video-part-2">
+                    <div class="block-section">
+                        <video src="#" controls class="video-block" name="otherConferenceVideo"></video>
+                    </div>
+                </div>
+            </div>
+          
+            <div class="panel-seassion">
+                <div class="screen-share">
+                    <div class="red-bg">
+                        <div style="padding:0px 0px" class="col-xs-8 text-center">
+                        <button class="form-control seceen-btn"  data-toggle="tooltip" data-placement="top" title="Farook - Screen Share">Screen Share </button>
+                    </div>
+                   
+                     <div style="padding:5px 3px 0 2px" class="col-xs-2 text-center">
+                        <button title="Share" data-placement="bottom" data-toggle="tooltip" class="btn btn-modify-video2">
+                        <i class="fa fa-external-link"></i></button>
+                      </div>
+                      <div style="padding:5px 3px 0 2px" class="col-xs-2 text-center">
+                        <button title="desktop" data-placement="bottom" data-toggle="tooltip" class="btn btn-modify-video2">
+                        <i class="fa fa-desktop"></i></button>
+                      </div>
+                     <div class="clearfix"></div>
+                    </div>
+                    <div class="yellow-bg">
+                    <div style="padding:0px 0px" class="col-xs-8 text-center">
+                    <button class="form-control seceen-btn-2"  data-toggle="tooltip" data-placement="bottom" title="Samantha - Screen Share">Screen Share </button>
+                    </div>
+                   
+                     <div style="padding:5px 3px 0 2px" class="col-xs-2 text-center">
+                        <button title="share" data-placement="bottom" data-toggle="tooltip" class="btn btn-modify-video-3">
+                        <i class="fa fa-external-link"></i></button>
+                      </div>
+                      <div style="padding:5px 3px 0 2px" class="col-xs-2 text-center">
+                        <button title="desktop" data-placement="bottom" data-toggle="tooltip" class="btn btn-modify-video-3"><i class="fa fa-desktop"></i></button>
+                      </div>
+                     <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+           
+            <div class="panel-seassion">
+              <div class="screen-share">
+                  <div class="text-center">
+                      <div class="fileUpload btn bg-red" data-toggle="tooltip" data-placement="bottom" title="Select Files to Upload">
+                        <span>Upload A File</span>
+                        <input id="fileshareBtn" type="file" class="upload"  />
+                      </div>
+                   </div>
+               </div>
+            </div>
+           
+            <div class="border-radius">
+                <div class="red-bg-2">
+                  <div style="padding:0px 0px" class="col-xs-6">
+                  <p class="text-center" style="color:#fff;margin:0;line-height:25px;font-weight:bold;">By Farook</p>
+                  </div>
+                 
+                  <div class="col-xs-2 text-right">
+                      <button title="Maxsimize" data-placement="bottom" data-toggle="tooltip" class="btn btn-modify-video2">
+                      <i class="fa fa-external-link"></i></button>
+                  </div>
+                  
+                  <div class="col-xs-1 text-left" style="padding:0;">
+                      <button title="Minimize" data-placement="bottom" data-toggle="tooltip" class="btn btn-modify-video2">
+                      <i class="fa fa-minus-square"></i></button>
+                  </div>
+                  
+                  <div class="col-xs-1 text-right" style="padding:0;">
+                      <button title="close" data-placement="bottom" data-toggle="tooltip" class="btn btn-modify-video2">
+                      <i class="fa fa-close"></i></button>
+                  </div>
+                  
+                  <div class="col-xs-2 text-center" >
+                      <button title="help" data-placement="bottom" data-toggle="tooltip" class="btn btn-modify-video2">
+                      <i class="fa fa-question"></i></button>
+                  </div>  
+
+                  <div class="clearfix"></div>
+                </div> 
+                <div class="table-section" id="fileListingRow">
+                </div>
+            </div>
+           
+            <div class="">
+                <div class="yellow-bg-2">
+        
+                    <div style="padding:0px 0px" class="col-xs-6">
+                        <p class="text-center" style="color:#000;margin:0;line-height:25px;font-weight:bold;">By Altanai</p>
+                    </div>
+                     
+                    <div class="col-xs-2 text-right">
+                        <button title="Maxsimize" data-placement="bottom" data-toggle="tooltip" class="btn btn-modify-video2">
+                        <i class="fa fa-external-link"></i></button>
+                    </div>
+                      
+                    <div class="col-xs-1 text-left" style="padding:0;">
+                        <button title="Minimize" data-placement="bottom" data-toggle="tooltip" class="btn btn-modify-video2">
+                        <i class="fa fa-minus-square" style="color:#000;"></i></button>
+                    </div>
+                    
+                    <div class="col-xs-1 text-right" style="padding:0;">
+                        <button title="close" data-placement="bottom" data-toggle="tooltip" class="btn btn-modify-video2">
+                        <i class="fa fa-close" style="color:#000;"></i></button>
+                    </div>
+                    
+                    <div class="col-xs-2 text-center" >
+                        <button title="help" data-placement="bottom" data-toggle="tooltip" class="btn btn-modify-video2">
+                        <i class="fa fa-question" style="color:#000;"></i></button>
+                    </div>
+               
+                    <div class="clearfix"></div>
+                </div>
+          
+                <div class="table-section">
+                </div>
+            
+            </div>
+           
+            <div class="panel-seassion">
+                <div class="icon-markup-block"> 
+                      <div style="padding-right:0px;" class="col-xs-2 text-center">
+                        <button data-placement="top" data-toggle="tooltip" class="btn btn-modify-chat" title="Demo"><img src="images/13.png"></button>
+                      </div>
+                      <div class="col-xs-2 text-center" style="padding:0px;">
+                        <button data-placement="top" data-toggle="tooltip" class="btn btn-modify-chat" title="Demo"><img src="images/14.png"></button>
+                      </div>
+                      <div class="col-xs-2 text-center" style="padding:0px;">
+                        <button data-placement="top" data-toggle="tooltip" class="btn btn-modify-chat" title="Demo"><img src="images/15.png"></button>
+                      </div>
+                      <div class="col-xs-2 text-center" style="padding:0px;">
+                        <button data-placement="bottom" data-toggle="tooltip" class="btn btn-modify-chat" title="Demo"><img src="images/16.png"></button>
+                      </div>
+                      <div class="col-xs-2 text-center" style="padding:0px;">
+                        <button data-placement="bottom" data-toggle="tooltip" class="btn btn-modify-chat" title="Demo"><img src="images/17.png"></button>
+                      </div>
+                      <div class="col-xs-2 text-center" style="padding:0px;">
+                        <button data-placement="bottom" data-toggle="tooltip" class="btn btn-modify-chat" title="Demo"><img src="images/18.png"></button>
+                      </div>
+                      <div class="clearfix"></div>
+                </div>
+            </div>
+           
+            <div style="padding-top:0px;" class="panel-seassion">
+                <div class="icon-markup-block">           
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+                
+        </div>
+    </div>
+    </div>
+            
+        </div>
+      </div>
+</section>
+
+<script src="../property.js"></script>
+<link rel=stylesheet href="../minScripts/webrtcdevelopment.css">
+<script src="../minScripts/webrtcdevelopment.js"></script>
+<script src="../scripts/start.js"></script>
+
+<!-- jQuery Version 1.11.1 --> 
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();   
+});
+</script>
+
+<script>
+$('document').ready(function(){
+    sessionid = init(true);
+
+    var searchParams = new URLSearchParams(window.location);
+    var role="participant",out_A=true, out_V=true ;
+
+    if(searchParams.get('audio')=="0"){
+        out_A=false;
+    }
+
+    if(searchParams.get('video')=="0"){
+        out_V=false;
+    }
+
+    if(searchParams.get('name')){
+        username=searchParams.get('name');
+    }else{
+        username="Expert";
+    }
+
+    if(searchParams.get('email')){
+        useremail=searchParams.get('email');
+    }else{
+        useremail="abc@gmail.com";
+    }
+
+    var webrtcdomobj;
+
+    console.log("searchParams" , searchParams);
+
+    var local={
+        video: "myAloneVideo",
+        videoClass:"",
+        videoContainer : "singleVideoContainer",
+        userDisplay:false,
+        userMetaDisplay:false,
+        userdetails:{
+            username: username,
+            usercolor: "#DDECEF",
+            useremail: useremail
+        }
+    };
+
+    var remote={
+        videoarr: ["myConferenceVideo", "otherConferenceVideo"],
+        videoClass:"",
+        maxAllowed: "6",
+        videoContainer : "confVideoContainer",
+        userDisplay:false,
+        userMetaDisplay:false,
+        dynamicVideos: false 
+    };
+
+    var incoming={
+        audio:  true,
+        video:  true,
+        data:   true,
+        screen: true
+    };
+
+    var outgoing={
+        audio:  true,
+        video:  true,
+        data:   true,
+        screen: true
+    };
+
+    webrtcdomobj= new WebRTCdom(
+        local, remote, incoming, outgoing
+    );
+
+    var session ={
+        sessionid : sessionid,
+        socketAddr: props.signaller,
+        turn:{
+                username    : props.xirsys.username,
+                secretkey   : props.xirsys.secretkey,
+                domain      : props.xirsys.domain,
+                application : props.xirsys.application,
+                room        : props.xirsys.room,
+                secure      : props.xirsys.secure
+            }
+    };
+    
+    var widgets={
+        debug      : true,
+        reconnect   :{
+                        active: true,
+                        button:{
+                            id: "reconnectBtn",
+                            class:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
+                            html:"Reconnect",
+                            resyncfiles:false
+                        }
+                    },
+        timer      :{
+                        active:true,
+                        type: "backward",
+                        upperlimit: {
+                            hour:0 , 
+                            min: 3 , 
+                            sec: 0 
+                        },
+                        span:{
+                            currentTime_id:"currentTimeArea",
+                            currentTimeZonr_id:"currentTimeZoneArea",
+                            class_on:""
+                        }
+                    },
+        chat    :{
+                        active: true,
+                        chatContainer: "chatContainer",
+                        inputBox:{
+                            text_id:"chatInputText",
+                            sendbutton_id:"chatSendButton"
+                        },
+                        button:{
+                            class_on:"btn btn-warning glyphicon glyphicon-font topPanelButton",
+                            html_on:"Chat",
+                            class_off:"btn btn-success glyphicon glyphicon-font topPanelButton",
+                            html_off:"Chat"
+                        }
+                },
+        fileShare :{
+                      active : true,
+                      fileShareContainer : "fileSharingRow",
+                      fileListContainer : "fileListingRow",
+                      button:{
+                          id: "fileshareBtn",
+                          class:"btn btn-success glyphicon glyphicon-file topPanelButton",
+                          html:"File"
+                      },
+                      props:{
+                          fileShare:"divided",
+                          fileList:"divided"
+                      }
+                  },
+        mute    :{
+                    active: true,
+                    audio   :{
+                            active: false,
+                            button:{
+                                class_on:"pull-right btn btn-modify-video2 videoButtonClass mediaButton",
+                                html_on:'mic',
+                                class_off:"pull-right btn btn-modify-video2 videoButtonClass mediaButton",
+                                html_off:'mic'
+                            }
+                        },
+                    video : {
+                            active: true,
+                            button:{
+                                class_on:"pull-right btn btn-modify-video2 videoButtonClass mediaButton",
+                                html_on:'cam',
+                                class_off:"pull-right btn btn-modify-video2 videoButtonClass mediaButton",
+                                html_off:'cam'
+                            }
+                        }
+                },
+        videoRecord :{
+                        active: true,
+                        videoRecordContainer: true,
+                        button:{
+                            class_on:"pull-right glyphicon glyphicon-facetime-video btn btn-warning mediaButton",
+                            html_on:"rec",
+                            class_off:"pull-right glyphicon glyphicon-facetime-video btn btn-default mediaButton",
+                            html_off:"rec"
+                        }
+                    },
+        snapshot :{
+                        active: true,
+                        snapshotContainer: true,
+                        button:{
+                            class_on:"pull-right glyphicon glyphicon-camera btn btn-default mediaButton",
+                            html_on:"pic"
+                        }
+                    }, 
+    };
+
+    var webrtcdevobj = new WebRTCdev ( 
+        session, widgets
+    );
+    startcall(webrtcdevobj);
+});
+</script>
+
+
+</body>
+</html>

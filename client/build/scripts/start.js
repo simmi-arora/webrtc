@@ -95,7 +95,7 @@ var WebRTCdev= function(session, widgets){
 
         if(widgets.mute)            muteobj         = widgets.mute;
 
-        if(widgets.timer)           timer           = widgets.timer;
+        if(widgets.timer)           timerobj          = widgets.timer;
     }
 
     return {
@@ -162,8 +162,8 @@ var WebRTCdev= function(session, widgets){
             },
 
             rtcMultiConnection.onopen = function(event) {                                 
-                if(timer)
-                   startsessionTimer(timer);
+                /*if(timer)
+                   startsessionTimer(timer);*/
                 shownotification(event.extra.name + " joined session ");
             },
 
@@ -306,8 +306,18 @@ var WebRTCdev= function(session, widgets){
             };
 
             if(chatobj.active){
-                createChatButton(chatobj);
-                createChatBox(chatobj);
+                /* 
+               if(chatobj.button.id && document.getElementById(chatobj.button.id)){
+                    assignChatButon(chatobj);
+                }else{
+                    createChatButton(chatobj);
+                }*/
+
+                if(chatobj.inputBox.text_id && document.getElementById(chatobj.inputBox.text_id)){
+                    assignChatBox(chatobj);
+                }else{
+                    createChatBox(chatobj);
+                }
             }
 
             if(screenrecordobj.active){
@@ -319,7 +329,16 @@ var WebRTCdev= function(session, widgets){
             }   
 
             if(reconnectobj.active){
-                createButtonRedial();
+                if(reconnectobj.button.id && document.getElementById(reconnectobj.button.id)){
+                    assignButtonRedial(reconnectobj.button.id);
+                }else{
+                    createButtonRedial();
+                }
+            }
+
+            if(timerobj.active){
+                startTime();
+                timeZone();
             }
 
             if(drawCanvasobj.active){
@@ -338,7 +357,11 @@ var WebRTCdev= function(session, widgets){
                 rtcMultiConnection.enableFileSharing = true;
                 /*setFileProgressBarHandlers(rtcMultiConnection);*/
                 rtcMultiConnection.filesContainer = document.getElementById(fileshareobj.fileShareContainer);
-                createFileShareButton(fileshareobj);
+                if(reconnectobj.button.id && document.getElementById(reconnectobj.button.id)){
+                    assignFileShareButton(fileshareobj);
+                }else{
+                    createFileShareButton(fileshareobj);
+                }
             }
 
             var addr = "/";
@@ -439,19 +462,7 @@ function checkWebRTCSupport(obj){
     }
 }
 
-function shownotification(message){
-    var alertDiv =document.createElement("div");
-    alertDiv.className="alert alert-success fade in";
-    alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ message;
 
-    document.getElementById("alertBox").hidden=false;
-    document.getElementById("alertBox").innerHTML="";
-    document.getElementById("alertBox").appendChild(alertDiv);
-
-    setTimeout(function() {
-        document.getElementById("alertBox").hidden=true;
-    }, 3000);
-}
 
 function error(arg1 , arg2){
     console.log(arg1, arg2);

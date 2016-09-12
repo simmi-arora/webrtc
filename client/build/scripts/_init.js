@@ -175,3 +175,17 @@ function error() {
 function warn() {
     console.warn(arguments);
 }
+
+function shownotification(message){
+    var alertDiv =document.createElement("div");
+    alertDiv.className="alert alert-success fade in";
+    alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ message;
+
+    document.getElementById("alertBox").hidden=false;
+    document.getElementById("alertBox").innerHTML="";
+    document.getElementById("alertBox").appendChild(alertDiv);
+
+    setTimeout(function() {
+        document.getElementById("alertBox").hidden=true;
+    }, 3000);
+}
