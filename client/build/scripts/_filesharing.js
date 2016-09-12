@@ -22,6 +22,17 @@ function createFileShareButton(fileshareobj){
     document.getElementById("topIconHolder_ul").appendChild(li);
 }
 
+function assignFileShareButton(fileshareobj){
+    var button= document.getElementById(fileshareobj.button.id);
+    button.onclick = function() {
+        var fileSelector = new FileSelector();
+        fileSelector.selectSingleFile(function(file) {
+            sendFile(file);
+            /*sendChatMessage("File is shared :"+file.name);*/
+        });
+    };
+}
+
 function sendFile(file){
         
     rtcMultiConnection.send(file);

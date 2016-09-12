@@ -22,6 +22,21 @@ function createChatButton(chatobj){
     document.getElementById("topIconHolder_ul").appendChild(li);
 }
 
+/*function assignChatButton(chatobj){
+    var button= document.getElementById(chatobj.button.id);
+    button.onclick = function() {
+        if(button.className==chatobj.button.class_off){
+            document.getElementById(chatobj.chatContainer).hidden=true;
+            button.className=chatobj.button.class_on;
+            button.innerHTML= chatobj.button.html_on;
+        }else if(button.className==chatobj.button.class_on){
+            document.getElementById(chatobj.chatContainer).hidden=false;
+            button.className=chatobj.button.class_off;
+            button.innerHTML= chatobj.button.html_off;
+        }
+    };
+}*/
+
 function createChatBox(chatobj){
 
     var mainInputBox=document.createElement("div");
@@ -63,6 +78,25 @@ function createChatBox(chatobj){
 
 }
 
+function assignChatBox(chatobj){
+
+    var chatInput= document.getElementById(chatobj.inputBox.text_id);
+    chatInput.onkeypress=function(e){
+        if (e.keyCode == 13) {
+            sendChatMessage(chatInput.value);
+            chatInput.value = "";
+        }
+    };
+
+    var chatButton= document.getElementById(chatobj.inputBox.sendbutton_id);
+    chatButton.onclick=function(e){
+        var chatInput=document.getElementById(chatobj.inputBox.text_id);
+        sendChatMessage(chatInput.value);
+        alert(chatInput.value);
+        chatInput.value = "";
+    }
+}
+
 function updateWhotyping(data){
     document.getElementById("whoTyping").innerHTML=data;
 }
@@ -91,12 +125,14 @@ function addMessageBlockFormat(messageheaderDivclass , messageheader ,messageDiv
 
 function addNewMessage(e) {
     if ("" != e.message && " " != e.message) {
+        console.log("addNewMessage" , e);
         addMessageLineformat("user-activity user-activity-right remoteMessageClass" , e.message , "chatBoard");
     }
 }
 
 function addNewMessagelocal(e) {
     if ("" != e.message && " " != e.message) {
+         console.log("addNewMessagelocal" , e);
         addMessageLineformat("user-activity user-activity-right localMessageClass" , e.message , "chatBoard");
     }
 }

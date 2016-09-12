@@ -227,6 +227,13 @@ gulp.task('git_pull',function(cb){
 });
 
 gulp.task('default', gulpSequence(
+    'betawebrtcdevelopmentjs',
+    'screensharejs',
+    'webrtcdevelopmentcss',
+    'serverjs'
+));
+
+gulp.task('develop', gulpSequence(
     'vendorjs',
     'drawjs' , 
     'drawcss',

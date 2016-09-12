@@ -97,7 +97,7 @@ function transitionToWaiting() {
 }
 
 function attachMediaStream(element, stream) {
-    console.log("element.src", typeof element.srcObject, typeof element.src );
+    /*console.log("element.src", typeof element.srcObject, typeof element.src );*/
     if (typeof element.src == 'string') {
         element.src = URL.createObjectURL(stream);
     }else if (typeof element.srcObject == 'object') {

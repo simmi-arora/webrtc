@@ -21,3 +21,14 @@ function createButtonRedial(){
     li.appendChild(reconnectButton);
     document.getElementById("topIconHolder_ul").appendChild(li);
 }
+
+function assignButtonRedial(id){
+    document.getElementById(id).onclick=function(){
+        var r = confirm("Do you want to reconnet ?");
+        if (r == true) {
+           location.reload();
+        } else {
+           //do nothing
+        }
+    };
+}

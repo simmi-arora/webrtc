@@ -45,3 +45,24 @@ function getDate(){
     var now = new Date();
     return now;
 }
+
+function startTime() {
+    var today = new Date();
+    var h = today.getHours();
+    var m = today.getMinutes();
+    var s = today.getSeconds();
+    m = checkTime(m);
+    s = checkTime(s);
+    var timerspan=document.getElementById(timerobj.span.currentTime_id);
+    timerspan.innerHTML =   h + ":" + m + ":" + s;
+    var t = setTimeout(startTime, 500);
+}
+function checkTime(i) {
+    if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+    return i;
+}
+
+function timeZone(){
+    var timerspan=document.getElementById(timerobj.span.currentTimeZonr_id);
+    timerspan.innerHTML = Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
