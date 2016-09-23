@@ -96,6 +96,8 @@ var WebRTCdev= function(session, widgets){
         if(widgets.mute)            muteobj         = widgets.mute;
 
         if(widgets.timer)           timerobj          = widgets.timer;
+
+        if(widgets.cursor)          cursorobj = widgets.cursor;
     }
 
     return {
@@ -318,6 +320,8 @@ var WebRTCdev= function(session, widgets){
                 }else{
                     createChatBox(chatobj);
                 }
+
+                console.log("start-chatobj --> " , chatobj);
             }
 
             if(screenrecordobj.active){
@@ -353,11 +357,15 @@ var WebRTCdev= function(session, widgets){
                 createCodeEditorButton();
             }
 
+            if(cursorobj.active){
+                startShareCursor();
+            }
+
             if(fileshareobj.active){
                 rtcMultiConnection.enableFileSharing = true;
                 /*setFileProgressBarHandlers(rtcMultiConnection);*/
                 rtcMultiConnection.filesContainer = document.getElementById(fileshareobj.fileShareContainer);
-                if(reconnectobj.button.id && document.getElementById(reconnectobj.button.id)){
+                if(fileshareobj.button.id && document.getElementById(fileshareobj.button.id)){
                     assignFileShareButton(fileshareobj);
                 }else{
                     createFileShareButton(fileshareobj);
@@ -375,6 +383,8 @@ var WebRTCdev= function(session, widgets){
              socket.emit("register-channel", {
                 channel: rtcMultiConnection.channel
             }); */          
+            
+            shownotification(" Checking status of  : "+ rtcMultiConnection.channel);
 
             socket.emit("presence", {
                 channel: rtcMultiConnection.channel
@@ -517,6 +527,7 @@ function appendVideo(e, style) {
         var video = document.createElement('video');
         video.className = style;
         video.setAttribute('style', 'height:auto;opacity:1;');
+        video.controls=false;
         video.id = e.userid;
         video.src = URL.createObjectURL(e.stream);
         viden.hidden=false;
@@ -611,7 +622,8 @@ function updateWebCallView(peerInfo){
                 selfvid.muted = true;
                 selfvid.setAttribute("style","border: 5px solid "+webcallpeers[0].color);
                 attachControlButtons( selfvid, webcallpeers[0]); 
-                attachUserDetails( selfvid, webcallpeers[0]); 
+                if(localobj.userDisplay)
+                    attachUserDetails( selfvid, webcallpeers[0]); 
                 if(fileshareobj.active){
                     createFileSharingDiv(webcallpeers[0]);
                 }
@@ -642,7 +654,8 @@ function updateWebCallView(peerInfo){
         remvid.id = peerInfo.videoContainer;
         remvid.setAttribute("style","border: 5px solid "+peerInfo.color);
         attachControlButtons(remvid, peerInfo); 
-        attachUserDetails( remvid, peerInfo); 
+        if(remoteobj.userDisplay)
+            attachUserDetails( remvid, peerInfo); 
         if(fileshareobj.active){
             createFileSharingDiv(peerInfo);
         }
@@ -686,8 +699,8 @@ connectWebRTC=function(type, channel , userid , remoteUsers){
     }
 
     rtcMultiConnection.sdpConstraints.mandatory = {
-        OfferToReceiveAudio: !0,
-        OfferToReceiveVideo: !0
+        OfferToReceiveAudio: outgoingAudio,
+        OfferToReceiveVideo: outgoingVideo
     }
 
     if(selfuserid == null){
@@ -728,8 +741,6 @@ joinWebRTC=function(channel , userid){
 leaveWebRTC=function(){
     shownotification("Leaving the session ");
 }
-
-
 
 
 var repeatInitilization = null;

@@ -32,12 +32,36 @@ function setSettingsAttributes(){
     });
 }
 
+function createSession(){
+    var role= $("#roleMakeSession").val();
+    var appname= $("#appnameMakeSession").val();
+    var username= $("#userNameMakeSession").val();
+    var sessionname = $("#sessionNameMakeSession").val();
+    var sessionlink = "https://"+window.location.host+window.location.pathname+"#"+sessionname+"?"+"appname="+appname+"&role="+role+"&audio="+1+"&video="+1+"&name="+username;
+/*    if(sessionlink.){
+        sessionlinkstr.replace("make", "index");
+    }*/
+    $("#sessionlink").val(sessionlink);
+    $("#sessionlinkGo").click(function(){
+        window.open($("#sessionlink").val())
+    });
+    /*$("#sessionlink").val(window.location+'?appname=webrtcwebcall&role=peer&audio=1&video=1&name='+$("#partnername").val());*/
+}
+
 function AddPartner(){
-    $("#partnerlink").val(window.location+'?appname=webrtcwebcall&role=peer&audio=1&video=1&name='+$("#partnername").val());
+    var role= $("#roleMakeSession").val();
+    var appname= $("#appnameMakeSession").val();
+    var username= $("#partnername").val();
+    var sessionname = $("#sessionNameMakeSession").val();
+    var sessionlink = "https://"+window.location.host+window.location.pathname+"#"+sessionname+"?"+"appname="+appname+"&role="+role+"&audio="+1+"&video="+1+"&name="+username;
+    $("#partnerlink").val(sessionlink);
+    /*$("#partnerlink").val(window.location+'?appname=webrtcwebcall&role=peer&audio=1&video=1&name='+$("#partnername").val());*/
 }
 
 function EmailPartnerLink(){
-    window.open('mailto:test@example.com?subject=subject&body=body');
+    var sessionname = $("#sessionNameMakeSession").val();
+    var sessionlink = $("#partnerlink").val();
+    window.open('mailto:test@example.com?subject='+'join Session '+ sessionname+'&body='+ sessionlink);
 }
 /******************* help and settings ***********************/
 

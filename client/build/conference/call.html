@@ -20,96 +20,105 @@
     <script src="../minScripts/webrtcdevelopment_header.js"> </script>
 
     <style type="text/css">
-#videoHold ul li,
-aside {
-    float: left
-}
-#mainWrap {
-    height: 100%;
-    width: 100%;
-    left: 0;
-    top: 0;
-    overflow: hidden
-}
-aside {
-    width: 5%;
-    color: #fff;
-    background-color: #000;
-    height: 100%
-}
-#asideIconHold {
-    padding: 0;
-    margin: 100px 20px;
-    list-style: none
-}
-#asideIconHold li {
-    padding: 10px 0
-}
-#asideIconHold li a {
-    text-decoration: none;
-    color: #fff;
-    font-size: 20px
-}
-section {
-    width: 90%;
-    padding: 30px 0;
-    display: block
-}
-#topIconHolder {
-    background: rgba(0, 0, 0, .6);
-    border-radius: 5px;
-    margin: 0 50%;
-    width: 250px;
-    height: 40px;
-    line-height: 40px
-}
-#topIconHolder ul {
-    padding: 0;
-    margin: 0;
-    list-style: none
-}
-#topIconHolder ul li {
-    float: left;
-    padding: 0 23px
-}
-#topIconHolder ul li a {
-    color: #fff;
-    position: relative
-}
-.slash:after {
-    content: "\\";
-    color: #fff;
-    font-size: 32px;
-    font-weight: 700;
-    left: 2px;
-    position: absolute;
-    top: -10px;
-    transform: rotate(-30deg)
-}
-#videoHold {
-    margin: 50px 35%;
-    width: 800px
-}
-#videoHold ul {
-    padding: 0;
-    margin: 0;
-    list-style: none
-}
-#max_vid {
-    border: 1px solid #fff;
-    width: 800px;
-    height: 400px;
-    max-height: 400px;
-    display: block
-}
-.bgc {
-    background-color: #4FC3F7
-}
-        video{
-            width:100% !important;
+        #videoHold ul li,
+        aside {
+            float: left
         }
+        #mainWrap {
+            height: 100%;
+            width: 100%;
+            left: 0;
+            top: 0;
+            overflow: hidden
+        }
+        aside {
+            width: 5%;
+            color: #fff;
+            background-color: #000;
+            height: 100%
+        }
+        #asideIconHold {
+            padding: 0;
+            margin: 100px 20px;
+            list-style: none
+        }
+        #asideIconHold li {
+            padding: 10px 0
+        }
+        #asideIconHold li a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 20px
+        }
+        section {
+            width: 90%;
+            padding: 30px 0;
+            display: block
+        }
+
+
+        #topIconHolder {
+            background: rgba(0, 0, 0, .6);
+            border-radius: 5px;
+            height: 40px;
+            line-height: 40px;
+            position: absolute;
+            top: 20px;
+            /*width: 310px*/
+            width: 40%;
+            margin: 0 30%;
+        }
+        #topIconHolder ul {
+            padding: 0;
+            margin: 0;
+            list-style: none
+        }
+        #topIconHolder ul li {
+            float: left;
+            display: block;
+            cursor: pointer;
+            padding: 0 23px
+        }
+        #topIconHolder ul li a {
+            color: #fff;
+            position: relative
+        }
+
+
+
+        .slash:after {
+            content: "\\";
+            color: #fff;
+            font-size: 32px;
+            font-weight: 700;
+            left: 2px;
+            position: absolute;
+            top: -10px;
+            transform: rotate(-30deg)
+        }
+        #videoHold {
+            margin: 50px 35%;
+            width: 800px
+        }
+        #videoHold ul {
+            padding: 0;
+            margin: 0;
+            list-style: none
+        }
+        #max_vid {
+            border: 1px solid #fff;
+            width: 800px;
+            height: 400px;
+            max-height: 400px;
+            display: block
+        }
+        .bgc {
+            background-color: #4FC3F7
+        }
+
         body{
             background: #2B2B2B;
+            overflow: hidden;
         }
         .fileViewing1Box{
             background-color: transparent;
@@ -118,468 +127,434 @@ section {
             background-color: transparent;
         }
 
-        #mainWrap,
-body {
-    overflow: hidden
-}
-#asideIconHold li:hover,
-.glyphicon {
-    cursor: pointer
-}
-#asideIconHold li a,
-.sidebar-name a,
-.small-screen-social-icon-wrapper li a {
-    text-decoration: none
-}
-#mainWrap {
-    background-color: #3D3D3D;
-    padding: 0;
-    margin: 0;
-    height: 100%;
-    width: 100%;
-    left: 0;
-    top: 0;
-    display: none
-}
+        #asideIconHold li:hover,
+        .glyphicon {
+            cursor: pointer
+        }
+        #asideIconHold li a,
+        .sidebar-name a,
+        .small-screen-social-icon-wrapper li a {
+            text-decoration: none
+        }
+        #mainWrap {
+            background-color: #3D3D3D;
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+            left: 0;
+            top: 0;
+            display: none
+        }
 
-asideright {
-    width: 20%;
-    color: #fff;
-    background-color: #181818;
-    float: right;
-    height: 100%;
-    padding: 23px;
-    line-height: 34px;
-}
+        asideright {
+            width: 20%;
+            color: #fff;
+            background-color: #181818;
+            float: right;
+            height: 100%;
+            padding: 23px;
+            line-height: 34px;
+        }
 
-aside {
-    width: 5%;
-    color: #fff;
-    background-color: #181818;
-    /*background-color: #828282;*/
-    float: left;
-    height: 100%
-}
-#asideIconHold {
-    padding: 0;
-    margin: 80px 10px;
-    list-style: none;
-    text-align: center
-}
-#asideIconHold li {
-    padding: 20px 0
-}
-#asideIconHold li a {
-    color: #fff;
-    font-size: 20px
-}
-section {
-    display: block;
-    float: left;
-    padding: 0;
-    margin: 0;
-    width: 95%
-}
-#contentWrap {
-    margin: 0;
-    width: 100%;
-    position: relative
-}
+        aside {
+            width: 5%;
+            color: #fff;
+            background-color: #181818;
+            /*background-color: #828282;*/
+            float: left;
+            height: 100%
+        }
+        #asideIconHold {
+            padding: 0;
+            margin: 80px 10px;
+            list-style: none;
+            text-align: center
+        }
+        #asideIconHold li {
+            padding: 20px 0
+        }
+        #asideIconHold li a {
+            color: #fff;
+            font-size: 20px
+        }
+        section {
+            display: block;
+            float: left;
+            padding: 0;
+            margin: 0;
+            width: 95%
+        }
+        #contentWrap {
+            margin: 0;
+            width: 100%;
+            position: relative
+        }
 
-
-
-#topIconHolder {
-    background: rgba(0, 0, 0, .6);
-    border-radius: 5px;
-    height: 40px;
-    /*left: 40%;*/
-    left: 25%;
-    line-height: 40px;
-    position: absolute;
-    top: 20px;
-    /*width: 310px*/
-    width: 40%;
-}
-#topIconHolder ul {
-    padding: 0;
-    margin: 0;
-    list-style: none
-}
-#topIconHolder ul li {
-    float: left;
-    display: block;
-    cursor: pointer;
-    padding: 0 23px
-}
-#topIconHolder ul li a {
-    color: #fff;
-    position: relative
-}
+        #bottomIconHolder {
+            background: rgba(0, 0, 0, .6);
+            /*border-radius: 5px;*/
+            height: 40px;
+            /*left: 40%;*/
+            line-height: 40px;
+            position: fixed;
+            bottom: 0px;
+            width: 100%
+        }
+        #bottomIconHolder ul {
+            padding: 0;
+            margin: 0;
+            list-style: none
+        }
+        #bottomIconHolder ul li {
+            float: left;
+            display: block;
+            cursor: pointer;
+            padding: 0 23px
+        }
+        #bottomIconHolder ul li a {
+            color: #fff;
+            position: relative
+        }
 
 
-#bottomIconHolder {
-    background: rgba(0, 0, 0, .6);
-    /*border-radius: 5px;*/
-    height: 40px;
-    /*left: 40%;*/
-    line-height: 40px;
-    position: fixed;
-    bottom: 0px;
-    width: 100%
-}
-#bottomIconHolder ul {
-    padding: 0;
-    margin: 0;
-    list-style: none
-}
-#bottomIconHolder ul li {
-    float: left;
-    display: block;
-    cursor: pointer;
-    padding: 0 23px
-}
-#bottomIconHolder ul li a {
-    color: #fff;
-    position: relative
-}
+        .slash:after {
+            content: "\\";
+            color: #fff;
+            font-size: 32px;
+            font-weight: 700;
+            left: 2px;
+            position: absolute;
+            top: -11px;
+            transform: rotate(-30deg)
+        }
+        #videoHold {
+            left: 4%;
+            padding: 0;
+            position: absolute;
+            top: 70px;
+         height:80%;
+         margin-left: 10%;
+        }
+        #videoHold ul,
+        .video {
+            width: 100%;
+            height: 100%
+        }
+        #videoHold ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            position: relative
+        }
+        #videoHold ul li {
+            float: left
+        }
+
+        video{
+            background-color: rgb(0, 0, 0);
+            width: 80%;
+            border-radius: 65px;
+            margin: 0px !important;
+        }
+
+        .video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: #000;
+            transition: width .5s ease
+        }
+
+        video::-webkit-media-controls-fullscreen-button {
+            
+        }
+        video::-webkit-media-controls-play-button {
+           display: none;
+        }
+
+        video::-webkit-media-controls-play-button {
+            display: none;
+        }
+        video::-webkit-media-controls-timeline {
+            display: none;
+        }
+
+        video::-webkit-media-controls-current-time-display{
+            display: none;
+        }
+
+        video::-webkit-media-controls-time-remaining-display {
+            display: none;
+        }
+        video::-webkit-media-controls-time-remaining-display {
+            display: none;
+        }
+        video::-webkit-media-controls-mute-button {
+            display: none;
+        }
+        video::-webkit-media-controls-toggle-closed-captions-button {
+            display: none;
+        }
+        video::-webkit-media-controls-volume-slider {}
 
 
-.slash:after {
-    content: "\\";
-    color: #fff;
-    font-size: 32px;
-    font-weight: 700;
-    left: 2px;
-    position: absolute;
-    top: -11px;
-    transform: rotate(-30deg)
-}
-#videoHold {
-    left: 4%;
-    padding: 0;
-    position: absolute;
-    top: 70px;
- height:80%;
- margin-left: 10%;
-}
-#videoHold ul,
-.video {
-    width: 100%;
-    height: 100%
-}
-#videoHold ul {
-    padding: 0;
-    margin: 0;
-    list-style: none;
-    position: relative
-}
-#videoHold ul li {
-    float: left
-}
+        .small-screen-social-icon-wrapper {
+            width: 100%;
+            padding: 0
+        }
+        .small-screen-social-icon-wrapper li {
+            list-style: none;
+            float: left;
+            padding: 0 10px;
+            height: 40px;
+            width: 40px
+        }
+        .modal-body {
+            font-size: 13px;
+            font-weight: 700;
+            margin: 0 auto;
+            text-align: center
+        }
+        .modal-body input {
+            font-weight: 0
+        }
+        .modal-footer {
+            text-align: left
+        }
+        @media only screen and (max-width: 540px) {
+            .chat-popup,
+            .chat-sidebar {
+                display: none!important
+            }
+        }
+        .chat-sidebar {
+            width: 200px;
+            position: fixed;
+            height: 100%;
+            right: 0;
+            top: 0;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border: 1px solid rgba(29, 49, 91, .3)
+        }
+        .sidebar-name {
+            padding-left: 10px;
+            padding-right: 10px;
+            margin-bottom: 4px;
+            font-size: 12px
+        }
+        .sidebar-name span {
+            padding-left: 5px
+        }
+        .sidebar-name a {
+            display: block;
+            height: 100%;
+            color: inherit
+        }
+        .sidebar-name:hover {
+            background-color: #e1e2e5
+        }
+        .sidebar-name img {
+            width: 32px;
+            height: 32px;
+            vertical-align: middle
+        }
+        .popup-box {
+            position: fixed;
+            /*bottom: 0;*/
+            /*bottom :60px;*/
+            bottom :12%;
+            right: 10px;
+            height: 400px;
+            background-color: #edeff4;
+            width: 300px
+        }
+        .popup-box .popup-head {
+            background-color: #4fc3f7;
+            padding: 15px;
+            height: 50px;
+            width: 100%;
+            float: left;
+            color: #fff;
+            font-weight: 700;
+            font-size: 14px;
+            clear: both;
+            position: initial!important;
+            border-bottom: 1px solid #fff
+        }
+        .popup-box .popup-head .popup-head-left {
+            float: left
+        }
+        .popup-box .popup-head .popup-head-right {
+            float: right;
+            height: 20px;
+            width: 20px;
+            text-align: center
+        }
+        .popup-head-right:hover {
+            background-color: #fff;
+            color: #4fc3f7
+        }
+        .popup-box .popup-head .popup-head-right a {
+            text-decoration: none;
+            color: inherit
+        }
+        .popup-box .popup-messages {
+            height: 300px;
+            width: 100%;
+            float: left;
+            overflow-y: auto;
+            position: initial!important;
+            background-color: #fff
+        }
+        .fa {
+            line-height: 2.4
+        }
+        .popup-box .main-input-box {
+            height: 50px;
+            width: 100%;
+            float: left
+        }
+        .popup-box .main-input-box input[type=text] {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            font-size: 15px;
+            text-indent: 10px;
+            background-color: #F2F7F9;
+            color: #000;
+            line-height: 50px;
+            font-weight: 500
+        }
+        .user-activity {
+            background-color: #CFE3FE;
+            line-height: 1.28;
+            color: #3D3D3D;
+            min-height: 50px;
+            width: 75%;
+            box-shadow: 3px 2px 6px #ccc;
+            padding: 5px;
+            margin: 5px 10px;
+            border-radius: 5px;
+            position: relative
+        }
+        .user-activity-left:after,
+        .user-activity-right:after {
+            position: absolute;
+            content: "";
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            top: 6px
+        }
+        .user-activity-right {
+            float: right!important;
+            box-shadow: -2px 2px 5px #3D3D3D
+        }
+        .user-activity-left {
+            float: left!important;
+            box-shadow: 2px 2px 5px #3D3D3D
+        }
+        .user-activity-left:after {
+            border-right: 10px solid #CFE3FE;
+            left: -9px
+        }
+        .user-activity-right:after {
+            border-left: 10px solid #CFE3FE;
+            right: -9px
+        }
+        .chatusername {
+            font-size: 13px;
+            color: #9D0C0C;
+            font-weight: 600;
+            font-stretch: expanded;
+            font-style: italic
+        }
+        .userchatmsg {
+            font-size: 12px;
+            color: #000;
+            font-weight: lighter;
+            font-style: oblique;
+            text-rendering: optimizeSpeed;
+            white-space: pre-line;
+            word-wrap: break-word
+        }
+        .max_vid {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            height: 40px;
+            width: 40px;
+            background-color: rgba(0, 0, 0, .8);
+            border-radius: 20px;
+            line-height: 40px;
+            text-align: center;
+            vertical-align: middle;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 700
+        }
+        .glyphicon {
+            line-height: 38px!important
+        }
+        #fullScreen {
+            display: none;
+            position: relative;
+            background-color: orange
+        }
+        #inlineVidWrap {
+            position: absolute;
+            bottom: 30px;
+            left: 30px
+        }
+        .inlineVid {
+            width: 200px;
+            border: 1px solid #00f;
+            margin: 0 20px;
+            display: inline-block
+        }
+        :fullscreen {
+            position: fixed!important;
+            top: 0!important;
+            right: 0!important;
+            bottom: 0!important;
+            left: 0!important;
+            margin: 0!important;
+            box-sizing: border-box!important;
+            width: 100%!important;
+            height: 100%!important;
+            object-fit: contain!important
+        }
+        :-webkit-full-screen {
+            background: orange;
+            width: 100%;
+            height: 100%
+        }
 
-.video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: #000;
-    transition: width .5s ease
-}
-
-video::-webkit-media-controls-fullscreen-button {
-    
-}
-video::-webkit-media-controls-play-button {
-   display: none;
-}
-
-video::-webkit-media-controls-play-button {
-    display: none;
-}
-video::-webkit-media-controls-timeline {
-    display: none;
-}
-
-video::-webkit-media-controls-current-time-display{
-    display: none;
-}
-
-video::-webkit-media-controls-time-remaining-display {
-    display: none;
-}
-video::-webkit-media-controls-time-remaining-display {
-    display: none;
-}
-video::-webkit-media-controls-mute-button {
-    display: none;
-}
-video::-webkit-media-controls-toggle-closed-captions-button {
-    display: none;
-}
-video::-webkit-media-controls-volume-slider {}
-
-
-
-.small-screen-social-icon-wrapper {
-    width: 100%;
-    padding: 0
-}
-.small-screen-social-icon-wrapper li {
-    list-style: none;
-    float: left;
-    padding: 0 10px;
-    height: 40px;
-    width: 40px
-}
-.modal-body {
-    font-size: 13px;
-    font-weight: 700;
-    margin: 0 auto;
-    text-align: center
-}
-.modal-body input {
-    font-weight: 0
-}
-.modal-footer {
-    text-align: left
-}
-@media only screen and (max-width: 540px) {
-    .chat-popup,
-    .chat-sidebar {
-        display: none!important
-    }
-}
-.chat-sidebar {
-    width: 200px;
-    position: fixed;
-    height: 100%;
-    right: 0;
-    top: 0;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    border: 1px solid rgba(29, 49, 91, .3)
-}
-.sidebar-name {
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-bottom: 4px;
-    font-size: 12px
-}
-.sidebar-name span {
-    padding-left: 5px
-}
-.sidebar-name a {
-    display: block;
-    height: 100%;
-    color: inherit
-}
-.sidebar-name:hover {
-    background-color: #e1e2e5
-}
-.sidebar-name img {
-    width: 32px;
-    height: 32px;
-    vertical-align: middle
-}
-.popup-box {
-    position: fixed;
-    /*bottom: 0;*/
-    /*bottom :60px;*/
-    bottom :12%;
-    right: 10px;
-    height: 400px;
-    background-color: #edeff4;
-    width: 300px
-}
-.popup-box .popup-head {
-    background-color: #4fc3f7;
-    padding: 15px;
-    height: 50px;
-    width: 100%;
-    float: left;
-    color: #fff;
-    font-weight: 700;
-    font-size: 14px;
-    clear: both;
-    position: initial!important;
-    border-bottom: 1px solid #fff
-}
-.popup-box .popup-head .popup-head-left {
-    float: left
-}
-.popup-box .popup-head .popup-head-right {
-    float: right;
-    height: 20px;
-    width: 20px;
-    text-align: center
-}
-.popup-head-right:hover {
-    background-color: #fff;
-    color: #4fc3f7
-}
-.popup-box .popup-head .popup-head-right a {
-    text-decoration: none;
-    color: inherit
-}
-.popup-box .popup-messages {
-    height: 300px;
-    width: 100%;
-    float: left;
-    overflow-y: auto;
-    position: initial!important;
-    background-color: #fff
-}
-.fa {
-    line-height: 2.4
-}
-.popup-box .main-input-box {
-    height: 50px;
-    width: 100%;
-    float: left
-}
-.popup-box .main-input-box input[type=text] {
-    width: 100%;
-    height: 100%;
-    border: 0;
-    font-size: 15px;
-    text-indent: 10px;
-    background-color: #F2F7F9;
-    color: #000;
-    line-height: 50px;
-    font-weight: 500
-}
-.user-activity {
-    background-color: #CFE3FE;
-    line-height: 1.28;
-    color: #3D3D3D;
-    min-height: 50px;
-    width: 75%;
-    box-shadow: 3px 2px 6px #ccc;
-    padding: 5px;
-    margin: 5px 10px;
-    border-radius: 5px;
-    position: relative
-}
-.user-activity-left:after,
-.user-activity-right:after {
-    position: absolute;
-    content: "";
-    width: 0;
-    height: 0;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    top: 6px
-}
-.user-activity-right {
-    float: right!important;
-    box-shadow: -2px 2px 5px #3D3D3D
-}
-.user-activity-left {
-    float: left!important;
-    box-shadow: 2px 2px 5px #3D3D3D
-}
-.user-activity-left:after {
-    border-right: 10px solid #CFE3FE;
-    left: -9px
-}
-.user-activity-right:after {
-    border-left: 10px solid #CFE3FE;
-    right: -9px
-}
-.chatusername {
-    font-size: 13px;
-    color: #9D0C0C;
-    font-weight: 600;
-    font-stretch: expanded;
-    font-style: italic
-}
-.userchatmsg {
-    font-size: 12px;
-    color: #000;
-    font-weight: lighter;
-    font-style: oblique;
-    text-rendering: optimizeSpeed;
-    white-space: pre-line;
-    word-wrap: break-word
-}
-.max_vid {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    height: 40px;
-    width: 40px;
-    background-color: rgba(0, 0, 0, .8);
-    border-radius: 20px;
-    line-height: 40px;
-    text-align: center;
-    vertical-align: middle;
-    color: #fff;
-    font-size: 20px;
-    font-weight: 700
-}
-.glyphicon {
-    line-height: 38px!important
-}
-#fullScreen {
-    display: none;
-    position: relative;
-    background-color: orange
-}
-#inlineVidWrap {
-    position: absolute;
-    bottom: 30px;
-    left: 30px
-}
-.inlineVid {
-    width: 200px;
-    border: 1px solid #00f;
-    margin: 0 20px;
-    display: inline-block
-}
-:fullscreen {
-    position: fixed!important;
-    top: 0!important;
-    right: 0!important;
-    bottom: 0!important;
-    left: 0!important;
-    margin: 0!important;
-    box-sizing: border-box!important;
-    width: 100%!important;
-    height: 100%!important;
-    object-fit: contain!important
-}
-:-webkit-full-screen {
-    background: orange;
-    width: 100%;
-    height: 100%
-}
-video {
-    width: 100%!important;
-    height: 100%!important;
-    margin: 0!important;
-    background-color: #000
-}
-.custom_wrapper {
-    position: relative;
-    width: 380px;
-    height: 285px;
-    margin: 2px
-}
-.anim {
-    width: 25%!important;
-    height: 25%!important;
-    z-index: 200
-}
-.screen {
-    position: absolute;
-    top: 0;
-    left: 0
-}
-.bgc {
-    background-color: #4FC3F7
-}
-#invitationemail {
-    font-size: 12px
-}
+        .custom_wrapper {
+            position: relative;
+            width: 380px;
+            height: 285px;
+            margin: 2px
+        }
+        .anim {
+            width: 25%!important;
+            height: 25%!important;
+            z-index: 200
+        }
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0
+        }
+        .bgc {
+            background-color: #4FC3F7
+        }
+        #invitationemail {
+            font-size: 12px
+        }
     </style>
 
     <link rel="stylesheet" href="css/scrol-bars.css">
@@ -617,10 +592,8 @@ video {
         <section><span class=logo1>&nbsp;</span>
             
             <div class="small-logo-holder" style="display:none;">
-                
                 <div class="small-logo"><img src="images/logo.png" alt=miljul></div>
             </div>
-
 
             <div id="contentWrap">
 
@@ -655,7 +628,7 @@ video {
                         <li id="install-extension">
                             <a id="install-allow-screen" title="Screen Share" data-placement="bottom" class="slash">
                                 <i class="fa fa-desktop"></i>
-                                <a href="#" onclick="chrome.webstore.install()" id="install-link">Screenshare</a>
+                                <a href="#" onclick="chrome.webstore.install()" id="install-link">..</a>
                             </a>
                         </li>
                                             
@@ -670,15 +643,6 @@ video {
                                 <i class="fa fa-phone fa-flip-horizontal"></i>
                             </a>
                         </li>
-                    </ul>
-                </div>
-
-                <!-- bottom bar -->
-                <div id="bottomIconHolder" class="content-body">
-                    <ul>
-                        <li> <input id="currenturl" type="text" size="55" class="form-control" > </li>
-                        <li> <span class="numbers-of-users" > </span> </li>
-                        <li> <span class="users-list"> </span> </li>
                     </ul>
                 </div>
 
@@ -698,57 +662,60 @@ video {
             <div class="col-xs-12 videoBox merge" id="videoHold">
                 <div class="row users-container merge" id="usersContainer" >
                     <div class="CardClass" id="card">
-                        
+
                         <!-- when no remote -->
-                        <div id="local" class="row" hidden="">
-                            <video name="localVideo" autoplay="autoplay" muted="true" />
+                        <div id="singleVideoContainer" class="row" hidden>
+                            <div class="col-sm-2 merge text-success" > Waiting  ! </div>
+                            <div class="col-sm-8 merge "> <video name="myAloneVideo" autoplay="autoplay" muted="true" /></div>
+                            <div class="col-sm-2 merge text-info" > You are the only one in the session ...</div>
                         </div>
 
                         <!-- when remote is connected -->
-                        <div id ="remote" class="row" style="display:inline" hidden>
-                            <div class="col-sm-4 merge" class="leftVideoClass" id="leftVideo">
-                                <video name="video1" autoplay="autoplay" muted="true" />
+                        <div id ="confVideoContainer"  class="row" hidden >
+                            <div class="col-sm-4 merge" class="leftVideoClass" id="userVideo">
+                                <video name="myConferenceVideo" autoplay="autoplay" muted="true" />
                             </div>
 
-                            <div class="col-sm-4 merge" class="rightVideoClass" id="rightVideo">
-                            </div>
-
-                            <div class="col-sm-4 merge "  style="height:100%" id="chatbox" >
-                                <div class="row">
-                                    <div class="mainInputBox">   
-                                        <button id="send" class="form-control btn-primary buttonChatSend">Send</button>
-                                        <input type=text style="width:70%;" id="chatInput" class="form-control" placeholder="Type message here">
-                                    </div>
-
-                                    <div  id="chatBoard"  contenteditable class="chatMessagesClass">
-                                        <div id="all-messages" style="padding:5px;"></div>
-                                    </div>
-                                    <p id="who-is-typing" hidden></p>
-
-                                    <div class="fileinputClass" style="position:absolute" data-provides="fileinput">
-                                        <span class="btn btn-default btn-file"><input id="file" type="file" /></span>
-                                    </div>
-
-                                </div>
+                            <div class="col-sm-4 merge" class="rightVideoClass" id="othersVideo">
+                                <video name="otherConferenceVideo" autoplay="autoplay" />
                             </div>
                         </div>
                     </div>
                 </div>
             </div> 
         </div>
-        <!-- .......................... Row 3 ................................ -->
-        <div class="row fourthPanelClass"> 
-            <div class="col-xs-12 filesharingBox merge" >
-                <div id="fileSharingRow" class="row fileSharingRow"> </div>
-            </div>
-        </div>
 
-        <!-- .......................... Row 4 ................................ -->
-        
-        <div class="row fifthPanelClass"> 
-            <div class="col-xs-12 filesharingBox merge" >
+        <div id="chatContainer" class="popup-box chat-popup" style="display: initial; top:50px">
+                
+                <div class="popup-head">
+                    <div class="popup-head-left">Miljul Chat</div>
+                    <div class="popup-head-right"><a href="javascript:toggle_chat_popup();">✕</a></div>
+                    <div style="clear: both"></div>
+                </div>
+                
+                <div class="popup-messages">
+                    <div id="chatBoard" id="all-messages" style="padding:5px;"></div>
+                </div>
+                
+                <div class="main-input-box">
+                    <input id="chatInputText" type="text" style="width:80%;" placeholder="Type message and press Enter">
+                    
+                    <div class="image-upload" style="width: 10%; float: right;">
+                        <label for="file-input" class="glyphicon glyphicon-paperclip">  </label>
+                        <input id="file-input" type="file">
+                    </div>
+
+                    <p id="whoTyping"></p>
+
+                </div>
+
+                <div style="background-color: rgb(171, 188, 196);">
+                    <!-- <input style="color:#000000;margin-left: 30px;" type="file" id="file"> -->
+                    <div style="color:#FFF;height:20px" id="file-progress"></div>
+                </div>
+
+                <div id="fileSharingRow" class="row fileSharingRow"> </div>
                 <div id="fileListingRow" class="row">  </div>
-            </div>
         </div>
 
         <!--modal help -->
@@ -768,9 +735,7 @@ video {
               </div>
             </div>
         </div>
-
     </div>
-
 
     <!-- mail popups -->
     <div class="modal" id="mailpopup">
@@ -797,7 +762,6 @@ video {
             </div>
         </div>
     </div>
-
 </body>
 
 <script src="../property.js"></script>
@@ -823,7 +787,7 @@ $('document').ready(function(){
     if(searchParams.get('name')){
         username=searchParams.get('name');
     }else{
-        username="Expert";
+        username="User Name here";
     }
 
     if(searchParams.get('email')){
@@ -892,9 +856,18 @@ $('document').ready(function(){
     
 
     var widgets={
-        debug      : true,
+        debug      : false,
+        reconnect   :{
+                        active: false,
+                        button:{
+                            id: "reconnectBtn",
+                            class:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
+                            html:"Reconnect",
+                            resyncfiles:false
+                        }
+                    },
         timer      :{
-                        active:true,
+                        active:false,
                         type: "backward",
                         upperlimit: {
                             hour:0 , 
@@ -902,13 +875,23 @@ $('document').ready(function(){
                             sec: 0 
                         },
                         span:{
-                            id:"timerDiv",
-                            class:""
+                            currentTime_id:"currentTimeArea",
+                            currentTimeZonr_id:"currentTimeZoneArea",
+                            class_on:""
                         }
                     },
         chat    :{
                         active: true,
-                        chatContainer: "chatContainer",
+                        container: {
+                            id: "chatContainer"
+                        },
+                        inputBox:{
+                            text_id:"chatInputText",
+                            sendbutton_id:"chatSendButton"
+                        },
+                        chatBox:{
+                            id: "chatBoard"
+                        },
                         button:{
                             class_on:"btn btn-warning glyphicon glyphicon-font topPanelButton",
                             html_on:"Chat",
@@ -916,118 +899,59 @@ $('document').ready(function(){
                             html_off:"Chat"
                         }
                 },
-        fileShare   :{
-                        active : true,
-                        fileShareContainer : "fileSharingRow",
-                        fileListContainer : "fileListingRow",
-                        button:{
-                            class:"btn btn-success glyphicon glyphicon-file topPanelButton",
-                            html:"File"
+        fileShare :{
+                      active : true,
+                      fileShareContainer : "fileSharingRow",
+                      fileListContainer : "fileListingRow",
+                      button:{
+                          id: "file-input",
+                          class:"btn btn-success glyphicon glyphicon-file topPanelButton",
+                          html:"File"
+                      },
+                      props:{
+                          fileShare:"divided",
+                          fileList:"divided"
+                      }
+                  },
+        mute    :{
+                    active: true,
+                    audio   :{
+                            active: true,
+                            button:{
+                                class_on:"pull-right btn btn-modify-video2 videoButtonClass ",
+                                html_on:"mic",
+                                class_off:"pull-right btn btn-modify-video2 videoButtonClass ",
+                                html_off:"mic"
+                            }
                         },
-                        props:{
-                            fileShare:"divided",
-                            fileList:"divided"
-                        }
-                    },
-        location    :{
-                         active : false
-                    },
-        screenrecord:{
-                        active: true,
-                        autoscreenrecord:false,
-                        screenrecordContainer: null,
-                        button:{
-                            class_on:"btn btn-warning glyphicon glyphicon-film topPanelButton",
-                            html_on:"Stop",
-                            class_off:"btn btn-success glyphicon glyphicon-film topPanelButton",
-                            html_off:"Record"
-                        }
-                    }, 
-        screenshare : {
-                        active:true,
-                        screenshareContainer: "widget-screenshareContainer",
-                        extensionID: props.extensionID,
-                        button:{
-                            installButton:{
-                                class_on:"btn btn-warning glyphicon glyphicon-inbox topPanelButton",
-                                html_on:"Stop Install",
-                                class_off:"btn btn-success glyphicon glyphicon-inbox topPanelButton",
-                                html_off:"Install Screen Share"
-                            },
-                            shareButton:{
-                                class_on:"btn btn-warning  glyphicon glyphicon-expand topPanelButton",
-                                html_on:"Stop Sharing",
-                                class_off:"btn btn-success glyphicon glyphicon-expand topPanelButton",
-                                html_off:"ScreenShare"
-                            },
-                            viewButton:{
-                                class_on:"btn btn-warning  glyphicon glyphicon-expand topPanelButton",
-                                html_on:"Stop Viewing",
-                                class_off:"btn btn-success glyphicon glyphicon-expand topPanelButton",
-                                html_off:"View Screen"
+                    video : {
+                            active: true,
+                            button:{
+                                class_on:"pull-right btn btn-modify-video2 videoButtonClass ",
+                                html_on:"cam",
+                                class_off:"pull-right btn btn-modify-video2 videoButtonClass ",
+                                html_off:"cam"
                             }
                         }
-                    },
+                },
         videoRecord :{
                         active: true,
                         videoRecordContainer: true,
                         button:{
-                            class_on:"pull-right glyphicon glyphicon-facetime-video btn btn-warning mediaButton",
-                            html_on:"",
-                            class_off:"pull-right glyphicon glyphicon-facetime-video btn btn-default mediaButton",
-                            html_off:""
+                            class_on:"pull-right btn btn-modify-video2 videoButtonClass",
+                            html_on:"rec",
+                            class_off:"pull-right btn btn-modify-video2 videoButtonClass",
+                            html_off:"rec"
                         }
                     },
         snapshot :{
                         active: true,
                         snapshotContainer: true,
                         button:{
-                            class_on:"pull-right glyphicon glyphicon-camera btn btn-default mediaButton",
-                            html_on:""
+                            class_on:"pull-right btn btn-modify-video2 videoButtonClass",
+                            html_on:"pic"
                         }
                     }, 
-        drawCanvas  :{
-                        active: true,
-                        drawCanvasContainer: "widget-drawContainer",
-                        button:{
-                            class_on:"btn btn-warning glyphicon glyphicon-edit topPanelButton",
-                            html_on:"close Draw",
-                            class_off:"btn btn-success glyphicon glyphicon-edit topPanelButton",
-                            html_off:"Draw"
-                        }
-                    }, 
-        texteditor  :{
-                        active: false
-                    },                   
-        reconnect   :{
-                        active: true,
-                        button:{
-                            class:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
-                            html:"Reconnect",
-                            resyncfiles:false
-                        }
-                    }, 
-        mute    :{
-                    active: true,
-                    audio   :{
-                            active: false,
-                            button:{
-                                class_on:"pull-right glyphicon glyphicon-volume-up btn btn-default mediaButton",
-                                html_on:"",
-                                class_off:"pull-right glyphicon glyphicon-volume-off btn btn-danger mediaButton",
-                                html_off:""
-                            }
-                        },
-                    video : {
-                            active: true,
-                            button:{
-                                class_on:"pull-right glyphicon glyphicon-eye-open btn btn-default videoButtonClass mediaButton",
-                                html_on:"",
-                                class_off:"pull-right glyphicon glyphicon-eye-close  btn btn-danger videoButtonClass mediaButton",
-                                html_off:""
-                            }
-                        }
-                }
     };
 
     var webrtcdevobj = new WebRTCdev ( 

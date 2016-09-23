@@ -16,7 +16,6 @@ function createFileShareButton(fileshareobj){
             /*sendChatMessage("File is shared :"+file.name);*/
         });
     };
-
     var li =document.createElement("li");
     li.appendChild(button);
     document.getElementById("topIconHolder_ul").appendChild(li);
@@ -101,11 +100,11 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     var elementDisplay= peerinfo.fileShare.container;
     var listlength=peerinfo.filearray.length;
 
-    if(peerinfo.name=="localVideo"){
+/*    if(peerinfo.name=="localVideo"){
         showRemoveButton=false;
     }else{
         showRemoveButton=false;
-    }
+    }*/
 
     var name = document.createElement("div");
     name.innerHTML = listlength +"   " + filename ;
@@ -113,14 +112,17 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     name.id="name"+filename;
 
     var downloadButton = document.createElement("div");
-    downloadButton.setAttribute("class" , "btn btn-primary");
+    downloadButton.style.float="right";
+    /*downloadButton.setAttribute("class" , "btn btn-primary");*/
     downloadButton.setAttribute("style", "color:white");
-    downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '" style="color:white" > Download </a>';
+    downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '">'+'<i class="fa fa-download"></i>'+' </a>';
 
     var showButton = document.createElement("div");
     showButton.id= "showButton"+filename;
-    showButton.setAttribute("class" , "btn btn-primary");
-    showButton.innerHTML='show';
+    showButton.style.float="right";
+/*    showButton.setAttribute("class" , "btn btn-primary");
+    showButton.innerHTML='show';*/
+    showButton.innerHTML='<i class="fa fa-eye"></i>';
     showButton.onclick=function(){
         if(repeatFlagShowButton != filename){
             showFile(uuid , elementDisplay , fileurl , filename , filetype);
@@ -140,8 +142,10 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
 
     var hideButton = document.createElement("div");
     hideButton.id= "hideButton"+filename;
-    hideButton.setAttribute("class" , "btn btn-primary");
-    hideButton.innerHTML='hide';
+    hideButton.style.float="right";
+/*    hideButton.setAttribute("class" , "btn btn-primary");
+    hideButton.innerHTML='hide';*/
+    hideButton.innerHTML='<i class="fa fa-eye-slash"></i>';
     hideButton.onclick=function(event){
         if(repeatFlagHideButton != filename){
             hideFile(uuid , elementDisplay , fileurl , filename , filetype);
@@ -162,8 +166,10 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
 
     var removeButton = document.createElement("div");
     removeButton.id= "removeButton"+filename;
-    removeButton.setAttribute("class" , "btn btn-primary");
-    removeButton.innerHTML='remove';
+    removeButton.style.float="right";
+/*    removeButton.setAttribute("class" , "btn btn-primary");
+    removeButton.innerHTML='remove';*/
+    removeButton.innerHTML='<i class="fa fa-trash-o"></i>';
     removeButton.onclick=function(event){
         if(repeatFlagRemoveButton != filename){
             hideFile(uuid , elementDisplay , fileurl , filename , filetype);
@@ -184,18 +190,8 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     
     if(document.getElementById(filename)){
         filedom = document.getElementById(filename);
-        if(fileshareobj.active){
-            filedom.innerHTML="";
-            filedom.appendChild(name);
-            if(showDownloadButton) 
-                filedom.appendChild(downloadButton);
-            filedom.appendChild(showButton);
-            filedom.appendChild(hideButton);
-            if(showRemoveButton) 
-                filedom.appendChild(removeButton);
-        }
     }else{
-        /* if the progress bar area dodont exist */
+        /* if the progress bar area does not exist */
         if(document.getElementById(elementList)){
             parentdom = document.getElementById(elementList);
             filedom = document.createElement("div") ;
@@ -203,21 +199,23 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
             parentdom = document.body;
             filedom = document.createElement("div") ;
         }
-        if(fileshareobj.active){
-            filedom.id=filename;
-            filedom.innerHTML="";
-            filedom.appendChild(name);
-            if(showDownloadButton) 
-                filedom.appendChild(downloadButton);
-            filedom.appendChild(showButton);
-            filedom.appendChild(hideButton);
-            if(showRemoveButton) 
-                filedom.appendChild(removeButton);
-        }
+    }
 
-        parentdom.appendChild(filedom);
+    if(fileshareobj.active){
+        filedom.id=filename;
+        filedom.innerHTML="";
+        filedom.className="row";
+        filedom.appendChild(name);
+        if(showDownloadButton) 
+            filedom.appendChild(downloadButton);
+        filedom.appendChild(showButton);
+        filedom.appendChild(hideButton);
+        if(showRemoveButton) 
+            filedom.appendChild(removeButton);
+    }
 
-    } 
+    if(parentdom)
+        parentdom.appendChild(filedom); 
 
 }
 
@@ -344,12 +342,22 @@ function createFileSharingBox(peerinfo, parent){
     fileSharingBox.id=peerinfo.fileShare.outerbox;
 
     /*--------------------------------add for File Share control Bar--------------------*/
+
+    /*    
+    <div class="button-corner">
+        <span data-placement="bottom" data-toggle="tooltip" title="" data-original-title="minimize"><i class="fa fa-minus-square"></i></span>
+        <span data-placement="bottom" data-toggle="tooltip" title="" data-original-title="maxsimize"><i class="fa fa-external-link-square"></i></span>
+        <span data-placement="bottom" data-toggle="tooltip" title="" data-original-title="close"><i class="fa fa-times-circle"></i></span>        
+    </div>*/
+
     var fileControlBar=document.createElement("p");
-    fileControlBar.appendChild(document.createTextNode("File Viewer for "+ peerinfo.name));
+    fileControlBar.style.float="right";
+    fileControlBar.appendChild(document.createTextNode("File Viewer for "+ peerinfo.name+ "     "));
 
     var minButton= document.createElement("span");
-    minButton.className="btn btn-default glyphicon glyphicon-import closeButton";
-    minButton.innerHTML="Minimize";
+/*    minButton.className="btn btn-default glyphicon glyphicon-import closeButton";
+    minButton.innerHTML="Minimize";*/
+    minButton.innerHTML='<i class="fa fa-minus-square"></i>';
     minButton.id=peerinfo.fileShare.minButton;
     minButton.setAttribute("lastClickedBy" ,'');
     minButton.onclick=function(){
@@ -357,8 +365,9 @@ function createFileSharingBox(peerinfo, parent){
     }
 
     var maxButton= document.createElement("span");
-    maxButton.className= "btn btn-default glyphicon glyphicon-export closeButton";
-    maxButton.innerHTML="Maximize";
+/*    maxButton.className= "btn btn-default glyphicon glyphicon-export closeButton";
+    maxButton.innerHTML="Maximize";*/
+    maxButton.innerHTML='<i class="fa fa-external-link-square"></i>';
     maxButton.id=peerinfo.fileShare.maxButton;
     maxButton.setAttribute("lastClickedBy" ,'');
     maxButton.onclick=function(){
@@ -366,17 +375,22 @@ function createFileSharingBox(peerinfo, parent){
     }
 
     var closeButton= document.createElement("span");
+    /*
     closeButton.className="btn btn-default glyphicon glyphicon-remove closeButton";
-    closeButton.innerHTML="Close";
+    closeButton.innerHTML="Close";*/
+    closeButton.innerHTML='<i class="fa fa-times-circle"></i>';
     closeButton.id=peerinfo.fileShare.closeButton;
     closeButton.setAttribute("lastClickedBy" ,'');
     closeButton.onclick=function(){
         closeFV(peerinfo.userid, closeButton.id , peerinfo.fileShare.container);
     }
 
+    linebreak = document.createElement("br");
+
     fileControlBar.appendChild(minButton);
     fileControlBar.appendChild(maxButton);
     fileControlBar.appendChild(closeButton);
+    fileControlBar.appendChild(linebreak);
 
     /*--------------------------------add for File Share Container--------------------*/
     var fileShareContainer = document.createElement("div");
@@ -410,16 +424,50 @@ function createFileListingBox(peerinfo, parent){
     fileListingBox.setAttribute("style","background-color:"+peerinfo.color);
 
 
+
     /*--------------------------------add for File List control Bar--------------------*/
 
     var fileListControlBar=document.createElement("p");
 
+    fileListControlBar.appendChild(document.createTextNode("List of Uploaded Files"));
+
+    /*
     var fileHelpButton= document.createElement("span");
     fileHelpButton.className="btn btn-default glyphicon glyphicon-question-sign closeButton";
     fileHelpButton.innerHTML="Help";
+    /*fileListControlBar.appendChild(fileHelpButton);*/
 
-    fileListControlBar.appendChild(document.createTextNode("List of Uploaded Files"));
-    fileListControlBar.appendChild(fileHelpButton);
+    var fileControlBar=document.createElement("p");
+    fileControlBar.appendChild(document.createTextNode("File Viewer for "+ peerinfo.name));
+
+    var minButton= document.createElement("span");
+    minButton.innerHTML='<i class="fa fa-minus-square"></i>';
+    minButton.id=peerinfo.fileShare.minButton;
+    minButton.setAttribute("lastClickedBy" ,'');
+    minButton.onclick=function(){
+        resizeFV(peerinfo.userid, minButton.id , peerinfo.fileShare.outerbox);
+    }
+
+    var maxButton= document.createElement("span");
+    maxButton.innerHTML='<i class="fa fa-external-link-square"></i>';
+    maxButton.id=peerinfo.fileShare.maxButton;
+    maxButton.setAttribute("lastClickedBy" ,'');
+    maxButton.onclick=function(){
+        maxFV(peerinfo.userid, maxButton.id  , peerinfo.fileShare.outerbox);
+    }
+
+    var closeButton= document.createElement("span");
+    closeButton.innerHTML='<i class="fa fa-times-circle"></i>';
+    closeButton.id=peerinfo.fileShare.closeButton;
+    closeButton.setAttribute("lastClickedBy" ,'');
+    closeButton.onclick=function(){
+        closeFV(peerinfo.userid, closeButton.id , peerinfo.fileShare.container);
+    }
+
+    fileListControlBar.appendChild(minButton);
+    fileListControlBar.appendChild(maxButton);
+    fileListControlBar.appendChild(closeButton);
+
 
    /*--------------------------------add for File List Container--------------------*/
     var fileListContainer= document.createElement("div");
@@ -447,6 +495,7 @@ function createFileSharingDiv(peerinfo){
 
     var parentFileListContainer = document.getElementById(fileshareobj.fileListContainer);
     createFileListingBox(peerinfo , parentFileListContainer);
+
 }
 
 /* ************* file sharing container button functions --------------- */
@@ -456,10 +505,18 @@ function closeFV(userid,  buttonId , selectedFileSharingBox){
 }
 
 function resizeFV(userid,  buttonId , selectedFileSharingBox){
-
-    document.getElementById(selectedFileSharingBox).hidden=false;
+    for(x in webcallpeers){
+        if(webcallpeers[x].fileShare.outerbox==selectedFileSharingBox) {
+            document.getElementById(selectedFileSharingBox).hidden=false;
+            document.getElementById(selectedFileSharingBox).style.width="50%";
+        }else{
+            document.getElementById(webcallpeers[x].fileShare.outerbox).hidden=false;
+            document.getElementById(webcallpeers[x].fileShare.outerbox).style.width="50%";
+        }
+    }
+/*    document.getElementById(selectedFileSharingBox).hidden=false;
     document.getElementById(selectedFileSharingBox).style.width="50%";   
-    syncButton(buttonId);
+    syncButton(buttonId);*/
 }
 
 function minFV(userid, buttonId , selectedFileSharingBox){

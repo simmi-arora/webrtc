@@ -13,6 +13,16 @@ function placeCursor(element , x_pos, y_pos) {
 var cursorX;
 var cursorY;
 
+function startShareCursor(){
+
+  document.onmousemove = function(e){
+    cursorX = e.pageX;
+    cursorY = e.pageY;
+  }
+
+  setInterval("shareCursor()", 500);
+
+}
 /*document.onmousemove = function(e){
     cursorX = e.pageX;
     cursorY = e.pageY;
@@ -20,7 +30,7 @@ var cursorY;
 */
 //setInterval("shareCursor()", 500);
 
-/*function shareCursor(){
+function shareCursor(){
     rtcMultiConnection.send({
         type:"pointer", 
         corX: cursorX , 
@@ -28,4 +38,3 @@ var cursorY;
     });
     placeCursor("cursor1" , cursorX, cursorY);
 }
-*/
