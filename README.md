@@ -77,13 +77,14 @@ It will read the package.json and update the dependencies in node_modules folder
 
 To change the ports for running the https server and rest server, goto env.json
 ```
-{       "hostname"      : "host",        
+{       
+    "hostname"      : "host",        
 	"enviornment"   : "local",        
 	"host"        	: "localhost",
-	"jsdebug"       :  true,          
-	"httpsPort"	:  8086,
-	"restPort"	:  8087,
-        "extensionID"   : "elfbfompfpakbefoaicaeoabnnoihoac"
+	"jsdebug"      :  true,          
+	"httpsPort"    :  8086,
+	"restPort"     :  8087,
+    "extensionID"   : "elfbfompfpakbefoaicaeoabnnoihoac"
 }
 ```
 
@@ -122,33 +123,72 @@ After the body tag of html
 ##### 7. Configure
 
 
-Create the webrtc dom object
+Create the webrtc dom object with local and remote objects
+
+local object  :
 ```
-var local={
-        localVideo: "localVideo",
-        videoClass:"",
-        userDisplay:false,
-        userMetaDisplay:false  
+    var local={
+        video: "myAloneVideo",              // name of the local video element
+        videoClass:"",                      // class of the localvideo
+        videoContainer : "singleVideoContainer", // outer container of the video element
+        userDisplay:false,                  // do you want to display user details
+        userMetaDisplay:false,
+        userdetails:{                       //users details include name , emeial , color
+            username: username,
+            usercolor: "#DDECEF",
+            useremail: useremail
+        }
     };
+```
 
+remote object  :
+```
     var remote={
-        remotearr: ["video1"],
-        remoteVideoCount: "unlimited",
-        remoteVideoContainer : "rightVideo",
+        videoarr: ["myConferenceVideo", "otherConferenceVideo"], // conatiners for the video after session is made 
+                                                                // first one is usually the local video holder followed by remote video holders
         videoClass:"",
+        maxAllowed: "6",
+        videoContainer : "confVideoContainer",
         userDisplay:false,
-        userMetaDisplay:false    
+        userMetaDisplay:false,
+        dynamicVideos: false 
     };
 
-    var webrtcdomobj= new WebRTCdom(
-        local,remote
+```
+
+Incoming and outgoing media configiration  ( self exlanatory ) :
+```
+    var incoming={
+        audio:  true,
+        video:  true,
+        data:   true,
+        screen: true
+    };
+
+    var outgoing={
+        audio:  true,
+        video:  true,
+        data:   true,
+        screen: true
+    };
+
+    webrtcdomobj= new WebRTCdom(
+        local, remote, incoming, outgoing
     );
 ```
 
-Get session id
+____
+
+Get session id automaically
 ```
 sessionid = init(true);
 ```
+or get session name from user
+```
+sessionid = init(false);
+```
+
+___
 
 Create a session json object with turn credentials nd the session created from above step
 

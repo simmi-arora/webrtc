@@ -290,12 +290,9 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
         });
 
         socket.on('presence', function(data, callback) {
-            console.log(" Presence Check index of " , data.channel);
-            if (webrtcdevchannels[data.channel]){
-                socket.emit("presence",true);
-            }else{
-                socket.emit("presence",false);
-            }
+            var presence=(webrtcdevchannels[data.channel]?true:false);
+            console.log(" Presence Check index of " , data.channel , " is " , presence);
+            socket.emit("presence",presence);
         });
 
         socket.on("admin_enquire",function(data){

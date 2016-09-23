@@ -1,17 +1,17 @@
 /********************************************************************************8
         Chat
 **************************************************************************************/
-function createChatButton(chatobj){
+function createChatButton(obj){
     var button= document.createElement("span");
     button.className= chatobj.button.class_on;
     button.innerHTML= chatobj.button.html_on;
     button.onclick = function() {
         if(button.className==chatobj.button.class_off){
-            document.getElementById(chatobj.chatContainer).hidden=true;
+            document.getElementById(chatobj.container.id).hidden=true;
             button.className=chatobj.button.class_on;
             button.innerHTML= chatobj.button.html_on;
         }else if(button.className==chatobj.button.class_on){
-            document.getElementById(chatobj.chatContainer).hidden=false;
+            document.getElementById(chatobj.container.id).hidden=false;
             button.className=chatobj.button.class_off;
             button.innerHTML= chatobj.button.html_off;
         }
@@ -37,7 +37,7 @@ function createChatButton(chatobj){
     };
 }*/
 
-function createChatBox(chatobj){
+function createChatBox(obj){
 
     var mainInputBox=document.createElement("div");
 
@@ -68,17 +68,16 @@ function createChatBox(chatobj){
     mainInputBox.appendChild(chatInput);
     mainInputBox.appendChild(chatButton);
     mainInputBox.appendChild(whoTyping);
-    document.getElementById(chatobj.chatContainer).appendChild(mainInputBox);
+    document.getElementById(chatobj.container.id).appendChild(mainInputBox);
 
     var chatBoard=document.createElement("div");
     chatBoard.className="chatMessagesClass";
     chatBoard.setAttribute("contenteditable",true);
-    chatBoard.id="chatBoard";
-    document.getElementById(chatobj.chatContainer).appendChild(chatBoard);
-
+    chatBoard.id=chatobj.chatbox.id;
+    document.getElementById(chatobj.container.id).appendChild(chatBoard);
 }
 
-function assignChatBox(chatobj){
+function assignChatBox(obj){
 
     var chatInput= document.getElementById(chatobj.inputBox.text_id);
     chatInput.onkeypress=function(e){
@@ -88,17 +87,47 @@ function assignChatBox(chatobj){
         }
     };
 
-    var chatButton= document.getElementById(chatobj.inputBox.sendbutton_id);
-    chatButton.onclick=function(e){
-        var chatInput=document.getElementById(chatobj.inputBox.text_id);
-        sendChatMessage(chatInput.value);
-        alert(chatInput.value);
-        chatInput.value = "";
+    if(document.getElementById(chatobj.inputBox.sendbutton_id)){
+        var chatButton= document.getElementById(chatobj.inputBox.sendbutton_id);
+        chatButton.onclick=function(e){
+            var chatInput=document.getElementById(chatobj.inputBox.text_id);
+            sendChatMessage(chatInput.value);
+            chatInput.value = "";
+        }  
     }
 }
 
 function updateWhotyping(data){
     document.getElementById("whoTyping").innerHTML=data;
+}
+
+function sendChatMessage(msg){
+    addNewMessagelocal({
+        header: rtcMultiConnection.extra.username,
+        message: msg,
+        userinfo: getUserinfo(rtcMultiConnection.blobURLs[rtcMultiConnection.userid], "chat-message.png"),
+        color: rtcMultiConnection.extra.color
+    });
+    rtcMultiConnection.send({type:"chat", message:msg });
+}
+
+
+function replaceURLWithHTMLLinks(text) {
+  var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+  return text.replace(exp,"<a href='$1'>$1</a>"); 
+}
+
+function addNewMessagelocal(e) {
+    console.log(" addNewMessagelocal-chatobj-->"  , chatobj);
+    if ("" != e.message && " " != e.message) {
+        addMessageLineformat("user-activity user-activity-right localMessageClass" , e.message , chatobj.chatBox.id);
+    }
+}
+
+function addNewMessage(e) {
+    if ("" != e.message && " " != e.message) {
+        addMessageLineformat("user-activity user-activity-right remoteMessageClass" , e.message , chatobj.chatBox.id);
+    }
 }
 
 function addMessageLineformat(messageDivclass, message , parent){
@@ -121,36 +150,6 @@ function addMessageBlockFormat(messageheaderDivclass , messageheader ,messageDiv
     t.appendChild(n),  
     $("#"+parent).append(n);
     /* $("#all-messages").scrollTop($("#all-messages")[0].scrollHeight) */
-}
-
-function addNewMessage(e) {
-    if ("" != e.message && " " != e.message) {
-        console.log("addNewMessage" , e);
-        addMessageLineformat("user-activity user-activity-right remoteMessageClass" , e.message , "chatBoard");
-    }
-}
-
-function addNewMessagelocal(e) {
-    if ("" != e.message && " " != e.message) {
-         console.log("addNewMessagelocal" , e);
-        addMessageLineformat("user-activity user-activity-right localMessageClass" , e.message , "chatBoard");
-    }
-}
-
-function sendChatMessage(msg){
-    addNewMessagelocal({
-        header: rtcMultiConnection.extra.username,
-        message: msg,
-        userinfo: getUserinfo(rtcMultiConnection.blobURLs[rtcMultiConnection.userid], "chat-message.png"),
-        color: rtcMultiConnection.extra.color
-    });
-    rtcMultiConnection.send({type:"chat", message:msg });
-}
-
-
-function replaceURLWithHTMLLinks(text) {
-  var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-  return text.replace(exp,"<a href='$1'>$1</a>"); 
 }
 
 /*$("#chatInput").keypress(function(e) {

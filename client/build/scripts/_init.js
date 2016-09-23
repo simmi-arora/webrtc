@@ -1,4 +1,5 @@
-/*//var username= prompt("Please enter your id ", "");
+/*
+//var username= prompt("Please enter your id ", "");
 var username= " "
 document.getElementById("username").innerHTML=username;
 var useremail= "serviceexchange@serviceexchange.com";
@@ -61,6 +62,8 @@ var texteditorobj= false;
 var codeeditorobj=false, editor=null;
 
 var reconnectobj=false;
+
+var cursorobj=false;
 
 var muteobj=false;
 
