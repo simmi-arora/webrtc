@@ -71,7 +71,7 @@ function takeSnapshot(peerinfo , callback) {
 }
     
 function syncSnapshot(datasnapshot , datatype , dataname ){
-    rtcMultiConnection.send({
+    rtcConn.send({
         type:datatype, 
         message:datasnapshot, 
         name : dataname

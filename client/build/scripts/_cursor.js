@@ -23,6 +23,16 @@ function startShareCursor(){
   setInterval("shareCursor()", 500);
 
 }
+
+function assignButtonCursor(bid){
+  console.log("shareCursorButton " , bid);
+  var button =document.getElementById(bid);
+  button.onclick=function(){
+    startShareCursor();
+  }
+}
+                
+
 /*document.onmousemove = function(e){
     cursorX = e.pageX;
     cursorY = e.pageY;
@@ -31,7 +41,7 @@ function startShareCursor(){
 //setInterval("shareCursor()", 500);
 
 function shareCursor(){
-    rtcMultiConnection.send({
+    rtcConn.send({
         type:"pointer", 
         corX: cursorX , 
         corY: cursorY

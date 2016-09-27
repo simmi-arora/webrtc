@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: RecordRTCConfiguration</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: RecordRTCConfiguration</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>RecordRTCConfiguration</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="RecordRTCConfiguration"><span class="type-signature"></span>new RecordRTCConfiguration<span class="signature">(mediaStream, config)</span><span class="type-signature"></span></h4>
+
+    
+    <p class="summary">It configures the 2nd parameter passed over <a href="RecordRTC.html">RecordRTC</a> and returns a valid "config" object.</p>
+    
+
+
+
+<div class="description">
+    <a href="RecordRTCConfiguration.html">RecordRTCConfiguration</a> is an inner/private helper for <a href="RecordRTC.html">RecordRTC</a>.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>mediaStream</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">MediaStream</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">MediaStream object fetched using getUserMedia API or generated using captureStreamUntilEnded or WebAudio API.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>config</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">{type:"video", disableLogs: true, numberOfAudioChannels: 1, bufferSize: 0, sampleRate: 0, video: HTMLVideoElement, getNativeBlob:true, etc.}</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li><a href="http://www.MuazKhan.com">Muaz Khan</a></li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li><a href="https://github.com/muaz-khan/RecordRTC#license">MIT</a></li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="webrtcdevelopment.js.html">webrtcdevelopment.js</a>, <a href="webrtcdevelopment.js.html#line7521">line 7521</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://github.com/muaz-khan/RecordRTC">RecordRTC Source Code</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>var options = RecordRTCConfiguration(mediaStream, options);</code></pre>
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CanvasRecorder.html">CanvasRecorder</a></li><li><a href="GetRecorderType.html">GetRecorderType</a></li><li><a href="GifRecorder.html">GifRecorder</a></li><li><a href="MediaStreamRecorder.html">MediaStreamRecorder</a></li><li><a href="MRecordRTC.html">MRecordRTC</a></li><li><a href="RecordRTC.html">RecordRTC</a></li><li><a href="RecordRTCConfiguration.html">RecordRTCConfiguration</a></li><li><a href="StereoAudioRecorder.html">StereoAudioRecorder</a></li><li><a href="Whammy.html">Whammy</a></li><li><a href="WhammyRecorder.html">WhammyRecorder</a></li></ul><h3>Global</h3><ul><li><a href="global.html#bytesToSize">bytesToSize</a></li><li><a href="global.html#DiskStorage">DiskStorage</a></li><li><a href="global.html#invokeSaveAsDialog">invokeSaveAsDialog</a></li><li><a href="global.html#MediaRecorderWrapper">MediaRecorderWrapper</a></li><li><a href="global.html#Storage">Storage</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.1</a> on Sat Sep 24 2016 16:26:08 GMT+0530 (DST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -160,7 +160,7 @@ var scriptList=[
     "client/build/scripts/_texteditor.js",
     "client/build/scripts/_mediahandler.js",
     "client/build/scripts/_turn.js",
-    "client/build/scripts/timer.js"
+    "client/build/scripts/_timer.js"
 ];
 
 gulp.task('betawebrtcdevelopmentjs',function() {

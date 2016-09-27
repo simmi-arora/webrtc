@@ -19,8 +19,8 @@ function getSourceId(callback, audioPlusTab) {
     if (!callback)
         throw '"callback" parameter is mandatory.';
     return sourceId ? (callback(sourceId),
-    void (sourceId = null )) : (screenCallback = callback,
-    audioPlusTab ? void window.postMessage("audio-plus-tab", "*") : void window.postMessage("webrtcdev-extension-getsourceId", "*"))
+    void (sourceId = null )) : (screenCallback = callback, void window.postMessage("webrtcdev-extension-getsourceId", "*"))
+    /*audioPlusTab ? void window.postMessage("audio-plus-tab", "*") : void window.postMessage("webrtcdev-extension-getsourceId", "*"))*/
 };
 
 function getChromeExtensionStatus(extensionid, callback) {
@@ -57,7 +57,7 @@ function isChromeExtensionAvailable(callback) {
 }
 
 function webrtcdevPrepareScreenShare(){
-    roomid= "screenshare"+"_"+rtcMultiConnection.channel;
+    roomid= "screenshare"+"_"+sessionid;
     connection  = new RTCMultiConnection();
     connection.socketURL = socketAddr;
     connection.socketMessageEvent = 'screen-sharing-demo';
@@ -65,7 +65,7 @@ function webrtcdevPrepareScreenShare(){
         screen: true,
         oneway: true
     };
-    connection.iceServers=rtcMultiConnection.iceServers;
+    connection.iceServers=rtcConn.iceServers;
     connection.sdpConstraints.mandatory = {
         OfferToReceiveAudio: false,
         OfferToReceiveVideo: false
@@ -89,8 +89,8 @@ function webrtcdevPrepareScreenShare(){
         document.getElementById(screenshareobj.screenshareContainer).innerHTML="";
         connection.removeStream(screenStreamId);
         connection.videosContainer.hidden=true;
-        screenShareButton.className=screenshareobj.button.shareButton.class_off;
-        screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
+/*        screenShareButton.className=screenshareobj.button.shareButton.class_off;
+        screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;*/
         removeScreenViewButton();
     };
 }
@@ -137,7 +137,7 @@ function webrtcdevSharescreen(roomid) {
     /*newly opeend session*/
     connection.open(roomid, function() {
         shownotification(" Making a new session for screenshare"+roomid);
-        rtcMultiConnection.send({
+        rtcConn.send({
             type:"screenshare", 
             message:roomid
         });
@@ -160,7 +160,12 @@ function webrtcdevStopShareScreen(){
     /*connection.leave();*/
     removeScreenViewButton();
 }
-
+function createOrAssignScreenshareButton(){
+    if(screenshareobj.button.viewButton.id && document.getElementById(screenshareobj.button.viewButton.id)) 
+        assignScreenViewButton();
+    else
+        createScreenViewButton();
+}
 function createScreenViewButton(){
     if(document.getElementById("viewScreenShareButton"))
         return;
@@ -186,22 +191,40 @@ function createScreenViewButton(){
     document.getElementById("topIconHolder_ul").appendChild(li);
 }
 
+function assignScreenViewButton(){
+/*    if(document.getElementById(screenshareobj.button.viewButton.id))
+        return;*/
+    var button =document.getElementById(screenshareobj.button.viewButton.id);
+    webrtcdevViewscreen(roomid);
+    button.onclick = function() {
+        if(button.className==screenshareobj.button.viewButton.class_off){
+            document.getElementById(screenshareobj.screenshareContainer).hidden=false;
+            button.className=screenshareobj.button.viewButton.class_on;
+            button.innerHTML=screenshareobj.button.viewButton.html_on;
+        }else if(button.className==screenshareobj.button.viewButton.class_on){
+            document.getElementById(screenshareobj.screenshareContainer).hidden=true;
+            button.className=screenshareobj.button.viewButton.class_off;
+            button.innerHTML=screenshareobj.button.viewButton.html_off;
+        }
+    };
+}
+
 function removeScreenViewButton(){
     var elem = document.getElementById("viewScreenShareButton");
     elem.parentElement.removeChild(elem);
 }
 
 function createScreenInstallButton(extensionID){
-    var screenShareButton= document.createElement("span");
-    screenShareButton.className=screenshareobj.button.installButton.class_off;
-    screenShareButton.innerHTML=screenshareobj.button.installButton.html_off;
-    screenShareButton.id="screeninstallButton";
-    screenShareButton.onclick = function(e) {    
+    var button= document.createElement("span");
+    button.className=screenshareobj.button.installButton.class_off;
+    button.innerHTML=screenshareobj.button.installButton.html_off;
+    button.id="screeninstallButton";
+    button.onclick = function(e) {    
         chrome.webstore.install("https://chrome.google.com/webstore/detail/"+extensionID,
         function(){
             console.log("Chrome extension inline installation - success");
-            screenShareButton.hidden=true;
-            createScreenshareButton();
+            button.hidden=true;
+            createOrAssignScreenshareButton();
         },function (err){
             console.log("Chrome extension inline installation - fail " , err);
         });
@@ -209,8 +232,39 @@ function createScreenInstallButton(extensionID){
         e.preventDefault();
     };
     var li =document.createElement("li");
-    li.appendChild(screenShareButton);
+    li.appendChild(button);
     document.getElementById("topIconHolder_ul").appendChild(li);
+}
+
+function assignScreenInstallButton(){
+    var button=document.getElementById(screenshareobj.button.installButton.id);
+    button.onclick= function(e) {    
+        chrome.webstore.install("https://chrome.google.com/webstore/detail/"+extensionID,
+            function(){
+                console.log("Chrome extension inline installation - success");
+                screenShareButton.hidden=true;
+                createOrAssignScreenshareButton();
+            },function (err){
+                console.log("Chrome extension inline installation - fail " , err);
+            });
+        // Prevent the opening of the Web Store page
+        e.preventDefault();
+    }
+}
+
+function hideScreenInstallButton(){
+    var button=document.getElementById(screenshareobj.button.installButton.id);
+    button.hidden=true;
+}
+
+function createOrAssignScreenshareButton(){
+    if(screenshareobj.button.shareButton.id && document.getElementById(screenshareobj.button.shareButton.id)) 
+    {
+        assignScreenShareButton();
+        hideScreenInstallButton();
+    }    
+    else
+        createScreenShareButton();
 }
 
 function createScreenshareButton(){
@@ -224,6 +278,7 @@ function createScreenshareButton(){
             webrtcdevSharescreen(roomid);
             screenShareButton.className=screenshareobj.button.shareButton.class_on;
             screenShareButton.innerHTML=screenshareobj.button.shareButton.html_on;
+            alert("webrtcdevscreenshare");
         }else if(screenShareButton.className==screenshareobj.button.shareButton.class_on){
             screenShareButton.className=screenshareobj.button.shareButton.class_off;
             screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
@@ -233,6 +288,21 @@ function createScreenshareButton(){
     var li =document.createElement("li");
     li.appendChild(screenShareButton);
     document.getElementById("topIconHolder_ul").appendChild(li);
+}
+
+function assignScreenShareButton(){
+    var button=document.getElementById(screenshareobj.button.shareButton.id);
+    button.onclick= function(event) {    
+        if(button.className==screenshareobj.button.shareButton.class_off){
+            webrtcdevSharescreen(roomid);
+            button.className=screenshareobj.button.shareButton.class_on;
+            button.innerHTML=screenshareobj.button.shareButton.html_on;
+        }else if(button.className==screenshareobj.button.shareButton.class_on){
+            button.className=screenshareobj.button.shareButton.class_off;
+            button.innerHTML=screenshareobj.button.shareButton.html_off;
+            webrtcdevStopShareScreen();
+        }
+    }
 }
 
 window.addEventListener('message', onScreenshareExtensionCallback);
@@ -257,20 +327,22 @@ function detectExtensionScreenshare(extensionID){
 
     getChromeExtensionStatus(extensionID, function(status) {
         console.log( "detectExtensionScreenshare for ", extensionID, " -> " , status);
+        console.log(" screenshareobj " , screenshareobj);
 
         if(status == 'installed-enabled') {
-            createScreenshareButton();
+            createOrAssignScreenshareButton();
         }
         
         if(status == 'installed-disabled') {
-            // chrome extension is installed but disabled.
             shownotification("chrome extension is installed but disabled.");
-            createScreenshareButton();
+            createOrAssignScreenshareButton();
         }
         
         if(status == 'not-installed') {
-            // chrome extension is not installed
-            createScreenInstallButton(extensionID);
+            if(screenshareobj.button.installButton.id && document.getElementById(screenshareobj.button.installButton.id)) 
+                assignScreenInstallButton(extensionID);
+            else
+                createScreenInstallButton(extensionID);
         }
         
         if(status == 'not-chrome') {

@@ -34,7 +34,7 @@ function assignFileShareButton(fileshareobj){
 
 function sendFile(file){
         
-    rtcMultiConnection.send(file);
+    rtcConn.send(file);
 
     /*    
     addNewFileLocal({
@@ -126,7 +126,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     showButton.onclick=function(){
         if(repeatFlagShowButton != filename){
             showFile(uuid , elementDisplay , fileurl , filename , filetype);
-            rtcMultiConnection.send({
+            rtcConn.send({
                 type:"shareFileShow", 
                 _uuid: uuid , 
                 _element: elementDisplay,
@@ -149,7 +149,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     hideButton.onclick=function(event){
         if(repeatFlagHideButton != filename){
             hideFile(uuid , elementDisplay , fileurl , filename , filetype);
-            rtcMultiConnection.send({
+            rtcConn.send({
                 type:"shareFileHide", 
                 _uuid: uuid , 
                 _element: elementDisplay,
@@ -174,7 +174,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         if(repeatFlagRemoveButton != filename){
             hideFile(uuid , elementDisplay , fileurl , filename , filetype);
             var tobeHiddenElement = event.target.parentNode.id;
-            rtcMultiConnection.send({
+            rtcConn.send({
                 type:"shareFileRemove", 
                 _element: tobeHiddenElement,
                 _filename : filename
@@ -303,8 +303,8 @@ function syncButton(buttonId){
     }
 
     if(buttonElement.getAttribute("lastClickedBy")==''){
-        buttonElement.setAttribute("lastClickedBy" , rtcMultiConnection.userid);
-        rtcMultiConnection.send({
+        buttonElement.setAttribute("lastClickedBy" , rtcConn.userid);
+        rtcConn.send({
                 type:"buttonclick", 
                 buttonName: buttonId
         });

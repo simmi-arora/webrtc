@@ -1,8 +1,8 @@
 function setSettingsAttributes(){
 	$("#inspectorlink").val(window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0');
     
-    $("#channelname").val(rtcMultiConnection.channel);
-    $("#userid").val(rtcMultiConnection.userid);
+    $("#channelname").val(rtcConn.channel);
+    $("#userid").val(rtcConn.userid);
 
     /*$("#inAudio").val(incomingAudio);*/
     $("#inAudio").prop('checked', incomingAudio);
@@ -27,8 +27,8 @@ function setSettingsAttributes(){
     $("#btnDebug").click(function(){
         //window.open().document.write('<pre>'+rtcMultiConnection+'<pre>');
         $("#allwebrtcdevinfo").empty();
-        $('#allwebrtcdevinfo').append('<pre contenteditable>'+rtcMultiConnection+'<pre>');
-        console.info(rtcMultiConnection);
+        $('#allwebrtcdevinfo').append('<pre contenteditable>'+rtcConn+'<pre>');
+        console.info(rtcConn);
     });
 }
 
