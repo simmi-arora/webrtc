@@ -569,7 +569,6 @@
         
         <aside>
             <ul id="asideIconHold">
-                <li style="cursor:default;"><b>INVITE</b></li>
                 
                 <li id="sendlink" title="Send mail from Miljul" data-placement="right" data-toggle="modal" data-target=#mailpopup>
                     <i class="fa fa-envelope-o fa-lg"></i>
@@ -613,6 +612,7 @@
                                 <i class="fa fa-video-camera"></i>
                             </a>
                         </li> -->
+
                         <li data-target=#mailpopup>
                             <a id="allow-webcam" data-val="mute" title="Camera" data-placement=bottom>
                                 <i class="fa fa-video-camera"></i>
@@ -856,30 +856,7 @@ $('document').ready(function(){
     
 
     var widgets={
-        debug      : false,
-        reconnect   :{
-                        active: false,
-                        button:{
-                            id: "reconnectBtn",
-                            class:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
-                            html:"Reconnect",
-                            resyncfiles:false
-                        }
-                    },
-        timer      :{
-                        active:false,
-                        type: "backward",
-                        upperlimit: {
-                            hour:0 , 
-                            min: 3 , 
-                            sec: 0 
-                        },
-                        span:{
-                            currentTime_id:"currentTimeArea",
-                            currentTimeZonr_id:"currentTimeZoneArea",
-                            class_on:""
-                        }
-                    },
+        debug   : false,
         chat    :{
                         active: true,
                         container: {
@@ -951,7 +928,7 @@ $('document').ready(function(){
                             class_on:"pull-right btn btn-modify-video2 videoButtonClass",
                             html_on:"pic"
                         }
-                    }, 
+                    }
     };
 
     var webrtcdevobj = new WebRTCdev ( 

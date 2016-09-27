@@ -57,6 +57,19 @@ function startTime() {
     timerspan.innerHTML =   h + ":" + m + ":" + s;
     var t = setTimeout(startTime, 500);
 }
+
+function activateBttons(timerobj){
+    if(document.getElementById(timerobj.container.minbutton_id)){
+        var button= document.getElementById(timerobj.container.minbutton_id);
+        button.onclick=function(e){
+            if(document.getElementById(timerobj.container.id).hidden)
+                document.getElementById(timerobj.container.id).hidden=false;
+            else
+                document.getElementById(timerobj.container.id).hidden=true;
+        }  
+    }
+}
+
 function checkTime(i) {
     if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
     return i;
@@ -66,3 +79,4 @@ function timeZone(){
     var timerspan=document.getElementById(timerobj.span.currentTimeZonr_id);
     timerspan.innerHTML = Intl.DateTimeFormat().resolvedOptions().timeZone;
 }
+

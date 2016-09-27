@@ -20,7 +20,7 @@ if(window.location.href.indexOf("s=1")>=0){
 var t = " ";
 var e = null;
 var n ="tara181989@gmail.com";
-
+var rtcConn ;
 var selfuserid=null , remoteUserId=null;
 var containerDiv;
 var webcallpeers=[];
@@ -79,9 +79,11 @@ function init(autoload){
 	        location.href = location.href.split('#')[0] + '#' + (Math.random() * 100).toString().replace('.', '');
 	        location.reload();
 	}else if(autoload && location.hash.replace('#', '').length){
-		/*ssid=location.href.replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');*/
-        ssid=(location.href.substring(0,location.href.indexOf('?'))).replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
-	}else{
+        if(location.href.indexOf('?')>-1)
+            ssid=(location.href.substring(0,location.href.indexOf('?'))).replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
+	   else
+            ssid=location.href.replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
+    }else{
 	    ssid=prompt("Enter session ", "");
 	}
 	return ssid;

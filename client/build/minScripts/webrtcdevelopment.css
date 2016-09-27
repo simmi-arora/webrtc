@@ -647,8 +647,6 @@ video {
 
 .closeButton{
     float: right !important;
-    /* background: rgb(183, 183, 183); */
-    /*padding: 2px 2px 2px 2px;*/
     margin: 2px 2px 2px 2px;
     font-size: 14px;
     color: #333333;
@@ -677,11 +675,9 @@ video {
     cursor: pointer;
 }
 
-video::-webkit-media-controls {
+/*video::-webkit-media-controls {
   display: none;
 }
-
-/* Could Use thise as well for Individual Controls */
 video::-webkit-media-controls-play-button {}
 
 video::-webkit-media-controls-volume-slider {}
@@ -690,7 +686,7 @@ video::-webkit-media-controls-mute-button {}
 
 video::-webkit-media-controls-timeline {}
 
-video::-webkit-media-controls-current-time-display {}
+video::-webkit-media-controls-current-time-display {}*/
 
 .chatContainerClass{
 	background: #f5f5f5;

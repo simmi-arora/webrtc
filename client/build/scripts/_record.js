@@ -58,8 +58,8 @@ function stopRecord(peerinfo , streamid , stream){
         numFile.value= peerinfo.filearray.length;
         var fileurl=URL.createObjectURL(blob);
 
-        displayList(rtcMultiConnection.uuid , peerinfo  ,fileurl , recordVideoname , "videoRecording");
-        displayFile(rtcMultiConnection.uuid , peerinfo , fileurl , recordVideoname , "videoRecording");
+        displayList(peerinfo.uuid , peerinfo  ,fileurl , recordVideoname , "videoRecording");
+        displayFile(peerinfo.uuid , peerinfo , fileurl , recordVideoname , "videoRecording");
     });
 }
 
