@@ -191,10 +191,12 @@ var WebRTCdev= function(session, widgets){
                 }else{
                     switch(e.data.type){
                         case "screenshare":
+                            alert("screenshare message received "+e.data.message);
                             shownotification("screen is getting shared "+ e.data.message);
                             createScreenViewButton();
                         break;
                         case "chat":
+                            alert("chat message received "+e.data.message);
                             updateWhotyping(e.extra.name+ " has send message");
                             addNewMessage({
                                 header: e.extra.name,

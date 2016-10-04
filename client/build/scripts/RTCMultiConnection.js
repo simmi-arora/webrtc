@@ -321,13 +321,11 @@
         }
         ,
         connection.getUserMedia = connection.captureUserMedia = function(callback, sessionForced) {
-            callback = callback || function() {}
-            ;
+            callback = callback || function() {};
             var session = sessionForced || connection.session;
             return connection.dontCaptureUserMedia || isData(session) ? void callback() : void ((session.audio || session.video || session.screen) && (session.screen ? connection.getScreenConstraints(function(error, screen_constraints) {
                 if (error)
                     throw error;
-                alert("connection get user media screen_constraints");
                 connection.invokeGetUserMedia({
                     audio: isAudioPlusTab(connection) ? getAudioScreenConstraints(screen_constraints) : !1,
                     video: screen_constraints,

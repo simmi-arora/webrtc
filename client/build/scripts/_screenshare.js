@@ -12,7 +12,7 @@ var isMobileDevice = !!navigator.userAgent.match(/Android|iPhone|iPad|iPod|Black
 
 var connection , screenCallback ;
 var iceServers=[];
-var signaler,screen,roomid;
+var signaler,screen,screenRoomid;
 
 /* getsourceID in RTCmtulconn has been commented to make the below one active */
 function getSourceId(callback, audioPlusTab) {
@@ -57,7 +57,7 @@ function isChromeExtensionAvailable(callback) {
 }
 
 function webrtcdevPrepareScreenShare(){
-    roomid= "screenshare"+"_"+sessionid;
+    screenRoomid= "screenshare"+"_"+sessionid;
     connection  = new RTCMultiConnection();
     connection.socketURL = socketAddr;
     connection.socketMessageEvent = 'screen-sharing-demo';
@@ -68,58 +68,12 @@ function webrtcdevPrepareScreenShare(){
     connection.iceServers=rtcConn.iceServers;
     connection.sdpConstraints.mandatory = {
         OfferToReceiveAudio: false,
-        OfferToReceiveVideo: false
+        OfferToReceiveVideo: true
     };
-    connection.videosContainer = document.getElementById(screenshareobj.screenshareContainer);
-    connection.onstream = function(event) {
-        console.log(" on stream in _screenshare :" , event);
-        if(event.stream.isScreen){
-            document.getElementById(screenshareobj.screenshareContainer).innerHTML="";
-            createScreenViewButton();
-            screenStreamId = event.streamid;
-            connection.videosContainer.appendChild(event.mediaElement);
-            event.mediaElement.play();
-            setTimeout(function() {
-                event.mediaElement.play();
-            }, 5000);
-        }
-    };
-    connection.onstreamended = function(event) {
-        console.log(" onstreamended in _screenshare :" , event);
-        document.getElementById(screenshareobj.screenshareContainer).innerHTML="";
-        connection.removeStream(screenStreamId);
-        connection.videosContainer.hidden=true;
-/*        screenShareButton.className=screenshareobj.button.shareButton.class_off;
-        screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;*/
-        removeScreenViewButton();
-    };
-}
-
-function webrtcdevScreenConstraints(chromeMediaSourceId){
-    screen_constraints = {
-        audio: false,
-        video: {
-            mandatory: {
-                chromeMediaSource: 'desktop',
-                chromeMediaSourceId: chromeMediaSourceId,
-                maxWidth: window.screen.width > 1920 ? window.screen.width : 1920,
-                maxHeight: window.screen.height > 1080 ? window.screen.height : 1080
-            },
-            optional: []
-        }
-    };
-    console.log(screen_constraints , connection);
-    connection.getScreenConstraints = function(callback) {
-        alert("getScreenConstraints");
-        screen_constraints = connection.modifyScreenConstraints(screen_constraints);
-        console.log("screen_constraints", screen_constraints);
-        callback(false, screen_constraints);
-        return;
-    };
+    connection.dontCaptureUserMedia = false;
 }
 
 function webrtcdevSharescreen(roomid) {
-
     /*    
     if(Object.keys(connection.streamEvents).length>2){   
         connection.addStream({
@@ -133,15 +87,123 @@ function webrtcdevSharescreen(roomid) {
         });
         return ;
     }*/
-    /*connection.captureUserMedia();*/
-    /*newly opeend session*/
-    connection.open(roomid, function() {
-        shownotification(" Making a new session for screenshare"+roomid);
+    connection.channel=roomid;
+    connection.sessionid=roomid;
+    connection.dontCaptureUserMedia = false;
+    //connection.captureUserMedia();
+    //connection.getUserMedia();
+    connection.open(screenRoomid, function() {
+        shownotification(" Making a new session for screenshare"+screenRoomid);
         rtcConn.send({
             type:"screenshare", 
-            message:roomid
+            message:screenRoomid
         });
     });
+
+    socket.emit("open-channel", {
+        channel    : screenRoomid,
+        sender     : "temp",
+        maxAllowed : 6
+    });
+
+    connection.onstream = function(event) {
+        alert("on stream");
+        console.log(" on stream in _screenshare :" , event);
+        //if(event.stream.isScreen){
+            //document.getElementById(screenshareobj.screenshareContainer).innerHTML="";
+            connection.videosContainer = document.getElementById(screenshareobj.screenshareContainer);
+            console.log(connection.videosContainer);
+            //createScreenViewButton();
+            screenStreamId = event.streamid;
+            connection.videosContainer.appendChild(event.mediaElement);
+            event.mediaElement.play();
+            setTimeout(function() {
+                event.mediaElement.play();
+            }, 5000);
+        //}
+    };
+    connection.onstreamended = function(event) {
+        console.log(" onstreamended in _screenshare :" , event);
+        document.getElementById(screenshareobj.screenshareContainer).innerHTML="";
+        connection.removeStream(screenStreamId);
+        connection.videosContainer.hidden=true;
+        /*        
+        screenShareButton.className=screenshareobj.button.shareButton.class_off;
+        screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;*/
+        removeScreenViewButton();
+    };
+
+    console.log("webrtcdevscreenshare" , connection , rtcConn);
+    alert("webrtcdevscreenshare"+ roomid+ "||"+ screenRoomid)
+}
+
+function webrtcdevScreenConstraints(chromeMediaSourceId){
+/*    screen_constraints = {
+        audio: false,
+        video: {
+            mandatory: {
+                chromeMediaSource: 'desktop',
+                chromeMediaSourceId: chromeMediaSourceId,
+                maxWidth: window.screen.width > 1920 ? window.screen.width : 1920,
+                maxHeight: window.screen.height > 1080 ? window.screen.height : 1080
+            },
+            optional: []
+        }
+    };*/
+    
+    //screen_constraints = connection.modifyScreenConstraints(screen_constraints);
+    
+    /*    
+    connection.getScreenConstraints = function(callback) {
+        alert("getScreenConstraints");
+        screen_constraints = connection.modifyScreenConstraints(screen_constraints);
+        console.log("screen_constraints", screen_constraints);
+        callback(false, screen_constraints);
+        return;
+    };*/
+   
+
+    navigator.getUserMedia(
+        {
+            audio: false,
+            video: {
+                mandatory: {
+                    chromeMediaSource: 'desktop',
+                    chromeMediaSourceId: chromeMediaSourceId,
+                    maxWidth: window.screen.width > 1920 ? window.screen.width : 1920,
+                    maxHeight: window.screen.height > 1080 ? window.screen.height : 1080
+                },
+                optional: []
+            }
+        },
+        function stream(event) {
+            console.log("screen stream "  , event , screenshareobj.screenshareContainer);
+            //connection.onstream(event);
+            var container = document.getElementById(screenshareobj.screenshareContainer);
+            console.log("videosContainer "  , videosContainer);
+            screenStreamId = event.streamid;
+            var videosContainer=document.createElement("video");
+            videosContainer.src = window.URL.createObjectURL(event);
+            container.appendChild(videosContainer);
+            //videosContainer.appendChild(event.mediaElement);
+        },
+        function error(err) {
+            if (isChrome && location.protocol === 'http:') {
+                alert('Please test this WebRTC experiment on HTTPS.');
+            } else if(isChrome) {
+                alert('Screen capturing is either denied or not supported. Please install chrome extension for screen capturing or run chrome with command-line flag: --enable-usermedia-screen-capturing');
+            }
+            else if(!!navigator.mozGetUserMedia) {
+                alert(Firefox_Screen_Capturing_Warning);
+            }
+        }
+    );
+    
+
+    connection.connect(screenRoomid);
+    shownotification("Connected to "+ screenRoomid);
+
+    alert("webrtcdevScreenConstraints : "+ chromeMediaSourceId+ screenRoomid);
 }
 
 function webrtcdevViewscreen(roomid){
@@ -173,7 +235,7 @@ function createScreenViewButton(){
     viewScreenShareButton.className=screenshareobj.button.viewButton.class_off;
     viewScreenShareButton.innerHTML=screenshareobj.button.viewButton.html_off;
     viewScreenShareButton.id="viewScreenShareButton";
-    webrtcdevViewscreen(roomid);
+    webrtcdevViewscreen(screenRoomid);
     viewScreenShareButton.onclick = function() {
         if(viewScreenShareButton.className==screenshareobj.button.viewButton.class_off){
             document.getElementById(screenshareobj.screenshareContainer).hidden=false;
@@ -195,7 +257,7 @@ function assignScreenViewButton(){
 /*    if(document.getElementById(screenshareobj.button.viewButton.id))
         return;*/
     var button =document.getElementById(screenshareobj.button.viewButton.id);
-    webrtcdevViewscreen(roomid);
+    webrtcdevViewscreen(screenRoomid);
     button.onclick = function() {
         if(button.className==screenshareobj.button.viewButton.class_off){
             document.getElementById(screenshareobj.screenshareContainer).hidden=false;
@@ -210,8 +272,11 @@ function assignScreenViewButton(){
 }
 
 function removeScreenViewButton(){
-    var elem = document.getElementById("viewScreenShareButton");
-    elem.parentElement.removeChild(elem);
+    if(document.getElementById("viewScreenShareButton")){
+        var elem = document.getElementById("viewScreenShareButton");
+        elem.parentElement.removeChild(elem);
+    }
+    return;
 }
 
 function createScreenInstallButton(extensionID){
@@ -275,7 +340,7 @@ function createScreenshareButton(){
     screenShareButton.id="screenShareButton";
     screenShareButton.onclick = function(event) {    
         if(screenShareButton.className==screenshareobj.button.shareButton.class_off){
-            webrtcdevSharescreen(roomid);
+            webrtcdevSharescreen(screenRoomid);
             screenShareButton.className=screenshareobj.button.shareButton.class_on;
             screenShareButton.innerHTML=screenshareobj.button.shareButton.html_on;
             alert("webrtcdevscreenshare");
@@ -294,7 +359,7 @@ function assignScreenShareButton(){
     var button=document.getElementById(screenshareobj.button.shareButton.id);
     button.onclick= function(event) {    
         if(button.className==screenshareobj.button.shareButton.class_off){
-            webrtcdevSharescreen(roomid);
+            webrtcdevSharescreen(screenRoomid);
             button.className=screenshareobj.button.shareButton.class_on;
             button.innerHTML=screenshareobj.button.shareButton.html_on;
         }else if(button.className==screenshareobj.button.shareButton.class_on){
