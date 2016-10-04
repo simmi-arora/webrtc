@@ -120,7 +120,10 @@ function sendChatMessage(msg){
         userinfo: getUserinfo(rtcConn.blobURLs[rtcConn.userid], "chat-message.png"),
         color: rtcConn.extra.color
     });
-    rtcConn.send({type:"chat", message:msg });
+    rtcConn.send({
+        type:"chat", 
+        message:msg 
+    });
 }
 
 

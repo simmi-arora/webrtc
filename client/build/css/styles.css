@@ -254,7 +254,6 @@ video {
     /*left: 10%;*/
 }
 
-
 .snapshotButton{
     color: black; 
     float: right;    
@@ -264,7 +263,6 @@ video {
 }
 
 .videoContainer{
-    /*left:10%;*/
     margin: 0 20px 0 20px;
     padding: 10px;
     border: 0;
@@ -275,8 +273,6 @@ video {
     margin: 0 auto;
     width: 90%;"
 }
-
-
 
 .local-media,
 .remote-media {

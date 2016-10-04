@@ -86,7 +86,7 @@ if(drawCanvasobj.active){
 function webrtcdevCanvasDesigner(){
     try{
         CanvasDesigner.addSyncListener(function(data) {
-            rtcMultiConnection.send({type:"canvas", draw:data});
+            rtcConn.send({type:"canvas", draw:data});
         });
 
         CanvasDesigner.setSelected('pencil');
