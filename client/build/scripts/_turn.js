@@ -1,6 +1,27 @@
-/*********************************************8
+/*********************************************
 ICE
 **************************************************/
+
+// ____________
+// _turn.js
+
+/**
+ * {@link https://github.com/altanai/webrtc/blob/master/client/build/scripts/_turn.js|TURN} 
+ * @summary JavaScript audio/video recording library runs top over WebRTC getUserMedia API.
+ * @author {@link https://telecom.altanai.com/about-me/|Altanai}
+ * @typedef _turn.js
+ * @function
+ * @example
+ *  turn    = (session.hasOwnProperty('turn')?session.turn:null);
+ *  if(turn!=null ){
+ *       getICEServer( turn.username ,turn.secretkey , turn.domain,
+ *                      turn.application , turn.room , turn.secure); 
+ *   }
+ *
+ * @param {MediaStream} mediaStream - MediaStream object fetched using getUserMedia API or generated using captureStreamUntilEnded or WebAudio API.
+ * @param {object} config - {type:"video", disableLogs: true, numberOfAudioChannels: 1, bufferSize: 0, sampleRate: 0, video: HTMLVideoElement, etc.}
+ */
+
 var iceServers=[];
 function createCORSRequest(method, url) {
     var xhr = new XMLHttpRequest();

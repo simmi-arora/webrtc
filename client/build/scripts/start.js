@@ -13,6 +13,14 @@ var tempuserid = guid();
 
 var sessions = {};
 
+/**
+ * Represents a webrtc dom startup.
+ * @constructor
+ * @param {json} _localObj - The title of the book.
+ * @param {json} _remoteObj - The author of the book.
+ * @param {json} incoming - The title of the book.
+ * @param {json} outgoing - The author of the book.
+ */
 var WebRTCdom= function(  _localObj , _remoteObj , incoming, outgoing){
 
     if(incoming){
@@ -191,12 +199,13 @@ var WebRTCdev= function(session, widgets){
                 }else{
                     switch(e.data.type){
                         case "screenshare":
-                            alert("screenshare message received "+e.data.message);
+                            console.log("screen is getting shared ", e.data.message);
+                            console.log(scrConn);
                             shownotification("screen is getting shared "+ e.data.message);
-                            createScreenViewButton();
+                            //createScreenViewButton();
+                            scrConn.join(e.data.message);
                         break;
                         case "chat":
-                            alert("chat message received "+e.data.message);
                             updateWhotyping(e.extra.name+ " has send message");
                             addNewMessage({
                                 header: e.extra.name,
@@ -610,6 +619,8 @@ function attachControlButtons( vid ,  peerinfo){
 }
 
 function updateWebCallView(peerInfo){
+    console.log("peerInfo" , peerInfo);
+
     if(peerInfo.vid.indexOf("videolocal") > -1){
         $("#"+localobj.videoContainer).show();
         $("#"+remoteobj.videoContainer).hide();
@@ -739,7 +750,6 @@ connectWebRTC=function(type, channel , userid , remoteUsers){
     for (x in remoteUsers){
         updatePeerInfo(remoteUsers[x] ,"Peer" , "#BFD9DA" , "", "remote");
     }
-
 }
 
 joinWebRTC=function(channel , userid){

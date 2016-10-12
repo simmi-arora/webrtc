@@ -233,6 +233,11 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
             socket.emit("open-channel-resp",true);  
         });
 
+        socket.on('open-channel-screenshare', function (data) {  
+            console.log("------------open channel screenshare------------- ", data.channel," by " , data.sender);
+            socket.emit("open-channel-screenshare-resp",true);  
+        });
+
         socket.on('join-channel', function (data) {  
             var isallowed=false;
             if(webrtcdevchannels[data.channel].users.length < webrtcdevchannels[data.channel].maxAllowed || webrtcdevchannels[data.channel].maxAllowed=="unlimited")
