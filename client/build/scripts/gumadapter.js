@@ -1,4 +1,4 @@
-   var getUserMedia = null;
+    var getUserMedia = null;
     var webrtcDetectedBrowser = null;
     var webrtcDetectedVersion = null;
     var webrtcMinimumVersion = null;

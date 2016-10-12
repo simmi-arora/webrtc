@@ -3,3 +3,4 @@ aws
 env.json
 conference
 elearn
+client/build/doc

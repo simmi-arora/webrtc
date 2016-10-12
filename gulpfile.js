@@ -138,7 +138,7 @@ gulp.task('codecss',function() {
 var scriptList=[
     "client/build/scripts/_init.js",
     "client/build/scripts/RTCMultiConnection.js",
-    /*"client/build/scripts/_screenshare.js",*/
+    "client/build/scripts/_screenshare.js",
     "client/build/scripts/_detectRTC.js",
     "client/build/scripts/_settings.js",
     "client/build/scripts/firebase.js",
