@@ -101,7 +101,7 @@ var WebRTCdev= function(session, widgets){
 
         if(widgets.mute)            muteobj         = widgets.mute;
 
-        if(widgets.timer)           timerobj          = widgets.timer;
+        if(widgets.timer)           timerobj        = widgets.timer;
 
         if(widgets.cursor)          cursorobj       = widgets.cursor;
     }
@@ -395,10 +395,23 @@ var WebRTCdev= function(session, widgets){
     };
 };
 
+/**
+ * event handler for when session is connected with a peer
+ * @method
+ * @name onSessionConnect
+ */
 var onSessionConnect=function(){
-    alert("on session connect do anothing ");
+    //alert("on session connect do anothing ");
+    //eventhandler for session onConnect , overwrite in client lib 
+    console.log(" On session connect ");
 };
 
+/**
+ * function to start session with socket
+ * @method
+ * @name startSession
+ * @param {object} connection
+ */
 function startSession(rtcConn){
     console.log("==========startSession"  , rtcConn);
     var addr = "/";
@@ -453,6 +466,12 @@ function startSession(rtcConn){
 
 }
 
+/**
+ * function to check devices like speakers , webcam ,  microphone etc
+ * @method
+ * @name checkDevices
+ * @param {object} connection
+ */
 function checkDevices(obj){
     console.log(" obj.DetectRTC  " , obj.DetectRTC);
     if(obj.DetectRTC.hasMicrophone) {
@@ -477,6 +496,11 @@ function checkDevices(obj){
     }
 }
 
+/**
+ * function to check browser support for webrtc apis
+ * @name checkWebRTCSupport
+ * @param {object} connection
+ */
 function checkWebRTCSupport(obj){
     if(obj.DetectRTC.isWebRTCSupported) {
     // seems WebRTC compatible client
@@ -572,7 +596,7 @@ function createVideoContainer(e, style, callback) {
 }
 
 /************************************
-control Buttons 
+        control Buttons and User Detaisl attchmenet to Video Element
 *******************************************/
 function attachUserDetails(vid,peerinfo){
     var nameBox=document.createElement("span");
@@ -593,7 +617,7 @@ function attachControlButtons( vid ,  peerinfo){
 
     var controlBar= document.createElement("div");
     controlBar.id = controlBarName;
-    controlBar.setAttribute("style","float:left;margin-left: 20px;");
+    controlBar.className= "videoControlBarClass";
     if(muteobj.active){
         if(muteobj.audio.active){
             controlBar.appendChild(createAudioMuteButton(controlBarName , peerinfo));
@@ -628,7 +652,6 @@ function updateWebCallView(peerInfo){
             var vid = document.getElementsByName(localVideo)[0];
             vid.muted = true;
             vid.style.opacity = 1;
-            vid.setAttribute("style","width: 90%!important; border: 5px solid "+peerInfo.color);
             attachMediaStream(vid, peerInfo.stream);
         }
     }else if(peerInfo.vid.indexOf("videoremote") > -1) {
@@ -649,7 +672,6 @@ function updateWebCallView(peerInfo){
                     attachMediaStream(selfvid, webcallpeers[0].stream);
                 selfvid.id = webcallpeers[0].videoContainer;
                 selfvid.muted = true;
-                selfvid.setAttribute("style","border: 5px solid "+webcallpeers[0].color);
                 attachControlButtons( selfvid, webcallpeers[0]); 
                 if(localobj.userDisplay)
                     attachUserDetails( selfvid, webcallpeers[0]); 
@@ -681,98 +703,34 @@ function updateWebCallView(peerInfo){
 
         attachMediaStream(remvid, peerInfo.stream);
         remvid.id = peerInfo.videoContainer;
-        remvid.setAttribute("style","border: 5px solid "+peerInfo.color);
         attachControlButtons(remvid, peerInfo); 
         if(remoteobj.userDisplay)
             attachUserDetails( remvid, peerInfo); 
         if(fileshareobj.active){
-            createFileSharingDiv(peerInfo);
+
+            if(fileshareobj.props.fileShare){
+                if(fileshareobj.props.fileShare=="divided")
+                    createFileSharingDiv(peerInfo);
+                else if(fileshareobj.props.fileShare=="single")
+                    console.log("No Seprate div created for this peer  s fileshare container is single");
+                else
+                    console.log("props undefined ");
+            }
         }
     }
 }
 
 /********************************************************************************** 
-        Session call 
+        Session call and Updateing Peer Info
 ************************************************************************************/
-opneWebRTC=function(channel , userid){
-    rtcConn.open(channel);
-    socket.emit("open-channel", {
-        channel    : channel,
-        sender     : tempuserid,
-        maxAllowed : remoteobj.maxAllowed
-    });
-    shownotification(" Making a new session ");
-}
-
-connectWebRTC=function(type, channel , userid , remoteUsers){
-    if(type=="open"){
-        rtcConn.connect(channel);
-        shownotification("Connected to new channel");
-    }else if(type=="join"){
-        rtcConn.join(channel);
-        shownotification("Connected with existing channel");
-    }else{
-        shownotification("Connection type not found");
-    }
-
-    void(document.title = channel);
-
-    rtcConn.dontCaptureUserMedia = false,
-
-    rtcConn.getUserMedia();
-
-    rtcConn.session = {
-        video: incomingVideo,
-        audio: incomingAudio,
-        data:  incomingData
-    }
-
-    rtcConn.sdpConstraints.mandatory = {
-        OfferToReceiveAudio: outgoingAudio,
-        OfferToReceiveVideo: outgoingVideo
-    }
-
-    if(selfuserid == null){
-        selfuserid = rtcConn.userid;
-        updatePeerInfo( selfuserid, selfusername ,selfcolor, selfemail, "local" );
-        if(tempuserid!=selfuserid)
-            socket.emit("update-channel", {
-                type    : "change-userid",
-                channel : rtcConn.channel,
-                sender  : selfuserid,
-                extra:{
-                    old : tempuserid,
-                    new : selfuserid
-                }
-            });
-    }
-
-    for (x in remoteUsers){
-        updatePeerInfo(remoteUsers[x] ,"Peer" , "#BFD9DA" , "", "remote");
-    }
-}
-
-joinWebRTC=function(channel , userid){
-    shownotification("Joining an existing session ");
-    socket.emit("join-channel", {
-        channel: channel,
-        sender: (selfuserid==null?tempuserid:selfuserid),
-        extra: {
-            userid:(selfuserid==null?tempuserid:selfuserid),
-            name:selfusername,
-            color:selfcolor,
-            email:selfemail
-        }
-    });
-}
-
-leaveWebRTC=function(){
-    shownotification("Leaving the session ");
-}
-
-
 var repeatInitilization = null;
 
+/**
+ * find information about a peer form array of peers basedon userid
+ * @method
+ * @name findPeerInfo
+ * @param {string} userid
+ */
 function startCall(obj){
     if(turn=='none'){
         obj.startwebrtcdev();
@@ -781,6 +739,15 @@ function startCall(obj){
     }
 }
 
+/**
+ * update info about a peer in list of peers (webcallpeers)
+ * @method
+ * @name updatePeerInfo
+ * @param {string} userid
+ * @param {string} username
+ * @param {string} usercolor
+ * @param {string} type
+ */
 function updatePeerInfo(userid , username , usecolor , useremail,  type ){
     console.log("updating peerInfo: " , userid , type);
     for(x in webcallpeers){
@@ -840,25 +807,156 @@ function updatePeerInfo(userid , username , usecolor , useremail,  type ){
     webcallpeers.push(peerInfo);
 }
 
+/**
+ * find information about a peer form array of peers basedon userid
+ * @method
+ * @name findPeerInfo
+ * @param {string} userid
+ */
 function findPeerInfo(userid){
     var peerInfo;
-/*    if(rtcConn.userid==userid){
+    /*    
+    if(rtcConn.userid==userid){
         console.log("PeerInfo is found for initiator", webcallpeers[0]);
         return webcallpeers[0];
     }
-*/
+    */
     for(x in webcallpeers){
         if(webcallpeers[x].userid==userid) {
-            peerInfo=webcallpeers[x];
-            console.log("PeerInfo is found for userid", peerInfo);
-            return peerInfo;
+            return webcallpeers[x];
         }
     }
     return null;
 }
 
-function showStatus(){
+/**
+ * shows status of ongoing webrtc call
+ * @method
+ * @name showStatus
+ * @param {obj} conn
+ */
+function showStatus(conn){
     console.log(rtcConn);
     console.log(webcallpeers);
 }
 
+/**
+ * Open a WebRTC socket channel
+ * @method
+ * @name opneWebRTC
+ * @param {string} channel
+ * @param {string} userid
+ */
+opneWebRTC=function(channel , userid){
+    rtcConn.open(channel);
+    socket.emit("open-channel", {
+        channel    : channel,
+        sender     : tempuserid,
+        maxAllowed : remoteobj.maxAllowed
+    });
+    shownotification(" Making a new session ");
+}
+
+
+/**
+ * connect to a webrtc socket channel
+ * @method
+ * @name connectWebRTC
+ * @param {string} type
+ * @param {string} channel
+ * @param {string} userid
+ * @param {string} remoteUsers
+ */
+connectWebRTC=function(type, channel , userid , remoteUsers){
+    if(type=="open"){
+        rtcConn.connect(channel);
+        shownotification("Connected to new channel");
+    }else if(type=="join"){
+        rtcConn.connectionDescription=rtcConn.join(channel);
+        shownotification("Connected with existing channel");
+    }else{
+        shownotification("Connection type not found");
+    }
+
+    void(document.title = channel);
+
+    rtcConn.dontCaptureUserMedia = false,
+
+    rtcConn.getUserMedia();
+
+    rtcConn.session = {
+        video: incomingVideo,
+        audio: incomingAudio,
+        data:  incomingData
+    }
+
+    rtcConn.sdpConstraints.mandatory = {
+        OfferToReceiveAudio: outgoingAudio,
+        OfferToReceiveVideo: outgoingVideo
+    }
+
+    if(selfuserid == null){
+        selfuserid = rtcConn.userid;
+        updatePeerInfo( selfuserid, selfusername ,selfcolor, selfemail, "local" );
+        if(tempuserid!=selfuserid)
+            socket.emit("update-channel", {
+                type    : "change-userid",
+                channel : rtcConn.channel,
+                sender  : selfuserid,
+                extra:{
+                    old : tempuserid,
+                    new : selfuserid
+                }
+            });
+    }
+
+    for (x in remoteUsers){
+        updatePeerInfo(remoteUsers[x] ,"Peer" , "#BFD9DA" , "", "remote");
+    }
+
+    localStorage.setItem("channel", channel);
+    localStorage.setItem("userid", userid);
+    localStorage.setItem("remoteUsers", remoteUsers);
+}
+
+
+/**
+ * function to join w webrtc socket channel
+ * @method
+ * @name joinWebRTC
+ * @param {string} channel
+ * @param {string} userid
+ */
+joinWebRTC=function(channel , userid){
+    shownotification("Joining an existing session ");
+    socket.emit("join-channel", {
+        channel: channel,
+        sender: (selfuserid==null?tempuserid:selfuserid),
+        extra: {
+            userid:(selfuserid==null?tempuserid:selfuserid),
+            name:selfusername,
+            color:selfcolor,
+            email:selfemail
+        }
+    });
+}
+
+
+/**
+ * function to leave a webrtc socket channel
+ * @method
+ * @name leaveWebRTC
+ */
+leaveWebRTC=function(){
+    shownotification("Leaving the session ");
+}
+
+window.onload=function(){
+
+    console.log( "Local Storage Channel " ,   localStorage.getItem("channel"));
+};
+
+window.onunload=function(){
+
+    console.log(    localStorage.getItem("channel"));
+};

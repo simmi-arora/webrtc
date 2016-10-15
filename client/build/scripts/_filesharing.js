@@ -115,14 +115,14 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     downloadButton.style.float="right";
     /*downloadButton.setAttribute("class" , "btn btn-primary");*/
     downloadButton.setAttribute("style", "color:white");
-    downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '">'+'<i class="fa fa-download"></i>'+' </a>';
+    downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '">'+'<i class="fa fa-download" style="font-size: 25px;"></i>'+' </a>';
 
     var showButton = document.createElement("div");
     showButton.id= "showButton"+filename;
     showButton.style.float="right";
 /*    showButton.setAttribute("class" , "btn btn-primary");
     showButton.innerHTML='show';*/
-    showButton.innerHTML='<i class="fa fa-eye"></i>';
+    showButton.innerHTML='<i class="fa fa-eye" style="font-size: 25px;"></i>';
     showButton.onclick=function(){
         if(repeatFlagShowButton != filename){
             showFile(uuid , elementDisplay , fileurl , filename , filetype);
@@ -145,7 +145,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     hideButton.style.float="right";
 /*    hideButton.setAttribute("class" , "btn btn-primary");
     hideButton.innerHTML='hide';*/
-    hideButton.innerHTML='<i class="fa fa-eye-slash"></i>';
+    hideButton.innerHTML='<i class="fa fa-eye-slash" style="font-size: 25px;"></i>';
     hideButton.onclick=function(event){
         if(repeatFlagHideButton != filename){
             hideFile(uuid , elementDisplay , fileurl , filename , filetype);
@@ -169,7 +169,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     removeButton.style.float="right";
 /*    removeButton.setAttribute("class" , "btn btn-primary");
     removeButton.innerHTML='remove';*/
-    removeButton.innerHTML='<i class="fa fa-trash-o"></i>';
+    removeButton.innerHTML='<i class="fa fa-trash-o" style="font-size: 25px;"></i>';
     removeButton.onclick=function(event){
         if(repeatFlagRemoveButton != filename){
             hideFile(uuid , elementDisplay , fileurl , filename , filetype);
@@ -342,7 +342,6 @@ function createFileSharingBox(peerinfo, parent){
     fileSharingBox.id=peerinfo.fileShare.outerbox;
 
     /*--------------------------------add for File Share control Bar--------------------*/
-
     /*    
     <div class="button-corner">
         <span data-placement="bottom" data-toggle="tooltip" title="" data-original-title="minimize"><i class="fa fa-minus-square"></i></span>
@@ -352,45 +351,43 @@ function createFileSharingBox(peerinfo, parent){
 
     var fileControlBar=document.createElement("p");
     fileControlBar.style.float="right";
+    fileControlBar.id =peerinfo.fileShare.container+"controlBar";
     fileControlBar.appendChild(document.createTextNode("File Viewer for "+ peerinfo.name+ "     "));
 
-    var minButton= document.createElement("span");
-/*    minButton.className="btn btn-default glyphicon glyphicon-import closeButton";
-    minButton.innerHTML="Minimize";*/
-    minButton.innerHTML='<i class="fa fa-minus-square"></i>';
-    minButton.id=peerinfo.fileShare.minButton;
-    minButton.setAttribute("lastClickedBy" ,'');
-    minButton.onclick=function(){
-        resizeFV(peerinfo.userid, minButton.id , peerinfo.fileShare.outerbox);
-    }
+        var minButton= document.createElement("span");
+        /*    minButton.className="btn btn-default glyphicon glyphicon-import closeButton";
+        minButton.innerHTML="Minimize";*/
+        minButton.innerHTML='<i class="fa fa-minus-square" style="font-size: 25px;"></i>';
+        minButton.id=peerinfo.fileShare.minButton;
+        minButton.setAttribute("lastClickedBy" ,'');
+        minButton.onclick=function(){
+            resizeFV(peerinfo.userid, minButton.id , peerinfo.fileShare.outerbox);
+        }
 
-    var maxButton= document.createElement("span");
-/*    maxButton.className= "btn btn-default glyphicon glyphicon-export closeButton";
-    maxButton.innerHTML="Maximize";*/
-    maxButton.innerHTML='<i class="fa fa-external-link-square"></i>';
-    maxButton.id=peerinfo.fileShare.maxButton;
-    maxButton.setAttribute("lastClickedBy" ,'');
-    maxButton.onclick=function(){
-        maxFV(peerinfo.userid, maxButton.id  , peerinfo.fileShare.outerbox);
-    }
+        var maxButton= document.createElement("span");
+        /*    maxButton.className= "btn btn-default glyphicon glyphicon-export closeButton";
+        maxButton.innerHTML="Maximize";*/
+        maxButton.innerHTML='<i class="fa fa-external-link-square" style="font-size: 25px;"></i>';
+        maxButton.id=peerinfo.fileShare.maxButton;
+        maxButton.setAttribute("lastClickedBy" ,'');
+        maxButton.onclick=function(){
+            maxFV(peerinfo.userid, maxButton.id  , peerinfo.fileShare.outerbox);
+        }
 
-    var closeButton= document.createElement("span");
-    /*
-    closeButton.className="btn btn-default glyphicon glyphicon-remove closeButton";
-    closeButton.innerHTML="Close";*/
-    closeButton.innerHTML='<i class="fa fa-times-circle"></i>';
-    closeButton.id=peerinfo.fileShare.closeButton;
-    closeButton.setAttribute("lastClickedBy" ,'');
-    closeButton.onclick=function(){
-        closeFV(peerinfo.userid, closeButton.id , peerinfo.fileShare.container);
-    }
-
-    linebreak = document.createElement("br");
+        var closeButton= document.createElement("span");
+        /*
+        closeButton.className="btn btn-default glyphicon glyphicon-remove closeButton";
+        closeButton.innerHTML="Close";*/
+        closeButton.innerHTML='<i class="fa fa-times-circle" style="font-size: 25px;"></i>';
+        closeButton.id=peerinfo.fileShare.closeButton;
+        closeButton.setAttribute("lastClickedBy" ,'');
+        closeButton.onclick=function(){
+            closeFV(peerinfo.userid, closeButton.id , peerinfo.fileShare.container);
+        }
 
     fileControlBar.appendChild(minButton);
     fileControlBar.appendChild(maxButton);
     fileControlBar.appendChild(closeButton);
-    fileControlBar.appendChild(linebreak);
 
     /*--------------------------------add for File Share Container--------------------*/
     var fileShareContainer = document.createElement("div");
@@ -406,7 +403,11 @@ function createFileSharingBox(peerinfo, parent){
         fileSharingBox.appendChild(nameBox);
     }
 
+    linebreak = document.createElement("br");
+
     fileSharingBox.appendChild(fileControlBar);
+    fileSharingBox.appendChild(linebreak);
+    fileSharingBox.appendChild(linebreak);
     fileSharingBox.appendChild(fileShareContainer);
     fileSharingBox.appendChild(fillerArea);
 
@@ -423,8 +424,6 @@ function createFileListingBox(peerinfo, parent){
     fileListingBox.id=peerinfo.fileList.outerbox;
     fileListingBox.setAttribute("style","background-color:"+peerinfo.color);
 
-
-
     /*--------------------------------add for File List control Bar--------------------*/
 
     var fileListControlBar=document.createElement("p");
@@ -440,29 +439,29 @@ function createFileListingBox(peerinfo, parent){
     var fileControlBar=document.createElement("p");
     fileControlBar.appendChild(document.createTextNode("File Viewer for "+ peerinfo.name));
 
-    var minButton= document.createElement("span");
-    minButton.innerHTML='<i class="fa fa-minus-square"></i>';
-    minButton.id=peerinfo.fileShare.minButton;
-    minButton.setAttribute("lastClickedBy" ,'');
-    minButton.onclick=function(){
-        resizeFV(peerinfo.userid, minButton.id , peerinfo.fileShare.outerbox);
-    }
+        var minButton= document.createElement("span");
+        minButton.innerHTML='<i class="fa fa-minus-square" style="font-size: 20px;></i>';
+        minButton.id=peerinfo.fileShare.minButton;
+        minButton.setAttribute("lastClickedBy" ,'');
+        minButton.onclick=function(){
+            resizeFV(peerinfo.userid, minButton.id , peerinfo.fileShare.outerbox);
+        }
 
-    var maxButton= document.createElement("span");
-    maxButton.innerHTML='<i class="fa fa-external-link-square"></i>';
-    maxButton.id=peerinfo.fileShare.maxButton;
-    maxButton.setAttribute("lastClickedBy" ,'');
-    maxButton.onclick=function(){
-        maxFV(peerinfo.userid, maxButton.id  , peerinfo.fileShare.outerbox);
-    }
+        var maxButton= document.createElement("span");
+        maxButton.innerHTML='<i class="fa fa-external-link-square" style="font-size: 20px;></i>';
+        maxButton.id=peerinfo.fileShare.maxButton;
+        maxButton.setAttribute("lastClickedBy" ,'');
+        maxButton.onclick=function(){
+            maxFV(peerinfo.userid, maxButton.id  , peerinfo.fileShare.outerbox);
+        }
 
-    var closeButton= document.createElement("span");
-    closeButton.innerHTML='<i class="fa fa-times-circle"></i>';
-    closeButton.id=peerinfo.fileShare.closeButton;
-    closeButton.setAttribute("lastClickedBy" ,'');
-    closeButton.onclick=function(){
-        closeFV(peerinfo.userid, closeButton.id , peerinfo.fileShare.container);
-    }
+        var closeButton= document.createElement("span");
+        closeButton.innerHTML='<i class="fa fa-times-circle" style="font-size: 20px;></i>';
+        closeButton.id=peerinfo.fileShare.closeButton;
+        closeButton.setAttribute("lastClickedBy" ,'');
+        closeButton.onclick=function(){
+            closeFV(peerinfo.userid, closeButton.id , peerinfo.fileShare.container);
+        }
 
     fileListControlBar.appendChild(minButton);
     fileListControlBar.appendChild(maxButton);
@@ -490,12 +489,15 @@ function createFileListingBox(peerinfo, parent){
 
 function createFileSharingDiv(peerinfo){
 
-    var parentFileShareContainer = document.getElementById(fileshareobj.fileShareContainer);
-    createFileSharingBox(peerinfo , parentFileShareContainer);
+    if (!document.getElementById(peerinfo.fileShare.outerbo)){
+        var parentFileShareContainer = document.getElementById(fileshareobj.fileShareContainer);
+        createFileSharingBox(peerinfo , parentFileShareContainer);
+    }
 
-    var parentFileListContainer = document.getElementById(fileshareobj.fileListContainer);
-    createFileListingBox(peerinfo , parentFileListContainer);
-
+    if(!document.getElementById(peerinfo.fileList.outerbox)){
+        var parentFileListContainer = document.getElementById(fileshareobj.fileListContainer);
+        createFileListingBox(peerinfo , parentFileListContainer);
+    }
 }
 
 /* ************* file sharing container button functions --------------- */

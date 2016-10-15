@@ -39,11 +39,13 @@ var autoload=true;
 var sessionid=null, socketAddr="/", turn=null , webrtcdevIceServers;
 var localStream , localStreamId, remoteStream , remoteStreamId;
 
-/* icoming and outgoing call params */
+/* incoming and outgoing call params */
 var incomingAudio =true , incomingVideo =true , incomingData = true;
 var outgoingAudio =true , outgoingVideo =true , outgoingData = true;
 
 var debug=false;
+
+var timerobj =false;
 
 var chatobj=false , chatContainer= null;
 

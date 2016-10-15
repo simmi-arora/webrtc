@@ -1,10 +1,6 @@
 /*********************************************
 ICE
 **************************************************/
-
-// ____________
-// _turn.js
-
 /**
  * {@link https://github.com/altanai/webrtc/blob/master/client/build/scripts/_turn.js|TURN} 
  * @summary JavaScript audio/video recording library runs top over WebRTC getUserMedia API.
@@ -17,9 +13,6 @@ ICE
  *       getICEServer( turn.username ,turn.secretkey , turn.domain,
  *                      turn.application , turn.room , turn.secure); 
  *   }
- *
- * @param {MediaStream} mediaStream - MediaStream object fetched using getUserMedia API or generated using captureStreamUntilEnded or WebAudio API.
- * @param {object} config - {type:"video", disableLogs: true, numberOfAudioChannels: 1, bufferSize: 0, sampleRate: 0, video: HTMLVideoElement, etc.}
  */
 
 var iceServers=[];
@@ -37,7 +30,6 @@ function createCORSRequest(method, url) {
 }
 
 function getICEServer(username , secretkey , domain , appname , roomname , secure){
-    console.log(" TURN -------------" , username , secretkey , domain , appname , roomname , secure);
     var url = 'https://service.xirsys.com/ice';
     var xhr = createCORSRequest('POST', url);
     xhr.onload = function () {
@@ -47,15 +39,12 @@ function getICEServer(username , secretkey , domain , appname , roomname , secur
             shownotification(" media not able to pass through "+ JSON.parse(xhr.responseText).e);
         }else{
             webrtcdevIceServers=JSON.parse(xhr.responseText).d.iceServers;
-            console.log("iceserver got" ,webrtcdevIceServers );
         }
     };
     xhr.onerror = function () {
         console.error('Woops, there was an error making xhr request.');
     };
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
-    /* xhr.send('ident=muazkh&secret=59d93f26-5b89-11e5-babe-d61aeb366a63&domain=webrtcexperiment-webrtc.netdna-ssl.com&application=default&room=default&secure=1');*/
     xhr.send('ident='+username+'&secret='+secretkey +
         '&domain='+domain +'&application='+appname+
         '&room='+ roomname+'&secure='+secure);

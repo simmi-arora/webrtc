@@ -1,7 +1,3 @@
-// Last time updated at July 06, 2014, 08:32:23
-// Muaz Khan     - https://github.com/muaz-khan
-// MIT License   - https://www.webrtc-experiment.com/licence/
-// Documentation - https://github.com/muaz-khan/WebRTC-Experiment/tree/master/part-of-screen-sharing
 // Note: All libraries listed in this file are "external libraries" 
 // ----  and has their own copyrights. Taken from "html2canvas" project.
 "use strict";

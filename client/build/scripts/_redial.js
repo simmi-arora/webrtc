@@ -26,7 +26,8 @@ function assignButtonRedial(id){
     document.getElementById(id).onclick=function(){
         var r = confirm("Do you want to reconnet ?");
         if (r == true) {
-           location.reload();
+           rtcConn.rejoin(rtcConn.connectionDescription);
+           //location.reload();
         } else {
            //do nothing
         }
