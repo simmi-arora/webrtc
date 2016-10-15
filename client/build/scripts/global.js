@@ -85,6 +85,13 @@
         });
     }
 
+    /**
+     * This method sets the audio and video mute ahndler to stream
+     * @method
+     * @name setMuteHandlers
+     * @param {object} connection
+     * @param {object} streamEvent
+     */
     function setMuteHandlers(connection, streamEvent) {
         if (!streamEvent.stream || !streamEvent.stream || !streamEvent.stream.addEventListener) return;
 
@@ -111,6 +118,11 @@
         }, false);
     }
 
+    /**
+     * Gets a random token made of date tiem and random numbers
+     * @method
+     * @name getRandomString
+     */
     function getRandomString() {
         if (window.crypto && window.crypto.getRandomValues && navigator.userAgent.indexOf('Safari') === -1) {
             var a = window.crypto.getRandomValues(new Uint32Array(3)),
@@ -124,8 +136,14 @@
         }
     }
 
-    // Get HTMLAudioElement/HTMLVideoElement accordingly
-
+    /**
+     * This method sets the audio and video mute ahndler to stream
+     * @method
+     * @name getRMCMediaElement
+     * @param {object} stream
+     * @param {function} callback
+     * @param {object} connection
+     */
     function getRMCMediaElement(stream, callback, connection) {
         var isAudioOnly = false;
         if (!!stream.getVideoTracks && !stream.getVideoTracks().length) {

@@ -7,6 +7,12 @@ if (navigator.geolocation) {
     x.innerHTML = "Geolocation is not supported by this browser.";
 }
 
+/**
+ * shows position from lat and long 
+ * @method
+ * @name showPosition
+ * @param {object} position
+ */
 function showPosition(position) {
     console.log("Latitude: " + position.coords.latitude +
     "<br>Longitude: " + position.coords.longitude);
@@ -15,6 +21,12 @@ function showPosition(position) {
     /*return position;*/
 }
 
+/**
+ * This method handles erro in position data
+ * @method
+ * @name showError
+ * @param {object} error
+ */
 function showError(error) {
     switch(error.code) {
         case error.PERMISSION_DENIED:
