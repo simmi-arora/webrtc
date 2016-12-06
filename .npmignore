@@ -17,3 +17,4 @@ propertyWriter.js
 gulpfile.js
 env.json
 client_secret.json
+*.html

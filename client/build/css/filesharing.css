@@ -2,6 +2,7 @@
 .filesharing1Box{
     background-color: #9999FF;
     color: #968787;
+    overflow-y: auto;
 }
 
 #file-progress1{

@@ -56,39 +56,68 @@ function isChromeExtensionAvailable(callback) {
     }
 }
 
-function webrtcdevPrepareScreenShare(){
-    screenRoomid= "screenshare"+"_"+sessionid;
-    scrConn  = new RTCMultiConnection(screenRoomid);
-    scrConn.channel=screenRoomid;
-    scrConn.sessionid=screenRoomid;
-    scrConn.socketURL = socketAddr;
-    scrConn.socketMessageEvent = 'screen-sharing-demo';
+function webrtcdevPrepareScreenShare(callback){
+    var time            = new Date().getUTCMilliseconds(); 
+    if(screenRoomid == null)
+        screenRoomid    = "screenshare"+"_"+sessionid+"_"+time;
+
+    console.log("webrtcdevPrepareScreenShare" + screenRoomid);
+
+    scrConn             = new RTCMultiConnection(screenRoomid);
+    scrConn.iceServers  = webrtcdevIceServers;  
+    scrConn.channel     = screenRoomid,
+    scrConn.sessionid   = screenRoomid,
+    scrConn.socketURL   = socketAddr,
+    //scrConn.socketMessageEvent = 'screen-sharing-demo',
     scrConn.session = {
         screen: true,
         oneway: true
-    };
-    scrConn.iceServers=rtcConn.iceServers;
+    },
+    scrConn.iceServers=rtcConn.iceServers,
     scrConn.sdpConstraints.mandatory = {
         OfferToReceiveAudio: false,
         OfferToReceiveVideo: true
-    };
-    scrConn.dontCaptureUserMedia = false;
+    },
+    scrConn.dontCaptureUserMedia = false,
+
+    /*    
+    scrConn.onconnected = function(event) {
+        // event.peer.addStream || event.peer.getConnectionStats
+        console.log('scrConn.onconnected ......', event);
+        alert("srcConn on Connected ");
+    },
+
+    scrConn.onopen = function(event) {                                 
+        alert("srcConn onopen");
+    },*/
+
     scrConn.onstream = function(event) {
         console.log(" on stream in _screenshare :" , event);
         //if(event.stream.isScreen){
-            //alert(" scrConn on stream isScreen"+event.type);
+            //alert(" scrConn onStream streamid : "+ event.stream.streamid + " " + event.streamid);
             if(event.type=="remote" && event.type!="local"){
+                console.log("started streaming remote's screen");
                 var userid=event.userid;
                 var type=event.type;
                 var stream=event.stream;
-                screenStreamId=event.stream.streamid;
+                if(event.stream.streamid){
+                    alert("remote screen event.stream.streamId " , event.stream.streamId);
+                    screenStreamId=event.stream.streamid;                    
+                }else if(event.streamid){
+                    alert("remote screen event.id " ,  event.streamid);
+                    screenStreamId=event.streamid;  
+                }
 
                 var video = document.createElement('video');
                 video.autoplay="autoplay";
                 attachMediaStream(video, stream);
                 //video.id = peerInfo.videoContainer;
                 document.getElementById(screenshareobj.screenshareContainer).appendChild(video);
+            }else{
+                console.log("local screen stream ");
+                console.log("started streaming local screen");
             }
+
             //createScreenViewButton();
 
             /*scrConn.videosContainer.appendChild(event.mediaElement);
@@ -97,22 +126,60 @@ function webrtcdevPrepareScreenShare(){
                 event.mediaElement.play();
             }, 5000);*/
         //}
-    };
+    },
+
     scrConn.onstreamended = function(event) {
         if(event)
             console.log(" onstreamended in _screenshare :" , event);
     
-        if(document.getElementById(screenshareobj.screenshareContainer))
+        if(document.getElementById(screenshareobj.screenshareContainer)){
             document.getElementById(screenshareobj.screenshareContainer).innerHTML="";
+            /*alert("screenshare : " + screenshareobj.screenshareContainer);*/
+        }
         scrConn.removeStream(screenStreamId);
         //scrConn.videosContainer.hidden=true;
-        screenShareButton.className=screenshareobj.button.shareButton.class_off;
-        screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
+        if(screenShareButton){
+            screenShareButton.className=screenshareobj.button.shareButton.class_off;
+            screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
+        }
         //removeScreenViewButton();
     };
+
+    console.log(" webrtcdevscreenshare calling callback for socket.io operations");
+    callback(screenRoomid);
 }
 
-function webrtcdevSharescreen(roomid) {
+function webrtcdevSharescreen() {
+    console.log("webrtcdevSharescreen");
+
+    webrtcdevPrepareScreenShare(function(screenRoomid){
+
+        var selfuserid="temp_"+(new Date().getUTCMilliseconds());
+        scrConn.dontCaptureUserMedia = false,
+        //scrConn.captureUserMedia();
+        //scrConn.getUserMedia();
+        scrConn.open(screenRoomid, function() {
+            console.log("Event : open-channel-screenshare" );
+            socket.emit("open-channel-screenshare", {
+                channel    : screenRoomid,
+                sender     : selfuserid,
+                maxAllowed : 6
+            });
+
+            shownotification(" Making a new session for screenshare"+screenRoomid);
+        });
+
+        socket.on("open-channel-screenshare-resp",function(event) {
+            console.log("Event Handler : open-channel-screenshare" , event);
+            if(event) connectScrWebRTC("open" , screenRoomid, selfuserid, []); 
+        });
+
+        rtcConn.send({
+            type:"screenshare", 
+            message:screenRoomid
+        });
+
+    });
     /*    
     if(Object.keys(scrConn.streamEvents).length>2){   
         scrConn.addStream({
@@ -127,48 +194,25 @@ function webrtcdevSharescreen(roomid) {
         return ;
     }*/
 
-    scrConn.dontCaptureUserMedia = false;
-    //scrConn.captureUserMedia();
-    //scrConn.getUserMedia();
-    scrConn.open(screenRoomid, function() {
-        shownotification(" Making a new session for screenshare"+screenRoomid);
-    });
-
-    socket.emit("open-channel-screenshare", {
-        channel    : screenRoomid,
-        sender     : "temp",
-        maxAllowed : 6
-    });
-
-    socket.on("open-channel-screenshare-resp",function(event) {
-        console.log("opened-channel-screenshare" , event);
-       if(event) connectScrWebRTC("open" , screenRoomid, selfuserid, []); 
-    });
-
-    console.log("RTCConn in screenshare "  , rtcConn);
-    rtcConn.send({
-        type:"screenshare", 
-        message:screenRoomid
-    });
-
     console.log("webrtcdevscreenshare" , scrConn , rtcConn);
 }
 
-connectScrWebRTC=function(type, channel , userid , remoteUsers){
+function connectScrWebRTC(type, channel , userid , remoteUsers){
     console.log("connectScrWebRTC -> " , type, channel , userid , remoteUsers);
     if(type=="open"){
         scrConn.connect(screenRoomid);
-        shownotification("Connected to "+ screenRoomid);
+        shownotification("Connected to "+ screenRoomid + " for screenshare ");
     }else if(type=="join"){
         scrConn.join(screenRoomid);
-        shownotification("Connected with existing channel");
+        shownotification("Connected with existing Screenshare channel "+ screenRoomid);
     }else{
-        shownotification("Connection type not found");
+        shownotification("Connection type not found for Screenshare ");
     }
 }
 
 function webrtcdevScreenConstraints(chromeMediaSourceId){
-/*    screen_constraints = {
+    /*    
+    screen_constraints = {
         audio: false,
         video: {
             mandatory: {
@@ -192,7 +236,6 @@ function webrtcdevScreenConstraints(chromeMediaSourceId){
         return;
     };*/
    
-
     navigator.getUserMedia(
         {
             audio: false,
@@ -217,27 +260,57 @@ function webrtcdevScreenConstraints(chromeMediaSourceId){
             //container.appendChild(videosContainer);
             //videosContainer.appendChild(event.mediaElement);
             var stream=event;
+            console.log("Stream from getUserMedia" , stream);
             stream.type = "local",
             scrConn.setStreamEndHandler(stream),
             getRMCMediaElement(stream, function(mediaElement) {
-                mediaElement.id = stream.streamid,
-                mediaElement.muted = !0,
-                mediaElement.volume = 0,
-                -1 === scrConn.attachStreams.indexOf(stream) && scrConn.attachStreams.push(stream),
-                "undefined" != typeof StreamsHandler && StreamsHandler.setHandlers(stream, !0, scrConn),
-                scrConn.streamEvents[stream.streamid] = {
-                    stream: stream,
-                    type: "local",
-                    mediaElement: mediaElement,
-                    userid: scrConn.userid,
-                    extra: scrConn.extra,
-                    streamid: stream.streamid,
-                    blobURL: mediaElement.src || URL.createObjectURL(stream),
-                    isAudioMuted: !0
-                },
-                /*setHarkEvents(scrConn, scrConn.streamEvents[stream.streamid]),*/
-                /*setMuteHandlers(scrConn, scrConn.streamEvents[stream.streamid]),*/
-                scrConn.onstream(scrConn.streamEvents[stream.streamid])
+                console.log(" getRMCMediaElement Callback function --> " + stream.streamid +" .. " + stream.id);
+                if(stream.streamid){
+                    console.log("using streamid");
+                    mediaElement.id = stream.streamid,
+                    mediaElement.muted = !0,
+                    mediaElement.volume = 0,
+                    -1 === scrConn.attachStreams.indexOf(stream) && scrConn.attachStreams.push(stream),
+                    "undefined" != typeof StreamsHandler && StreamsHandler.setHandlers(stream, !0, scrConn),
+                    scrConn.streamEvents[stream.streamid] = {
+                        stream: stream,
+                        type: "local",
+                        mediaElement: mediaElement,
+                        userid: scrConn.userid,
+                        extra: scrConn.extra,
+                        streamid: stream.streamid,
+                        blobURL: mediaElement.src || URL.createObjectURL(stream),
+                        isAudioMuted: !0
+                    };
+                    console.log(scrConn.streamEvents[stream.streamid]);
+                    /*setHarkEvents(scrConn, scrConn.streamEvents[stream.streamid]),*/
+                    /*setMuteHandlers(scrConn, scrConn.streamEvents[stream.streamid]),*/
+                    scrConn.onstream(scrConn.streamEvents[stream.streamid])
+                }else if(stream.id){
+                    console.log("using id");
+                    mediaElement.id = stream.id,
+                    mediaElement.muted = !0,
+                    mediaElement.volume = 0,
+                    -1 === scrConn.attachStreams.indexOf(stream) && scrConn.attachStreams.push(stream),
+                    "undefined" != typeof StreamsHandler && StreamsHandler.setHandlers(stream, !0, scrConn),
+                    scrConn.streamEvents[stream.id] = {
+                        stream: stream,
+                        type: "local",
+                        mediaElement: mediaElement,
+                        userid: scrConn.userid,
+                        extra: scrConn.extra,
+                        streamid: stream.id,
+                        blobURL: mediaElement.src || URL.createObjectURL(stream),
+                        isAudioMuted: !0
+                    };
+                    console.log(scrConn.streamEvents[stream.id]);
+                    /*setHarkEvents(scrConn, scrConn.streamEvents[stream.streamid]),*/
+                    /*setMuteHandlers(scrConn, scrConn.streamEvents[stream.streamid]),*/
+                    scrConn.onstream(scrConn.streamEvents[stream.id])
+                }else{
+                    alert("screenshare has neither streamid not id");
+                }
+
             }, scrConn);
 
         },
@@ -251,37 +324,35 @@ function webrtcdevScreenConstraints(chromeMediaSourceId){
             }
         }
     );
-    
-
 }
 
-    function getRMCMediaElement(stream, callback, connection) {
-        var isAudioOnly = !1;
-        stream.getVideoTracks && !stream.getVideoTracks().length && (isAudioOnly = !0);
-        var mediaElement = document.createElement(isAudioOnly ? "audio" : "video");
-        return  (mediaElement[isFirefox ? "mozSrcObject" : "src"] = isFirefox ? stream : window.URL.createObjectURL(stream),
-        mediaElement.controls = !0,
-        isFirefox && mediaElement.addEventListener("ended", function() {
-            if (currentUserMediaRequest.remove(stream.idInstance),
-            "local" === stream.type) {
-                StreamsHandler.onSyncNeeded(stream.streamid, "ended"),
-                connection.attachStreams.forEach(function(aStream, idx) {
-                    stream.streamid === aStream.streamid && delete connection.attachStreams[idx]
-                });
-                var newStreamsArray = [];
-                connection.attachStreams.forEach(function(aStream) {
-                    aStream && newStreamsArray.push(aStream)
-                }),
-                connection.attachStreams = newStreamsArray;
-                var streamEvent = connection.streamEvents[stream.streamid];
-                if (streamEvent)
-                    return void connection.onstreamended(streamEvent);
-                this.parentNode && this.parentNode.removeChild(this)
-            }
-        }, !1),
-        mediaElement.play(),
-        void callback(mediaElement))
-    }
+function getRMCMediaElement(stream, callback, connection) {
+    console.log(" getRMCMediaElement "  , stream , connection);
+    var isAudioOnly = !1;
+    stream.getVideoTracks && !stream.getVideoTracks().length && (isAudioOnly = !0);
+    var mediaElement = document.createElement(isAudioOnly ? "audio" : "video");
+    return  ( mediaElement[isFirefox ? "mozSrcObject" : "src"] = isFirefox ? stream : window.URL.createObjectURL(stream),
+    mediaElement.controls = !0,
+    isFirefox && mediaElement.addEventListener("ended", function() {
+        if (currentUserMediaRequest.remove(stream.idInstance), "local" === stream.type) {
+            StreamsHandler.onSyncNeeded(stream.streamid, "ended"),
+            connection.attachStreams.forEach(function(aStream, idx) {
+                stream.streamid === aStream.streamid && delete connection.attachStreams[idx]
+            });
+            var newStreamsArray = [];
+            connection.attachStreams.forEach(function(aStream) {
+                aStream && newStreamsArray.push(aStream)
+            }),
+            connection.attachStreams = newStreamsArray;
+            var streamEvent = connection.streamEvents[stream.streamid];
+            if (streamEvent)
+                return void connection.onstreamended(streamEvent);
+            this.parentNode && this.parentNode.removeChild(this)
+        }
+    }, !1),
+    mediaElement.play(),
+    void callback(mediaElement))
+}
 
 function webrtcdevViewscreen(roomid){
     scrConn.join(roomid);
@@ -293,19 +364,32 @@ function webrtcdevStopShareScreen(){
         screen: true,  // it will remove all screen streams
         stop: true     // ask to stop old stream
     });*/
+
+    document.getElementById(screenshareobj.screenshareContainer).innerHTML="";
+
+    rtcConn.send({
+        type:"screenshare", 
+        screenid: screenRoomid,
+        screenStreamid:screenStreamId,
+        message:"stoppedscreenshare"
+    });
     window.postMessage("webrtcdev-extension-stopsource", "*");
     scrConn.onstreamended();
-    scrConn.removeStream(screenStreamId);
+    scrConn.close();
+    console.log("Sender stopped: screenRoomid "+ screenRoomid +" || Screen stoppped "  , scrConn);
+
     //scrConn.videosContainer.hidden=true;
     /*scrConn.leave();*/
-    removeScreenViewButton();
+    //removeScreenViewButton();
 }
+
 function createOrAssignScreenviewButton(){
     if(screenshareobj.button.viewButton.id && document.getElementById(screenshareobj.button.viewButton.id)) 
         assignScreenViewButton();
     else
         createScreenViewButton();
 }
+
 function createScreenViewButton(){
     if(document.getElementById("viewScreenShareButton"))
         return;
@@ -331,11 +415,11 @@ function createScreenViewButton(){
         li.appendChild(viewScreenShareButton);
         document.getElementById("topIconHolder_ul").appendChild(li);
     }
-
 }
 
 function assignScreenViewButton(){
-/*    if(document.getElementById(screenshareobj.button.viewButton.id))
+    /*    
+    if(document.getElementById(screenshareobj.button.viewButton.id))
         return;*/
     var button =document.getElementById(screenshareobj.button.viewButton.id);
     webrtcdevViewscreen(screenRoomid);
@@ -421,7 +505,7 @@ function createScreenshareButton(){
     screenShareButton.id="screenShareButton";
     screenShareButton.onclick = function(event) {    
         if(screenShareButton.className==screenshareobj.button.shareButton.class_off){
-            webrtcdevSharescreen(screenRoomid);
+            webrtcdevSharescreen();
             screenShareButton.className=screenshareobj.button.shareButton.class_on;
             screenShareButton.innerHTML=screenshareobj.button.shareButton.html_on;
         }else if(screenShareButton.className==screenshareobj.button.shareButton.class_on){
@@ -440,7 +524,7 @@ function assignScreenShareButton(){
     var button=document.getElementById(screenshareobj.button.shareButton.id);
     button.onclick= function(event) {    
         if(button.className==screenshareobj.button.shareButton.class_off){
-            webrtcdevSharescreen(screenRoomid);
+            webrtcdevSharescreen();
             button.className=screenshareobj.button.shareButton.class_on;
             button.innerHTML=screenshareobj.button.shareButton.html_on;
         }else if(button.className==screenshareobj.button.shareButton.class_on){
@@ -498,6 +582,11 @@ function detectExtensionScreenshare(extensionID){
             // using non-chrome browser
         }
 
-        webrtcdevPrepareScreenShare();
     });
+}
+
+
+function showSrcConn(){
+    console.log(" srcConn : "  , srcConn);
+    console.log(" srcConn.peers.getAllParticipants() : " , srcConn.peers.getAllParticipants());
 }

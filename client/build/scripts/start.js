@@ -104,6 +104,8 @@ var WebRTCdev= function(session, widgets){
         if(widgets.timer)           timerobj        = widgets.timer;
 
         if(widgets.cursor)          cursorobj       = widgets.cursor;
+
+        if(widgets.fullscreen)      fullscreenobj   = widgets.fullscreen;
     }
 
     return {
@@ -174,8 +176,10 @@ var WebRTCdev= function(session, widgets){
             },
 
             rtcConn.onopen = function(event) {                                 
-                /*if(timer)
-                   startsessionTimer(timer);*/
+                if(timer){
+                   startsessionTimer(timerobj);
+                   shareTimePeer();
+                }
                 shownotification(event.extra.name + " joined session ");
                 onSessionConnect();
             },
@@ -199,11 +203,34 @@ var WebRTCdev= function(session, widgets){
                 }else{
                     switch(e.data.type){
                         case "screenshare":
-                            console.log("screen is getting shared ", e.data.message);
-                            console.log(scrConn);
-                            shownotification("screen is getting shared "+ e.data.message);
-                            //createScreenViewButton();
-                            scrConn.join(e.data.message);
+                            
+                            if(e.data.message=="stoppedscreenshare"){
+                                shownotification("Screenshare has stopped : " + e.data.screenStreamid);
+                                //createScreenViewButton();
+                                var button=document.getElementById(screenshareobj.button.shareButton.id);
+                                button.innerHTML="Screen share";
+                                button.parentNode.setAttribute("style","background:#2e6da4");
+                                button.disabled = false;
+
+                                scrConn.onstreamended();
+                                scrConn.removeStream(e.data.screenStreamid);
+                                scrConn.close();
+                            }else{
+                                shownotification("screen is getting shared "+ e.data.message);
+                                //createScreenViewButton();
+                                var button=document.getElementById(screenshareobj.button.shareButton.id);
+                                button.innerHTML="Peer sharing";
+                                button.parentNode.setAttribute("style","background:rgba(46, 109, 164, 0.35)");
+                                button.disabled = true;
+                                
+                                screenRoomid=e.data.message;
+                                var selfuserid="temp_"+(new Date().getUTCMilliseconds());
+                                webrtcdevPrepareScreenShare(function(screenRoomid){
+                                    //scrConn.join(screenRoomid);  
+                                     connectScrWebRTC("join" , screenRoomid, selfuserid, []); 
+                                });                             
+                            }
+
                         break;
                         case "chat":
                             updateWhotyping(e.extra.name+ " has send message");
@@ -231,7 +258,7 @@ var WebRTCdev= function(session, widgets){
                         break;
                         case "file":
                             addNewMessage({
-                                header: e.extra.username,
+                                header: e.extra.name,
                                 message: e.data.message,
                                 userinfo: getUserinfo(rtcConn.blobURLs[e.userid], "chat-message.png"),
                                 color: e.extra.color
@@ -248,6 +275,9 @@ var WebRTCdev= function(session, widgets){
                         break;
                         case "pointer":
                             placeCursor("cursor2" , e.data.corX , e.data.corY);
+                        break;
+                        case "timer":
+                            startPeersTime(e.data.time , e.data.zone);
                         break;
                         case "buttonclick":
                             var buttonElement= document.getElementById(e.data.buttonName);
@@ -277,7 +307,12 @@ var WebRTCdev= function(session, widgets){
                 });   
             },
 
-            rtcConn.onclose = rtcConn.onleave = function(e) {
+            rtcConn.onclose = function(e) {
+                console.log(" RTCConn on close conversation " ,e);
+                /*alert(e.extra.name + "closed ");*/
+            },
+
+            rtcConn.onleave = function(e) {
                 /*
                 addNewMessage({
                     header: e.extra.name,
@@ -285,13 +320,14 @@ var WebRTCdev= function(session, widgets){
                     userinfo: getUserinfo(rtcConn.blobURLs[e.userid], "info.png"),
                     color: e.extra.color
                 }), */
-                
-                shownotification(e.extra.name + " left the conversation.");
+                console.log(" RTCConn  on leave Left conversation " ,e , findPeerInfo(e.userid));
+                if(e.extra.name !="undefined")
+                    shownotification(e.extra.name + "  left the conversation.");
                 //rtcConn.playRoleOfInitiator()
-                for(x in webcallpeers){
-                    if(webcallpeers[x].userid=e.userid)
-                        webcallpeers.splice(x,1);
-                }
+                destroyWebCallView(findPeerInfo(e.userid), function(result){
+                    if(result)
+                        removePeerInfo(e.userid);
+                });
             },
 
             rtcConn.takeSnapshot = function(userid, callback) {
@@ -340,7 +376,11 @@ var WebRTCdev= function(session, widgets){
             }
 
             if(screenrecordobj.active){
-                createScreenRecordButton();
+                if(screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)){
+                    assignScreenRecordButton(screenrecordobj);
+                }else{
+                    createScreenRecordButton();
+                }
             }
 
             if(screenshareobj.active){
@@ -373,9 +413,9 @@ var WebRTCdev= function(session, widgets){
                 createCodeEditorButton();
             }
 
-            if(cursorobj.active){
-                assignButtonCursor(cursorobj.button.id);
-            }
+            //if(cursorobj.active){
+              //  assignButtonCursor(cursorobj.button.id);
+            //}
 
             if(fileshareobj.active){
                 rtcConn.enableFileSharing = true;
@@ -626,11 +666,22 @@ function attachControlButtons( vid ,  peerinfo){
             controlBar.appendChild(createVideoMuteButton(controlBarName , peerinfo));        
         }
     }
+    
     if(snapshotobj.active){
         controlBar.appendChild(createSnapshotButton(controlBarName , peerinfo));
     }
+
     if(videoRecordobj.active){
         controlBar.appendChild(createRecordButton(controlBarName, peerinfo, streamid, stream ));
+    }
+
+    if(cursorobj.active){
+        //assignButtonCursor(cursorobj.button.id);
+        controlBar.appendChild(createCursorButton(controlBarName, peerinfo ));
+    }
+
+    if(fullscreenobj.active){
+        controlBar.appendChild(createFullScreenButton(controlBarName, peerinfo, streamid, stream ));
     }
 
     if(debug){
@@ -652,6 +703,7 @@ function updateWebCallView(peerInfo){
             var vid = document.getElementsByName(localVideo)[0];
             vid.muted = true;
             vid.style.opacity = 1;
+            vid.className=localobj.videoClass;
             attachMediaStream(vid, peerInfo.stream);
         }
     }else if(peerInfo.vid.indexOf("videoremote") > -1) {
@@ -671,6 +723,7 @@ function updateWebCallView(peerInfo){
                 else
                     attachMediaStream(selfvid, webcallpeers[0].stream);
                 selfvid.id = webcallpeers[0].videoContainer;
+                selfvid.className=remoteobj.videoClass;
                 selfvid.muted = true;
                 attachControlButtons( selfvid, webcallpeers[0]); 
                 if(localobj.userDisplay)
@@ -684,7 +737,8 @@ function updateWebCallView(peerInfo){
         /*get the next empty index of video and pointer in video array */
         var vi=0;
         for(var v=0;v<remoteVideos.length;v++){
-            if(remoteVideos[v].src){
+            console.log("Remote Video index array " , v , " || ", remoteVideos[v] , document.getElementsByName(remoteVideos[v])  , document.getElementsByName(remoteVideos[v]).src);
+            if(document.getElementsByName(remoteVideos[v])[0].src){
                 vi++;
             }
         }
@@ -698,14 +752,17 @@ function updateWebCallView(peerInfo){
             remvid=remoteVideos[vi];
         }else{
             remvid=document.getElementsByName(remoteVideos[vi])[0];
-            console.log("remote video not unlimited " , remoteVideos[vi]);
+            console.log("remote video not unlimited " , remvid);
         }
 
         attachMediaStream(remvid, peerInfo.stream);
         remvid.id = peerInfo.videoContainer;
+        remvid.className=remoteobj.videoClass;
         attachControlButtons(remvid, peerInfo); 
+
         if(remoteobj.userDisplay)
             attachUserDetails( remvid, peerInfo); 
+        
         if(fileshareobj.active){
 
             if(fileshareobj.props.fileShare){
@@ -808,6 +865,42 @@ function updatePeerInfo(userid , username , usecolor , useremail,  type ){
 }
 
 /**
+ * update info about a peer in list of peers (webcallpeers)
+ * @method
+ * @name updatePeerInfo
+ * @param {string} userid
+ * @param {string} username
+ * @param {string} usercolor
+ * @param {string} type
+ */
+function removePeerInfo(userid){
+    console.log(" Before  " , webcallpeers);
+    console.log("removing peerInfo: " , userid);
+    webcallpeers.splice(userid, 1);
+    console.log(" After " , webcallpeers);
+}
+
+function destroyWebCallView(peerInfo , callback){
+    console.log(" [destroyWebCallView] peerInfo" , peerInfo);
+    if(document.getElementById(peerInfo.videoContainer))
+        document.getElementById(peerInfo.videoContainer).src="";
+    
+    if(fileshareobj.active){
+        if(fileshareobj.props.fileShare){
+            if(fileshareobj.props.fileShare=="divided")
+                console.log("dont remove it now ");
+                //createFileSharingDiv(peerInfo);
+            else if(fileshareobj.props.fileShare=="single")
+                console.log("No Seprate div created for this peer  s fileshare container is single");
+            else
+                console.log("props undefined ");
+        }
+    }
+
+    callback(true);
+}
+
+/**
  * find information about a peer form array of peers basedon userid
  * @method
  * @name findPeerInfo
@@ -836,8 +929,18 @@ function findPeerInfo(userid){
  * @param {obj} conn
  */
 function showStatus(conn){
-    console.log(rtcConn);
-    console.log(webcallpeers);
+    console.log("======================status of " , rtcConn);
+
+    getStats(rtcConn, function(result) {
+        alert("getstats Result");
+        console.log(result.connectionType.remote.ipAddress);
+        console.log(result.connectionType.remote.candidateType);
+        console.log(result.connectionType.transport);
+    });
+
+    alert( "got stats " , result.connectionType.transport);
+
+    console.log("WebcallPeers " , webcallpeers);
 }
 
 /**
@@ -960,3 +1063,8 @@ window.onunload=function(){
 
     console.log(    localStorage.getItem("channel"));
 };
+
+function showRtcConn(){
+    console.log(" rtcConn : "  , rtcConn);
+    console.log(" rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
+}

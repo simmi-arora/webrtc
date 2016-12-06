@@ -135,20 +135,20 @@ function replaceURLWithHTMLLinks(text) {
 function addNewMessagelocal(e) {
     console.log(" addNewMessagelocal-chatobj-->"  , chatobj);
     if ("" != e.message && " " != e.message) {
-        addMessageLineformat("user-activity user-activity-right localMessageClass" , e.message , chatobj.chatBox.id);
+        addMessageLineformat("user-activity user-activity-right localMessageClass" , e.header , e.message , chatobj.chatBox.id);
     }
 }
 
 function addNewMessage(e) {
     if ("" != e.message && " " != e.message) {
-        addMessageLineformat("user-activity user-activity-right remoteMessageClass" , e.message , chatobj.chatBox.id);
+        addMessageLineformat("user-activity user-activity-right remoteMessageClass" , e.header , e.message , chatobj.chatBox.id);
     }
 }
 
-function addMessageLineformat(messageDivclass, message , parent){
+function addMessageLineformat(messageDivclass, messageheader , message , parent){
     var n = document.createElement("div");
     n.className = messageDivclass; 
-    n.innerHTML =  replaceURLWithHTMLLinks(message);
+    n.innerHTML = messageheader +" : "+ replaceURLWithHTMLLinks(message);
     document.getElementById(parent).insertBefore(n, document.getElementById(parent).firstChild);
 }
 
