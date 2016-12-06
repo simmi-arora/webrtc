@@ -500,10 +500,8 @@ input:focus {
 .viewerIframeClass{
     width:100%;
     height: 100%;
+    position: absolute;
 }
-
-
-
 
 .userName{
   color: #000;
@@ -779,6 +777,7 @@ video::-webkit-media-controls-current-time-display {}*/
 .filesharing1Box{
     background-color: #9999FF;
     color: #968787;
+    overflow-y: auto;
 }
 
 #file-progress1{

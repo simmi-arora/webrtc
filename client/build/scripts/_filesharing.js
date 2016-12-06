@@ -27,7 +27,7 @@ function assignFileShareButton(fileshareobj){
         var fileSelector = new FileSelector();
         fileSelector.selectSingleFile(function(file) {
             sendFile(file);
-            /*sendChatMessage("File is shared :"+file.name);*/
+            //sendChatMessage("File is shared :"+file.name);
         });
     };
 }
@@ -109,12 +109,13 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     var name = document.createElement("div");
     name.innerHTML = listlength +"   " + filename ;
     name.title=filetype +" shared by " +peerinfo.name ;  
+    name.setAttribute("style", " width: 40%;  float: left;");
     name.id="name"+filename;
 
     var downloadButton = document.createElement("div");
     downloadButton.style.float="right";
     /*downloadButton.setAttribute("class" , "btn btn-primary");*/
-    downloadButton.setAttribute("style", "color:white");
+    /*downloadButton.setAttribute("style", "color:white");*/
     downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '">'+'<i class="fa fa-download" style="font-size: 25px;"></i>'+' </a>';
 
     var showButton = document.createElement("div");
@@ -173,7 +174,10 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     removeButton.onclick=function(event){
         if(repeatFlagRemoveButton != filename){
             hideFile(uuid , elementDisplay , fileurl , filename , filetype);
-            var tobeHiddenElement = event.target.parentNode.id;
+            //console.log("remove button clicked || to be deleted " , event.target.parentNode.id);
+            //alert("remove button clciked ");
+            //var tobeHiddenElement = event.target.parentNode.id;
+            var tobeHiddenElement=filename;
             rtcConn.send({
                 type:"shareFileRemove", 
                 _element: tobeHiddenElement,
@@ -205,6 +209,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         filedom.id=filename;
         filedom.innerHTML="";
         filedom.className="row";
+        filedom.setAttribute("style"," margin: 5px; padding: 5px;   background-color: rgba(204, 204, 204, 0.56)");
         filedom.appendChild(name);
         if(showDownloadButton) 
             filedom.appendChild(downloadButton);
@@ -264,6 +269,7 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
         elementDisplay=video;
     }else{
         var iframe= document.createElement("iframe");
+        iframe.style.width="100%";
         iframe.src= fileurl;
         iframe.className= "viewerIframeClass";
         iframe.title= filename;
@@ -350,7 +356,6 @@ function createFileSharingBox(peerinfo, parent){
     </div>*/
 
     var fileControlBar=document.createElement("p");
-    fileControlBar.style.float="right";
     fileControlBar.id =peerinfo.fileShare.container+"controlBar";
     fileControlBar.appendChild(document.createTextNode("File Viewer for "+ peerinfo.name+ "     "));
 
@@ -359,6 +364,7 @@ function createFileSharingBox(peerinfo, parent){
         minButton.innerHTML="Minimize";*/
         minButton.innerHTML='<i class="fa fa-minus-square" style="font-size: 25px;"></i>';
         minButton.id=peerinfo.fileShare.minButton;
+        minButton.style.float="right";
         minButton.setAttribute("lastClickedBy" ,'');
         minButton.onclick=function(){
             resizeFV(peerinfo.userid, minButton.id , peerinfo.fileShare.outerbox);
@@ -369,6 +375,7 @@ function createFileSharingBox(peerinfo, parent){
         maxButton.innerHTML="Maximize";*/
         maxButton.innerHTML='<i class="fa fa-external-link-square" style="font-size: 25px;"></i>';
         maxButton.id=peerinfo.fileShare.maxButton;
+        maxButton.style.float="right";
         maxButton.setAttribute("lastClickedBy" ,'');
         maxButton.onclick=function(){
             maxFV(peerinfo.userid, maxButton.id  , peerinfo.fileShare.outerbox);
@@ -380,6 +387,7 @@ function createFileSharingBox(peerinfo, parent){
         closeButton.innerHTML="Close";*/
         closeButton.innerHTML='<i class="fa fa-times-circle" style="font-size: 25px;"></i>';
         closeButton.id=peerinfo.fileShare.closeButton;
+        closeButton.style.float="right";
         closeButton.setAttribute("lastClickedBy" ,'');
         closeButton.onclick=function(){
             closeFV(peerinfo.userid, closeButton.id , peerinfo.fileShare.container);

@@ -158,9 +158,9 @@ var scriptList=[
     "client/build/scripts/_cursor.js",
     "client/build/scripts/_codeeditor.js",
     "client/build/scripts/_texteditor.js",
-    "client/build/scripts/_mediahandler.js",
     "client/build/scripts/_turn.js",
-    "client/build/scripts/_timer.js"
+    "client/build/scripts/_timer.js",
+    "client/build/scripts/_stats.js"
 ];
 
 gulp.task('betawebrtcdevelopmentjs',function() {

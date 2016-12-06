@@ -1,20 +1,13 @@
 @charset "utf-8";
 /* CSS Document */
-.header-part{background:rgba(255,255,255,0.9);width:100%;}
-.logo{padding:10px 0px;}
+
 .over-lap {
     position: absolute;
     right: 50px;
     top: 7px;
-	display:none;
+  display:none;
 }
-.profile.pull-left {
-    border-radius: 50%;
-    height: 80px;
-    margin-right: 25px;
-    overflow: hidden;
-    width: 80px;
-}
+
 .search-background{background:rgba(255,255,255,0.2);margin-top:25px;padding-bottom:20px;border:solid 1px #666;margin-bottom:25px;}
 .background-blue{background:#617bff; border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px}
@@ -32,7 +25,9 @@ h1.search-title {
     text-align: center;
     text-transform: uppercase;
     width: 100%;
-}.border4side{border:1px solid #eee;}
+}
+
+.border4side{border:1px solid #eee;}
 .bg-gray{background:#faf8ff;}
 .search-profile > img {
     height: 100%;
@@ -78,8 +73,8 @@ h1.search-title {
     padding: 7px 0;
     text-align: center;
     width: 200px;
-	margin-top:20px;
-	transition:all 0.3s ease-in-out 0s;
+  margin-top:20px;
+  transition:all 0.3s ease-in-out 0s;
 }
 .col-sm-2.pull-right.count:hover{background:#d1d900;}
 .marginTOP{margin-top:10px;}
@@ -95,7 +90,7 @@ h1.search-title {
     font-size: 16px;
     padding: 10px 0 !important;
     text-align: center;
-	
+  
 }
 .table-hover tr td {
     color: #fff;
@@ -280,8 +275,8 @@ button {
     text-shadow: 1px 1px 1px #999;
     text-transform: uppercase;
     width: 100%;
-	border:3px solid rgba(0,0,0,0);
-	margin: 35px 35px 55px 35px;
+  border:3px solid rgba(0,0,0,0);
+  margin: 35px 35px 55px 35px;
    position:relative;
     transition: all 1s ease 0s;
     width: 220px;
@@ -292,8 +287,8 @@ button {
   transition: all 1s ease;
    border-bottom-right-radius: 5px;
     border-top-right-radius: 5px;
-box-shadow:0px 0px 10px rgba(0,0,0,0.5);	
-	
+box-shadow:0px 0px 10px rgba(0,0,0,0.5);  
+  
 }
 .fa {
   -webkit-transition: all 1s ease;
@@ -376,7 +371,7 @@ to { left: -100%; }
     font-size: 20px;
     padding-right: 10px;
     padding-top: 13px;
-	color:#fff;
+  color:#fff;
     
 }
 .hidden { display: none; }
@@ -387,27 +382,28 @@ to { left: -100%; }
     position: absolute;
     top: -9px;
     width: 75px;
-	background:#fff; border-radius: 3px;}
+  background:#fff; border-radius: 3px;}
 .panel-box {
     background:url(../images/sba-services.jpg) center no-repeat;background-size:cover;
     border-radius: 3px;
     height: 560px;
     margin: 30px auto 0 auto;
     width: 90%;
+  
 }
 .search-header {
     background: #363965;
     color: #00CC99;
     font-family: 'Roboto', sans-serif;
     font-size:18px;
-   	position:relative;
+    position:relative;
     padding: 15px 0 15px 20px;;
     text-align: left;
     text-transform: uppercase;
-	border-top-left-radius:3px;
-	border-top-right-radius:3px;
-	font-weight:400;
-	letter-spacing:1px;
+  border-top-left-radius:3px;
+  border-top-right-radius:3px;
+  font-weight:400;
+  letter-spacing:1px;
 }
 .search-header span {
     color:#ff7676;
@@ -423,15 +419,15 @@ to { left: -100%; }
     border-bottom-right-radius: 3px;
     height: 100%;
     max-height: 510px;
-	padding: 15px;
-	overflow-y: scroll;
-	margin-bottom:15px;
+  padding: 15px;
+  overflow-y: scroll;
+  margin-bottom:15px;
 }
 .seclect-box {
     background: #fff;
     padding: 5px;
-	margin-bottom: 5px;
-	
+  margin-bottom: 5px;
+  
 }
 .search-box{height:70px;width:70px;border-radius:50%;overflow:hidden; border: 1px solid #eee;}
 .search-box img{width:100%;height:100%;}
@@ -455,7 +451,7 @@ to { left: -100%; }
     margin: 20px auto;
     position: relative;
     width: 35px;
-	box-shadow: 0 0 5px #666;
+  box-shadow: 0 0 5px #666;
 }
 .squaredOne label::after {
      background: rgba(0, 0, 0, 0) linear-gradient(to bottom, #666 0%, #000 100%) repeat scroll 0 0;
@@ -515,7 +511,7 @@ to { left: -100%; }
     position: relative;
     text-align: left;
     text-shadow: 1px 1px 1px #333;
-	overflow:hidden;
+  overflow:hidden;
 }
 .result-hder > span {
     background: #2e4fc8 none repeat scroll 0 0;
@@ -542,7 +538,7 @@ to { left: -100%; }
 .result-list > li a > p.text-center {
     color: #06F;
     font-size: 15px;
-	 border-bottom: 1px solid #eee;
+   border-bottom: 1px solid #eee;
 }
 .list-inline.result-list{margin:0px 10px;}
 .result-list > li a {text-decoration:none;}
@@ -550,7 +546,7 @@ to { left: -100%; }
 .result-list > li a > p.text-center:hover {
     color: #352f2f;
     font-size: 15px;
-	 border-bottom: 1px solid #ddd;
+   border-bottom: 1px solid #ddd;
 }
 .disable-section{opacity:0.5;cursor:not-allowed;}
 .value-holder {
@@ -577,11 +573,11 @@ to { left: -100%; }
     height: 100px;
     overflow: hidden;
     width: 100px;
-	margin-top:25px;
+  margin-top:25px;
 }
 .person-img img {
     width: 100%;
-	height:100%;
+  height:100%;
 }
 .wellcome-text > p {
     color: white;
@@ -593,7 +589,331 @@ to { left: -100%; }
 }
 .loader{background:rgba(41,102,149,0.8);width:100%;height:100%;}
 
+    .over-lap {
+      display: block !important
+    }
 
+    /*------------STYLE RULES ONLY FOR RTC-VIDEO PAGE-START---------*/
+
+    .right-section{
+      background:#fff;
+      border-radius:30px;
+      padding:20px 0px 0px;
+      border:1px solid #F00;
+      margin-top:20px;
+      position:relative;
+    }
+    .main-block{width:95%;margin:auto;}
+    .time-function {
+        background: #b2b2b2 none repeat scroll 0 0;
+        border-radius: 5px;
+        font-family: Helvetica;
+        font-size: 12px;
+        letter-spacing: 1px;
+        padding: 7px 0;
+        text-align: center;
+        width: 100%;
+    }
+    .panel-seassion{position:relative;}
+    .btn-modify-video.focus, .btn-modify-video:focus, .btn-modify-video:hover {color: #748970;}
+    .btn-modify-video {background: rgba(0,0,0,0);border: 0px;padding: 0px;color: #f60000;font-size: 22px;}
+    .bg-ssion{border-radius:10px;background:#ffda96;padding:5px 0px}
+    .arrow {border-radius: 50%;display: inline-block;height: auto;left: -20px;position: absolute;text-align: center;top: 0;font-size: 22px;color:#F00;}
+    .video-block{width:100%;}
+
+    .video-header{background:#e61339;color:#ffff00;margin:0;padding:5px 0px;text-align:center;font-size:16px;font-weight:bold;}
+    .controler-video {margin: 0;padding: 3px 0 9px;position:relative;}
+    .btn-modify-video2.focus, .btn-modify-video2:focus, .btn-modify-video2:hover {color: #eaff00;}
+    .btn-modify-video2 {background: rgba(0,0,0,0);border: 0px;padding: 0px;color: #fff;font-size: 18px;}
+
+    .send-chat-header-class{
+        border-radius: 10px;
+        background: #09F;
+        padding: 4px 0px;
+        overflow: hidden;
+        width: 100%;
+        margin: 0;
+    }
+    .send-message-block-class{
+      margin:3px 0px;height:150px;overflow-x: scroll;overflow-x: -moz-hidden-unscrollable; background: #b2b2b2;
+    }
+
+
+    .send-mesg{background:#efbf00;color:#fff;border-radius:8px;padding:2px 0px 3px 5px;height:auto;border:0px;}
+    .send-mesg:focus{box-shadow:0px;}
+    .send-mesg::-moz-placeholder{color:#FFF;}
+    .online-pro-pict img {height: auto;width: 100%;}
+    
+    .timer-block{margin:3px 0px;height:150px;overflow-x: scroll;overflow-x: -moz-hidden-unscrollable; background:rgba(119, 119, 119, 0.28);}
+    .online-pro-pict {border: 1px solid #CCC;border-radius: 50%;margin: 7px;overflow: hidden;}
+    .online-chat-text span, .online-chat-text-reply span {color:#333;display: inherit;font-size: 10px;margin-top: 5px;}
+    .online-chat-text {background:#fdd1c6;padding:5px;color:#000;margin:10px 0px 0px 0px;font-family:Helvetica;font-size:13px;font-weight:bold;
+    border-radius:5px}
+    .online-chat-text-reply {background:#c44b31;padding:5px;color:#fff;margin:10px 0px 0px 0px;font-family:Helvetica;font-size:13px;font-weight:bold;
+    border-radius:5px}
+    .chat-text-area {margin: 5px 0px;}
+    .chating-area {overflow-y: scroll; overflow-x: hidden;}
+    .chat-class{position:relative;}
+
+    .video-header-2{background:#FF0;color:#000;margin:0;padding:5px 0px;text-align:center;font-size:16px;font-weight:bold;}
+    .btn-modify-video-3.focus, .btn-modify-video-3:focus, .btn-modify-video-3:hover {color:#FF0000;}
+    .btn-modify-video-3{background: rgba(0,0,0,0);border: 0px;padding: 0px;color: #000;font-size: 18px;}
+    
+    .screen-share-class{border-radius:10px;padding:5px 5px;background:#e2f0d9;margin:5px 0px;/*border:1px solid #F00;*/}
+    .file-share-class{border-radius:10px;padding:5px 5px;background:#e2f0d9;margin:5px 0px;/*border:1px solid #F00;*/}
+    
+    .red-bg{background:#e61339 ;border-top-left-radius:10px;border-bottom-left-radius:10px;}
+    .seceen-btn{background:#0033CC;color:#fff;border-radius:8px;border:0px;}
+    .seceen-btn:hover{background:#0CF;color:#fff;border-radius:8px;border:0px;}
+    .seceen-btn-2{background:#999900;color:#fff;border-radius:8px;border:0px;}
+    .seceen-btn-2:hover{background:#9C0;color:#fff;border-radius:8px;border:0px;}
+    .yellow-bg{background:#FF0;border-top-left-radius:10px;border-bottom-left-radius:10px;margin:5px 0px}
+    .yellow-bg-2{background:#FF0;border-top-left-radius:5px;border-top-right-radius:5px;margin:5px 0px 0 0;color:#000;padding:5px 0px}
+    .yellow-bg-2 .fa{color:#000;}
+    .red-bg-2{background:#e61339 ;border-top-left-radius:5px;border-top-right-radius:5px;margin:5px 0px 0 0;color:#fff;padding:5px 0px}
+    .red-bg-2 .fa{color:#fff;}
+    .panel-seassion table {font-size: 10px;}
+    .btn-modify-chat {
+      background: rgba(0,0,0,0);
+      border: 0px;
+      color: #666;
+      font-size: 16px;
+      padding: 3px 0px
+    }
+    .btn-modify-chat .fa {
+      line-height: 19px;
+      margin: 0;
+      padding: 0;
+    }
+    .icon-markup-block{background:#f3f3f3;border-radius:5px;margin:5px 0px;}
+    .block-one {
+      border: 1px solid #fff;
+    }
+    .block-two {
+      padding-top: 0px;
+    }
+    .inner-block {
+      background: #fff;
+      height: 1670px;
+      margin-top: 15px;
+      margin-bottom: 15px;
+      position:relative;
+    }
+    .button-corner
+    {}
+    td span .fa {
+        cursor: pointer;
+    }
+    .fileUpload {
+        border-radius: 10px;
+        position: relative;
+        width: 130px;
+        margin-left: 10px;
+        align-items: center;
+    }
+    .fileUpload input.upload {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+        cursor: pointer;
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+    .fileViewing1Box{
+        color: #968787;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        border: 10px solid white;
+        height: 400px;
+    }
+    .bg-red{background:#ff6600;color:#fff;}
+    .bg-blue{background:#2e6da4;color:#fff;}
+    .table-section { font-size:12px;}
+    .border-radius { border-radius: 15px; overflow: hidden; margin:5px 0px;}
+    .videoButtonClass {
+        padding :5px;
+    }
+    .button-corner {
+        float: right;
+        margin-right: 5px;
+        cursor:pointer;
+    }
+    .minTimerBtn{
+        float: right;
+        margin-right: 20px;
+    }
+    .btn.btn-info.recannect{font-size:15px;font-weight:bold;text-transform:uppercase; }
+    .btn.btn-info.recannect > span {
+        background:#0099FF;
+        border-radius: 3px;
+        color:#FFF;
+        height: 34px;
+        left:16px;
+        line-height: 34px;
+        position: absolute;
+        text-align: center;
+        top: 0;
+        width: 34px;
+      
+    }
+    .btn.btn-info.recannect:hover span {background:#03F;}
+    .rightDiv-class{
+        padding-right:0px;
+        overflow-y:overflow;
+        overflow-x:hidden;
+    }
+
+    .centreDiv-class{
+        padding-right: 0px;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }.bodybg{
+      background:url(images/background.jpg) 100% 100%;
+      background-size:cover;
+      font-family:Arial, Helvetica, sans-serif;
+      background-attachment:fixed;
+      overflow:hidden;
+    }
+
+    .over-lap {
+      display: block !important
+    }
+
+    video{
+        position: relative;
+        top: 0;
+        left: 0;
+        transition: width .5s ease;
+        margin: 0;
+        background-color: #000;
+        border-radius: 50px;
+        width: 100%!important; 
+    }
+    /*------------STYLE RULES ONLY FOR RTC-VIDEO PAGE-START---------*/
+
+    .right-section{
+      background:#fff;
+      border-radius:30px;
+      padding:20px 0px 0px;
+      border:1px solid #F00;
+      margin-top:20px;
+      position:relative;
+    }
+    .main-block{width:95%;margin:auto;}
+    .time-function {
+        background: #b2b2b2 none repeat scroll 0 0;
+        border-radius: 5px;
+        font-family: Helvetica;
+        font-size: 12px;
+        letter-spacing: 1px;
+        padding: 7px 0;
+        text-align: center;
+        width: 100%;
+    }
+    .panel-seassion{position:relative;}
+    .btn-modify-video.focus, .btn-modify-video:focus, .btn-modify-video:hover {color: #748970;}
+    .btn-modify-video {background: rgba(0,0,0,0);border: 0px;padding: 0px;color: #f60000;font-size: 22px;}
+    .bg-ssion{border-radius:10px;background:#ffda96;padding:5px 0px}
+    .arrow {border-radius: 50%;display: inline-block;height: auto;left: -20px;position: absolute;text-align: center;top: 0;font-size: 22px;color:#F00;}
+    .video-block{width:100%;}
+
+    .video-header{background:#e61339;color:#ffff00;margin:0;padding:5px 0px;text-align:center;font-size:16px;font-weight:bold;}
+    .controler-video {margin: 0;padding: 3px 0 9px;position:relative;}
+
+
+    .send-chat-header-class{
+        border-radius: 10px;
+        background: #09F;
+        padding: 4px 0px;
+        overflow: hidden;
+        width: 100%;
+        margin: 0;
+    }
+    .send-message-block-class{
+      margin:3px 0px;height:150px;overflow-x: scroll;overflow-x: -moz-hidden-unscrollable; background: #b2b2b2;
+    }
+
+
+
+    .video-header-2{background:#FF0;color:#000;margin:0;padding:5px 0px;text-align:center;font-size:16px;font-weight:bold;}
+    .btn-modify-video-3.focus, .btn-modify-video-3:focus, .btn-modify-video-3:hover {color:#FF0000;}
+    .btn-modify-video-3{background: rgba(0,0,0,0);border: 0px;padding: 0px;color: #000;font-size: 18px;}
+    
+    .screen-share-class{border-radius:10px;padding:5px 5px;background:#e2f0d9;margin:5px 0px;/*border:1px solid #F00;*/}
+    .file-share-class{border-radius:10px;padding:5px 5px;background:#e2f0d9;margin:5px 0px;/*border:1px solid #F00;*/}
+    
+    .red-bg{background:#e61339 ;border-top-left-radius:10px;border-bottom-left-radius:10px;}
+    .seceen-btn{background:#0033CC;color:#fff;border-radius:8px;border:0px;}
+    .seceen-btn:hover{background:#0CF;color:#fff;border-radius:8px;border:0px;}
+    .seceen-btn-2{background:#999900;color:#fff;border-radius:8px;border:0px;}
+    .seceen-btn-2:hover{background:#9C0;color:#fff;border-radius:8px;border:0px;}
+    .yellow-bg{background:#FF0;border-top-left-radius:10px;border-bottom-left-radius:10px;margin:5px 0px}
+    .yellow-bg-2{background:#FF0;border-top-left-radius:5px;border-top-right-radius:5px;margin:5px 0px 0 0;color:#000;padding:5px 0px}
+    .yellow-bg-2 .fa{color:#000;}
+    .red-bg-2{background:#e61339 ;border-top-left-radius:5px;border-top-right-radius:5px;margin:5px 0px 0 0;color:#fff;padding:5px 0px}
+    .red-bg-2 .fa{color:#fff;}
+    .panel-seassion table {font-size: 10px;}
+    .btn-modify-chat {
+      background: rgba(0,0,0,0);
+      border: 0px;
+      color: #666;
+      font-size: 16px;
+      padding: 3px 0px
+    }
+    .btn-modify-chat .fa {
+      line-height: 19px;
+      margin: 0;
+      padding: 0;
+    }
+    .icon-markup-block{background:#f3f3f3;border-radius:5px;margin:5px 0px;}
+    .block-one {
+      border: 1px solid #fff;
+    }
+    .block-two {
+      padding-top: 0px;
+    }
+    .inner-block {
+      background: #fff;
+      height: 1670px;
+      margin-top: 15px;
+      margin-bottom: 15px;
+      position:relative;
+    }
+    .button-corner
+    {}
+    td span .fa {
+        cursor: pointer;
+    }
+
+    .bg-red{background:#ff6600;color:#fff;}
+    .bg-blue{background:#2e6da4;color:#fff;}
+    .table-section { font-size:12px;}
+    .border-radius { border-radius: 15px; overflow: hidden; margin:5px 0px;}
+
+    .button-corner {
+        float: right;
+        margin-right: 5px;
+        cursor:pointer;
+    }
+    .minTimerBtn{
+        float: right;
+        margin-right: 20px;
+    }
+
+    .rightDiv-class{
+        padding-right:0px;
+        overflow-y:overflow;
+        overflow-x:hidden;
+    }
+
+    .centreDiv-class{
+        padding-right: 0px;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
 
 
 

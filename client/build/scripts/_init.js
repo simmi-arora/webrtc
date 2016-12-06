@@ -69,6 +69,8 @@ var cursorobj=false;
 
 var muteobj=false;
 
+var fullscreenobj=false;
+
 var screenshareobj=false;
 var screen , isScreenOn=0;
 var screen_roomid , screen_userid;

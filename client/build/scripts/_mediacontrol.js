@@ -1,3 +1,24 @@
+function createFullScreenButton(controlBarName, peerinfo, streamid, stream ){
+    var button=document.createElement("span");
+    button.id=controlBarName+"fullscreeButton";
+    button.className=fullscreenobj.button.class_off;
+    button.innerHTML=fullscreenobj.button.html_off;
+    button.onclick = function() {
+        if(button.className == fullscreenobj.button.class_off){
+            var vid=document.getElementById(peerinfo.videoContainer);
+            vid.webkitRequestFullScreen();
+            button.className=fullscreenobj.button.class_on;
+            button.innerHTML=fullscreenobj.button.html_on;
+        } 
+        else{            
+            button.className=fullscreenobj.button.class_off;
+            button.innerHTML=fullscreenobj.button.html_off;
+        }     
+        //syncButton(audioButton.id);        
+    };
+    return button;
+}
+
 function createAudioMuteButton(controlBarName , peerinfo){
     var audioButton=document.createElement("span");
     audioButton.id=controlBarName+"audioButton";
@@ -104,6 +125,10 @@ function attachMediaStream(element, stream) {
         element.srcObject = stream;
     }else{
         console.log('Error attaching stream to element.' , element , stream);
+    }
+
+    if(element.hidden){
+        element.hidden=false;
     }
 }
 
