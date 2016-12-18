@@ -232,6 +232,7 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
         divNitofcation.className="alert alert-warning";
         divNitofcation.innerHTML= "Microsoft and Libra word file cannt be opened in browser";
         elementDisplay=divNitofcation;
+
     }else if(filetype.indexOf("image")>-1){
         var image= document.createElement("img");
         image.src= fileurl;
@@ -239,6 +240,7 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
         image.title=filename;
         image.id= "display"+filename; 
         elementDisplay=image;
+
     }else if(filetype.indexOf("videoScreenRecording")>-1){
         console.log("videoScreenRecording " , fileurl);
         var video = document.createElement("video");
@@ -393,6 +395,18 @@ function createFileSharingBox(peerinfo, parent){
             closeFV(peerinfo.userid, closeButton.id , peerinfo.fileShare.container);
         }
 
+        var angle = 0;
+        var rotateButton= document.createElement("span");
+        rotateButton.innerHTML='<i class="fa fa-mail-forward" style="font-size: 25px;"></i>';
+        rotateButton.id= "btnRotate";
+        rotateButton.style.float="right";
+        rotateButton.onclick=function(){
+            var img = document.getElementById(peerinfo.fileShare.container).firstChild;
+            angle = (angle+90)%360;
+            img.className = "rotate"+angle;
+        }
+
+    fileControlBar.appendChild(rotateButton);
     fileControlBar.appendChild(minButton);
     fileControlBar.appendChild(maxButton);
     fileControlBar.appendChild(closeButton);
