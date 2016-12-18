@@ -3,15 +3,17 @@
 cursor sharing 
 ***************************************************************************/
 
-function placeCursor(element , x_pos, y_pos) {
-  console.log(" place cursor "  , x_pos , y_pos);
-  d.style.position = "absolute";
-  d.style.left = x_pos+'px';
-  d.style.top = y_pos+'px';
-}
-  
 var cursorX;
 var cursorY;
+
+function placeCursor(element , x_pos, y_pos) {
+  //console.log(" place cursor "  , x_pos , y_pos);
+  element.style.position = "absolute";
+/*  element.style.left = '100px';
+  element.style.top = '100px';*/
+  element.style.left = x_pos+'px';
+  element.style.top = y_pos+'px';
+}
 
 function startShareCursor(){
   document.onmousemove = function(e){
@@ -21,32 +23,29 @@ function startShareCursor(){
   setInterval(shareCursor, 500);
 }
 
-function assignButtonCursor(bid){
+/*function assignButtonCursor(bid){
   var button =document.getElementById(bid);
   button.onclick=function(){
     startShareCursor();
   }
-}
+}*/
 
 function shareCursor(){
+    var element = document.getElementById("cursor1");
+    placeCursor( element, cursorX, cursorY);
+
     rtcConn.send({
         type:"pointer", 
         corX: cursorX , 
         corY: cursorY
     });
-
-    var d = document.getElementById("cursor1");
-    placeCursor( d, cursorX, cursorY);
 }
 
 function createCursorButton(controlBarName, peerinfo, streamid, stream ){
     var button=document.createElement("span");
     button.id=controlBarName+"cursorButton";
     button.setAttribute("data-val","mute");
-    button.setAttribute("title", "Toggle Audio");
-    button.setAttribute("data-placement", "bottom");
-    button.setAttribute("data-toggle", "tooltip");
-    button.setAttribute("data-container", "body");
+    button.setAttribute("title", "Pointer");
     button.className=cursorobj.button.class_on;
     button.innerHTML=cursorobj.button.html_on;
     button.onclick = function() {

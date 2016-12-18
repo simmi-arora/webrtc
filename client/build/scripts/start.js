@@ -274,7 +274,8 @@ var WebRTCdev= function(session, widgets){
                             receiveWebrtcdevCodeeditorSync(e.data.data);
                         break;
                         case "pointer":
-                            placeCursor("cursor2" , e.data.corX , e.data.corY);
+                            var element = document.getElementById("cursor2");
+                            placeCursor( element , e.data.corX , e.data.corY );
                         break;
                         case "timer":
                             startPeersTime(e.data.time , e.data.zone);
@@ -654,6 +655,19 @@ function attachControlButtons( vid ,  peerinfo){
     var streamid = peerinfo.streamid;
     var controlBarName =  peerinfo.controlBarName;
     var snapshotViewer =  peerinfo.fileSharingContainer ;
+
+    //Preventing multple control bars 
+    var c=vid.parentNode.childNodes;
+    for (i = 0; i < c.length; i++) {
+        console.log("ChildNode of video Parent " , c[i]);
+        if(c[i].nodeName=="DIV" && c[i].id!=undefined){
+            if( c[i].id.indexOf("control")>-1 ){
+                alert("control bar exists already delete the previos one before adding new one");
+                vid.parentNode.removeChild(c[i]);
+            }
+        }
+    }
+
 
     var controlBar= document.createElement("div");
     controlBar.id = controlBarName;

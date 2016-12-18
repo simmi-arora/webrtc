@@ -3,6 +3,7 @@
 Timer 
 ***************************************************/
 var hours,mins,secs;
+
 function startsessionTimer(timerobj){
     if(timerobj.type=="forward"){
         startForwardTimer();
@@ -61,6 +62,7 @@ var today,zone;
 
 function startTime() {
     today = new Date();
+    //console.log(" localdate :" , today);
     var h = today.getHours();
     var m = today.getMinutes();
     var s = today.getSeconds();
@@ -92,12 +94,14 @@ function startPeersTime(date,zone){
     smday.setHours(h);
     smday.setMinutes(m);
     smday.setSeconds(s);*/
-
+    console.log(" startPeersTime " , date , zone);
+    
     var timerspan=document.getElementById(timerobj.span.remoteTimeZone_id);
     timerspan.innerHTML = zone;
 
-    //var remotedate = new Date(date);
-    var remotedate = new Date().toLocaleString('en-US', { timeZone: zone })
+    var remotedate = new Date(date);
+    //var remotedate = new Date().toLocaleString('en-US', { timeZone: zone });
+    console.log(" remotedate :" , remotedate);
     var h = remotedate.getHours();
     var m = remotedate.getMinutes();
     var s = remotedate.getSeconds();
