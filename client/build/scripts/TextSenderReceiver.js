@@ -1,103 +1,105 @@
-  function TextReceiver(connection) {
-        var content = {};
+// TextReceiver.js & TextSender.js
 
-        function receive(data, userid, extra) {
-            // uuid is used to uniquely identify sending instance
-            var uuid = data.uuid;
-            if (!content[uuid]) {
-                content[uuid] = [];
-            }
+function TextReceiver(connection) {
+    var content = {};
 
-            content[uuid].push(data.message);
-
-            if (data.last) {
-                var message = content[uuid].join('');
-                if (data.isobject) {
-                    message = JSON.parse(message);
-                }
-
-                // latency detection
-                var receivingTime = new Date().getTime();
-                var latency = receivingTime - data.sendingTime;
-
-                var e = {
-                    data: message,
-                    userid: userid,
-                    extra: extra,
-                    latency: latency
-                };
-
-                if (connection.autoTranslateText) {
-                    e.original = e.data;
-                    connection.Translator.TranslateText(e.data, function(translatedText) {
-                        e.data = translatedText;
-                        connection.onmessage(e);
-                    });
-                } else {
-                    connection.onmessage(e);
-                }
-
-                delete content[uuid];
-            }
+    function receive(data, userid, extra) {
+        // uuid is used to uniquely identify sending instance
+        var uuid = data.uuid;
+        if (!content[uuid]) {
+            content[uuid] = [];
         }
 
-        return {
-            receive: receive
-        };
+        content[uuid].push(data.message);
+
+        if (data.last) {
+            var message = content[uuid].join('');
+            if (data.isobject) {
+                message = JSON.parse(message);
+            }
+
+            // latency detection
+            var receivingTime = new Date().getTime();
+            var latency = receivingTime - data.sendingTime;
+
+            var e = {
+                data: message,
+                userid: userid,
+                extra: extra,
+                latency: latency
+            };
+
+            if (connection.autoTranslateText) {
+                e.original = e.data;
+                connection.Translator.TranslateText(e.data, function(translatedText) {
+                    e.data = translatedText;
+                    connection.onmessage(e);
+                });
+            } else {
+                connection.onmessage(e);
+            }
+
+            delete content[uuid];
+        }
     }
 
-    // TextSender.js
-    var TextSender = {
-        send: function(config) {
-            var connection = config.connection;
+    return {
+        receive: receive
+    };
+}
 
-            var channel = config.channel,
-                remoteUserId = config.remoteUserId,
-                initialText = config.text,
-                packetSize = connection.chunkSize || 1000,
-                textToTransfer = '',
-                isobject = false;
+// TextSender.js
+var TextSender = {
+    send: function(config) {
+        var connection = config.connection;
 
-            if (!isString(initialText)) {
-                isobject = true;
-                initialText = JSON.stringify(initialText);
+        var channel = config.channel,
+            remoteUserId = config.remoteUserId,
+            initialText = config.text,
+            packetSize = connection.chunkSize || 1000,
+            textToTransfer = '',
+            isobject = false;
+
+        if (!isString(initialText)) {
+            isobject = true;
+            initialText = JSON.stringify(initialText);
+        }
+
+        // uuid is used to uniquely identify sending instance
+        var uuid = getRandomString();
+        var sendingTime = new Date().getTime();
+
+        sendText(initialText);
+
+        function sendText(textMessage, text) {
+            var data = {
+                type: 'text',
+                uuid: uuid,
+                sendingTime: sendingTime
+            };
+
+            if (textMessage) {
+                text = textMessage;
+                data.packets = parseInt(text.length / packetSize);
             }
 
-            // uuid is used to uniquely identify sending instance
-            var uuid = getRandomString();
-            var sendingTime = new Date().getTime();
+            if (text.length > packetSize) {
+                data.message = text.slice(0, packetSize);
+            } else {
+                data.message = text;
+                data.last = true;
+                data.isobject = isobject;
+            }
 
-            sendText(initialText);
+            channel.send(data, remoteUserId);
 
-            function sendText(textMessage, text) {
-                var data = {
-                    type: 'text',
-                    uuid: uuid,
-                    sendingTime: sendingTime
-                };
+            textToTransfer = text.slice(data.message.length);
 
-                if (textMessage) {
-                    text = textMessage;
-                    data.packets = parseInt(text.length / packetSize);
-                }
-
-                if (text.length > packetSize) {
-                    data.message = text.slice(0, packetSize);
-                } else {
-                    data.message = text;
-                    data.last = true;
-                    data.isobject = isobject;
-                }
-
-                channel.send(data, remoteUserId);
-
-                textToTransfer = text.slice(data.message.length);
-
-                if (textToTransfer.length) {
-                    setTimeout(function() {
-                        sendText(null, textToTransfer);
-                    }, connection.chunkInterval || 100);
-                }
+            if (textToTransfer.length) {
+                setTimeout(function() {
+                    sendText(null, textToTransfer);
+                }, connection.chunkInterval || 100);
             }
         }
-    };
+    }
+};

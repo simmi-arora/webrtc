@@ -783,16 +783,25 @@ video::-webkit-media-controls-current-time-display {}*/
     font-size: 20;
     font-weight: bold;
 }
+
+#countdownHours{
+  background-color: white;
+    color: #616150;
+    padding: 4px 4px 4px 4px;
+}
+
 #countdownMinutes{
   background-color: white;
     color: #616150;
     padding: 4px 4px 4px 4px;
 }
+
 #countdownSecond{
   background-color: white;
     color: #616150;
     padding: 4px 4px 4px 4px;
 }
+
 .countdown{
   color: #000
 }
