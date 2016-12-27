@@ -26,16 +26,17 @@ function assignFileShareButton(fileshareobj){
     button.onclick = function() {
         var fileSelector = new FileSelector();
         fileSelector.selectSingleFile(function(file) {
-            sendFile(file);
-            //sendChatMessage("File is shared :"+file.name);
+            console.log(rtcConn);
+            rtcConn.send(file);
+            /*sendFile(file);*/
+            /*sendChatMessage("File is shared :"+file.name);*/
         });
     };
 }
 
 function sendFile(file){
-        
+    //console.log(" Send ------------------" , file );
     rtcConn.send(file);
-
     /*    
     addNewFileLocal({
         userid : selfuserid,
@@ -51,18 +52,27 @@ function sendFile(file){
 }
 
 function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelperclassName ){
-    var progressDiv = document.createElement("div");
-    progressDiv.id = filename,
-    progressDiv.title = uuid + filename,
-    progressDiv.setAttribute("class", progressHelperclassName),
-    progressDiv.innerHTML = "<label>0%</label><progress></progress>", 
-    document.getElementById(peerinfo.fileList.container).appendChild(progressDiv),              
-    progressHelper[uuid] = {
-        div: progressDiv,
-        progress: progressDiv.querySelector("progress"),
-        label: progressDiv.querySelector("label")
-    }, 
-    progressHelper[uuid].progress.max = fileSize;
+    try{
+
+        console.log(" progresshelper " , uuid , peerinfo , filename , fileSize,  progressHelperclassName );
+
+        var progressDiv = document.createElement("div");
+        progressDiv.id = filename,
+        progressDiv.title = uuid + filename,
+        progressDiv.setAttribute("class", progressHelperclassName),
+        progressDiv.innerHTML = "<label>0%</label><progress></progress>", 
+        document.getElementById(peerinfo.fileList.container).appendChild(progressDiv),              
+        progressHelper[uuid] = {
+            div: progressDiv,
+            progress: progressDiv.querySelector("progress"),
+            label: progressDiv.querySelector("label")
+        }, 
+        progressHelper[uuid].progress.max = fileSize;
+    }catch(e){
+        alert(" problem in progress helper ");
+        console.log(" problem in progress helper " , e);
+    }
+
 }
 
 function addNewFileLocal(e) {
@@ -234,6 +244,7 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
         elementDisplay=divNitofcation;
 
     }else if(filetype.indexOf("image")>-1){
+        alert(" fileshare image");
         var image= document.createElement("img");
         image.src= fileurl;
         image.style.width="100%";
@@ -253,6 +264,7 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
     }else if(filetype.indexOf("video")>-1){
         console.log("videoRecording " , fileurl);
         var video = document.createElement("video");
+        video.src=fileurl;
         /*            
         try{
             if(fileurl.video!=undefined ){
@@ -260,9 +272,9 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
             }else{
                 video.src = URL.createObjectURL(fileurl); 
             }
-        }catch(e){*/
+        }catch(e){
             video.src=fileurl;
-        /*}*/
+        }*/
 
         video.setAttribute("controls","controls");  
         video.style.width="100%";
@@ -361,50 +373,50 @@ function createFileSharingBox(peerinfo, parent){
     fileControlBar.id =peerinfo.fileShare.container+"controlBar";
     fileControlBar.appendChild(document.createTextNode("File Viewer for "+ peerinfo.name+ "     "));
 
-        var minButton= document.createElement("span");
-        /*    minButton.className="btn btn-default glyphicon glyphicon-import closeButton";
-        minButton.innerHTML="Minimize";*/
-        minButton.innerHTML='<i class="fa fa-minus-square" style="font-size: 25px;"></i>';
-        minButton.id=peerinfo.fileShare.minButton;
-        minButton.style.float="right";
-        minButton.setAttribute("lastClickedBy" ,'');
-        minButton.onclick=function(){
-            resizeFV(peerinfo.userid, minButton.id , peerinfo.fileShare.outerbox);
-        }
+    var minButton= document.createElement("span");
+    /*    minButton.className="btn btn-default glyphicon glyphicon-import closeButton";
+    minButton.innerHTML="Minimize";*/
+    minButton.innerHTML='<i class="fa fa-minus-square" style="font-size: 25px;"></i>';
+    minButton.id=peerinfo.fileShare.minButton;
+    minButton.style.float="right";
+    minButton.setAttribute("lastClickedBy" ,'');
+    minButton.onclick=function(){
+        resizeFV(peerinfo.userid, minButton.id , peerinfo.fileShare.outerbox);
+    }
 
-        var maxButton= document.createElement("span");
-        /*    maxButton.className= "btn btn-default glyphicon glyphicon-export closeButton";
-        maxButton.innerHTML="Maximize";*/
-        maxButton.innerHTML='<i class="fa fa-external-link-square" style="font-size: 25px;"></i>';
-        maxButton.id=peerinfo.fileShare.maxButton;
-        maxButton.style.float="right";
-        maxButton.setAttribute("lastClickedBy" ,'');
-        maxButton.onclick=function(){
-            maxFV(peerinfo.userid, maxButton.id  , peerinfo.fileShare.outerbox);
-        }
+    var maxButton= document.createElement("span");
+    /*    maxButton.className= "btn btn-default glyphicon glyphicon-export closeButton";
+    maxButton.innerHTML="Maximize";*/
+    maxButton.innerHTML='<i class="fa fa-external-link-square" style="font-size: 25px;"></i>';
+    maxButton.id=peerinfo.fileShare.maxButton;
+    maxButton.style.float="right";
+    maxButton.setAttribute("lastClickedBy" ,'');
+    maxButton.onclick=function(){
+        maxFV(peerinfo.userid, maxButton.id  , peerinfo.fileShare.outerbox);
+    }
 
-        var closeButton= document.createElement("span");
-        /*
-        closeButton.className="btn btn-default glyphicon glyphicon-remove closeButton";
-        closeButton.innerHTML="Close";*/
-        closeButton.innerHTML='<i class="fa fa-times-circle" style="font-size: 25px;"></i>';
-        closeButton.id=peerinfo.fileShare.closeButton;
-        closeButton.style.float="right";
-        closeButton.setAttribute("lastClickedBy" ,'');
-        closeButton.onclick=function(){
-            closeFV(peerinfo.userid, closeButton.id , peerinfo.fileShare.container);
-        }
+    var closeButton= document.createElement("span");
+    /*
+    closeButton.className="btn btn-default glyphicon glyphicon-remove closeButton";
+    closeButton.innerHTML="Close";*/
+    closeButton.innerHTML='<i class="fa fa-times-circle" style="font-size: 25px;"></i>';
+    closeButton.id=peerinfo.fileShare.closeButton;
+    closeButton.style.float="right";
+    closeButton.setAttribute("lastClickedBy" ,'');
+    closeButton.onclick=function(){
+        closeFV(peerinfo.userid, closeButton.id , peerinfo.fileShare.container);
+    }
 
-        var angle = 0;
-        var rotateButton= document.createElement("span");
-        rotateButton.innerHTML='<i class="fa fa-mail-forward" style="font-size: 25px;"></i>';
-        rotateButton.id= "btnRotate";
-        rotateButton.style.float="right";
-        rotateButton.onclick=function(){
-            var img = document.getElementById(peerinfo.fileShare.container).firstChild;
-            angle = (angle+90)%360;
-            img.className = "rotate"+angle;
-        }
+    var angle = 0;
+    var rotateButton= document.createElement("span");
+    rotateButton.innerHTML='<i class="fa fa-mail-forward" style="font-size: 25px;"></i>';
+    rotateButton.id= "btnRotate";
+    rotateButton.style.float="right";
+    rotateButton.onclick=function(){
+        var img = document.getElementById(peerinfo.fileShare.container).firstChild;
+        angle = (angle+90)%360;
+        img.className = "rotate"+angle;
+    }
 
     fileControlBar.appendChild(rotateButton);
     fileControlBar.appendChild(minButton);
@@ -449,7 +461,6 @@ function createFileListingBox(peerinfo, parent){
     /*--------------------------------add for File List control Bar--------------------*/
 
     var fileListControlBar=document.createElement("p");
-
     fileListControlBar.appendChild(document.createTextNode("List of Uploaded Files"));
 
     /*
@@ -461,29 +472,29 @@ function createFileListingBox(peerinfo, parent){
     var fileControlBar=document.createElement("p");
     fileControlBar.appendChild(document.createTextNode("File Viewer for "+ peerinfo.name));
 
-        var minButton= document.createElement("span");
-        minButton.innerHTML='<i class="fa fa-minus-square" style="font-size: 20px;></i>';
-        minButton.id=peerinfo.fileShare.minButton;
-        minButton.setAttribute("lastClickedBy" ,'');
-        minButton.onclick=function(){
-            resizeFV(peerinfo.userid, minButton.id , peerinfo.fileShare.outerbox);
-        }
+    var minButton= document.createElement("span");
+    minButton.innerHTML='<i class="fa fa-minus-square" style="font-size: 20px;></i>';
+    minButton.id=peerinfo.fileShare.minButton;
+    minButton.setAttribute("lastClickedBy" ,'');
+    minButton.onclick=function(){
+        resizeFV(peerinfo.userid, minButton.id , peerinfo.fileShare.outerbox);
+    }
 
-        var maxButton= document.createElement("span");
-        maxButton.innerHTML='<i class="fa fa-external-link-square" style="font-size: 20px;></i>';
-        maxButton.id=peerinfo.fileShare.maxButton;
-        maxButton.setAttribute("lastClickedBy" ,'');
-        maxButton.onclick=function(){
-            maxFV(peerinfo.userid, maxButton.id  , peerinfo.fileShare.outerbox);
-        }
+    var maxButton= document.createElement("span");
+    maxButton.innerHTML='<i class="fa fa-external-link-square" style="font-size: 20px;></i>';
+    maxButton.id=peerinfo.fileShare.maxButton;
+    maxButton.setAttribute("lastClickedBy" ,'');
+    maxButton.onclick=function(){
+        maxFV(peerinfo.userid, maxButton.id  , peerinfo.fileShare.outerbox);
+    }
 
-        var closeButton= document.createElement("span");
-        closeButton.innerHTML='<i class="fa fa-times-circle" style="font-size: 20px;></i>';
-        closeButton.id=peerinfo.fileShare.closeButton;
-        closeButton.setAttribute("lastClickedBy" ,'');
-        closeButton.onclick=function(){
-            closeFV(peerinfo.userid, closeButton.id , peerinfo.fileShare.container);
-        }
+    var closeButton= document.createElement("span");
+    closeButton.innerHTML='<i class="fa fa-times-circle" style="font-size: 20px;></i>';
+    closeButton.id=peerinfo.fileShare.closeButton;
+    closeButton.setAttribute("lastClickedBy" ,'');
+    closeButton.onclick=function(){
+        closeFV(peerinfo.userid, closeButton.id , peerinfo.fileShare.container);
+    }
 
     fileListControlBar.appendChild(minButton);
     fileListControlBar.appendChild(maxButton);
@@ -538,7 +549,7 @@ function resizeFV(userid,  buttonId , selectedFileSharingBox){
             document.getElementById(webcallpeers[x].fileShare.outerbox).style.width="50%";
         }
     }
-/*    document.getElementById(selectedFileSharingBox).hidden=false;
+/*  document.getElementById(selectedFileSharingBox).hidden=false;
     document.getElementById(selectedFileSharingBox).style.width="50%";   
     syncButton(buttonId);*/
 }

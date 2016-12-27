@@ -55,17 +55,16 @@ function assignScreenRecordButton(){
     });
 
     var recordButton = document.getElementById(screenrecordobj.button.id);
-
+    console.log(" ----------------" , recordButton);
     recordButton.onclick = function() {
         if(recordButton.className==screenrecordobj.button.class_off){
             recordButton.className= screenrecordobj.button.class_on ;
             recordButton.innerHTML= screenrecordobj.button.html_on;
+            
             recorder.startRecording();
         
             isStoppedRecording = false;
             isRecordingStarted = true;
-
-            recorder.startRecording();
 
         }else if(recordButton.className==screenrecordobj.button.class_on){
             recordButton.className= screenrecordobj.button.class_off ;
