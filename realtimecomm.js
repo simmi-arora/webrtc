@@ -212,25 +212,43 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
 
         socket.on('open-channel', function (data) {  
             console.log("------------open channel------------- ", data.channel," by " , data.sender);
-            log.debug("------------open channel------------- ", data.channel," by " , data.sender);
-            if (channels.indexOf(data.channel)<0){
-                channels.push(data.channel);
+            
+            var newchannel=null;
+
+            if(data.channel){
+                newchannel=data.channel;
+            } else{
+                console.log(" Err :  channel is empty");
+            } 
+
+            if (channels.indexOf(newchannel)<0){
+                channels.push(newchannel);
                 console.log("registered new in channels " , channels);
             }else{
                 console.log("channel already exists channels " , channels);
             }
 
-            webrtcdevchannels[data.channel] = {
-                channel: data.channel,
-                timestamp: new Date().toLocaleString(),
-                maxAllowed: data.maxAllowed,
-                users:[data.sender],
-                status:"waiting",
-                endtimestamp:0,
-                log:[new Date().toLocaleString()+":-channel created . User "+data.sender+" waiting "]
-            };   
-            console.log("information added to channel" , webrtcdevchannels);
-            socket.emit("open-channel-resp",true);  
+            try{
+                webrtcdevchannels[newchannel] = {
+                    channel: newchannel,
+                    timestamp: new Date().toLocaleString(),
+                    maxAllowed: data.maxAllowed,
+                    users:[data.sender],
+                    status:"waiting",
+                    endtimestamp:0,
+                    log:[new Date().toLocaleString()+":-channel created . User "+data.sender+" waiting "]
+                };   
+                console.log("information added to channel" , webrtcdevchannels);
+            }catch(e){
+                console.log(" Err : info couldnt be aded to channel " , e);
+            }
+
+            //send back the resposne to web client 
+            var oevent={
+                status : true,
+                channel : newchannel
+            };
+            socket.emit("open-channel-resp", oevent);  
         });
 
         socket.on('open-channel-screenshare', function (data) {  
@@ -244,15 +262,18 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
                 isallowed=true;
 
             console.log("------------join channel------------- ", data.channel," by " , data.sender , " isallowed " , isallowed);
-            log.debug("------------join channel------------- ", data.channel," by " , data.sender , " isallowed " , isallowed);
+            
             if(isallowed){
                 webrtcdevchannels[data.channel].users.push(data.sender); 
                 webrtcdevchannels[data.channel].status=webrtcdevchannels[data.channel].users.length + " active members";
                 webrtcdevchannels[data.channel].log.push(new Date().toLocaleString()+":-User "+data.sender+" joined the channel ");  
+                
+                // send back the join response to webclient
                 var jevent={
-                    status:true,
-                    users:webrtcdevchannels[data.channel].users
-                }
+                    status: true,
+                    channel : data.channel,
+                    users: webrtcdevchannels[data.channel].users
+                };
                 socket.emit("join-channel-resp",jevent);
 
                 var cevent={
@@ -260,7 +281,7 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
                     type:"new-join", 
                     msgtype: "success",
                     data:data
-                }
+                };
                 socket.broadcast.emit('channel-event', cevent);
             }else{
                 var jevent={

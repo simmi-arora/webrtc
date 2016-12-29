@@ -62,3 +62,9 @@ function createCursorButton(controlBarName, peerinfo, streamid, stream ){
     };
     return button;
 }
+
+
+ // ............................Cursors resting position .................. 
+/*
+    <div id="cursor1" class="fa fa-hand-o-up" style="width:0"></div>
+    <div id="cursor2" class="fa fa-hand-o-up" style="width:0"></div>*/

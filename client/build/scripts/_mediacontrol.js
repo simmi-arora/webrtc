@@ -1,3 +1,111 @@
+/***************************************************
+video handling 
+*********************************************************/
+
+function appendVideo(e, style) {
+    createVideoContainer(e, style, function(div) {
+        var video = document.createElement('video');
+        video.className = style;
+        video.setAttribute('style', 'height:auto;opacity:1;');
+        video.controls=false;
+        video.id = e.userid;
+        video.src = URL.createObjectURL(e.stream);
+        viden.hidden=false;
+        var remote = document.getElementById('remote');
+        div.appendChild(video);
+        video.play();
+    });
+}
+
+function createVideoContainer(e, style, callback) {
+    var div = document.createElement('div');
+    div.setAttribute('style', style || 'float:left;opacity: 1;width: 32%;');
+    remote.insertBefore(div, remote.firstChild);
+    if (callback) callback(div);
+}
+
+/************************************
+       User Detail attchmenet to Video Element
+*******************************************/
+function attachUserDetails(vid , peerinfo){
+    var nameBox=document.createElement("span");
+    //nameBox.className="well well-sm";
+    nameBox.setAttribute("style","background-color:"+ peerinfo.color);
+    nameBox.innerHTML = peerinfo.name+"<br/>";
+    //    vid.parentNode.appendChild(nameBox); 
+    vid.parentNode.insertBefore(nameBox, vid.parentNode.firstChild);
+}
+
+function attachMetaUserDetails(vid , peerinfo){
+    alert(peerinfo.userid+ ":" + peerinfo.type);
+    var detailsbox = document.createElement("span");
+    detailsbox.setAttribute("style","background-color:"+ peerinfo.color);
+    detailsbox.innerHTML = peerinfo.userid+ ":" + peerinfo.type+"<br/>";
+    vid.parentNode.insertBefore(detailsbox, vid.parentNode.firstChild);
+}
+
+function attachControlButtons( vid ,  peerinfo){
+
+    var stream = peerinfo.stream;
+    var streamid = peerinfo.streamid;
+    var controlBarName =  peerinfo.controlBarName;
+    var snapshotViewer =  peerinfo.fileSharingContainer ;
+
+    //Preventing multple control bars 
+    var c=vid.parentNode.childNodes;
+    for (i = 0; i < c.length; i++) {
+        console.log("ChildNode of video Parent " , c[i]);
+        if(c[i].nodeName=="DIV" && c[i].id!=undefined){
+            if( c[i].id.indexOf("control")>-1 ){
+                alert("control bar exists already delete the previos one before adding new one");
+                vid.parentNode.removeChild(c[i]);
+            }
+        }
+    }
+
+    // Conyrol bar holds media control elements like , mute unmute , fillscreen ,. recird , snapshot
+    var controlBar= document.createElement("div");
+    controlBar.id = controlBarName;
+    controlBar.className= "videoControlBarClass";
+
+    if(muteobj.active){
+        if(muteobj.audio.active){
+            controlBar.appendChild(createAudioMuteButton(controlBarName , peerinfo));
+        }
+        if(muteobj.video.active){
+            controlBar.appendChild(createVideoMuteButton(controlBarName , peerinfo));        
+        }
+    }
+    
+    if(snapshotobj.active){
+        controlBar.appendChild(createSnapshotButton(controlBarName , peerinfo));
+    }
+
+    if(videoRecordobj.active){
+        controlBar.appendChild(createRecordButton(controlBarName, peerinfo, streamid, stream ));
+    }
+
+    if(cursorobj.active){
+        //assignButtonCursor(cursorobj.button.id);
+        controlBar.appendChild(createCursorButton(controlBarName, peerinfo ));
+    }
+
+    if(fullscreenobj.active){
+        controlBar.appendChild(createFullScreenButton(controlBarName, peerinfo, streamid, stream ));
+    }
+
+    if(debug){
+        var nameBox=document.createElement("span");
+        nameBox.innerHTML=vid.id;
+        controlBar.appendChild(nameBox);  
+    }
+
+    vid.parentNode.appendChild(controlBar);        
+}
+
+/************************************
+        control Buttons attchmenet to Video Element
+*******************************************/
 function createFullScreenButton(controlBarName, peerinfo, streamid, stream ){
     var button=document.createElement("span");
     button.id=controlBarName+"fullscreeButton";
@@ -118,7 +226,7 @@ function transitionToWaiting() {
 }
 
 function attachMediaStream(element, stream) {
-    /*console.log("element.src", typeof element.srcObject, typeof element.src );*/
+    console.log("element.src", typeof element.src ,typeof element.srcObject );
     if (typeof element.src == 'string') {
         element.src = URL.createObjectURL(stream);
     }else if (typeof element.srcObject == 'object') {
@@ -130,6 +238,8 @@ function attachMediaStream(element, stream) {
     if(element.hidden){
         element.hidden=false;
     }
+
+    console.log(" Media Stream attached ");
 }
 
 

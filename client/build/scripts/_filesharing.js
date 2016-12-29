@@ -5,6 +5,8 @@ File sharing
 var progressHelper = {};
 
 function createFileShareButton(fileshareobj){
+    widgetholder= "topIconHolder_ul";
+
     var button= document.createElement("span");
     button.setAttribute("data-provides","fileinput");
     button.className= fileshareobj.button.class;
@@ -13,12 +15,11 @@ function createFileShareButton(fileshareobj){
         var fileSelector = new FileSelector();
         fileSelector.selectSingleFile(function(file) {
             sendFile(file);
-            /*sendChatMessage("File is shared :"+file.name);*/
         });
     };
     var li =document.createElement("li");
     li.appendChild(button);
-    document.getElementById("topIconHolder_ul").appendChild(li);
+    document.getElementById(widgetholder).appendChild(li);
 }
 
 function assignFileShareButton(fileshareobj){
@@ -26,10 +27,7 @@ function assignFileShareButton(fileshareobj){
     button.onclick = function() {
         var fileSelector = new FileSelector();
         fileSelector.selectSingleFile(function(file) {
-            console.log(rtcConn);
-            rtcConn.send(file);
-            /*sendFile(file);*/
-            /*sendChatMessage("File is shared :"+file.name);*/
+            sendFile(file);
         });
     };
 }
@@ -37,18 +35,6 @@ function assignFileShareButton(fileshareobj){
 function sendFile(file){
     //console.log(" Send ------------------" , file );
     rtcConn.send(file);
-    /*    
-    addNewFileLocal({
-        userid : selfuserid,
-        header: 'User local',
-        message: 'File shared',
-        userinfo: getUserinfo(rtcMultiConnection.blobURLs[selfuserid], "images/share-files.png"),
-        callback: function(r) {   
-            console.log(r);
-            shownotification("Sharing File "+file.name);
-        }
-    });*/
-
 }
 
 function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelperclassName ){
@@ -110,7 +96,8 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     var elementDisplay= peerinfo.fileShare.container;
     var listlength=peerinfo.filearray.length;
 
-/*    if(peerinfo.name=="localVideo"){
+    /*  
+    if(peerinfo.name=="localVideo"){
         showRemoveButton=false;
     }else{
         showRemoveButton=false;
@@ -131,7 +118,8 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     var showButton = document.createElement("div");
     showButton.id= "showButton"+filename;
     showButton.style.float="right";
-/*    showButton.setAttribute("class" , "btn btn-primary");
+    /*    
+    showButton.setAttribute("class" , "btn btn-primary");
     showButton.innerHTML='show';*/
     showButton.innerHTML='<i class="fa fa-eye" style="font-size: 25px;"></i>';
     showButton.onclick=function(){
@@ -154,7 +142,8 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     var hideButton = document.createElement("div");
     hideButton.id= "hideButton"+filename;
     hideButton.style.float="right";
-/*    hideButton.setAttribute("class" , "btn btn-primary");
+    /*    
+    hideButton.setAttribute("class" , "btn btn-primary");
     hideButton.innerHTML='hide';*/
     hideButton.innerHTML='<i class="fa fa-eye-slash" style="font-size: 25px;"></i>';
     hideButton.onclick=function(event){
@@ -174,11 +163,11 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         }
     };
 
-
     var removeButton = document.createElement("div");
     removeButton.id= "removeButton"+filename;
     removeButton.style.float="right";
-/*    removeButton.setAttribute("class" , "btn btn-primary");
+    /*   
+    removeButton.setAttribute("class" , "btn btn-primary");
     removeButton.innerHTML='remove';*/
     removeButton.innerHTML='<i class="fa fa-trash-o" style="font-size: 25px;"></i>';
     removeButton.onclick=function(event){
@@ -231,7 +220,6 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
 
     if(parentdom)
         parentdom.appendChild(filedom); 
-
 }
 
 function getFileElementDisplayByType(filetype , fileurl , filename){
@@ -549,7 +537,8 @@ function resizeFV(userid,  buttonId , selectedFileSharingBox){
             document.getElementById(webcallpeers[x].fileShare.outerbox).style.width="50%";
         }
     }
-/*  document.getElementById(selectedFileSharingBox).hidden=false;
+    /*  
+    document.getElementById(selectedFileSharingBox).hidden=false;
     document.getElementById(selectedFileSharingBox).style.width="50%";   
     syncButton(buttonId);*/
 }
