@@ -35,7 +35,7 @@ var selfusername="" , selfemail="" , selfcolor="" ;
 var latitude="" , longitude="" , operatingsystem="";
 
 /* webrtc session intilization */
-var autoload=true;
+var autoload = true;
 var sessionid = null, socketAddr = "/", turn = null , webrtcdevIceServers;
 var localStream , localStreamId, remoteStream , remoteStreamId;
 
@@ -77,25 +77,25 @@ var screen_roomid , screen_userid;
 
 var role="participant";
 
-function init(autoload , callback ){
+function init( autoload , callback ){
 
 	if(autoload && !location.hash.replace('#', '').length) {
 		// When Session should autogenerate ssid and locationbar doesnt have a session name
 		location.href = location.href.split('#')[0] + '#' + (Math.random() * 100).toString().replace('.', '');
 		location.reload();
-	}else if(autoload && location.hash.replace('#', '').length){
+	}else if(autoload && location.href.replace('#', '').length){
 		// When Session should autogenerate ssid and locationbar doesnt have a session name
-		if(location.href.indexOf('?')>-1)
-			sessionid = (location.href.substring(0,location.href.indexOf('?'))).replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
-		else
-			sessionid = location.href.replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
+		if(location.href.indexOf('?')>-1){
+			sessionid = (location.hash.substring(0,location.href.indexOf('?'))).replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
+		}else{
+			sessionid = location.hash.replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
+		}
 		callback(sessionid);
 
 	}else{
 		sessionid = prompt("Enter session ", "");
 		callback(sessionid);
 	}
-	return;
 }
 
 
@@ -247,3 +247,106 @@ function spawnNotification(theBody,theIcon,theTitle) {
   }
   var n = new Notification(theTitle,options);
 }
+
+
+
+    /**
+     * function to check devices like speakers , webcam ,  microphone etc
+     * @method
+     * @name checkDevices
+     * @param {object} connection
+     */
+    function checkDevices(obj){
+        console.log(" obj.DetectRTC  " , obj.DetectRTC);
+        if(obj.DetectRTC.hasMicrophone) {
+            // seems current system has at least one audio input device
+            console.log("has Microphone");
+        }else{
+            console.log("doesnt have  hasMicrophone");
+        }
+
+        if(obj.DetectRTC.hasSpeakers) {
+            console.log("has Speakers");
+            // seems current system has at least one audio output device
+        }else{
+            console.log("doesnt have  Speakers");
+        }
+
+        if(obj.DetectRTC.hasWebcam) {
+            console.log("has Webcam");
+            // seems current system has at least one video input device
+        }else{
+            console.log("doesnt have Webcam");
+        }
+    }
+
+    /**
+     * function to check browser support for webrtc apis
+     * @name checkWebRTCSupport
+     * @param {object} connection
+     */
+    function checkWebRTCSupport(obj){
+        if(obj.DetectRTC.isWebRTCSupported) {
+        // seems WebRTC compatible client
+        }
+
+        if(obj.DetectRTC.isAudioContextSupported) {
+            // seems Web-Audio compatible client
+        }
+
+        if(obj.DetectRTC.isScreenCapturingSupported) {
+            // seems WebRTC screen capturing feature is supported on this client
+        }
+
+        if(obj.DetectRTC.isSctpDataChannelsSupported) {
+            // seems WebRTC SCTP data channels feature are supported on this client
+        }
+
+        if(obj.DetectRTC.isRtpDataChannelsSupported) {
+            // seems WebRTC (old-fashioned) RTP data channels feature are supported on this client
+        }
+    }
+
+    function error(arg1 , arg2){
+        console.log(arg1, arg2);
+    }
+
+    function getElement(e) {
+        return document.querySelector(e)
+    }
+
+    function getRandomColor() {
+        for (var e = "0123456789ABCDEF".split(""), t = "#", n = 0; 6 > n; n++) t += e[Math.round(15 * Math.random())];
+        return t
+    }
+
+    function guid() {
+      function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+          .toString(16)
+          .substring(1);
+      }
+      return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+    }
+
+
+    function getUserinfo(e, t) {
+        return e ? '<video src="' + e + '" autoplay></vide>' : '<img src="' + t + '">';
+    }
+
+    function fireClickEvent(e) {
+        var t = new MouseEvent("click", {
+            view: window,
+            bubbles: !0,
+            cancelable: !0
+        });
+        e.dispatchEvent(t)
+    }
+
+    function bytesToSize(e) {
+        var t = ["Bytes", "KB", "MB", "GB", "TB"];
+        if (0 == e) return "0 Bytes";
+        var n = parseInt(Math.floor(Math.log(e) / Math.log(1024)));
+        return Math.round(e / Math.pow(1024, n), 2) + " " + t[n]
+    }

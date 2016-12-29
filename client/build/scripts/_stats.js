@@ -267,3 +267,30 @@ function activateBandwidthButtons(timerobj){
         }  
     }
 }
+
+    /**
+     * shows status of ongoing webrtc call
+     * @method
+     * @name showStatus
+     * @param {obj} conn
+     */
+    function showStatus(conn){
+        console.log("======================status of " , rtcConn);
+
+        getStats(rtcConn, function(result) {
+            alert("getstats Result");
+            console.log(result.connectionType.remote.ipAddress);
+            console.log(result.connectionType.remote.candidateType);
+            console.log(result.connectionType.transport);
+        });
+
+        alert( "got stats " , result.connectionType.transport);
+
+        console.log("WebcallPeers " , webcallpeers);
+    }
+
+    
+    function showRtcConn(){
+        console.log(" rtcConn : "  , rtcConn);
+        console.log(" rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
+    }

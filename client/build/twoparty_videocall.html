@@ -76,8 +76,37 @@
 
 <script src="property.js"></script>
 <link rel=stylesheet href="minScripts/webrtcdevelopment.css">
-<script src="minScripts/webrtcdevelopment.js"></script>
+<!-- <script src="scripts/_screenshare.js"></script>  -->
+<!-- <script src="minScripts/webrtcdevelopment.js"></script> -->
+<script src="scripts/getMediaElement.js"></script>
+
+<script src="scripts/_init.js"></script>
+<script src="scripts/RTCMultiConnection.js"></script>
+<script src="scripts/_screenshare.js"></script>
+<script src="scripts/_detectRTC.js"></script>
+<script src="scripts/_settings.js"></script>
+<script src="scripts/firebase.js"></script>
+<script src="scripts/FileBufferReader.js"></script>
+<script src="scripts/MediaStreamRecorder.js"></script>
+<script src="scripts/RecordRTC.js"></script>
+<script src="scripts/screenshot.js"></script>
+<script src="scripts/_snapshot.js"></script>
+<script src="scripts/_geolocation.js"></script>
+<script src="scripts/_chat.js"></script>
+<script src="scripts/_mediacontrol.js"></script>
+<script src="scripts/_record.js"></script>
+<script src="scripts/_screenrecord.js"></script>
+<script src="scripts/_filesharing.js"></script>
+<script src="scripts/_draw.js"></script>
+<script src="scripts/_redial.js"></script>
+<script src="scripts/_cursor.js"></script>
+<script src="scripts/_codeeditor.js"></script>
+<script src="scripts/_texteditor.js"></script>
+<script src="scripts/_turn.js"></script>
+<script src="scripts/_timer.js"></script>
+<script src="scripts/_stats.js"></script>
 <script src="scripts/start.js"></script> 
+
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -91,142 +120,85 @@
 
 <script>
 $('document').ready(function(){
-    sessionid = init(true);
-
-    var searchParams = new URLSearchParams(window.location);
-
-    var webrtcdomobj;
-    var local={
-        video: "myAloneVideo",
-        videoClass:"",
-        videoContainer : "singleVideoContainer",
-        userDisplay:false,
-        userMetaDisplay:false,
-        userdetails:{
-            username:"Expert",
-            usercolor: "#DDECEF",
-            useremail: "abc@gmail.com"
-        }
-    };
-
-    var remote={
-        videoarr: ["myConferenceVideo", "otherConferenceVideo"],
-        videoClass:"",
-        maxAllowed: "6",
-        videoContainer : "confVideoContainer",
-        userDisplay:false,
-        userMetaDisplay:false,
-        dynamicVideos: false 
-    };
-
-    webrtcdomobj= new WebRTCdom(
-        local,remote, incoming, outgoing
-    );
-
-    var session ={
-        sessionid : sessionid,
-        socketAddr: props.signaller,
-        turn:{
-                username    : props.xirsys.username,
-                secretkey   : props.xirsys.secretkey,
-                domain      : props.xirsys.domain,
-                application : props.xirsys.application,
-                room        : props.xirsys.room,
-                secure      : props.xirsys.secure
+    init(true , function (sessionid){
+        
+        var webrtcdomobj;
+        var local={
+            video: "myAloneVideo",
+            videoClass:"",
+            videoContainer : "singleVideoContainer",
+            userDisplay:true,
+            userMetaDisplay:false,
+            userdetails:{
+                username:"Expert",
+                usercolor: "#DDECEF",
+                useremail: "abc@gmail.com"
             }
-    };
-    
-    var incoming={
-        audio:  true,
-        video:  true,
-        data:   true,
-        screen: true
-    };
+        };
 
-    var outgoing={
-        audio:  true,
-        video:  true,
-        data:   true,
-        screen: true
-    };
+        var remote={
+            videoarr: ["myConferenceVideo", "otherConferenceVideo"],
+            videoClass:"",
+            maxAllowed: "2",
+            videoContainer : "confVideoContainer",
+            userDisplay:true,
+            userMetaDisplay:false,
+            dynamicVideos: false 
+        };
 
-    var widgets={
-        debug      : true,
-        chat    :{
+        webrtcdomobj= new WebRTCdom(
+            local,remote, incoming, outgoing
+        );
+
+        var session ={
+            sessionid : sessionid,
+            socketAddr: "/",
+            turn:"none"
+        };
+        
+        var incoming={
+            audio:  true,
+            video:  true,
+            data:   true,
+            screen: true
+        };
+
+        var outgoing={
+            audio:  true,
+            video:  true,
+            data:   true,
+            screen: true
+        };
+
+        var widgets={
+            mute    :{
                         active: true,
-                        chatContainer: "chatContainer",
-                        button:{
-                            class_on:"btn btn-warning glyphicon glyphicon-font topPanelButton",
-                            html_on:"Chat",
-                            class_off:"btn btn-success glyphicon glyphicon-font topPanelButton",
-                            html_off:"Chat"
-                        }
-                },
-        fileShare   :{
-                        active : true,
-                        fileShareContainer : "fileSharingRow",
-                        fileListContainer : "fileListingRow",
-                        button:{
-                            class:"btn btn-success glyphicon glyphicon-file topPanelButton",
-                            html:"File"
-                        }
-                    },
-        screenrecord:{
-                        active: true,
-                        autoscreenrecord:false,
-                        screenrecordContainer: null,
-                        button:{
-                            class_on:"btn btn-warning glyphicon glyphicon-film topPanelButton",
-                            html_on:"Stop",
-                            class_off:"btn btn-success glyphicon glyphicon-film topPanelButton",
-                            html_off:"Record"
-                        }
-                    }, 
-        videoRecord :{
-                        active: true,
-                        videoRecordContainer: true,
-                        button:{
-                            class_on:"pull-right glyphicon glyphicon-facetime-video btn btn-warning mediaButton",
-                            html_on:"",
-                            class_off:"pull-right glyphicon glyphicon-facetime-video btn btn-default mediaButton",
-                            html_off:""
-                        }
-                    },
-        snapshot :{
-                        active: true,
-                        snapshotContainer: true,
-                        button:{
-                            class_on:"pull-right glyphicon glyphicon-camera btn btn-default mediaButton",
-                            html_on:""
-                        }
-                    }, 
-        mute    :{
-                    active: true,
-                    audio   :{
-                            active: false,
-                            button:{
-                                class_on:"pull-right glyphicon glyphicon-volume-up btn btn-default mediaButton",
-                                html_on:"",
-                                class_off:"pull-right glyphicon glyphicon-volume-off btn btn-danger mediaButton",
-                                html_off:""
+                        audio   :{
+                                active: false,
+                                button:{
+                                    class_on:"pull-right glyphicon glyphicon-volume-up btn btn-default mediaButton",
+                                    html_on:"",
+                                    class_off:"pull-right glyphicon glyphicon-volume-off btn btn-danger mediaButton",
+                                    html_off:""
+                                }
+                            },
+                        video : {
+                                active: true,
+                                button:{
+                                    class_on:"pull-right glyphicon glyphicon-eye-open btn btn-default videoButtonClass mediaButton",
+                                    html_on:"",
+                                    class_off:"pull-right glyphicon glyphicon-eye-close  btn btn-danger videoButtonClass mediaButton",
+                                    html_off:""
+                                }
                             }
-                        },
-                    video : {
-                            active: true,
-                            button:{
-                                class_on:"pull-right glyphicon glyphicon-eye-open btn btn-default videoButtonClass mediaButton",
-                                html_on:"",
-                                class_off:"pull-right glyphicon glyphicon-eye-close  btn btn-danger videoButtonClass mediaButton",
-                                html_off:""
-                            }
-                        }
-                }
-    };
+                    }
+        };
 
-    var webrtcdevobj = new WebRTCdev ( 
-        session, widgets
-    );
-    startcall(webrtcdevobj);
+        var webrtcdevobj = new WebRTCdev ( 
+            session, widgets
+        );
+        startCall(webrtcdevobj);
+    });
 });
 </script>
 </html>

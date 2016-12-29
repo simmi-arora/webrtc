@@ -284,7 +284,7 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
              console.log("------------update channel------------- ", data.channel," by " , data.sender," -> ", data );
             switch (data.type){
                 case "change-userid":
-                    var index=webrtcdevchannels[data.channel].users.indexOf(data.extra.old);
+                    var index = webrtcdevchannels[data.channel].users.indexOf(data.extra.old);
                     console.log("old userid" , webrtcdevchannels[data.channel].users[index]);
                     webrtcdevchannels[data.channel].users[index]=data.extra.new;
                     console.log("changed userid" , webrtcdevchannels[data.channel].users);
@@ -295,7 +295,7 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
         });
 
         socket.on('presence', function(data, callback) {
-            var presence=(webrtcdevchannels[data.channel]?true:false);
+            var presence = (webrtcdevchannels[data.channel]?true:false);
             console.log(" Presence Check index of " , data.channel , " is " , presence);
             socket.emit("presence",presence);
         });

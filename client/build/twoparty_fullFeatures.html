@@ -207,6 +207,7 @@
 <link rel=stylesheet href="minScripts/webrtcdevelopment.css">
 <!-- <script src="scripts/_screenshare.js"></script>  -->
 <!-- <script src="minScripts/webrtcdevelopment.js"></script> -->
+<script src="scripts/getMediaElement.js"></script>
 
 <script src="scripts/_init.js"></script>
 <script src="scripts/RTCMultiConnection.js"></script>
@@ -250,7 +251,7 @@
 
   $('document').ready(function(){
 
-      sessionid = init(true);
+      init(true , function(sessionid){
       var searchParams = new URLSearchParams(window.location);
       var role="participant",out_A=true, out_V=true ;
 
@@ -495,6 +496,8 @@
       onSessionConnect=function(){
           // Peer has connected 
       };
+
+      });
   });
 /*$('document').ready(function(){
     sessionid = init(true);
