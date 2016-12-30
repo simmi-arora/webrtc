@@ -12,7 +12,7 @@ try{
     var numbersOfUsers  = document.getElementById("numbersofusers");
     var usersContainer  = document.getElementById("usersContainer");*/
 
-    var tempuserid = guid();
+    var tempuserid ;
 
     var sessions = {};
 
@@ -156,14 +156,12 @@ try{
                 rtcConn.enableFileSharing = true,
                 rtcConn.filesContainer = document.body || document.documentElement,
 
-                rtcConn.userid = tempuserid,
-
                 rtcConn.dontCaptureUserMedia = true,
                 
                 rtcConn.onNewParticipant = function(participantId, userPreferences) {
-                    alert("onNewParticipant" + participantId);
+                    console.log("onNewParticipant" , participantId , userPreferences );
                     if(webcallpeers.length <= remoteobj.maxAllowed){
-                        updatePeerInfo(userPreferences.extra.uuid , "Peer" , "#BFD9DA" , "", "remote");
+                        updatePeerInfo(participantId , "Peer" , "#BFD9DA" , "", "remote");
                     }else{
                         shownotification("Another user is trying to join this channel but max count [ "+remoteobj.maxAllowed +" ] is reached");
                     }
@@ -366,6 +364,31 @@ try{
                     });   
                 },
 
+
+                rtcConn.onFileStart = function(file) {
+                    console.log("on File start "+ file.name);
+                    console.log("file description ",  file);
+                    alert(" send file "+file.name);
+                    var peerinfo = findPeerInfo(file.userid);
+                    addProgressHelper(file.uuid , peerinfo , file.name , file.maxChunks,  "fileBoxClass");
+                }, 
+
+                rtcConn.onFileProgress = function(e) {
+                    console.log("on File progress " , e);
+                    alert(" File Progress");
+                    var r = progressHelper[e.uuid];
+                    r && (r.progress.value = e.currentPosition || e.maxChunks || r.progress.max, updateLabel(r.progress, r.label))
+                }, 
+
+                rtcConn.onFileEnd = function(file) {
+                    console.log("On file End "+ file.name );
+                    var peerinfo=findPeerInfo(file.userid);
+                    if(peerinfo!=null)
+                        peerinfo.filearray.push(file.name);
+                    displayFile(file.uuid , peerinfo , file.url , file.name , file.type);
+                    displayList(file.uuid , peerinfo , file.url , file.name , file.type);
+                },
+
                 rtcConn.takeSnapshot = function(userid, callback) {
                     takeSnapshot({
                         userid: userid,
@@ -380,30 +403,7 @@ try{
                     connection.join(useridAlreadyTaken);
                 },*/
 
-                /*rtcConn.onFileStart = function(file) {
-                    console.log("on File start "+ file.name);
-                    console.log("file description ",  file);
-                    alert(" send file "+file.name);
-                    var peerinfo = findPeerInfo(file.userid);
-                    addProgressHelper(file.uuid , peerinfo , file.name , file.maxChunks,  "fileBoxClass");
-                }, */
-
-                /*rtcConn.onFileProgress = function(e) {
-                    console.log("on File progress " , e);
-                    alert(" File Progress");
-                    var r = progressHelper[e.uuid];
-                    r && (r.progress.value = e.currentPosition || e.maxChunks || r.progress.max, updateLabel(r.progress, r.label))
-                }, */
-
-                /*rtcConn.onFileEnd = function(file) {
-                    console.log("On file End "+ file.name );
-                    var peerinfo=findPeerInfo(file.userid);
-                    if(peerinfo!=null)
-                        peerinfo.filearray.push(file.name);
-                    displayFile(file.uuid , peerinfo , file.url , file.name , file.type);
-                    displayList(file.uuid , peerinfo , file.url , file.name , file.type);
-                };*/
-
+                tempuserid = rtcConn.userid;
 
                 setWidgets();
                 //setSettingsAttributes( rtcConn );
@@ -483,9 +483,9 @@ try{
 
         if(fileshareobj.active){
             rtcConn.enableFileSharing = true;
-            rtcConn.filesContainer = document.body || document.documentElement;
+            //rtcConn.filesContainer = document.body || document.documentElement;
             /*setFileProgressBarHandlers(rtcConn);*/
-            /*rtcConn.filesContainer = document.getElementById(fileshareobj.fileShareContainer);*/
+            rtcConn.filesContainer = document.getElementById(fileshareobj.fileShareContainer);
             if(fileshareobj.button.id && document.getElementById(fileshareobj.button.id)){
                 assignFileShareButton(fileshareobj);
             }else{
@@ -493,6 +493,8 @@ try{
             }
         }
     }
+
+
     /**
      * function to start session with socket
      * @method
@@ -673,9 +675,9 @@ try{
                     if(localobj.userMetaDisplay && webcallpeers[0].userid)
                         attachMetaUserDetails( selfvid, webcallpeers[0] ); 
 
-                    /*if(fileshareobj.active){
+                    if(fileshareobj.active){
                         createFileSharingDiv(webcallpeers[0]);
-                    }*/
+                    }
                 }
             }
 
@@ -712,8 +714,7 @@ try{
                 
                 if(remoteobj.userMetaDisplay && peerInfo.userid)
                     attachMetaUserDetails( remvid, peerInfo ); 
-
-                /*                
+      
                 if(fileshareobj.active){
 
                     if(fileshareobj.props.fileShare){
@@ -724,7 +725,7 @@ try{
                         else
                             console.log("props undefined ");
                     }
-                }*/
+                }
             }else{
                 alert(" remote Video containers not defined");
             }
@@ -748,11 +749,10 @@ try{
     function startCall(obj){
         if(turn=='none'){
             obj.startwebrtcdev();
-            return;
         }else if(turn!=null){
-            repeatInitilization = window.setInterval(obj.startwebrtcdev, 1000);     
-            return;
+            repeatInitilization = window.setInterval(obj.startwebrtcdev, 2000);     
         }
+
         return;
     }
 
@@ -786,8 +786,7 @@ try{
             filearray : [],
             vid : "video"+type+"_"+userid
         };
-
-        /*        
+     
         if(fileshareobj.active){
 
             if(fileshareobj.props.fileShare=="single"){
@@ -820,7 +819,7 @@ try{
                 };
             }
 
-        }*/
+        }
         console.log("updated peerInfo: " ,peerInfo);
         webcallpeers.push(peerInfo);
     }

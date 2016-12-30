@@ -510,7 +510,7 @@ function createFileListingBox(peerinfo, parent){
 
 function createFileSharingDiv(peerinfo){
 
-    if (!document.getElementById(peerinfo.fileShare.outerbo)){
+    if (!document.getElementById(peerinfo.fileShare.outerbox)){
         var parentFileShareContainer = document.getElementById(fileshareobj.fileShareContainer);
         createFileSharingBox(peerinfo , parentFileShareContainer);
     }
