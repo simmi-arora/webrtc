@@ -69,7 +69,7 @@ var cursorobj=false;
 
 var muteobj=false;
 
-var fullscreenobj=false;
+var minmaxobj=false;
 
 var screenshareobj=false;
 var screen , isScreenOn=0;

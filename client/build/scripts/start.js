@@ -119,7 +119,7 @@ try{
 
             if(widgets.cursor)          cursorobj       = widgets.cursor;
 
-            if(widgets.fullscreen)      fullscreenobj   = widgets.fullscreen;
+            if(widgets.minmax)          minmaxobj       = widgets.minmax;
         }
 
         return {
@@ -169,7 +169,7 @@ try{
                 },
 
                 rtcConn.onopen = function(event) {   
-                    alert("rtcconn oopen " + rtcConn.connectionType);
+                    console.log("rtcconn oopen " + rtcConn.connectionType);
                     try{              
                         if(rtcConn.connectionType=="open")
                             connectWebRTC("open" , sessionid, selfuserid, []); 
@@ -368,14 +368,14 @@ try{
                 rtcConn.onFileStart = function(file) {
                     console.log("on File start "+ file.name);
                     console.log("file description ",  file);
-                    alert(" send file "+file.name);
+
                     var peerinfo = findPeerInfo(file.userid);
                     addProgressHelper(file.uuid , peerinfo , file.name , file.maxChunks,  "fileBoxClass");
                 }, 
 
                 rtcConn.onFileProgress = function(e) {
                     console.log("on File progress " , e);
-                    alert(" File Progress");
+                    console.log(" File Progress");
                     var r = progressHelper[e.uuid];
                     r && (r.progress.value = e.currentPosition || e.maxChunks || r.progress.max, updateLabel(r.progress, r.label))
                 }, 
@@ -503,7 +503,7 @@ try{
      */
     function startSession(rtcConn , sessionid){
 
-        alert("==========startSession" + sessionid);
+        console.log("==========startSession" + sessionid);
 
         try{
             var addr = "/";
@@ -527,7 +527,6 @@ try{
 
         socket.on("presence", function(event) {
             console.log("PRESENCE -----------> ", event);
-            alert(" session id on presence " + event);
             event ?  joinWebRTC(sessionid, selfuserid) : openWebRTC(sessionid, selfuserid);
         });
 
@@ -566,7 +565,7 @@ try{
                         }
 
                         updatePeerInfo( selfuserid , selfusername , selfcolor, selfemail, "local" );
-                        alert(" trying to open a channel on WebRTC SDP ");
+                        console.log(" trying to open a channel on WebRTC SDP ");
                         rtcConn.dontCaptureUserMedia = false,
                         rtcConn.getUserMedia();
                     });
@@ -602,7 +601,7 @@ try{
                 rtcConn.join(event.channel);
                 rtcConn.dontCaptureUserMedia = false,
                 rtcConn.getUserMedia();
-                alert(" trying to join a channel on WebRTC SDP ");
+                console.log(" trying to join a channel on WebRTC SDP ");
             }else{
                 alert("signaller doesnt allow you to join he channel");
                 shownotification(event.msgtype+" : "+ event.message);
@@ -911,7 +910,7 @@ try{
      * @param {string} remoteUsers
      */
     connectWebRTC=function(type, channel , userid , remoteUsers){
-        alert(" ConnectWebRTC "+ type);
+        console.log(" ConnectWebRTC "+ type);
 
         void(document.title = channel);
 
@@ -959,6 +958,24 @@ try{
     window.onunload=function(){
         console.log(    localStorage.getItem("channel"));
     };*/
+
+    /**
+     * function to interact with background script of chrome extension
+     * @call
+     * @name addeventlistener
+     */
+    window.addEventListener('message', function(event){
+        if (event.data.type) {
+            if(event.data.type="screenshare"){
+                onScreenshareExtensionCallback(event);
+            }else if(event.data.type="screenrecord"){
+                onScreenrecordExtensionCallback(event);
+            }
+        }else{
+            onScreenshareExtensionCallback(event);
+        }
+
+    });
 
 }catch(e){
     console.log("exception in start " , e);

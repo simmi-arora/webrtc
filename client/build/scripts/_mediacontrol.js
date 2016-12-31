@@ -90,8 +90,9 @@ function attachControlButtons( vid ,  peerinfo){
         controlBar.appendChild(createCursorButton(controlBarName, peerinfo ));
     }
 
-    if(fullscreenobj.active){
+    if(minmaxobj.active){
         controlBar.appendChild(createFullScreenButton(controlBarName, peerinfo, streamid, stream ));
+        controlBar.appendChild(createMinimizeVideoButton(controlBarName, peerinfo, streamid, stream ));
     }
 
     if(debug){
@@ -109,23 +110,47 @@ function attachControlButtons( vid ,  peerinfo){
 function createFullScreenButton(controlBarName, peerinfo, streamid, stream ){
     var button=document.createElement("span");
     button.id=controlBarName+"fullscreeButton";
-    button.className=fullscreenobj.button.class_off;
-    button.innerHTML=fullscreenobj.button.html_off;
+    button.className=minmaxobj.max.button.class_off;
+    button.innerHTML=minmaxobj.max.button.html_off;
     button.onclick = function() {
-        if(button.className == fullscreenobj.button.class_off){
+        if(button.className == minmaxobj.max.button.class_off){
             var vid=document.getElementById(peerinfo.videoContainer);
             vid.webkitRequestFullScreen();
-            button.className=fullscreenobj.button.class_on;
-            button.innerHTML=fullscreenobj.button.html_on;
+            button.className=minmaxobj.max.button.class_on;
+            button.innerHTML=minmaxobj.max.button.html_on;
         } 
         else{            
-            button.className=fullscreenobj.button.class_off;
-            button.innerHTML=fullscreenobj.button.html_off;
+            button.className=minmaxobj.max.button.class_off;
+            button.innerHTML=minmaxobj.max.button.html_off;
         }     
         //syncButton(audioButton.id);        
     };
     return button;
 }
+
+
+function createMinimizeVideoButton(controlBarName, peerinfo, streamid, stream){
+    var button=document.createElement("span");
+    button.id=controlBarName+"minmizevideoButton";
+    button.className=minmaxobj.min.button.class_off;
+    button.innerHTML=minmaxobj.min.button.html_off;
+    var vid=document.getElementById(peerinfo.videoContainer);
+    button.onclick = function() {
+        if(button.className == minmaxobj.min.button.class_off){
+            vid.hidden=false;
+            button.className=minmaxobj.min.button.class_on;
+            button.innerHTML=minmaxobj.min.button.html_on;
+        } 
+        else{ 
+            vid.hidden=true;           
+            button.className=minmaxobj.min.button.class_off;
+            button.innerHTML=minmaxobj.min.button.html_off;
+        }     
+        //syncButton(audioButton.id);        
+    };
+    return button;
+}
+
 
 function createAudioMuteButton(controlBarName , peerinfo){
     var audioButton=document.createElement("span");
@@ -161,8 +186,6 @@ function createVideoMuteButton(controlBarName , peerinfo){
     var videoButton=document.createElement("span");
     videoButton.id=controlBarName+"videoButton";
     videoButton.setAttribute("title", "Toggle Video");
-    videoButton.setAttribute("data-placement", "bottom");
-    videoButton.setAttribute("data-toggle", "tooltip");
     videoButton.setAttribute("data-container", "body");
     videoButton.className=muteobj.video.button.class_on;   
     videoButton.innerHTML=muteobj.video.button.html_on;     
