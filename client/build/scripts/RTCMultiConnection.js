@@ -503,7 +503,6 @@
         ,
         connection.send = function(data, remoteUserId) {
             console.log("connection send -> connection.peers" , connection.peers);
-            alert(" connection send ");
             connection.peers.send(data, remoteUserId)
         }
         ,
@@ -1202,15 +1201,11 @@
                 var that = this;
 
                 if (!isNull(data.size) && !isNull(data.type)) {
-                    console.log(" send " , data  );
-                    alert(" share file ");
                     self.shareFile(data, remoteUserId);
                     return;
                 }
 
                 if (data.type !== 'text' && !(data instanceof ArrayBuffer) && !(data instanceof DataView)) {
-                    console.log(" send " , data  );
-                    alert(" share ArrayBuffer ");
                     TextSender.send({
                         text: data,
                         channel: this,
@@ -1292,12 +1287,9 @@
                 remoteSdp: remoteSdp,
                 onDataChannelMessage: function(message) {
 
-                    alert(" getLocalConfig ->onDataChannelMessage");
-
                     if (!fbr && connection.enableFileSharing) initFileBufferReader();
 
                     if (typeof message == 'string' || !connection.enableFileSharing) {
-                        alert(" messge is string ");
                         self.onDataChannelMessage(message, remoteUserId);
                         return;
                     }
@@ -1305,7 +1297,6 @@
                     var that = this;
 
                     if (message instanceof ArrayBuffer || message instanceof DataView) {
-                        alert(" message is either arraybuffer or dataviee ");
                         fbr.convertToObject(message, function(object) {
                             that.onDataChannelMessage(object);
                         });
@@ -1620,7 +1611,6 @@
             }
 
             initFileBufferReader();
-            alert(" this.shareFile");
             fbr.readAsArrayBuffer(file, function(uuid) {
                 var arrayOfUsers = connection.getAllParticipants();
 
@@ -1647,7 +1637,6 @@
         }
 
         this.onDataChannelMessage = function(message, remoteUserId) {
-            alert("on onDataChannelMessage");
             textReceiver.receive(JSON.parse(message), remoteUserId, connection.peers[remoteUserId] ? connection.peers[remoteUserId].extra : {});
         };
 
@@ -2124,7 +2113,6 @@
             channel.binaryType = 'arraybuffer';
 
             channel.onmessage = function(event) {
-                alert(" channel onmessahe");
                 config.onDataChannelMessage(event.data);
             };
 
@@ -2426,9 +2414,8 @@
 
     function TextReceiver(connection) {
         var content = {};
-        alert("TextReceiver");
+
         function receive(data, userid, extra) {
-            alert("TextReceiver -> receive");
             // uuid is used to uniquely identify sending instance
             var uuid = data.uuid;
             if (!content[uuid]) {
@@ -3361,7 +3348,6 @@
     var sourceId, screenCallback, chromeMediaSource = "screen";
     var TextSender = {
         send: function(config) {
-            alert(" text sender -> send ");
             var connection = config.connection;
 
             var channel = config.channel,

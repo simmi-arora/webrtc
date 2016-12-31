@@ -14,14 +14,18 @@ var scrConn , screenCallback ;
 var iceServers=[];
 var signaler,screen,screenRoomid;
 var screenShareButton ;
+
 /* getsourceID in RTCmtulconn has been commented to make the below one active */
 function getSourceId(callback, audioPlusTab) {
     if (!callback)
         throw '"callback" parameter is mandatory.';
-    return sourceId ? (callback(sourceId),
-    void (sourceId = null )) : (screenCallback = callback, void window.postMessage("webrtcdev-extension-getsourceId", "*"))
+
+    window.postMessage("webrtcdev-extension-getsourceId", "*");
+
+    /*return sourceId ? (callback(sourceId),
+    void (sourceId = null )) : (screenCallback = callback, void window.postMessage("webrtcdev-extension-getsourceId", "*"))*/
     /*audioPlusTab ? void window.postMessage("audio-plus-tab", "*") : void window.postMessage("webrtcdev-extension-getsourceId", "*"))*/
-};
+}
 
 function getChromeExtensionStatus(extensionid, callback) {
     if (2 != arguments.length && (callback = extensionid,
@@ -536,7 +540,9 @@ function assignScreenShareButton(){
     return button;
 }
 
-window.addEventListener('message', onScreenshareExtensionCallback);
+/*
+//shifted to start.js
+window.addEventListener('message', onScreenshareExtensionCallback);*/
 
 function onScreenshareExtensionCallback(event){
     console.log("onScreenshareExtensionCallback" , event);

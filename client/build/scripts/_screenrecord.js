@@ -55,7 +55,7 @@ function assignScreenRecordButton(){
     });
 
     var recordButton = document.getElementById(screenrecordobj.button.id);
-    console.log(" ----------------" , recordButton);
+    console.log(" -------recordButton---------" , recordButton);
     recordButton.onclick = function() {
         if(recordButton.className==screenrecordobj.button.class_off){
             recordButton.className= screenrecordobj.button.class_on ;
@@ -75,10 +75,11 @@ function assignScreenRecordButton(){
             recorder.stopRecording(function() {
                 var blob = recorder.getBlob();
                 var videoURL=URL.createObjectURL(blob);
+                var uuid= guid();
                 var recordVideoname= "screenrecorded"+ Math.floor(new Date() / 1000);
                 var peerinfo=findPeerInfo( selfuserid);
-                displayList(null , peerinfo , videoURL, recordVideoname , "videoScreenRecording");
-                displayFile(null , peerinfo , videoURL, recordVideoname , "videoScreenRecording");
+                displayList(uuid , peerinfo , videoURL, recordVideoname , "videoScreenRecording");
+                displayFile(uuid , peerinfo , videoURL, recordVideoname , "videoScreenRecording");
             });
   
         }
@@ -178,3 +179,63 @@ function createScreenRecordButton(){
     document.getElementById("topIconHolder_ul").appendChild(li);       
 }
 
+//call with getSourceIdScreenrecord(function(){} , true)
+function getSourceIdScreenrecord(callback, audioPlusTab) {
+    if (!callback)
+        throw '"callback" parameter is mandatory.';
+
+    window.postMessage("webrtcdev-extension-getsourceId-audio-plus-tab", "*");
+};
+
+function onScreenrecordExtensionCallback(event){
+    console.log("onScreenrecordExtensionCallback" , event);
+
+    if (event.data.chromeExtensionStatus) {
+       console.log(event.data.chromeExtensionStatus);
+    }
+
+    if (event.data.sourceId) {
+        if (event.data.sourceId === 'PermissionDeniedError') {
+            console.log('permission-denied');
+        } else{
+            webrtcdevScreenConstraints(event.data.sourceId);
+        }
+    }
+}
+
+function webrtcdevScreenRecordConstraints(chromeMediaSourceId){
+   
+    navigator.getUserMedia(
+        {
+            audio: false,
+            video: {
+                mandatory: {
+                    chromeMediaSource: 'desktop',
+                    chromeMediaSourceId: chromeMediaSourceId,
+                    maxWidth: window.screen.width > 1920 ? window.screen.width : 1920,
+                    maxHeight: window.screen.height > 1080 ? window.screen.height : 1080
+                },
+                optional: []
+            }
+        },
+        function stream(event) {
+            console.log("screen stream "  , event , screenshareobj.screenshareContainer);
+            //scrConn.onstream(event);
+            var container = document.getElementById(screenshareobj.screenshareContainer);
+            screenStreamId = event.streamid;
+            var videosContainer=document.createElement("video");
+            videosContainer.src = window.URL.createObjectURL(event);
+            container.appendChild(videosContainer);
+            videosContainer.appendChild(event.mediaElement);
+        },
+        function error(err) {
+            if (isChrome && location.protocol === 'http:') {
+                alert('Please test this WebRTC experiment on HTTPS.');
+            } else if(isChrome) {
+                alert('Screen capturing is either denied or not supported. Please install chrome extension for screen capturing or run chrome with command-line flag: --enable-usermedia-screen-capturing');
+            } else if(!!navigator.mozGetUserMedia) {
+                alert(Firefox_Screen_Capturing_Warning);
+            }
+        }
+    );
+}
