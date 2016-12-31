@@ -225,7 +225,7 @@ try{
                     }
                 },
 
-                rtcConn.chunkSize = 65 * 1000,
+                rtcConn.chunkSize = 50 * 1000,
 
                 rtcConn.onmessage = function(e) {
                     console.log(" on message ", e);

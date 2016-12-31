@@ -37,7 +37,7 @@ function attachUserDetails(vid , peerinfo){
 }
 
 function attachMetaUserDetails(vid , peerinfo){
-    alert(peerinfo.userid+ ":" + peerinfo.type);
+    console.log(peerinfo.userid+ ":" + peerinfo.type);
     var detailsbox = document.createElement("span");
     detailsbox.setAttribute("style","background-color:"+ peerinfo.color);
     detailsbox.innerHTML = peerinfo.userid+ ":" + peerinfo.type+"<br/>";

@@ -12,11 +12,18 @@ function autorecordScreenVideo(){
 
 function assignScreenRecordButton(){
 
+    var recordButton = document.getElementById(screenrecordobj.button.id);
+    console.log(" -------recordButton---------" , recordButton);
+    recordButton.onclick = function() {
+        if(recordButton.className==screenrecordobj.button.class_off){
+            alert(" start recording screen + audio ");
+
     var elementToShare = document.getElementById("mainDiv");
 
     var canvas2d = document.createElement('canvas');
     canvas2d.setAttribute("style","z-index:-1");
-    //canvas2d.hidden=true;
+    canvas2d.id="screenrecordCanvas";
+
     var context = canvas2d.getContext('2d');
 
     canvas2d.width = elementToShare.clientWidth;
@@ -54,10 +61,7 @@ function assignScreenRecordButton(){
         type: 'canvas'
     });
 
-    var recordButton = document.getElementById(screenrecordobj.button.id);
-    console.log(" -------recordButton---------" , recordButton);
-    recordButton.onclick = function() {
-        if(recordButton.className==screenrecordobj.button.class_off){
+
             recordButton.className= screenrecordobj.button.class_on ;
             recordButton.innerHTML= screenrecordobj.button.html_on;
             
@@ -67,6 +71,11 @@ function assignScreenRecordButton(){
             isRecordingStarted = true;
 
         }else if(recordButton.className==screenrecordobj.button.class_on){
+            alert(" stoppped recording screen + audio ");
+
+                var elem = document.getElementById("screenrecordCanvas");
+                elem.parentNode.removeChild(elem);
+
             recordButton.className= screenrecordobj.button.class_off ;
             recordButton.innerHTML= screenrecordobj.button.html_off;
             
@@ -88,63 +97,60 @@ function assignScreenRecordButton(){
 
 function createScreenRecordButton(){
 
-	var element = document.body;
-    /*    
-    recorder = RecordRTC(element, {
-        type: 'canvas',
-        showMousePointer: true
-    });*/
-
-    var canvas2d = document.createElement('canvas');
-    canvas2d.setAttribute("style","z-index:-1");
-    //canvas2d.hidden=true;
-    var context = canvas2d.getContext('2d');
-
-    /*   
-    canvas2d.width = elementToShare.clientWidth;
-    canvas2d.height = elementToShare.clientHeight;*/
-
-    canvas2d.style.top = 0;
-    canvas2d.style.left = 0;
-
-    (document.body || document.documentElement).appendChild(canvas2d);
-
-    var isRecordingStarted = false;
-    var isStoppedRecording = false;
-
-    (function looper() {
-        if(!isRecordingStarted) {
-            return setTimeout(looper, 500);
-        }
-
-        html2canvas(elementToShare, {
-            grabMouse: true,
-            onrendered: function(canvas) {
-                context.clearRect(0, 0, canvas2d.width, canvas2d.height);
-                context.drawImage(canvas, 0, 0, canvas2d.width, canvas2d.height);
-
-                if(isStoppedRecording) {
-                    return;
-                }
-
-                setTimeout(looper, 1);
-            }
-        });
-    })();
-
-    recorder = RecordRTC(canvas2d, {
-        type: 'canvas'
-    });
-
     var recordButton= document.createElement("span");
     recordButton.className= screenrecordobj.button.class_off ;
     recordButton.innerHTML= screenrecordobj.button.html_off;
     recordButton.onclick = function() {
         if(recordButton.className==screenrecordobj.button.class_off){
+
+            var element = document.body;
+            /*    
+            recorder = RecordRTC(element, {
+                type: 'canvas',
+                showMousePointer: true
+            });*/
+
+            var canvas2d = document.createElement('canvas');
+            canvas2d.id="screenrecordCanvas";
+            canvas2d.setAttribute("style","z-index:-1");
+            var context = canvas2d.getContext('2d');
+
+            canvas2d.style.top = 0;
+            canvas2d.style.left = 0;
+
+            (document.body || document.documentElement).appendChild(canvas2d);
+
+            var isRecordingStarted = false;
+            var isStoppedRecording = false;
+
+            (function looper() {
+                if(!isRecordingStarted) {
+                    return setTimeout(looper, 500);
+                }
+
+                html2canvas(elementToShare, {
+                    grabMouse: true,
+                    onrendered: function(canvas) {
+                        context.clearRect(0, 0, canvas2d.width, canvas2d.height);
+                        context.drawImage(canvas, 0, 0, canvas2d.width, canvas2d.height);
+
+                        if(isStoppedRecording) {
+                            return;
+                        }
+
+                        setTimeout(looper, 1);
+                    }
+                });
+            })();
+
+            recorder = RecordRTC(canvas2d, {
+                type: 'canvas'
+            });
+
             recordButton.className= screenrecordobj.button.class_on ;
             recordButton.innerHTML= screenrecordobj.button.html_on;
             recorder.startRecording();
-        
+
             isStoppedRecording = false;
             isRecordingStarted = true;
 
@@ -159,6 +165,8 @@ function createScreenRecordButton(){
             isStoppedRecoridng = true;
 
             recorder.stopRecording(function() {
+                var elem = document.getElementById("screenrecordCanvas");
+                elem.parentNode.removeChild(elem);
 
                 var blob = recorder.getBlob();
                 var video = document.createElement('video');
