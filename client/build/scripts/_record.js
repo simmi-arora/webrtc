@@ -1,4 +1,4 @@
-function createRecordButton(controlBarName,peerinfo, streamid, stream){
+function createRecordButton(controlBarName, peerinfo, streamid, stream){
     var recordButton=document.createElement("div");
     recordButton.id=controlBarName+"recordButton";
     recordButton.setAttribute("title", "Record");

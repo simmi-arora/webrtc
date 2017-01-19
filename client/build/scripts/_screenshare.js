@@ -10,10 +10,12 @@ var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
 var isChrome = !!window.chrome && !isOpera;
 var isMobileDevice = !!navigator.userAgent.match(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile/i);
 
-var scrConn , screenCallback ;
+var scrConn, screenCallback ;
 var iceServers=[];
 var signaler,screen,screenRoomid;
 var screenShareButton ;
+
+var screenShareStreamLocal = null;
 
 /* getsourceID in RTCmtulconn has been commented to make the below one active */
 function getSourceId(callback, audioPlusTab) {
@@ -21,10 +23,6 @@ function getSourceId(callback, audioPlusTab) {
         throw '"callback" parameter is mandatory.';
 
     window.postMessage("webrtcdev-extension-getsourceId", "*");
-
-    /*return sourceId ? (callback(sourceId),
-    void (sourceId = null )) : (screenCallback = callback, void window.postMessage("webrtcdev-extension-getsourceId", "*"))*/
-    /*audioPlusTab ? void window.postMessage("audio-plus-tab", "*") : void window.postMessage("webrtcdev-extension-getsourceId", "*"))*/
 }
 
 function getChromeExtensionStatus(extensionid, callback) {
@@ -32,6 +30,7 @@ function getChromeExtensionStatus(extensionid, callback) {
     extensionid = window.RMCExtensionID || "ajhifddimkapgcifgcodmmfdlknahffk"),
     isFirefox)
         return callback("not-chrome");
+
     var image = document.createElement("img");
     image.src = "chrome-extension://" + extensionid + "/icon.png",
     image.onload = function() {
@@ -39,9 +38,8 @@ function getChromeExtensionStatus(extensionid, callback) {
         window.postMessage("webrtcdev-extension-presence", "*"),
         setTimeout(function() {
             callback("screen" == chromeMediaSource ? extensionid == extensionid ? "installed-enabled" : "installed-disabled" : "installed-enabled")
-        }, 2e3)
-    }
-    ,
+        }, 2e3);
+    },
     image.onerror = function() {
         callback("not-installed")
     }
@@ -61,29 +59,40 @@ function isChromeExtensionAvailable(callback) {
 }
 
 function webrtcdevPrepareScreenShare(callback){
+    alert(" peparing fresh screenshare ");
     var time            = new Date().getUTCMilliseconds(); 
     if(screenRoomid == null)
         screenRoomid    = "screenshare"+"_"+sessionid+"_"+time;
 
-    console.log("webrtcdevPrepareScreenShare" + screenRoomid);
+    console.log(" webrtcdevPrepareScreenShare" + screenRoomid);
+    console.log("Screenshare ||  filling up iceServers " , turn , webrtcdevIceServers);
 
-    scrConn             = new RTCMultiConnection(screenRoomid);
-    scrConn.iceServers  = webrtcdevIceServers;  
+    scrConn             = new RTCMultiConnection();
+    if(turn!='none'){
+        if(!webrtcdevIceServers) {
+            alert("ICE server not found yet in screenshare session ");
+        }
+        scrConn.iceServers  = webrtcdevIceServers;      
+    }  
+    
     scrConn.channel     = screenRoomid,
-    scrConn.sessionid   = screenRoomid,
     scrConn.socketURL   = socketAddr,
     //scrConn.socketMessageEvent = 'screen-sharing-demo',
     scrConn.session = {
         screen: true,
         oneway: true
     },
-    scrConn.iceServers=rtcConn.iceServers,
+    scrConn.iceServers  = webrtcdevIceServers ,
     scrConn.sdpConstraints.mandatory = {
         OfferToReceiveAudio: false,
         OfferToReceiveVideo: true
     },
     scrConn.dontCaptureUserMedia = false,
 
+    scrConn.onMediaError = function(error, constraints) {
+        console.error(error, constraints);
+        shownotificationWarning(error.name);
+    },
     /*    
     scrConn.onconnected = function(event) {
         // event.peer.addStream || event.peer.getConnectionStats
@@ -100,15 +109,15 @@ function webrtcdevPrepareScreenShare(callback){
         //if(event.stream.isScreen){
             //alert(" scrConn onStream streamid : "+ event.stream.streamid + " " + event.streamid);
             if(event.type=="remote" && event.type!="local"){
-                console.log("started streaming remote's screen");
+                alert("started streaming remote's screen");
                 var userid=event.userid;
                 var type=event.type;
                 var stream=event.stream;
                 if(event.stream.streamid){
-                    alert("remote screen event.stream.streamId " , event.stream.streamId);
+                    console.log("remote screen event.stream.streamId " + event.stream.streamId);
                     screenStreamId=event.stream.streamid;                    
                 }else if(event.streamid){
-                    alert("remote screen event.id " ,  event.streamid);
+                    console.log("remote screen event.streamid " + event.streamid);
                     screenStreamId=event.streamid;  
                 }
 
@@ -118,7 +127,6 @@ function webrtcdevPrepareScreenShare(callback){
                 //video.id = peerInfo.videoContainer;
                 document.getElementById(screenshareobj.screenshareContainer).appendChild(video);
             }else{
-                console.log("local screen stream ");
                 console.log("started streaming local screen");
             }
 
@@ -138,8 +146,8 @@ function webrtcdevPrepareScreenShare(callback){
     
         if(document.getElementById(screenshareobj.screenshareContainer)){
             document.getElementById(screenshareobj.screenshareContainer).innerHTML="";
-            /*alert("screenshare : " + screenshareobj.screenshareContainer);*/
         }
+
         scrConn.removeStream(screenStreamId);
         //scrConn.videosContainer.hidden=true;
         if(screenShareButton){
@@ -180,7 +188,9 @@ function webrtcdevSharescreen() {
 
         rtcConn.send({
             type:"screenshare", 
-            message:screenRoomid
+            screenid: screenRoomid,
+            screenStreamid:screenStreamId,
+            message:"startscreenshare"
         });
 
     });
@@ -239,95 +249,100 @@ function webrtcdevScreenConstraints(chromeMediaSourceId){
         callback(false, screen_constraints);
         return;
     };*/
-   
-    navigator.getUserMedia(
-        {
-            audio: false,
-            video: {
-                mandatory: {
-                    chromeMediaSource: 'desktop',
-                    chromeMediaSourceId: chromeMediaSourceId,
-                    maxWidth: window.screen.width > 1920 ? window.screen.width : 1920,
-                    maxHeight: window.screen.height > 1080 ? window.screen.height : 1080
-                },
-                optional: []
-            }
-        },
-        function stream(event) {
-            console.log("screen stream "  , event , screenshareobj.screenshareContainer);
-            //scrConn.onstream(event);
-            //var container = document.getElementById(screenshareobj.screenshareContainer);
-            //console.log("videosContainer "  , container);
-            //screenStreamId = event.streamid;
-            //var videosContainer=document.createElement("video");
-            //videosContainer.src = window.URL.createObjectURL(event);
-            //container.appendChild(videosContainer);
-            //videosContainer.appendChild(event.mediaElement);
-            var stream=event;
-            console.log("Stream from getUserMedia" , stream);
-            stream.type = "local",
-            scrConn.setStreamEndHandler(stream),
-            getRMCMediaElement(stream, function(mediaElement) {
-                console.log(" getRMCMediaElement Callback function --> " + stream.streamid +" .. " + stream.id);
-                if(stream.streamid){
-                    console.log("using streamid");
-                    mediaElement.id = stream.streamid,
-                    mediaElement.muted = !0,
-                    mediaElement.volume = 0,
-                    -1 === scrConn.attachStreams.indexOf(stream) && scrConn.attachStreams.push(stream),
-                    "undefined" != typeof StreamsHandler && StreamsHandler.setHandlers(stream, !0, scrConn),
-                    scrConn.streamEvents[stream.streamid] = {
-                        stream: stream,
-                        type: "local",
-                        mediaElement: mediaElement,
-                        userid: scrConn.userid,
-                        extra: scrConn.extra,
-                        streamid: stream.streamid,
-                        blobURL: mediaElement.src || URL.createObjectURL(stream),
-                        isAudioMuted: !0
-                    };
-                    console.log(scrConn.streamEvents[stream.streamid]);
-                    /*setHarkEvents(scrConn, scrConn.streamEvents[stream.streamid]),*/
-                    /*setMuteHandlers(scrConn, scrConn.streamEvents[stream.streamid]),*/
-                    scrConn.onstream(scrConn.streamEvents[stream.streamid])
-                }else if(stream.id){
-                    console.log("using id");
-                    mediaElement.id = stream.id,
-                    mediaElement.muted = !0,
-                    mediaElement.volume = 0,
-                    -1 === scrConn.attachStreams.indexOf(stream) && scrConn.attachStreams.push(stream),
-                    "undefined" != typeof StreamsHandler && StreamsHandler.setHandlers(stream, !0, scrConn),
-                    scrConn.streamEvents[stream.id] = {
-                        stream: stream,
-                        type: "local",
-                        mediaElement: mediaElement,
-                        userid: scrConn.userid,
-                        extra: scrConn.extra,
-                        streamid: stream.id,
-                        blobURL: mediaElement.src || URL.createObjectURL(stream),
-                        isAudioMuted: !0
-                    };
-                    console.log(scrConn.streamEvents[stream.id]);
-                    /*setHarkEvents(scrConn, scrConn.streamEvents[stream.streamid]),*/
-                    /*setMuteHandlers(scrConn, scrConn.streamEvents[stream.streamid]),*/
-                    scrConn.onstream(scrConn.streamEvents[stream.id])
-                }else{
-                    alert("screenshare has neither streamid not id");
+   try{
+        navigator.getUserMedia(
+            {
+                audio: false,
+                video: {
+                    mandatory: {
+                        chromeMediaSource: 'desktop',
+                        chromeMediaSourceId: chromeMediaSourceId,
+                        maxWidth: window.screen.width > 1920 ? window.screen.width : 1920,
+                        maxHeight: window.screen.height > 1080 ? window.screen.height : 1080
+                    },
+                    optional: []
                 }
+            },
+            function stream(event) {
+                console.log("screen stream "  , event , screenshareobj.screenshareContainer);
+                //scrConn.onstream(event);
+                //var container = document.getElementById(screenshareobj.screenshareContainer);
+                //console.log("videosContainer "  , container);
+                //screenStreamId = event.streamid;
+                //var videosContainer = document.createElement("video");
+                //videosContainer.src = window.URL.createObjectURL(event);
+                //container.appendChild(videosContainer);
+                //videosContainer.appendChild(event.mediaElement);
+                var stream = event;
+                screenShareStreamLocal = event;
+                console.log("Stream from getUserMedia" , stream);
+                stream.type = "local",
+                //scrConn.setStreamEndHandler(stream),
+                getRMCMediaElement(stream, function(mediaElement) {
+                    console.log(" getRMCMediaElement Callback function --> " + stream.streamid +" .. " + stream.id);
+                    if(stream.streamid){
+                        console.log("using streamid");
+                        mediaElement.id = stream.streamid,
+                        mediaElement.muted = !0,
+                        mediaElement.volume = 0,
+                        -1 === scrConn.attachStreams.indexOf(stream) && scrConn.attachStreams.push(stream),
+                        "undefined" != typeof StreamsHandler && StreamsHandler.setHandlers(stream, !0, scrConn),
+                        scrConn.streamEvents[stream.streamid] = {
+                            stream: stream,
+                            type: "local",
+                            mediaElement: mediaElement,
+                            userid: scrConn.userid,
+                            extra: scrConn.extra,
+                            streamid: stream.streamid,
+                            blobURL: mediaElement.src || URL.createObjectURL(stream),
+                            isAudioMuted: !0
+                        };
+                        console.log(scrConn.streamEvents[stream.streamid]);
+                        /*setHarkEvents(scrConn, scrConn.streamEvents[stream.streamid]),*/
+                        /*setMuteHandlers(scrConn, scrConn.streamEvents[stream.streamid]),*/
+                        scrConn.onstream(scrConn.streamEvents[stream.streamid])
+                    }else if(stream.id){
+                        console.log("using id");
+                        mediaElement.id = stream.id,
+                        mediaElement.muted = !0,
+                        mediaElement.volume = 0,
+                        -1 === scrConn.attachStreams.indexOf(stream) && scrConn.attachStreams.push(stream),
+                        "undefined" != typeof StreamsHandler && StreamsHandler.setHandlers(stream, !0, scrConn),
+                        scrConn.streamEvents[stream.id] = {
+                            stream: stream,
+                            type: "local",
+                            mediaElement: mediaElement,
+                            userid: scrConn.userid,
+                            extra: scrConn.extra,
+                            streamid: stream.id,
+                            blobURL: mediaElement.src || URL.createObjectURL(stream),
+                            isAudioMuted: !0
+                        };
+                        console.log(scrConn.streamEvents[stream.id]);
+                        /*setHarkEvents(scrConn, scrConn.streamEvents[stream.streamid]),*/
+                        /*setMuteHandlers(scrConn, scrConn.streamEvents[stream.streamid]),*/
+                        scrConn.onstream(scrConn.streamEvents[stream.id])
+                    }else{
+                        alert("screenshare has neither streamid not id");
+                    }
+                }, scrConn);
 
-            }, scrConn);
-
-        },
-        function error(err) {
-            if (isChrome && location.protocol === 'http:') {
-                alert('Please test this WebRTC experiment on HTTPS.');
-            } else if(isChrome) {
-                alert('Screen capturing is either denied or not supported. Please install chrome extension for screen capturing or run chrome with command-line flag: --enable-usermedia-screen-capturing');
-            } else if(!!navigator.mozGetUserMedia) {
-                alert(Firefox_Screen_Capturing_Warning);
+            },
+            function error(err) {
+                console.log(" Error in webrtcdevScreenConstraints " , err);
+                if (isChrome && location.protocol === 'http:') {
+                    alert('Please test this WebRTC experiment on HTTPS.');
+                } else if(isChrome) {
+                    alert('Screen capturing is either denied or not supported. Please install chrome extension for screen capturing or run chrome with command-line flag: --enable-usermedia-screen-capturing');
+                } else if(!!navigator.mozGetUserMedia) {
+                    alert(Firefox_Screen_Capturing_Warning);
+                }
             }
-        }
-    );
+        );
+   }catch(e){
+        console.log(" Error in webrtcdevScreenConstraints " , err);
+   }
+
 }
 
 function getRMCMediaElement(stream, callback, connection) {
@@ -377,11 +392,17 @@ function webrtcdevStopShareScreen(){
         screenStreamid:screenStreamId,
         message:"stoppedscreenshare"
     });
+
     window.postMessage("webrtcdev-extension-stopsource", "*");
     scrConn.onstreamended();
     scrConn.close();
-    console.log("Sender stopped: screenRoomid "+ screenRoomid +" || Screen stoppped "  , scrConn);
-
+    scrConn.closeEntireSession();
+    console.log("Sender stopped: screenRoomid "+ screenRoomid +" || Screen stoppped "  , scrConn , document.getElementById(screenshareobj.screenshareContainer));
+    
+    if(screenShareStreamLocal){
+        screenShareStreamLocal.stop();
+        screenShareStreamLocal=null;        
+    }
     //scrConn.videosContainer.hidden=true;
     /*scrConn.leave();*/
     //removeScreenViewButton();
@@ -560,35 +581,17 @@ function onScreenshareExtensionCallback(event){
     }
 }
 
-function detectExtensionScreenshare(extensionID){
+function detectExtension(extensionID , callback){
 
-    getChromeExtensionStatus(extensionID, function(status) {
+    getChromeExtensionStatus(extensionID, function(status) {  
         console.log( "detectExtensionScreenshare for ", extensionID, " -> " , status);
-        console.log(" screenshareobj " , screenshareobj);
+        //reset extension's local storage objects 
+        
+        window.postMessage("reset-webrtcdev-extension", "*");
 
-        if(status == 'installed-enabled') {
-            var screenShareButton=createOrAssignScreenshareButton();
-            hideScreenInstallButton();
-        }
-        
-        if(status == 'installed-disabled') {
-            shownotification("chrome extension is installed but disabled.");
-            var screenShareButton=createOrAssignScreenshareButton();
-            hideScreenInstallButton();
-        }
-        
-        if(status == 'not-installed') {
-            if(screenshareobj.button.installButton.id && document.getElementById(screenshareobj.button.installButton.id)) 
-                assignScreenInstallButton(extensionID);
-            else
-                createScreenInstallButton(extensionID);
-        }
-        
-        if(status == 'not-chrome') {
-            // using non-chrome browser
-        }
-
+        callback(status);
     });
+
 }
 
 
