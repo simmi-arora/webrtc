@@ -796,7 +796,7 @@ video::-webkit-media-controls-current-time-display {}*/
     padding: 4px 4px 4px 4px;
 }
 
-#countdownSecond{
+#countdownSeconds{
   background-color: white;
     color: #616150;
     padding: 4px 4px 4px 4px;

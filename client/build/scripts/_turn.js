@@ -35,10 +35,11 @@ function getICEServer(username , secretkey , domain , appname , roomname , secur
     xhr.onload = function () {
         console.log(xhr.responseText);
         if(JSON.parse(xhr.responseText).d==null){
-            webrtcdevIceServers="err";
+            webrtcdevIceServers = "err";
             shownotification(" media not able to pass through "+ JSON.parse(xhr.responseText).e);
         }else{
-            webrtcdevIceServers=JSON.parse(xhr.responseText).d.iceServers;
+            webrtcdevIceServers = JSON.parse(xhr.responseText).d.iceServers;
+            console.log(" otained iceServers" , webrtcdevIceServers);
         }
     };
     xhr.onerror = function () {

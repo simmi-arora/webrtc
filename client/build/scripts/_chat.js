@@ -114,10 +114,16 @@ function updateWhotyping(data){
 }
 
 function sendChatMessage(msg){
+    var userinfo;
+    try{
+        userinfo=getUserinfo(rtcConn.blobURLs[rtcConn.userid], "chat-message.png");
+    }catch(e){
+        userinfo="empty";
+    }
     addNewMessagelocal({
         header: rtcConn.extra.username,
         message: msg,
-        userinfo: getUserinfo(rtcConn.blobURLs[rtcConn.userid], "chat-message.png"),
+        userinfo: userinfo,
         color: rtcConn.extra.color
     });
     rtcConn.send({
@@ -148,7 +154,12 @@ function addNewMessage(e) {
 function addMessageLineformat(messageDivclass, messageheader , message , parent){
     var n = document.createElement("div");
     n.className = messageDivclass; 
-    n.innerHTML = messageheader +" : "+ replaceURLWithHTMLLinks(message);
+    if(messageheader){
+        n.innerHTML = messageheader +" : "+ replaceURLWithHTMLLinks(message);
+    }else{
+        n.innerHTML = replaceURLWithHTMLLinks(message);
+    }
+    
     document.getElementById(parent).insertBefore(n, document.getElementById(parent).firstChild);
 }
 

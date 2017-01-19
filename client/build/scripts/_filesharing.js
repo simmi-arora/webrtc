@@ -39,9 +39,7 @@ function sendFile(file){
 
 function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelperclassName ){
     try{
-
         console.log(" progresshelper " , uuid , peerinfo , filename , fileSize,  progressHelperclassName );
-
         var progressDiv = document.createElement("div");
         progressDiv.id = filename,
         progressDiv.title = uuid + filename,
@@ -359,7 +357,7 @@ function createFileSharingBox(peerinfo, parent){
 
     var fileControlBar=document.createElement("p");
     fileControlBar.id =peerinfo.fileShare.container+"controlBar";
-    fileControlBar.appendChild(document.createTextNode("File Viewer for "+ peerinfo.name+ "     "));
+    fileControlBar.appendChild(document.createTextNode("File Viewer "+ peerinfo.name+ "     "));
 
     var minButton= document.createElement("span");
     /*    minButton.className="btn btn-default glyphicon glyphicon-import closeButton";
@@ -449,10 +447,10 @@ function createFileListingBox(peerinfo, parent){
     /*--------------------------------add for File List control Bar--------------------*/
 
     var fileListControlBar=document.createElement("p");
-    fileListControlBar.appendChild(document.createTextNode("List of Uploaded Files"));
+    fileListControlBar.appendChild(document.createTextNode("Uploaded Files "+ peerinfo.name+ "     "));
 
     /*
-    var fileHelpButton= document.createElement("span");
+    var fileHelpButton= document.createElement("span");s
     fileHelpButton.className="btn btn-default glyphicon glyphicon-question-sign closeButton";
     fileHelpButton.innerHTML="Help";
     /*fileListControlBar.appendChild(fileHelpButton);*/
