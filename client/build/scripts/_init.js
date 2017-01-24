@@ -32,6 +32,8 @@ var localVideo=null, selfVideo=null, remoteVideos=[];
 var localobj , remoteobj;
 
 var selfusername="" , selfemail="" , selfcolor="" ;
+var remoteusername="" , remoteemail="" , remotecolor="" ;
+
 var latitude="" , longitude="" , operatingsystem="";
 
 /* webrtc session intilization */

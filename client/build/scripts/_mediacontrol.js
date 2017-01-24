@@ -32,7 +32,7 @@ function attachUserDetails(vid , peerinfo){
     //nameBox.className="well well-sm";
     nameBox.setAttribute("style","background-color:"+ peerinfo.color);
     nameBox.innerHTML = peerinfo.name+"<br/>";
-    //    vid.parentNode.appendChild(nameBox); 
+    // vid.parentNode.appendChild(nameBox); 
     vid.parentNode.insertBefore(nameBox, vid.parentNode.firstChild);
 }
 

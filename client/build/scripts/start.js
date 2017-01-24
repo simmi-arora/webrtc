@@ -58,13 +58,20 @@ try{
             }
         }
 
-
         if(localobj.hasOwnProperty('userdetails')){
             console.log("userdetails " , localobj.userdetails);
-            selfusername = (localobj.userdetails.username  == undefined ? "user": localobj.userdetails.username);
+            selfusername = (localobj.userdetails.username  == undefined ? "LOCAL": localobj.userdetails.username);
             selfcolor    = (localobj.userdetails.usercolor == undefined ? "orange": localobj.userdetails.usercolor);
-            selfemail    = (localobj.userdetails.useremail == undefined ? "noemail": localobj.userdetails.useremail);
+            selfemail    = (localobj.userdetails.useremail == undefined ? "unknown": localobj.userdetails.useremail);
         }
+
+        if(remoteobj.hasOwnProperty('userdetails')){
+            console.log("userdetails " , remoteobj.userdetails);
+            remoteusername = (remoteobj.userdetails.username  == undefined ? "REMOTE": remoteobj.userdetails.username);
+            remotecolor    = (remoteobj.userdetails.usercolor == undefined ? "orange": remoteobj.userdetails.usercolor);
+            remoteemail    = (remoteobj.userdetails.useremail == undefined ? "unknown": remoteobj.userdetails.useremail);
+        }
+
     };
 
     var WebRTCdev= function(session, widgets){
@@ -648,7 +655,7 @@ try{
                 }
 
             }else{
-                alert(" sigbller doesnt allow channel open");
+                alert(" signaller doesnt allow channel open");
             }
         });
 
@@ -669,7 +676,7 @@ try{
                 updatePeerInfo( rtcConn.userid , selfusername , selfcolor, selfemail, "local" );
 
                 for (x in rtcConn.remoteUsers){
-                    updatePeerInfo(rtcConn.remoteUsers[x] ,"REMOTE" , "#BFD9DA" , "", "remote");
+                    updatePeerInfo(rtcConn.remoteUsers[x] ,remoteusername , remotecolor , remoteemail, "remote");
                 }
 
                 rtcConn.join(event.channel);
@@ -705,7 +712,6 @@ try{
             if(localVideo && document.getElementsByName(localVideo)[0]){
                 var vid = document.getElementsByName(localVideo)[0];
                 vid.muted = true;
-                /*vid.style.opacity = 1;*/
                 vid.className=localobj.videoClass;
                 attachMediaStream(vid, peerInfo.stream);
 

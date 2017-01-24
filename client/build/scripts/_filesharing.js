@@ -62,14 +62,14 @@ function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelpe
 function addNewFileLocal(e) {
     console.log("addNewFileLocal message ", e);
     if ("" != e.message && " " != e.message) {
-        alert("addNewFileLocal");
+        console.log("addNewFileLocal");
     }
 }
 
 function addNewFileRemote(e) {
     console.log("addNewFileRemote message ", e);
     if ("" != e.message && " " != e.message) {
-        alert("addNewFileRemote");
+        console.log("addNewFileRemote");
     }
 }
 
@@ -172,7 +172,6 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         if(repeatFlagRemoveButton != filename){
             hideFile(uuid , elementDisplay , fileurl , filename , filetype);
             //console.log("remove button clicked || to be deleted " , event.target.parentNode.id);
-            //alert("remove button clciked ");
             //var tobeHiddenElement = event.target.parentNode.id;
             var tobeHiddenElement=filename;
             rtcConn.send({
@@ -230,7 +229,6 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
         elementDisplay=divNitofcation;
 
     }else if(filetype.indexOf("image")>-1){
-        alert(" fileshare image");
         var image= document.createElement("img");
         image.src= fileurl;
         image.style.width="100%";
@@ -343,7 +341,7 @@ function createFileSharingBox(peerinfo, parent){
         return;
 
     var fileSharingBox=document.createElement("div");
-    fileSharingBox.className= "col-sm-6 fileViewing1Box";
+    fileSharingBox.className= "col-sm-6 fileViewing-box";
     fileSharingBox.setAttribute("style","background-color:"+peerinfo.color);
     fileSharingBox.id=peerinfo.fileShare.outerbox;
 
