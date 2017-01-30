@@ -5,24 +5,33 @@ cursor sharing
 
 var cursorX;
 var cursorY;
+var cursorinterval;
 
 function placeCursor(element , x_pos, y_pos) {
-  //console.log(" place cursor "  , x_pos , y_pos);
   element.style.position = "absolute";
-/*  element.style.left = '100px';
+/*element.style.left = '100px';
   element.style.top = '100px';*/
   element.style.left = x_pos+'px';
   element.style.top = y_pos+'px';
 }
 
 function startShareCursor(){
+  document.getElementById("cursor1").setAttribute("style","display:block");
   document.onmousemove = function(e){
-    cursorX = e.pageX;
+    cursorX = e.pageX + 10 ;
     cursorY = e.pageY;
   }
-  setInterval(shareCursor, 500);
+  cursorinterval = setInterval(shareCursor, 500);
 }
 
+function stopShareCursor(){
+    document.getElementById("cursor1").setAttribute("style","display:none");
+    rtcConn.send({
+        type: "pointer", 
+        action : "stopCursor"
+    });
+   clearInterval(cursorinterval);
+}
 /*function assignButtonCursor(bid){
   var button =document.getElementById(bid);
   button.onclick=function(){
@@ -32,10 +41,13 @@ function startShareCursor(){
 
 function shareCursor(){
     var element = document.getElementById("cursor1");
-    placeCursor( element, cursorX, cursorY);
+    element.hidden=false;
+
+    placeCursor( element, cursorX, cursorY );
 
     rtcConn.send({
         type:"pointer", 
+        action : "startCursor",
         corX: cursorX , 
         corY: cursorY
     });
@@ -53,8 +65,8 @@ function createCursorButton(controlBarName, peerinfo, streamid, stream ){
             startShareCursor();
             button.className=cursorobj.button.class_off;
             button.innerHTML=cursorobj.button.html_off;
-        } 
-        else{            
+        }else if (button.className == cursorobj.button.class_off ){            
+            stopShareCursor();
             button.className=cursorobj.button.class_on;
             button.innerHTML=cursorobj.button.html_on;
         }     

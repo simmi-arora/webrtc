@@ -59,13 +59,12 @@ function isChromeExtensionAvailable(callback) {
 }
 
 function webrtcdevPrepareScreenShare(callback){
-    alert(" peparing fresh screenshare ");
     var time            = new Date().getUTCMilliseconds(); 
     if(screenRoomid == null)
         screenRoomid    = "screenshare"+"_"+sessionid+"_"+time;
 
     console.log(" webrtcdevPrepareScreenShare" + screenRoomid);
-    console.log("Screenshare ||  filling up iceServers " , turn , webrtcdevIceServers);
+    console.log(" Screenshare ||  filling up iceServers " , turn , webrtcdevIceServers);
 
     scrConn             = new RTCMultiConnection();
     if(turn!='none'){
@@ -82,7 +81,6 @@ function webrtcdevPrepareScreenShare(callback){
         screen: true,
         oneway: true
     },
-    scrConn.iceServers  = webrtcdevIceServers ,
     scrConn.sdpConstraints.mandatory = {
         OfferToReceiveAudio: false,
         OfferToReceiveVideo: true
@@ -158,6 +156,8 @@ function webrtcdevPrepareScreenShare(callback){
     };
 
     console.log(" webrtcdevscreenshare calling callback for socket.io operations");
+
+    alert(" Preparing fresh Screenshare "+ screenRoomid);
     callback(screenRoomid);
 }
 

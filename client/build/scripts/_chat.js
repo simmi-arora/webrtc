@@ -1,8 +1,6 @@
 /********************************************************************************8
         Chat
 **************************************************************************************/
-
-
 function createChatButton(obj){
     var button= document.createElement("span");
     button.className= chatobj.button.class_on;
@@ -84,7 +82,9 @@ function assignChatBox(obj){
     var chatInput= document.getElementById(chatobj.inputBox.text_id);
     chatInput.onkeypress=function(e){
         if (e.keyCode == 13) {
-            sendChatMessage(chatInput.value);
+            var peerinfo = findPeerInfo( selfuserid );
+            console.log(" chat " , selfuserid , peerinfo);
+            sendChatMessage(chatInput.value , peerinfo);
             chatInput.value = "";
         }
     };
@@ -92,8 +92,10 @@ function assignChatBox(obj){
     if(document.getElementById(chatobj.inputBox.sendbutton_id)){
         var chatButton= document.getElementById(chatobj.inputBox.sendbutton_id);
         chatButton.onclick=function(e){
+
+            var peerinfo = findPeerInfo( selfuserid );
             var chatInput=document.getElementById(chatobj.inputBox.text_id);
-            sendChatMessage(chatInput.value);
+            sendChatMessage(chatInput.value , peerinfo);
             chatInput.value = "";
         }  
     }
@@ -113,22 +115,24 @@ function updateWhotyping(data){
     document.getElementById("whoTyping").innerHTML=data;
 }
 
-function sendChatMessage(msg){
-    var userinfo;
-    try{
-        userinfo=getUserinfo(rtcConn.blobURLs[rtcConn.userid], "chat-message.png");
+function sendChatMessage(msg,  peerinfo){
+    /*var userinfo;*/
+    /*try{
+        userinfo = getUserinfo(rtcConn.blobURLs[rtcConn.userid], "chat-message.png");
     }catch(e){
-        userinfo="empty";
-    }
+        userinfo = "empty";
+    }*/
     addNewMessagelocal({
         header: rtcConn.extra.username,
         message: msg,
-        userinfo: userinfo,
+        userinfo: peerinfo,
         color: rtcConn.extra.color
     });
+
     rtcConn.send({
         type:"chat", 
-        message:msg 
+        userinfo: peerinfo,
+        message: msg 
     });
 }
 
@@ -138,17 +142,39 @@ function replaceURLWithHTMLLinks(text) {
   return text.replace(exp,"<a href='$1'>$1</a>"); 
 }
 
-function addNewMessagelocal(e) {
-    console.log(" addNewMessagelocal-chatobj-->"  , chatobj);
+function addNewMessagelocal(e ) {
     if ("" != e.message && " " != e.message) {
-        addMessageLineformat("user-activity user-activity-right localMessageClass" , e.header , e.message , chatobj.chatBox.id);
+        addMessageSnapshotFormat("user-activity user-activity-right localMessageClass" , e.userinfo , e.message , chatobj.chatBox.id);
     }
 }
 
 function addNewMessage(e) {
     if ("" != e.message && " " != e.message) {
-        addMessageLineformat("user-activity user-activity-right remoteMessageClass" , e.header , e.message , chatobj.chatBox.id);
+        addMessageSnapshotFormat("user-activity user-activity-right remoteMessageClass" , e.userinfo , e.message , chatobj.chatBox.id);
     }
+}
+
+function addMessageSnapshotFormat(messageDivclass, userinfo , message , parent){
+    var n = document.createElement("div");
+    n.className = messageDivclass; 
+    console.log("addNewMessagelocal" , userinfo);
+
+      takeSnapshot(userinfo, function(datasnapshot) {    
+            var image= document.createElement("img");
+            image.src= datasnapshot;
+            image.style.height="40px";
+
+            var t = document.createElement("span");
+            t.innerHTML =  replaceURLWithHTMLLinks(message);
+
+            n.appendChild(image) ;
+            n.appendChild(t);
+            //n.innerHTML = image +" : "+ replaceURLWithHTMLLinks(message);
+               // displayFile(peerinfo.uuid , peerinfo, datasnapshot , snapshotname, "imagesnapshot");
+
+        });       
+
+    document.getElementById(parent).insertBefore(n, document.getElementById(parent).firstChild);
 }
 
 function addMessageLineformat(messageDivclass, messageheader , message , parent){

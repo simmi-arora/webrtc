@@ -269,7 +269,7 @@ try{
                                     button.parentNode.setAttribute("style","background:rgba(46, 109, 164, 0.35)");
                                     button.disabled = true;
                                     
-                                    screenRoomid=e.data.message;
+                                    screenRoomid=e.data.screenid;
                                     var selfuserid="temp_"+(new Date().getUTCMilliseconds());
                                     webrtcdevPrepareScreenShare(function(screenRoomid){
                                         //scrConn.join(screenRoomid);  
@@ -280,16 +280,16 @@ try{
                             break;
                             case "chat":
                                 updateWhotyping(e.extra.name+ " has send message");
-                                var userinfo;
+                                /*var userinfo;
                                 try{
                                     userinfo=getUserinfo(rtcConn.blobURLs[e.userid], "chat-message.png");
                                 }catch(e){
                                     userinfo="empty";
-                                }
+                                }*/
                                 addNewMessage({
                                     header: e.extra.name,
                                     message: e.data.message,
-                                    userinfo: userinfo,
+                                    userinfo: e.data.userinfo,
                                     color: e.extra.color
                                 }); 
                             break;
@@ -326,8 +326,19 @@ try{
                                 receiveWebrtcdevCodeeditorSync(e.data.data);
                             break;
                             case "pointer":
-                                var element = document.getElementById("cursor2");
-                                placeCursor( element , e.data.corX , e.data.corY );
+
+                                var elem =document.getElementById("cursor2");
+                                if(elem){
+                                    if(e.data.action=="startCursor"){
+                                        elem.setAttribute("style","display:block");
+                                        placeCursor( elem , e.data.corX , e.data.corY );
+                                    }else if(e.data.action=="stopCursor"){
+                                        elem.setAttribute("style","display:none");
+                                    }
+                                }else{
+                                    alert(" Cursor for remote is not present ");
+                                }
+
                             break;
                             case "timer":
                                 startPeersTime(e.data.time , e.data.zone);
@@ -535,6 +546,11 @@ try{
             }else{
                 createButtonRedial();
             }
+        }
+
+        if(cursorobj.active){
+            document.getElementById("cursor1").setAttribute("style","display:none");
+            document.getElementById("cursor2").setAttribute("style","display:none");
         }
 
         if(timerobj.active){
@@ -1008,12 +1024,16 @@ try{
      * @param {string} userid
      */
     joinWebRTC=function(channel , userid){
-        shownotification("Joining an existing session "+channel);
+        shownotification("Joining an existing session "+channel+ " selfuserid "+ selfuserid);
+        
+        if (selfuserid==null)
+            selfuserid=tempuserid;
+
         socket.emit("join-channel", {
             channel: channel,
-            sender: (selfuserid==null?tempuserid:selfuserid),
+            sender: selfuserid,
             extra: {
-                userid:(selfuserid==null?tempuserid:selfuserid),
+                userid:selfuserid,
                 name:selfusername,
                 color:selfcolor,
                 email:selfemail
@@ -1034,10 +1054,11 @@ try{
     /*window.onload=function(){
         console.log( "Local Storage Channel " ,   localStorage.getItem("channel"));
     };
-
+*/
     window.onunload=function(){
-        console.log(    localStorage.getItem("channel"));
-    };*/
+        console.log( localStorage.getItem("channel"));
+        alert(" Refreshing the Page will loose the session data");
+    };
 
     /**
      * function to interact with background script of chrome extension
@@ -1045,7 +1066,7 @@ try{
      * @name addeventlistener
      */
     window.addEventListener('message', function(event){
-        console.log("------ messahhe from Extension " , event);
+        console.log("------ message from Extension " , event);
         if (event.data.type) {
             if(event.data.type=="screenshare"){
                 onScreenshareExtensionCallback(event);

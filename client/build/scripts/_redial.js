@@ -26,11 +26,14 @@ function createButtonRedial(){
 
 function assignButtonRedial(id){
     document.getElementById(id).onclick=function(){
-        var r = confirm("Do you want to reconnet ?");
+        var r = confirm("Do you want to reconnect ?");
         if (r == true) {
-           rtcConn.rejoin(rtcConn.connectionDescription);
-           $(this).html('<img src="http://www.bba-reman.com/images/fbloader.gif" />');
-           setTimeout(function(){ $(this).html(reconnectobj.button.html )}, 3000);
+            rtcConn.rejoin(rtcConn.connectionDescription);
+            $(this).html('<img src="http://www.bba-reman.com/images/fbloader.gif" />');
+            setTimeout(function(){ 
+            console.log("now " , reconnectobj.button.html );
+            document.getElementById(id).innerHTML= reconnectobj.button.html ;
+          }, 3000);
            //location.reload();
         } else {
            //do nothing
