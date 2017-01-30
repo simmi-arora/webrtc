@@ -278,10 +278,9 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
 }
 
 function displayFile( uuid , peerinfo , _fileurl , _filename , _filetype ){
-    console.log("displayFile peerinfo->",peerinfo);
 
     var parentdom =  document.getElementById(peerinfo.fileShare.container);
-    var filedom=getFileElementDisplayByType(_filetype , _fileurl , _filename);
+    var filedom = getFileElementDisplayByType(_filetype , _fileurl , _filename);
     if(parentdom){
         parentdom.innerHTML="";
         parentdom.appendChild(filedom);
@@ -438,7 +437,7 @@ function createFileListingBox(peerinfo, parent){
         return;
 
     var fileListingBox= document.createElement("div");
-    fileListingBox.className="col-sm-6  filesharing1Box";
+    fileListingBox.className="col-sm-6  filesharing-box";
     fileListingBox.id=peerinfo.fileList.outerbox;
     fileListingBox.setAttribute("style","background-color:"+peerinfo.color);
 

@@ -2,6 +2,7 @@
 Canvas Record 
 *************************************************************************/
 var scrrecordStream = null , scrrecordStreamid = null;
+var scrrecordAudioStream = null , scrrecordAudioStreamid = null;
 
 function syncVideoScreenRecording(data , datatype , dataname ){
     rtcMultiConnection.send({type:datatype, message:data  , name : dataname});
@@ -14,17 +15,15 @@ function autorecordScreenVideo(){
 function assignScreenRecordButton(){
 
     var recordButton = document.getElementById(screenrecordobj.button.id);
-    console.log(" -------recordButton---------" , recordButton);
+
     recordButton.onclick = function() {
         if(recordButton.className==screenrecordobj.button.class_off){
-            console.log(" start recording screen + audio ");
 
             recordButton.className= screenrecordobj.button.class_on ;
             recordButton.innerHTML= screenrecordobj.button.html_on;
             webrtcdevRecordScreen();
 
         }else if(recordButton.className==screenrecordobj.button.class_on){
-            console.log(" stopped recording screen + audio ");
 
             recordButton.className= screenrecordobj.button.class_off ;
             recordButton.innerHTML= screenrecordobj.button.html_off;
@@ -35,7 +34,9 @@ function assignScreenRecordButton(){
                 peerinfo = findPeerInfo(selfuserid);
             else
                 peerinfo = findPeerInfo(rtcConn.userid);
+
             stopRecord(peerinfo , scrrecordStreamid, scrrecordStream);
+            stopRecord(peerinfo , scrrecordAudioStreamid, scrrecordAudioStream);
             scrrecordStreamid = null;
             scrrecordStream = null ;
         }
@@ -126,7 +127,7 @@ function assignScreenRecordButton(){
     };
 }*/
 
-function createScreenRecordButton(){
+/*function createScreenRecordButton(){
 
     var recordButton= document.createElement("span");
     recordButton.className= screenrecordobj.button.class_off ;
@@ -134,12 +135,11 @@ function createScreenRecordButton(){
     recordButton.onclick = function() {
         if(recordButton.className==screenrecordobj.button.class_off){
 
-            var element = document.body;
-            /*    
+            var element = document.body;  
             recorder = RecordRTC(element, {
                 type: 'canvas',
                 showMousePointer: true
-            });*/
+            });
 
             var canvas2d = document.createElement('canvas');
             canvas2d.id="screenrecordCanvas";
@@ -216,7 +216,7 @@ function createScreenRecordButton(){
     var li =document.createElement("li");
     li.appendChild(recordButton);
     document.getElementById("topIconHolder_ul").appendChild(li);       
-}
+}*/
 
 //call with getSourceIdScreenrecord(function(){} , true)
 function getSourceIdScreenrecord(callback, audioPlusTab) {
@@ -244,6 +244,38 @@ function onScreenrecordExtensionCallback(event){
 
 function webrtcdevScreenRecordConstraints(chromeMediaSourceId){
     console.log(" webrtcdevScreenRecordConstraints :" + chromeMediaSourceId);
+    
+    navigator.getUserMedia(
+        {
+            audio: true,
+            video: false
+        },
+        function stream(event) {
+            console.log(" webrtcdevScreenRecordConstraints stream");
+            console.log("screenRecord stream "  , event );
+
+            var peerinfo;
+            if(selfuserid)
+                peerinfo = findPeerInfo(selfuserid);
+            else
+                peerinfo = findPeerInfo(rtcConn.userid);
+
+            scrrecordAudioStreamid = event.id ;
+            scrrecordAudioStream = event ;
+            startRecord(peerinfo ,  scrrecordAudioStreamid , scrrecordAudioStream);
+        },
+        function error(err) {
+            console.log(" Error in webrtcdevScreenRecordConstraints "  , err);
+            if (isChrome && location.protocol === 'http:') {
+                alert('Please test this WebRTC experiment on HTTPS.');
+            } else if(isChrome) {
+                alert('Screen capturing is either denied or not supported. Please install chrome extension for screen capturing or run chrome with command-line flag: --enable-usermedia-screen-capturing');
+            } else if(!!navigator.mozGetUserMedia) {
+                alert(Firefox_Screen_Capturing_Warning);
+            }
+        }
+    );
+
     navigator.getUserMedia(
         {
             audio: false,
@@ -287,6 +319,7 @@ function webrtcdevScreenRecordConstraints(chromeMediaSourceId){
             }
         }
     );
+
 }
 
 
@@ -299,4 +332,5 @@ function webrtcdevStopRecordScreen(){
     console.log("webrtcdevStopRecordScreen screenRoomid");
     window.postMessage("webrtcdev-extension-stopsource-screenrecord", "*");
     scrrecordStream.stop();
+    scrrecordAudioStream.stop();
 }
