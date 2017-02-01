@@ -548,6 +548,7 @@ function createScreenshareButton(){
 function assignScreenShareButton(){
     var button=document.getElementById(screenshareobj.button.shareButton.id);
     button.onclick= function(event) {    
+        alert(" hello screenshare ");
         if(button.className==screenshareobj.button.shareButton.class_off){
             webrtcdevSharescreen();
             button.className=screenshareobj.button.shareButton.class_on;
