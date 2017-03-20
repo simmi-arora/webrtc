@@ -52,12 +52,12 @@ function attachControlButtons( vid ,  peerinfo){
     var snapshotViewer =  peerinfo.fileSharingContainer ;
 
     //Preventing multple control bars 
-    var c=vid.parentNode.childNodes;
+    var c = vid.parentNode.childNodes;
     for (i = 0; i < c.length; i++) {
         console.log("ChildNode of video Parent " , c[i]);
         if(c[i].nodeName=="DIV" && c[i].id!=undefined){
             if( c[i].id.indexOf("control")>-1 ){
-                alert("control bar exists already delete the previos one before adding new one");
+                console.log("control bar exists already  , delete the previous one before adding new one");
                 vid.parentNode.removeChild(c[i]);
             }
         }
@@ -108,13 +108,13 @@ function attachControlButtons( vid ,  peerinfo){
         control Buttons attchmenet to Video Element
 *******************************************/
 function createFullScreenButton(controlBarName, peerinfo, streamid, stream ){
-    var button=document.createElement("span");
-    button.id=controlBarName+"fullscreeButton";
-    button.className=minmaxobj.max.button.class_off;
-    button.innerHTML=minmaxobj.max.button.html_off;
+    var button = document.createElement("span");
+    button.id = controlBarName+"fullscreeButton";
+    button.className = minmaxobj.max.button.class_off;
+    button.innerHTML = minmaxobj.max.button.html_off;
     button.onclick = function() {
         if(button.className == minmaxobj.max.button.class_off){
-            var vid=document.getElementById(peerinfo.videoContainer);
+            var vid = document.getElementById(peerinfo.videoContainer);
             vid.webkitRequestFullScreen();
             button.className=minmaxobj.max.button.class_on;
             button.innerHTML=minmaxobj.max.button.html_on;
@@ -130,19 +130,19 @@ function createFullScreenButton(controlBarName, peerinfo, streamid, stream ){
 
 
 function createMinimizeVideoButton(controlBarName, peerinfo, streamid, stream){
-    var button=document.createElement("span");
-    button.id=controlBarName+"minmizevideoButton";
-    button.className=minmaxobj.min.button.class_off;
-    button.innerHTML=minmaxobj.min.button.html_off;
+    var button = document.createElement("span");
+    button.id = controlBarName+"minmizevideoButton";
+    button.className = minmaxobj.min.button.class_off;
+    button.innerHTML = minmaxobj.min.button.html_off;
     var vid=document.getElementById(peerinfo.videoContainer);
     button.onclick = function() {
         if(button.className == minmaxobj.min.button.class_off){
-            vid.hidden=false;
+            vid.hidden = true;
             button.className=minmaxobj.min.button.class_on;
             button.innerHTML=minmaxobj.min.button.html_on;
         } 
         else{ 
-            vid.hidden=true;           
+            vid.hidden = false;           
             button.className=minmaxobj.min.button.class_off;
             button.innerHTML=minmaxobj.min.button.html_off;
         }     

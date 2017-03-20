@@ -1,5 +1,4 @@
 function setSettingsAttributes(){
-	$("#inspectorlink").val(window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0');
     
     $("#channelname").val(rtcConn.channel);
     $("#userid").val(rtcConn.userid);
@@ -12,6 +11,8 @@ function setSettingsAttributes(){
     $("#outAudio").prop('checked',outgoingAudio);
     $("#outVideo").prop('checked',outgoingVideo);
     $("#outData").prop('checked',outgoingData);
+
+    $("#role").val(role);
 
     $("#btnGetPeers").click(function(){
        // $("#alllpeerinfo").html(JSON.stringify(webcallpeers,null,6));
@@ -33,9 +34,9 @@ function setSettingsAttributes(){
 }
 
 function createSession(){
-    var role= $("#roleMakeSession").val();
-    var appname= $("#appnameMakeSession").val();
-    var username= $("#userNameMakeSession").val();
+    var role = $("#roleMakeSession").val();
+    var appname = $("#appnameMakeSession").val();
+    var username = $("#userNameMakeSession").val();
     var sessionname = $("#sessionNameMakeSession").val();
     var sessionlink = "https://"+window.location.host+window.location.pathname+"#"+sessionname+"?"+"appname="+appname+"&role="+role+"&audio="+1+"&video="+1+"&name="+username;
 /*    if(sessionlink.){

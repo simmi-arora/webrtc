@@ -28,17 +28,37 @@ function assignScreenRecordButton(){
             recordButton.className= screenrecordobj.button.class_off ;
             recordButton.innerHTML= screenrecordobj.button.html_off;
             webrtcdevStopRecordScreen();
-            
-            var peerinfo;
-            if(selfuserid)
-                peerinfo = findPeerInfo(selfuserid);
-            else
-                peerinfo = findPeerInfo(rtcConn.userid);
 
-            stopRecord(peerinfo , scrrecordStreamid, scrrecordStream);
-            stopRecord(peerinfo , scrrecordAudioStreamid, scrrecordAudioStream);
-            scrrecordStreamid = null;
-            scrrecordStream = null ;
+            //stopRecord(peerinfo , scrrecordStreamid, scrrecordStream);
+            //stopRecord(peerinfo , scrrecordAudioStreamid, scrrecordAudioStream);
+            
+            var scrrecordStreamBlob;
+            var scrrecordAudioStreamBlob;
+
+            var recorder1 = listOfRecorders[scrrecordStreamid];
+            recorder1.stopRecording(function() {
+                scrrecordStreamBlob = recorder1.getBlob();
+            });
+
+            var recorder2 = listOfRecorders[scrrecordAudioStreamid];
+            recorder2.stopRecording(function() {
+                scrrecordAudioStreamBlob = recorder2.getBlob();
+            });
+
+            setTimeout(function(){ 
+                alert("wait for the screen recoridng to compile ");
+
+                console.log(" ===2 blobs====", scrrecordStreamBlob , scrrecordAudioStreamBlob); 
+                convertStreams(scrrecordStreamBlob , scrrecordAudioStreamBlob);
+                
+                scrrecordStreamid = null;
+                scrrecordStream = null ;
+
+                scrrecordAudioStreamid = null;
+                scrrecordAudioStream = null ;
+
+             }, 5000);
+
         }
     };
 }
@@ -322,7 +342,6 @@ function webrtcdevScreenRecordConstraints(chromeMediaSourceId){
 
 }
 
-
 function webrtcdevRecordScreen() {
     console.log("webrtcdevRecordScreen");
     getSourceIdScreenrecord(function(){} , true);
@@ -333,4 +352,147 @@ function webrtcdevStopRecordScreen(){
     window.postMessage("webrtcdev-extension-stopsource-screenrecord", "*");
     scrrecordStream.stop();
     scrrecordAudioStream.stop();
+}
+
+var workerPath = 'https://archive.org/download/ffmpeg_asm/ffmpeg_asm.js';
+
+function processInWebWorker() {
+    var blob = URL.createObjectURL(new Blob(['importScripts("' + workerPath + '");var now = Date.now;function print(text) {postMessage({"type" : "stdout","data" : text});};onmessage = function(event) {var message = event.data;if (message.type === "command") {var Module = {print: print,printErr: print,files: message.files || [],arguments: message.arguments || [],TOTAL_MEMORY: message.TOTAL_MEMORY || false};postMessage({"type" : "start","data" : Module.arguments.join(" ")});postMessage({"type" : "stdout","data" : "Received command: " +Module.arguments.join(" ") +((Module.TOTAL_MEMORY) ? ".  Processing with " + Module.TOTAL_MEMORY + " bits." : "")});var time = now();var result = ffmpeg_run(Module);var totalTime = now() - time;postMessage({"type" : "stdout","data" : "Finished processing (took " + totalTime + "ms)"});postMessage({"type" : "done","data" : result,"time" : totalTime});}};postMessage({"type" : "ready"});'], {
+        type: 'application/javascript'
+    }));
+
+    var worker = new Worker(blob);
+    URL.revokeObjectURL(blob);
+    return worker;
+}
+
+var worker;
+var videoFile = !!navigator.mozGetUserMedia ? 'video.gif' : 'video.webm';
+
+function convertStreams(videoBlob, audioBlob) {
+    var vab;
+    var aab;
+    var buffersReady;
+    var workerReady;
+    var posted = false;
+
+    var fileReader1 = new FileReader();
+    fileReader1.onload = function() {
+        vab = this.result;
+
+        if (aab) buffersReady = true;
+
+        if (buffersReady && workerReady && !posted) postMessage();
+    };
+
+    var fileReader2 = new FileReader();
+    fileReader2.onload = function() {
+        aab = this.result;
+
+        if (vab) buffersReady = true;
+
+        if (buffersReady && workerReady && !posted) postMessage();
+    };
+
+    console.log("videoBlob ", videoBlob);
+    console.log("audioBlob ", audioBlob);
+
+    fileReader1.readAsArrayBuffer(videoBlob);
+    fileReader2.readAsArrayBuffer(audioBlob);
+
+    if (!worker) {
+        worker = processInWebWorker();
+    }
+
+    worker.onmessage = function(event) {
+        var message = event.data;
+        if (message.type == "ready") {
+            console.log('<a href="'+ workerPath +'" download="ffmpeg-asm.js">ffmpeg-asm.js</a> file has been loaded.');
+            workerReady = true;
+            if (buffersReady)
+                postMessage();
+        } else if (message.type == "stdout") {
+            console.log(message.data);
+        } else if (message.type == "start") {
+            console.log('<a href="'+ workerPath +'" download="ffmpeg-asm.js">ffmpeg-asm.js</a> file received ffmpeg command.');
+        } else if (message.type == "done") {
+            console.log(JSON.stringify(message));
+
+            var result = message.data[0];
+            console.log(JSON.stringify(result));
+
+            var blob = new Blob([result.data], {
+                type: 'video/mp4'
+            });
+
+            console.log(JSON.stringify(blob));
+
+            PostBlob(blob);
+        }
+    };
+
+    var postMessage = function() {
+        posted = true;
+
+        worker.postMessage({
+            type: 'command',
+            arguments: [
+                '-i', videoFile,
+                '-i', 'audio.wav',
+                '-c:v', 'mpeg4',
+                '-c:a', 'vorbis',
+                '-b:v', '6400k',
+                '-b:a', '4800k',
+                '-strict', 'experimental', 'output.mp4'
+            ],
+            files: [
+                {
+                    data: new Uint8Array(vab),
+                    name: videoFile
+                },
+                {
+                    data: new Uint8Array(aab),
+                    name: "audio.wav"
+                }
+            ]
+        });
+    };
+}
+
+function PostBlob(blob) {
+
+    var peerinfo;
+    if(selfuserid){
+        peerinfo = findPeerInfo(selfuserid);
+    }else{
+        peerinfo = findPeerInfo(rtcConn.userid);
+    }
+
+    var recordVideoname = "recordedvideo"+ new Date().getTime();
+    peerinfo.filearray.push(recordVideoname);
+    var numFile= document.createElement("div");
+    numFile.value= peerinfo.filearray.length;
+    var fileurl=URL.createObjectURL(blob);
+
+   // displayList(peerinfo.uuid , peerinfo  ,fileurl , recordVideoname , "videoRecording");
+   // displayFile(peerinfo.uuid , peerinfo , fileurl , recordVideoname , "videoRecording");
+   
+    var video = document.createElement('video');
+    video.controls = true;
+    var source = document.createElement('source');
+    source.src = URL.createObjectURL(blob);
+    source.type = 'video/mp4; codecs=mpeg4';
+    video.appendChild(source);
+    video.download = 'Play mp4 in VLC Player.mp4';
+    
+    document.body.appendChild(video);
+/*    var h2 = document.createElement('h2');
+    h2.innerHTML = '<a href="' + source.src + '" target="_blank" download="Play mp4 in VLC Player.mp4">Download Converted mp4 and play in VLC player!</a>';
+    inner.appendChild(h2);
+    h2.style.display = 'block';
+    inner.appendChild(video);*/
+
+    video.tabIndex = 0;
+    video.focus();
+    video.play();
 }

@@ -12,9 +12,13 @@ function createButtonRedial(){
     reconnectButton.onclick=function(){
         var r = confirm("Do you want to reconnet ?");
         if (r == true) {
-           //location.reload();
-           $(this).html('<img src="http://www.bba-reman.com/images/fbloader.gif" />');
-           setTimeout(function(){ $(this).html(reconnectobj.button.html )}, 3000);
+          //location.reload();
+
+          $(this).html('<img src="http://www.bba-reman.com/images/fbloader.gif" />');
+           setTimeout(function(){ 
+            $(this).html(reconnectobj.button.html )
+          }, 3000);
+
         } else {
            //do nothing
         }
@@ -28,12 +32,19 @@ function assignButtonRedial(id){
     document.getElementById(id).onclick=function(){
         var r = confirm("Do you want to reconnect ?");
         if (r == true) {
+
+            //rtcConn.rejoin(rtcConn.connectionDescription);
+            if (!rtcConn.peers[rtcConn.connectionDescription.remoteUserId]) return;
+            rtcConn.peers[rtcConn.connectionDescription.remoteUserId].peer.close();
+
             rtcConn.rejoin(rtcConn.connectionDescription);
+
             $(this).html('<img src="http://www.bba-reman.com/images/fbloader.gif" />');
             setTimeout(function(){ 
-            console.log("now " , reconnectobj.button.html );
+            
             document.getElementById(id).innerHTML= reconnectobj.button.html ;
           }, 3000);
+
            //location.reload();
         } else {
            //do nothing

@@ -108,6 +108,7 @@ function webrtcdevPrepareScreenShare(callback){
             //alert(" scrConn onStream streamid : "+ event.stream.streamid + " " + event.streamid);
             if(event.type=="remote" && event.type!="local"){
                 alert("started streaming remote's screen");
+
                 var userid=event.userid;
                 var type=event.type;
                 var stream=event.stream;
@@ -124,8 +125,24 @@ function webrtcdevPrepareScreenShare(callback){
                 attachMediaStream(video, stream);
                 //video.id = peerInfo.videoContainer;
                 document.getElementById(screenshareobj.screenshareContainer).appendChild(video);
+            
+                rtcConn.send({
+                    type:"screenshare", 
+                    screenid: screenRoomid,
+                    message:"screenshareStartedViewing"
+                });
+
             }else{
                 console.log("started streaming local screen");
+
+                screenshareNotification("","screenshareBegin"); 
+                rtcConn.send({
+                    type:"screenshare", 
+                    screenid: screenRoomid,
+                    screenStreamid: screenStreamId,
+                    message:"startscreenshare"
+                });
+
             }
 
             //createScreenViewButton();
@@ -186,12 +203,12 @@ function webrtcdevSharescreen() {
             if(event) connectScrWebRTC("open" , screenRoomid, selfuserid, []); 
         });
 
-        rtcConn.send({
+/*        rtcConn.send({
             type:"screenshare", 
             screenid: screenRoomid,
             screenStreamid:screenStreamId,
             message:"startscreenshare"
-        });
+        });*/
 
     });
     /*    
@@ -214,8 +231,10 @@ function webrtcdevSharescreen() {
 function connectScrWebRTC(type, channel , userid , remoteUsers){
     console.log("connectScrWebRTC -> " , type, channel , userid , remoteUsers);
     if(type=="open"){
+          
         scrConn.connect(screenRoomid);
         shownotification("Connected to "+ screenRoomid + " for screenshare ");
+
     }else if(type=="join"){
         scrConn.join(screenRoomid);
         shownotification("Connected with existing Screenshare channel "+ screenRoomid);
@@ -546,14 +565,13 @@ function createScreenshareButton(){
 }
 
 function assignScreenShareButton(){
-    var button=document.getElementById(screenshareobj.button.shareButton.id);
-    button.onclick= function(event) {    
-        alert(" hello screenshare ");
-        if(button.className==screenshareobj.button.shareButton.class_off){
+    var button = document.getElementById(screenshareobj.button.shareButton.id);
+    button.onclick = function(event) {    
+        if(button.className == screenshareobj.button.shareButton.class_off){
             webrtcdevSharescreen();
             button.className=screenshareobj.button.shareButton.class_on;
             button.innerHTML=screenshareobj.button.shareButton.html_on;
-        }else if(button.className==screenshareobj.button.shareButton.class_on){
+        }else{
             button.className=screenshareobj.button.shareButton.class_off;
             button.innerHTML=screenshareobj.button.shareButton.html_off;
             webrtcdevStopShareScreen();
@@ -599,4 +617,49 @@ function detectExtension(extensionID , callback){
 function showSrcConn(){
     console.log(" srcConn : "  , srcConn);
     console.log(" srcConn.peers.getAllParticipants() : " , srcConn.peers.getAllParticipants());
+}
+
+
+var counterBeforeFailureNotice=0;
+function screenshareNotification(message , type){
+
+    if(document.getElementById("alertBox")){
+        
+        if(type=="screenshareBegin"){
+
+            var alertDiv =document.createElement("div");
+            document.getElementById("alertBox").hidden=false;
+            document.getElementById("alertBox").innerHTML="";
+            alertDiv.className="alert alert-info";
+            alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ "You have begun sharing screen , waiting for peer to view";
+            document.getElementById("alertBox").appendChild(alertDiv);
+
+            setTimeout(function() {
+                var alertDiv =document.createElement("div");
+                document.getElementById("alertBox").hidden=false;
+                document.getElementById("alertBox").innerHTML="";
+                alertDiv.className="alert alert-danger";
+                alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ "Peer was not able to view screen , please retry";
+                document.getElementById("alertBox").appendChild(alertDiv);
+            }, 20000);
+
+        }else if(type=="screenshareStartedViewing"){
+                
+            var alertDiv =document.createElement("div");
+            document.getElementById("alertBox").hidden=false;
+            document.getElementById("alertBox").innerHTML="";
+            alertDiv.className="alert alert-success";
+            alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ "Peer has started viewing screen ";        
+            document.getElementById("alertBox").appendChild(alertDiv);
+
+        }else if(type=="screenshareError"){
+
+        }else{
+
+        }
+
+    }else{
+        alert(message);
+    }
+
 }

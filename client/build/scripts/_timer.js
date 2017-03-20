@@ -5,12 +5,17 @@ Timer
 var hours,mins,secs;
 
 function startsessionTimer(timerobj){
+    hours=document.getElementById(timerobj.counter.hours);
+    mins=document.getElementById(timerobj.counter.minutes);
+    secs=document.getElementById(timerobj.counter.seconds);
+
     if(timerobj.type=="forward"){
         startForwardTimer();
+        hours.innerHTML=0;
+        mins.innerHTML=0;
+        secs.innerHTML=0;
+
     }else if (timerobj.type=="backward"){
-        hours=document.getElementById(timerobj.counter.hours);
-        mins=document.getElementById(timerobj.counter.minutes);
-        secs=document.getElementById(timerobj.counter.seconds);
         hours.innerHTML=0;
         mins.innerHTML=3;
         secs.innerHTML=0;
@@ -25,14 +30,33 @@ function startBackwardTimer(){
     var c = parseInt(cd.innerHTML,10);
     var m =  parseInt(cdm.innerHTML,10);
     //alert(" Time for session validy is "+m +" minutes :"+ c+ " seconds");
-    timer(cd , c , cdm ,  m);  
+    btimer(cd , c , cdm ,  m);  
 }
 
 function startForwardTimer(){
-    alert("time started ");
+    console.log("forward vtime started ");
+    var cd = secs;
+    var cdm = mins;
+    var c = parseInt(cd.innerHTML,10);
+    var m =  parseInt(cdm.innerHTML,10);
+    //alert(" Time for session validy is "+m +" minutes :"+ c+ " seconds");
+    ftimer(cd , c , cdm ,  m); 
 }
 
-function timer(cd , c , cdm , m ){
+function ftimer(cd , c , cdm , m ){
+    var interv = setInterval(function() {
+        c++;
+        secs.innerHTML= c;
+
+        if (c == 60) {
+            c = 0;
+            m++;  
+            mins.innerHTML = m;                    
+        }
+    }, 1000);
+}
+
+function btimer(cd , c , cdm , m ){
     var interv = setInterval(function() {
         c--;
         secs.innerHTML= c;
@@ -106,6 +130,7 @@ function startPeersTime(date,zone){
     var m = remotedate.getMinutes();
     var s = remotedate.getSeconds();
 
+    h = checkTime(h);
     m = checkTime(m);
     s = checkTime(s);
     var timerspan=document.getElementById(timerobj.span.remoteTime_id);

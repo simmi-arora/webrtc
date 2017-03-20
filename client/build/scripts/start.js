@@ -63,6 +63,7 @@ try{
             selfusername = (localobj.userdetails.username  == undefined ? "LOCAL": localobj.userdetails.username);
             selfcolor    = (localobj.userdetails.usercolor == undefined ? "orange": localobj.userdetails.usercolor);
             selfemail    = (localobj.userdetails.useremail == undefined ? "unknown": localobj.userdetails.useremail);
+            role         = (localobj.userdetails.role  == undefined ? "participant": localobj.userdetails.role);
         }
 
         if(remoteobj.hasOwnProperty('userdetails')){
@@ -124,6 +125,8 @@ try{
 
             if(widgets.timer)           timerobj        = widgets.timer;
 
+            if(widgets.listenin)         listeninobj    = widgets.listenin;
+
             if(widgets.cursor)          cursorobj       = widgets.cursor;
 
             if(widgets.minmax)          minmaxobj       = widgets.minmax;
@@ -169,7 +172,7 @@ try{
                 rtcConn.onNewParticipant = function(participantId, userPreferences) {
                     console.log("onNewParticipant" , participantId , userPreferences );
                     if(webcallpeers.length <= remoteobj.maxAllowed){
-                        updatePeerInfo(participantId , "REMOTE" , "#BFD9DA" , "", "remote");
+                        updatePeerInfo(participantId , remoteusername , remotecolor  , "", "remote");                        
                     }else{
                         shownotificationWarning("Another user is trying to join this channel but max count [ "+remoteobj.maxAllowed +" ] is reached");
                     }
@@ -261,6 +264,8 @@ try{
                                     scrConn.onstreamended();
                                     scrConn.removeStream(e.data.screenStreamid);
                                     scrConn.close();
+                                }else if(e.data.message=="screenshareStartedViewing"){
+                                    screenshareNotification("" , "screenshareStartedViewing");
                                 }else{
                                     shownotification("screen is getting shared "+ e.data.screenid);
                                     //createScreenViewButton();
@@ -472,8 +477,9 @@ try{
             console.log("start-chatobj --> " , chatobj);
         }
 
-        if(screenrecordobj.active){
-/*           if(screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)){
+        if(screenrecordobj && screenrecordobj.active){
+            /*           
+            if(screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)){
                 assignScreenRecordButton(screenrecordobj);
             }else{
                 createScreenRecordButton();
@@ -509,6 +515,10 @@ try{
                 }
             });
 
+        }else if(screenrecordobj && !screenrecordobj.active){
+            if(screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)){
+                document.getElementById(screenrecordobj.button.id).className="inactiveButton";
+            }
         }
 
         if(screenshareobj.active){
@@ -540,11 +550,15 @@ try{
             }); 
         }   
 
-        if(reconnectobj.active){
+        if(reconnectobj && reconnectobj.active){
             if(reconnectobj.button.id && document.getElementById(reconnectobj.button.id)){
                 assignButtonRedial(reconnectobj.button.id);
             }else{
                 createButtonRedial();
+            }
+        }else if(reconnectobj && !reconnectobj.active){
+            if(reconnectobj.button.id && document.getElementById(reconnectobj.button.id)){
+                document.getElementById(reconnectobj.button.id).className="inactiveButton";
             }
         }
 
@@ -553,15 +567,35 @@ try{
             document.getElementById("cursor2").setAttribute("style","display:none");
         }
 
-        if(timerobj.active){
+        if(listeninobj && listeninobj.active){
+            if(listeninobj.button.id && document.getElementById(listeninobj.button.id)){
+                //assignButtonRedial(reconnectobj.button.id);
+            }else{
+                //createButtonRedial();
+            }
+        }else if(listeninobj && !listeninobj.active){
+            if(listeninobj.button.id && document.getElementById(listeninobj.button.id)){
+                document.getElementById(listeninobj.button.id).className="inactiveButton";
+            }
+        }
+
+        if(timerobj && timerobj.active){
             startTime();
             timeZone();
             activateBttons(timerobj);
             document.getElementById(timerobj.container.id).hidden=true;
+        }else if(timerobj && !timerobj.active){
+            if(timerobj.button.id && document.getElementById(timerobj.button.id)){
+                document.getElementById(timerobj.button.id).className="inactiveButton";
+            }
         }
 
-        if(drawCanvasobj.active){
+        if(drawCanvasobj && drawCanvasobj.active){
             createdrawButton();
+        }else if(drawCanvasobj && !drawCanvasobj.active){
+            if(drawCanvasobj.button.id && document.getElementById(drawCanvasobj.button.id)){
+                document.getElementById(drawCanvasobj.button.id).className="inactiveButton";
+            }
         }
 
         if(texteditorobj.active){
@@ -572,7 +606,7 @@ try{
             createCodeEditorButton();
         }
 
-        if(fileshareobj.active){
+        if(fileshareobj.active ){
             rtcConn.enableFileSharing = true;
             //rtcConn.filesContainer = document.body || document.documentElement;
             /*setFileProgressBarHandlers(rtcConn);*/
@@ -677,7 +711,7 @@ try{
 
         socket.on("join-channel-resp",function(event) {
             console.log("joined-channel" , event);
-            if(event.status && event.channel==sessionid){
+            if(event.status && event.channel == sessionid){
                 rtcConn.connectionType="join",
                 rtcConn.session = {
                     video: incomingVideo,
@@ -688,19 +722,25 @@ try{
                     OfferToReceiveAudio: outgoingAudio,
                     OfferToReceiveVideo: outgoingVideo
                 },
-                rtcConn.remoteUsers=event.users,
+                rtcConn.remoteUsers = event.users,
                 updatePeerInfo( rtcConn.userid , selfusername , selfcolor, selfemail, "local" );
 
                 for (x in rtcConn.remoteUsers){
-                    updatePeerInfo(rtcConn.remoteUsers[x] ,remoteusername , remotecolor , remoteemail, "remote");
+                    updatePeerInfo(rtcConn.remoteUsers[x] , remoteusername , remotecolor , remoteemail, "remote");
+                    /*
+                    if(role!="inspector"){
+                        
+                    }else{
+                        shownotificationWarning("This session is being inspected ");
+                    }*/
                 }
 
-                rtcConn.join(event.channel);
+                rtcConn.connectionDescription = rtcConn.join(event.channel);
                 rtcConn.dontCaptureUserMedia = false,
                 rtcConn.getUserMedia();
                 console.log(" trying to join a channel on WebRTC SDP ");
             }else{
-                alert("signaller doesnt allow you to join he channel");
+                alert("signaller doesnt allow you to join the channel");
                 shownotification(event.msgtype+" : "+ event.message);
             }
         });
@@ -882,7 +922,7 @@ try{
             vid : "video"+type+"_"+userid
         };
      
-        if(fileshareobj.active){
+        if(fileshareobj.active ){
 
             if(fileshareobj.props.fileShare=="single"){
                 peerInfo.fileShare={
@@ -1036,7 +1076,8 @@ try{
                 userid:selfuserid,
                 name:selfusername,
                 color:selfcolor,
-                email:selfemail
+                email:selfemail,
+                role: role
             }
         });
     }
@@ -1079,7 +1120,7 @@ try{
             onScreenshareExtensionCallback(event);
         }
 
-    });
+    }); 
 
 }catch(e){
     console.log("exception in start " , e);

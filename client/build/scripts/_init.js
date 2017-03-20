@@ -73,6 +73,8 @@ var muteobj=false;
 
 var minmaxobj=false;
 
+var listeninobj=false;
+
 var screenshareobj=false;
 var screen , isScreenOn=0;
 var screen_roomid , screen_userid;
@@ -88,7 +90,7 @@ function init( autoload , callback ){
 	}else if(autoload && location.href.replace('#', '').length){
 		// When Session should autogenerate ssid and locationbar doesnt have a session name
 		if(location.href.indexOf('?')>-1){
-			sessionid = (location.hash.substring(0,location.href.indexOf('?'))).replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
+			sessionid = (location.hash.substring(0,location.hash.indexOf('?'))).replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
 		}else{
 			sessionid = location.hash.replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
 		}
@@ -235,23 +237,30 @@ function shownotificationWarning(message){
 function showdesktopnotification() {
   // Let's check if the browser supports notifications
   if (!("Notification" in window)) {
-	alert("This browser does not support desktop notification");
+	   alert("This browser does not support desktop notification");
   }
 
   // Let's check whether notification permissions have already been granted
   else if (Notification.permission === "granted") {
-	// If it's okay let's create a notification
-	var notification = new Notification("Vilageexperts");
+	   // If it's okay let's create a notification
+      var options = {
+          body: "The remote has joined the session",
+          icon: "images/villagexpertslogo2.png"
+      };
+
+	   var notification = new Notification("Vilageexperts" , options);
   }
 
   // Otherwise, we need to ask the user for permission
   else if (Notification.permission !== 'denied') {
-	Notification.requestPermission(function (permission) {
-	  // If the user accepts, let's create a notification
-	  if (permission === "granted") {
-		var notification = new Notification("villageexpsrts");
-	  }
-	});
+  	Notification.requestPermission(function (permission) {
+  	  // If the user accepts, let's create a notification
+  	  if (permission === "granted") {
+  		  var notification = new Notification("villageexpsrts");
+  	  }
+
+  	});
+
   }
 
   // At last, if the user has denied notifications, and you 

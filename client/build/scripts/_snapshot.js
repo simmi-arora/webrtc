@@ -15,10 +15,15 @@ function createSnapshotButton(controlBarName , peerinfo){
             }
         }*/
 
-        console.log(" mediaobj ----------------" , peerinfo);
-
         takeSnapshot(peerinfo, function(datasnapshot) {    
             var snapshotname = "snapshot"+ new Date().getTime();
+        
+            var peerinfo;
+            if(selfuserid)
+                peerinfo = findPeerInfo(selfuserid);
+            else
+                peerinfo = findPeerInfo(rtcConn.userid);
+
             peerinfo.filearray.push(snapshotname);
             var numFile= document.createElement("div");
             numFile.value= peerinfo.filearray.length;
