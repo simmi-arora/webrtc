@@ -55,22 +55,36 @@ function shareCursor(){
 
 function createCursorButton(controlBarName, peerinfo, streamid, stream ){
     var button=document.createElement("span");
-    button.id=controlBarName+"cursorButton";
+    button.id = controlBarName+"cursorButton";
     button.setAttribute("data-val","mute");
     button.setAttribute("title", "Pointer");
     button.className=cursorobj.button.class_on;
     button.innerHTML=cursorobj.button.html_on;
     button.onclick = function() {
-        if(button.className == cursorobj.button.class_on ){
-            startShareCursor();
-            button.className=cursorobj.button.class_off;
-            button.innerHTML=cursorobj.button.html_off;
-        }else if (button.className == cursorobj.button.class_off ){            
-            stopShareCursor();
-            button.className=cursorobj.button.class_on;
-            button.innerHTML=cursorobj.button.html_on;
-        }     
-        //syncButton(audioButton.id);        
+        var btnid = button.id;
+        var peerinfo ;
+        if(selfuserid)
+            peerinfo = findPeerInfo(selfuserid);
+        else
+            peerinfo = findPeerInfo(rtcConn.userid);
+
+
+        if(btnid.indexOf(peerinfo.controlBarName)>-1){
+            if(button.className == cursorobj.button.class_on ){
+                startShareCursor();
+                button.className=cursorobj.button.class_off;
+                button.innerHTML=cursorobj.button.html_off;
+            }else if (button.className == cursorobj.button.class_off ){            
+                stopShareCursor();
+                button.className=cursorobj.button.class_on;
+                button.innerHTML=cursorobj.button.html_on;
+            }     
+            //syncButton(audioButton.id);   
+        }else{
+            alert(" Use Local Pointer button ");
+        }
+
+             
     };
     return button;
 }

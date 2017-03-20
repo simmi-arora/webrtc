@@ -674,7 +674,7 @@ video {
 }
 
 .mediaButton{
-        padding: 4px;
+    padding: 4px;
     line-height: 20px!important;
 }
 
@@ -684,6 +684,19 @@ video {
     cursor: pointer;
 }
 
+.activeButon{
+    width: 100%;
+    border-radius: 10px;
+    margin: 0px;
+}
+
+.inactiveButton{
+    cursor: not-allowed;
+    width: 100%;
+    border-radius: 10px;
+    margin: 0px;
+    background-color: grey;
+}
 /*video::-webkit-media-controls {
   display: none;
 }

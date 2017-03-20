@@ -27,8 +27,8 @@ var listOfRecorders = {};
 
 function startRecord(peerinfo , streamid, stream){
     var recorder = RecordRTC(stream, {
-        type: 'video',
-        recorderType: MediaStreamRecorder
+        type: 'video        recorderType: MediaStreamRecorder',
+
     });
     recorder.startRecording();
     listOfRecorders[streamid] = recorder;
@@ -44,6 +44,12 @@ function stopRecord(peerinfo , streamid , stream){
     var recorder = listOfRecorders[streamid];
     recorder.stopRecording(function() {
         var blob = recorder.getBlob();
+
+        var peerinfo;
+        if(selfuserid)
+            peerinfo = findPeerInfo(selfuserid);
+        else
+            peerinfo = findPeerInfo(rtcConn.userid);
 
         /*        
         window.open( URL.createObjectURL(blob) );

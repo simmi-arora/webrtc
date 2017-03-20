@@ -155,6 +155,7 @@ var scriptList=[
     "client/build/scripts/_filesharing.js",
     "client/build/scripts/_draw.js",
     "client/build/scripts/_redial.js",
+    "client/build/scripts/_listenin.js",
     "client/build/scripts/_cursor.js",
     "client/build/scripts/_codeeditor.js",
     "client/build/scripts/_texteditor.js",
