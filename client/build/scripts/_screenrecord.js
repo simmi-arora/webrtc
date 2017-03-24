@@ -25,12 +25,18 @@ function assignScreenRecordButton(){
 
         }else if(recordButton.className==screenrecordobj.button.class_on){
 
+            var peerinfo;
+            if(selfuserid)
+                peerinfo = findPeerInfo(selfuserid);
+            else
+                peerinfo = findPeerInfo(rtcConn.userid);
+
             recordButton.className= screenrecordobj.button.class_off ;
             recordButton.innerHTML= screenrecordobj.button.html_off;
             webrtcdevStopRecordScreen();
 
-            //stopRecord(peerinfo , scrrecordStreamid, scrrecordStream);
-            //stopRecord(peerinfo , scrrecordAudioStreamid, scrrecordAudioStream);
+            stopRecord(peerinfo , scrrecordStreamid, scrrecordStream);
+            stopRecord(peerinfo , scrrecordAudioStreamid, scrrecordAudioStream);
             
             var scrrecordStreamBlob;
             var scrrecordAudioStreamBlob;
@@ -46,10 +52,10 @@ function assignScreenRecordButton(){
             });
 
             setTimeout(function(){ 
-                alert("wait for the screen recoridng to compile ");
+                alert("wait for the screen recording to compile ");
 
                 console.log(" ===2 blobs====", scrrecordStreamBlob , scrrecordAudioStreamBlob); 
-                convertStreams(scrrecordStreamBlob , scrrecordAudioStreamBlob);
+                //convertStreams(scrrecordStreamBlob , scrrecordAudioStreamBlob);
                 
                 scrrecordStreamid = null;
                 scrrecordStream = null ;
@@ -271,8 +277,6 @@ function webrtcdevScreenRecordConstraints(chromeMediaSourceId){
             video: false
         },
         function stream(event) {
-            console.log(" webrtcdevScreenRecordConstraints stream");
-            console.log("screenRecord stream "  , event );
 
             var peerinfo;
             if(selfuserid)
@@ -310,8 +314,6 @@ function webrtcdevScreenRecordConstraints(chromeMediaSourceId){
             }
         },
         function stream(event) {
-            console.log(" webrtcdevScreenRecordConstraints stream");
-            console.log("screenRecord stream "  , event );
 
             //var container = document.getElementById(screenshareobj.screenshareContainer);
             //var videosContainer = document.createElement("video");
@@ -350,9 +352,15 @@ function webrtcdevRecordScreen() {
 function webrtcdevStopRecordScreen(){
     console.log("webrtcdevStopRecordScreen screenRoomid");
     window.postMessage("webrtcdev-extension-stopsource-screenrecord", "*");
-    scrrecordStream.stop();
-    scrrecordAudioStream.stop();
+
+    if(scrrecordStream)scrrecordStream.stop();
+    else alert(" screen video recoridng was not succesfull");
+
+    if(scrrecordAudioStream)scrrecordAudioStream.stop();
+    else alert(" screen audio recording was not successfull");
 }
+
+// Using ffmpeg concept and merging it together
 
 var workerPath = 'https://archive.org/download/ffmpeg_asm/ffmpeg_asm.js';
 

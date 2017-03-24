@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="a4bf1e51-018f-482a-b0a3-2a012303cd44" name="altanai Mumbai Server" url="http://35.154.198.101">
+        <fileTransfer host="35.154.198.101" port="22" privateKey="F:\webrtcWorkspace\aws\altanai2server.pem" accessType="SFTP" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
