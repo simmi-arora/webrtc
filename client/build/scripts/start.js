@@ -224,6 +224,7 @@ try{
                     mediaElement.id = event.streamid;*/
                     var peerinfo = findPeerInfo(event.userid);
                     if(!peerinfo){
+                        console.log(" PeerInfo not present in webcallpeers " , event.userid , rtcConn );
                         alert(" PeerInfo not present in webcallpeers");
                     }else{
                         peerinfo.type = event.type;
@@ -710,7 +711,7 @@ try{
         });
 
         socket.on("join-channel-resp",function(event) {
-            console.log("joined-channel" , event);
+            console.log("===========================joined-channel" , event);
             if(event.status && event.channel == sessionid){
                 rtcConn.connectionType="join",
                 rtcConn.session = {
@@ -745,25 +746,30 @@ try{
             }
         });
 
-        /*socket.on("channel-event",function(event) {
+        socket.on("channel-event",function(event) {
             console.log("channel-event" , event);
             if(event.type=="new-join"){
                 if(event.status){
-                    updatePeerInfo(event.data.sender , event.data.extra.name , "#BFD9DA" , event.data.extra.email, "remote");
-                    shownotification(event.type);
+                    var peerinfo = findPeerInfo(event.data.sender);
+                    if(!peerinfo){
+                        updatePeerInfo(event.data.sender , event.data.extra.name , "#BFD9DA" , event.data.extra.email, "remote");
+                        shownotification(event.type);
+                    }
                 }else{
                     shownotification(event.msgtype+" : "+ event.message);
                 }
             }
-        });*/
+        });
     }
 
     function updateWebCallView(peerInfo){
         console.log("updateWebCallView - start with peerInfo" , peerInfo);
 
         if(peerInfo.vid.indexOf("videolocal") > -1){
-            $("#"+localobj.videoContainer).show();
-            $("#"+remoteobj.videoContainer).hide();
+/*            $("#"+localobj.videoContainer).show();
+            $("#"+remoteobj.videoContainer).hide();*/
+            $("[id="+localobj.videoContainer+"]").show();
+            $("[id="+remoteobj.videoContainer+"]").hide();
 
             if(localVideo && document.getElementsByName(localVideo)[0]){
                 var vid = document.getElementsByName(localVideo)[0];
@@ -783,9 +789,11 @@ try{
 
         }else if(peerInfo.vid.indexOf("videoremote") > -1) {
 
-            $("#"+localobj.videoContainer).hide();
-            $("#"+remoteobj.videoContainer).show();
-        
+            //$(""#"+localobj.videoContainer").hide();
+            //$("#"+remoteobj.videoContainer).show();
+            $("[id="+localobj.videoContainer+"]").hide();
+            $("[id="+remoteobj.videoContainer+"]").show();
+
             /* handling local video transistion to active */
             if( outgoingVideo ){
                 /*chk if local video is added to conf , else adding local video to index 0 */
@@ -812,6 +820,14 @@ try{
 
                     if(fileshareobj.active){
                         createFileSharingDiv(webcallpeers[0]);
+                        
+                        if(fileshareobj.props.fileshare=="single"){
+                            document.getElementById(peerInfo.fileShare.outerbox).style.width="100%";
+                        }
+
+                        if(fileshareobj.props.fileList=="single"){
+                            document.getElementById(peerInfo.fileList.outerbox).style.width="100%";
+                        }
                     }
                 }
             }
@@ -962,7 +978,7 @@ try{
     /**
      * update info about a peer in list of peers (webcallpeers)
      * @method
-     * @name updatePeerInfo
+     * @name removePeerInfo
      * @param {string} userid
      * @param {string} username
      * @param {string} usercolor

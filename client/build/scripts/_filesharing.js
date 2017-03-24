@@ -340,7 +340,7 @@ function createFileSharingBox(peerinfo, parent){
         return;
 
     var fileSharingBox=document.createElement("div");
-    fileSharingBox.className= "col-sm-6 fileViewing-box";
+    fileSharingBox.className= "col-sm-6 fileviewing-box";
     fileSharingBox.setAttribute("style","background-color:"+peerinfo.color);
     fileSharingBox.id=peerinfo.fileShare.outerbox;
 
