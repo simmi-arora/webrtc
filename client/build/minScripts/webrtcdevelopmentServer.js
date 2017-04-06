@@ -3,7 +3,7 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
     var shiftedModerationControls = {};
     var ScalableBroadcast;
 
-    var webrtcdevchannels = [];
+    var webrtcdevchannels = {};
     var channels=[];
     var users = {};
     var sessions = {};
@@ -80,43 +80,45 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
             }
         });
 
-        socket.on('become-a-public-moderator', function() {
-            try {
-                if (!listOfUsers[socket.userid]) return;
-                listOfUsers[socket.userid].isPublic = true;
-            } catch (e) {
-                pushLogs('become-a-public-moderator', e);
-            }
-        });
-
-        socket.on('dont-make-me-moderator', function() {
-            try {
-                if (!listOfUsers[socket.userid]) return;
-                listOfUsers[socket.userid].isPublic = false;
-            } catch (e) {
-                pushLogs('dont-make-me-moderator', e);
-            }
-        });
-
-        socket.on('get-public-moderators', function(userIdStartsWith, callback) {
-            try {
-                userIdStartsWith = userIdStartsWith || '';
-                var allPublicModerators = [];
-                for (var moderatorId in listOfUsers) {
-                    if (listOfUsers[moderatorId].isPublic && moderatorId.indexOf(userIdStartsWith) === 0 && moderatorId !== socket.userid) {
-                        var moderator = listOfUsers[moderatorId];
-                        allPublicModerators.push({
-                            userid: moderatorId,
-                            extra: moderator.extra
-                        });
+        /*
+                socket.on('become-a-public-moderator', function() {
+                    try {
+                        if (!listOfUsers[socket.userid]) return;
+                        listOfUsers[socket.userid].isPublic = true;
+                    } catch (e) {
+                        pushLogs('become-a-public-moderator', e);
                     }
-                }
+                });
 
-                callback(allPublicModerators);
-            } catch (e) {
-                pushLogs('get-public-moderators', e);
-            }
-        });
+                socket.on('dont-make-me-moderator', function() {
+                    try {
+                        if (!listOfUsers[socket.userid]) return;
+                        listOfUsers[socket.userid].isPublic = false;
+                    } catch (e) {
+                        pushLogs('dont-make-me-moderator', e);
+                    }
+                });
+
+                socket.on('get-public-moderators', function(userIdStartsWith, callback) {
+                    try {
+                        userIdStartsWith = userIdStartsWith || '';
+                        var allPublicModerators = [];
+                        for (var moderatorId in listOfUsers) {
+                            if (listOfUsers[moderatorId].isPublic && moderatorId.indexOf(userIdStartsWith) === 0 && moderatorId !== socket.userid) {
+                                var moderator = listOfUsers[moderatorId];
+                                allPublicModerators.push({
+                                    userid: moderatorId,
+                                    extra: moderator.extra
+                                });
+                            }
+                        }
+
+                        callback(allPublicModerators);
+                    } catch (e) {
+                        pushLogs('get-public-moderators', e);
+                    }
+                });
+        */
 
         socket.on('changed-uuid', function(newUserId, callback) {
             callback = callback || function() {};
@@ -321,7 +323,7 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
             socket.emit("presence",presence);
         });
 
-        socket.on("admin_enquire",function(data){
+        /*socket.on("admin_enquire",function(data){
             switch (data.ask){
                 case "channels":
                     if(data.find){
@@ -339,7 +341,7 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
                 default :
                     socket.emit('response_to_admin_enquire', "no case matched ");
             }           
-        });
+        });*/
 
         function onMessageCallback(message) {
             try {
@@ -507,7 +509,7 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
         }
     }
 
-    module.getAll=function(format){
+    /*module.getAll=function(format){
         var channels=[];
         for (i in webrtcdevchannels) { 
             channels.push(webrtcdevchannels[i]);
@@ -519,7 +521,6 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
         };
         return output;
     };
-
 
     module.getAllChannels=function(format){
         var sessions=[];
@@ -579,7 +580,7 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
                 format:data.format
             };
         return output;
-    };
+    };*/
     console.log("----------------realtimecomm----------------------");
     console.log(" Socket.io env => "+ properties.enviornment+ " running at\n "+properties.httpsPort);
 

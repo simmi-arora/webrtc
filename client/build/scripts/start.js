@@ -822,7 +822,7 @@ try{
                         createFileSharingDiv(webcallpeers[0]);
                         
                         if(fileshareobj.props.fileshare=="single"){
-                            document.getElementById(peerInfo.fileShare.outerbox).style.width="100%";
+                            document.getElementById(peerInfo.fileShare.outerbox).style.width="100% !important";
                         }
 
                         if(fileshareobj.props.fileList=="single"){
@@ -856,6 +856,7 @@ try{
                 }
 
                 attachMediaStream(remvid, peerInfo.stream);
+                if(remvid.hidden) removid.hidden=false;
                 remvid.id = peerInfo.videoContainer;
                 remvid.className=remoteobj.videoClass;
                 attachControlButtons(remvid, peerInfo); 
