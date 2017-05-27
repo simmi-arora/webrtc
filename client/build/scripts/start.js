@@ -592,7 +592,12 @@ try{
         }
 
         if(drawCanvasobj && drawCanvasobj.active){
-            createdrawButton();
+            
+            if(drawCanvasobj.button.id && document.getElementById(drawCanvasobj.button.id)){
+                assigndrawButton(drawCanvasobj.button.id);
+            }else{
+                createdrawButton();
+            }
         }else if(drawCanvasobj && !drawCanvasobj.active){
             if(drawCanvasobj.button.id && document.getElementById(drawCanvasobj.button.id)){
                 document.getElementById(drawCanvasobj.button.id).className="inactiveButton";
@@ -820,9 +825,9 @@ try{
 
                     if(fileshareobj.active){
                         createFileSharingDiv(webcallpeers[0]);
-                        
-                        if(fileshareobj.props.fileshare=="single"){
-                            document.getElementById(peerInfo.fileShare.outerbox).style.width="100% !important";
+
+                        if(fileshareobj.props.fileShare=="single"){
+                            document.getElementById(peerInfo.fileShare.outerbox).style.width="100%";
                         }
 
                         if(fileshareobj.props.fileList=="single"){
@@ -873,7 +878,7 @@ try{
                         if(fileshareobj.props.fileShare=="divided")
                             createFileSharingDiv(peerInfo);
                         else if(fileshareobj.props.fileShare=="single")
-                            console.log("No Seprate div created for this peer  s fileshare container is single");
+                            console.log("No Seprate div created for this peer since fileshare container is single");
                         else
                             console.log("props undefined ");
                     }

@@ -2,7 +2,7 @@
 /**************************************************************************8
 draw 
 ******************************************************************************/
-var CanvasDesigner;
+var CanvasDesigner=null;
 if(drawCanvasobj.active){
     CanvasDesigner = (function() {
         var iframe;
@@ -122,4 +122,22 @@ function createdrawButton(){
     var li =document.createElement("li");
     li.appendChild(drawButton);
     document.getElementById("topIconHolder_ul").appendChild(li);
+}
+
+function assigndrawButton(btnid){
+    drawButton = document.getElementById(btnid);
+    drawButton.className= drawCanvasobj.button.class_off ;
+    drawButton.innerHTML= drawCanvasobj.button.html_off;
+    drawButton.onclick=function(){
+        if(drawButton.className==drawCanvasobj.button.class_off){
+            drawButton.className= drawCanvasobj.button.class_on ;
+            drawButton.innerHTML= drawCanvasobj.button.html_on;
+            webrtcdevCanvasDesigner();
+            document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=false;
+        }else if(drawButton.className==drawCanvasobj.button.class_on){
+            drawButton.className= drawCanvasobj.button.class_off ;
+            drawButton.innerHTML= drawCanvasobj.button.html_off;
+            document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=true;
+        }
+    };
 }
