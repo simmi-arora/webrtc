@@ -69,6 +69,34 @@ function stopRecord(peerinfo , streamid , stream){
     });
 }
 
+
+function stopSessionRecord(peerinfo , scrrecordStreamid, scrrecordStream , scrrecordAudioStreamid, scrrecordAudioStream){
+    /*var streamid = prompt('Enter stream-id');*/
+
+    if(!listOfRecorders[scrrecordStreamid]) {
+        /*throw 'Wrong stream-id';*/
+        console.log("wrong stream id scrrecordStreamid");
+    }
+
+    if(!listOfRecorders[scrrecordAudioStreamid]) {
+        /*throw 'Wrong stream-id';*/
+        console.log("wrong stream id scrrecordAudioStreamid");
+    }
+
+    var recorder = listOfRecorders[scrrecordStreamid];
+    recorder.stopRecording(function() {
+        var blob = recorder.getBlob();
+        console.log(" scrrecordStreamid stopped recoridng blob is " , blob);
+    });
+
+    var recorder2 = listOfRecorders[scrrecordAudioStreamid];
+    recorder2.stopRecording(function() {
+        var blob = recorder2.getBlob();
+        console.log(" scrrecordStreamid stopped recoridng blob is " , blob);
+    });
+
+}
+
 /*function startRecord(){
     rtcMultiConnection.streams[streamid].startRecording({
         audio: true,

@@ -35,8 +35,7 @@ function assignScreenRecordButton(){
             recordButton.innerHTML= screenrecordobj.button.html_off;
             webrtcdevStopRecordScreen();
 
-            stopRecord(peerinfo , scrrecordStreamid, scrrecordStream);
-            stopRecord(peerinfo , scrrecordAudioStreamid, scrrecordAudioStream);
+            stopRecord(peerinfo , scrrecordStreamid, scrrecordStream , scrrecordAudioStreamid, scrrecordAudioStream);
             
             var scrrecordStreamBlob;
             var scrrecordAudioStreamBlob;
@@ -51,10 +50,11 @@ function assignScreenRecordButton(){
                 scrrecordAudioStreamBlob = recorder2.getBlob();
             });
 
+            
             setTimeout(function(){ 
-                alert("wait for the screen recording to compile ");
 
                 console.log(" ===2 blobs====", scrrecordStreamBlob , scrrecordAudioStreamBlob); 
+                mergeStreams(scrrecordStreamBlob , scrrecordAudioStreamBlob);
                 //convertStreams(scrrecordStreamBlob , scrrecordAudioStreamBlob);
                 
                 scrrecordStreamid = null;
@@ -377,6 +377,41 @@ function processInWebWorker() {
 var worker;
 var videoFile = !!navigator.mozGetUserMedia ? 'video.gif' : 'video.webm';
 
+function mergeStreams(videoBlob, audioBlob) {
+    var peerinfo;
+    if(selfuserid){
+        peerinfo = findPeerInfo(selfuserid);
+    }else{
+        peerinfo = findPeerInfo(rtcConn.userid);
+    }
+
+    var recordVideoname = "recordedvideo"+ new Date().getTime();
+    peerinfo.filearray.push(recordVideoname);
+    var numFile= document.createElement("div");
+    numFile.value= peerinfo.filearray.length;
+    var fileurl=URL.createObjectURL(videoBlob);
+
+    var recordAudioname = "recordedaudio"+ new Date().getTime();
+    peerinfo.filearray.push(recordAudioname);
+    var numFile2= document.createElement("div");
+    numFile2.value= peerinfo.filearray.length;
+    var fileurl2=URL.createObjectURL(audioBlob);
+
+    var sessionRecordfileurl={
+        videofileurl:fileurl,
+        audiofileurl: fileurl2
+    };
+
+    var sessionRecordName={
+        videoname: recordVideoname,
+        audioname: recordAudioname
+    };
+
+   displayList(peerinfo.uuid , peerinfo  ,sessionRecordfileurl , sessionRecordName , "sessionRecording");
+   displayFile(peerinfo.uuid , peerinfo , sessionRecordfileurl , sessionRecordName , "sessionRecording"); 
+
+}
+
 function convertStreams(videoBlob, audioBlob) {
     var vab;
     var aab;
@@ -494,7 +529,8 @@ function PostBlob(blob) {
     video.download = 'Play mp4 in VLC Player.mp4';
     
     document.body.appendChild(video);
-/*    var h2 = document.createElement('h2');
+    /*    
+    var h2 = document.createElement('h2');
     h2.innerHTML = '<a href="' + source.src + '" target="_blank" download="Play mp4 in VLC Player.mp4">Download Converted mp4 and play in VLC player!</a>';
     inner.appendChild(h2);
     h2.style.display = 'block';

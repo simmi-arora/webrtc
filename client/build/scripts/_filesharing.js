@@ -90,9 +90,9 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     console.log("DisplayList peerinfo->",peerinfo);
     var showDownloadButton=true , showRemoveButton=true; 
 
-    var elementList= peerinfo.fileList.container;
+    var elementList = peerinfo.fileList.container;
     var elementDisplay= peerinfo.fileShare.container;
-    var listlength=peerinfo.filearray.length;
+    var listlength = peerinfo.filearray.length;
 
     /*  
     if(peerinfo.name=="localVideo"){
@@ -101,11 +101,15 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         showRemoveButton=false;
     }*/
 
+    if(filetype=="sessionRecording"){
+        filename = filename.videoname+"_"+filename.audioname;
+    }
+
     var name = document.createElement("div");
     name.innerHTML = listlength +"   " + filename ;
-    name.title=filetype +" shared by " +peerinfo.name ;  
+    name.title = filetype +" shared by " +peerinfo.name ;  
     name.setAttribute("style", " width: 40%;  float: left;");
-    name.id="name"+filename;
+    name.id = "name"+filename;
 
     var downloadButton = document.createElement("div");
     downloadButton.style.float="right";
@@ -171,7 +175,6 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     removeButton.onclick=function(event){
         if(repeatFlagRemoveButton != filename){
             hideFile(uuid , elementDisplay , fileurl , filename , filetype);
-            //console.log("remove button clicked || to be deleted " , event.target.parentNode.id);
             //var tobeHiddenElement = event.target.parentNode.id;
             var tobeHiddenElement=filename;
             rtcConn.send({
@@ -236,6 +239,28 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
         image.id= "display"+filename; 
         elementDisplay=image;
 
+    }else if(filetype=="sessionRecording"){
+        var filename = filename.videoname+"_"+filename.audioname;
+        var div  document.createElement("div");
+        div.id= "display"+filename; 
+        div.title filename; 
+        var video = document.createElement('video');
+        video.src=URL.createObjectURL(videoBlob);
+
+        var audio = document.createElement('audio');
+        audio.controls = false;
+        audio.src = audioBlob;
+        audio.hidden=true;
+
+        div.appendChild(video);
+        div.appendChild(audio);
+
+        elementDisplay  = div;
+
+        video.play();
+        audio.play();
+
+
     }else if(filetype.indexOf("videoScreenRecording")>-1){
         console.log("videoScreenRecording " , fileurl);
         var video = document.createElement("video");
@@ -245,6 +270,7 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
         video.title=filename;
         video.id= "display"+filename; 
         elementDisplay=video;
+
     }else if(filetype.indexOf("video")>-1){
         console.log("videoRecording " , fileurl);
         var video = document.createElement("video");
@@ -265,6 +291,7 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
         video.title=filename;
         video.id= "display"+filename; 
         elementDisplay=video;
+
     }else{
         var iframe= document.createElement("iframe");
         iframe.style.width="100%";
@@ -280,14 +307,32 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
 function displayFile( uuid , peerinfo , _fileurl , _filename , _filetype ){
 
     var parentdom =  document.getElementById(peerinfo.fileShare.container);
-    var filedom = getFileElementDisplayByType(_filetype , _fileurl , _filename);
+
+    if(filetype=="sessionRecording"){
+        var video = document.createElement('video');
+        video.src=URL.createObjectURL(videoBlob);
+        document.getElementsByClassName("fileviewing-box")[0].appendChild(video);
+
+        var audio = document.createElement('audio');
+        audio.controls = false;
+        audio.src = audioBlob;
+        audio.hidden=true;
+        document.getElementsByClassName("fileviewing-box")[0].appendChild(audio);
+
+        video.play();
+        audio.play();
+        filename = filename.videoname+"_"+filename.audioname;
+    }else{
+        var filedom = getFileElementDisplayByType(_filetype , _fileurl , _filename);
+        
+    }
+
     if(parentdom){
         parentdom.innerHTML="";
         parentdom.appendChild(filedom);
     }else{
         document.body.appendChild(filedom);
     }
-
     /*
     if($('#'+ parentdom).length > 0)
         $("#"+element).html(getFileElementDisplayByType(_filetype , _fileurl , _filename));
