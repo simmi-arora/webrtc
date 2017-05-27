@@ -178,7 +178,6 @@ gulp.task('webrtcdevelopmentjs',function() {
     scriptList.push("client/build/scripts/admin.js");    
     console.log(scriptList);
     gulp.src(scriptList)
-        .pipe(uglify())
         .pipe(concat('webrtcdevelopment.js'))  
         .pipe(gulp.dest(folderPath+'minScripts/')); 
 });

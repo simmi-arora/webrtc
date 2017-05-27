@@ -241,16 +241,17 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
 
     }else if(filetype=="sessionRecording"){
         var filename = filename.videoname+"_"+filename.audioname;
-        var div  document.createElement("div");
+        var div =  document.createElement("div");
         div.id= "display"+filename; 
-        div.title filename; 
+        div.title=  filename; 
+
         var video = document.createElement('video');
-        video.src=URL.createObjectURL(videoBlob);
+        video.src=fileurl.videofileurl;
 
         var audio = document.createElement('audio');
         audio.controls = false;
-        audio.src = audioBlob;
-        audio.hidden=true;
+        audio.src = fileurl.audiofileurl;
+        //audio.hidden=true;
 
         div.appendChild(video);
         div.appendChild(audio);
