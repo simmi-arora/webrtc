@@ -79,7 +79,7 @@ function createChatBox(obj){
 
 function assignChatBox(obj){
 
-    var chatInput= document.getElementById(chatobj.inputBox.text_id);
+    var chatInput = document.getElementById(chatobj.inputBox.text_id);
     chatInput.onkeypress=function(e){
         if (e.keyCode == 13) {
             var peerinfo = findPeerInfo( selfuserid );

@@ -255,7 +255,6 @@
 }
 
 video {
-    position: absolute;
     top: 0;
     left: 0;
     transition: width .5s ease;

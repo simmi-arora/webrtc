@@ -469,7 +469,7 @@ try{
                 createChatButton(chatobj);
             }*/
 
-            if(chatobj.inputBox.text_id && document.getElementById(chatobj.inputBox.text_id)){
+            if( chatobj.inputBox && chatobj.inputBox.text_id && document.getElementById(chatobj.inputBox.text_id)){
                 assignChatBox(chatobj);
             }else{
                 createChatBox(chatobj);
@@ -540,13 +540,14 @@ try{
                 
                 if(status == 'not-installed') {
                     if(screenshareobj.button.installButton.id && document.getElementById(screenshareobj.button.installButton.id)) 
-                        assignScreenInstallButton(extensionID);
+                        assignScreenInstallButton(screenshareobj.extensionID);
                     else
-                        createScreenInstallButton(extensionID);
+                        createScreenInstallButton(screenshareobj.extensionID);
                 }
                 
                 if(status == 'not-chrome') {
                     // using non-chrome browser
+                    alert(" Screen share extension only works in Chrome for now ");
                 }
             }); 
         }   
