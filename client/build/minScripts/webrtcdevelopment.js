@@ -15974,7 +15974,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     var showDownloadButton=true , showRemoveButton=true; 
 
     var elementList = peerinfo.fileList.container;
-    var elementDisplay= peerinfo.fileShare.container;
+    var elementDisplay = peerinfo.fileShare.container;
     var listlength = peerinfo.filearray.length;
 
     /*  
@@ -16125,12 +16125,14 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
     }else if(filetype=="sessionRecording"){
         var filename = filename.videoname+"_"+filename.audioname;
         var div =  document.createElement("div");
+        div.setAttribute("background-color","black");
         div.id= "display"+filename; 
         div.title=  filename; 
 
         var video = document.createElement('video');
-        video.src=fileurl.videofileurl;
-
+        video.src = fileurl.videofileurl;
+        video.control=true;
+        
         var audio = document.createElement('audio');
         audio.controls = false;
         audio.src = fileurl.audiofileurl;
@@ -16191,26 +16193,8 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
 function displayFile( uuid , peerinfo , _fileurl , _filename , _filetype ){
 
     var parentdom =  document.getElementById(peerinfo.fileShare.container);
-
-    if(filetype=="sessionRecording"){
-        var video = document.createElement('video');
-        video.src=URL.createObjectURL(videoBlob);
-        document.getElementsByClassName("fileviewing-box")[0].appendChild(video);
-
-        var audio = document.createElement('audio');
-        audio.controls = false;
-        audio.src = audioBlob;
-        audio.hidden=true;
-        document.getElementsByClassName("fileviewing-box")[0].appendChild(audio);
-
-        video.play();
-        audio.play();
-        filename = filename.videoname+"_"+filename.audioname;
-    }else{
-        var filedom = getFileElementDisplayByType(_filetype , _fileurl , _filename);
-        
-    }
-
+    var filedom = getFileElementDisplayByType(_filetype , _fileurl , _filename);
+    
     if(parentdom){
         parentdom.innerHTML="";
         parentdom.appendChild(filedom);
@@ -16615,7 +16599,7 @@ function createdrawButton(){
 
 function assigndrawButton(btnid){
     drawButton = document.getElementById(btnid);
-    drawButton.className= drawCanvasobj.button.class_off ;
+    drawButton.className= drawCanvasobj.button.class_off;
     drawButton.innerHTML= drawCanvasobj.button.html_off;
     drawButton.onclick=function(){
         if(drawButton.className==drawCanvasobj.button.class_off){
