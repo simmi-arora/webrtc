@@ -230,207 +230,215 @@
 
 <script>
 $('document').ready(function(){
-    sessionid = init(true);
 
     var searchParams = new URLSearchParams(window.location);
-    var webrtcdomobj;
-
     console.log("searchParams" , searchParams);
-
-    var local={
-        video: "myAloneVideo",
-        videoClass:"",
-        videoContainer : "singleVideoContainer",
-        userDisplay:false,
-        userMetaDisplay:false,
-        userdetails:{
-            username:"Expert",
-            usercolor: "#DDECEF",
-            useremail: "abc@gmail.com"
-        }
-    };
-
-    var remote={
-        videoarr: ["myConferenceVideo"],
-        videoClass:"",
-        maxAllowed: "unlimited",
-        videoContainer : "confVideoContainer",
-        userDisplay:false,
-        userMetaDisplay:false,
-        dynamicVideos: false 
-    };
-
-    webrtcdomobj= new WebRTCdom(
-        local,remote, incoming, outgoing
-    );
-
-    var session ={
-        sessionid : sessionid,
-        socketAddr: props.signaller,
-        turn:{
-                username    : props.xirsys.username,
-                secretkey   : props.xirsys.secretkey,
-                domain      : props.xirsys.domain,
-                application : props.xirsys.application,
-                room        : props.xirsys.room,
-                secure      : props.xirsys.secure
-            }
-    };
     
-    var incoming={
-        audio:  true,
-        video:  true,
-        data:   true,
-        screen: true
-    };
+    init(true , function (sessionid){
 
-    var outgoing={
-        audio:  true,
-        video:  true,
-        data:   true,
-        screen: true
-    };
+        var webrtcdomobj;
 
-    var widgets={
-        debug      : true,
-        timer      :{
-                        active:true,
-                        type: "backward",
-                        upperlimit: {
-                            hour:0 , 
-                            min: 3 , 
-                            sec: 0 
-                        },
-                        span:{
-                            id:"timerDiv",
-                            class:""
-                        }
-                    },
-        chat        :{
-                        active: true,
-                        chatContainer: "",
-                        input:{
-                            id:"chatInput"
-                        },
-                        button:{
-                            id:"chatInputButton",
-                            class:"form-control btn-primary buttonChatSend",
-                            html:"Send"
-                        }
-                    },
-        fileShare   :{
-                        active : true,
-                        fileShareContainer : "fileSharingRow",
-                        fileListContainer : "fileListingRow",
-                        button :{
-                            id:"fileShareButton"
-                        }
-                    },
-        location    :{
-                         active : false
-                    },
-        screenrecord:{
-                        active: true,
-                        autoscreenrecord:false,
-                        screenrecordContainer: null,
-                        button:{
-                            class_on:"btn btn-warning glyphicon glyphicon-refresh topPanelButton",
-                            html_on:"Stop",
-                            class_off:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
-                            html_off:"Record"
-                        }
-                    }, 
-        screenshare : {
-                        active:true,
-                        screenshareContainer: "widget-screenshareContainer",
-                        extensionID: props.extensionID,
-                        button:{
-                            installButton:{
-                                class_on:"btn btn-warning glyphicon glyphicon-inbox topPanelButton",
-                                html_on:"Stop Install",
-                                class_off:"btn btn-success glyphicon glyphicon-inbox topPanelButton",
-                                html_off:"Install Screen Share"
+        var local={
+            video: "myAloneVideo",
+            videoClass:"",
+            videoContainer : "singleVideoContainer",
+            userDisplay:false,
+            userMetaDisplay:false,
+            userdetails:{
+                username:"Expert",
+                usercolor: "#DDECEF",
+                useremail: "abc@gmail.com"
+            }
+        };
+
+        var remote={
+            videoarr: ["myConferenceVideo"],
+            videoClass:"",
+            maxAllowed: "unlimited",
+            videoContainer : "confVideoContainer",
+            userDisplay:false,
+            userMetaDisplay:false,
+            dynamicVideos: false 
+        };
+
+        webrtcdomobj= new WebRTCdom(
+            local,remote, incoming, outgoing
+        );
+
+        var session ={
+            sessionid : sessionid,
+            socketAddr: props.signaller,
+            turn:{
+                    username    : props.xirsys.username,
+                    secretkey   : props.xirsys.secretkey,
+                    domain      : props.xirsys.domain,
+                    application : props.xirsys.application,
+                    room        : props.xirsys.room,
+                    secure      : props.xirsys.secure
+                }
+        };
+        
+        var incoming={
+            audio:  true,
+            video:  true,
+            data:   true,
+            screen: true
+        };
+
+        var outgoing={
+            audio:  true,
+            video:  true,
+            data:   true,
+            screen: true
+        };
+
+        var widgets={
+            debug      : true,
+            timer      :{
+                            active:true,
+                            type: "backward",
+                            upperlimit: {
+                                hour:0 , 
+                                min: 3 , 
+                                sec: 0 
                             },
-                            shareButton:{
-                                class_on:"btn btn-warning  glyphicon glyphicon-expand topPanelButton",
-                                html_on:"Stop Sharing",
-                                class_off:"btn btn-success glyphicon glyphicon-expand topPanelButton",
-                                html_off:"ScreenShare"
-                            },
-                            viewButton:{
-                                class_on:"btn btn-warning  glyphicon glyphicon-expand topPanelButton",
-                                html_on:"Stop Viewing",
-                                class_off:"btn btn-success glyphicon glyphicon-expand topPanelButton",
-                                html_off:"View Screen"
+                            span:{
+                                id:"timerDiv",
+                                class:""
                             }
-                        }
-                    },
-        videoRecord :{
-                        active: true,
-                        videoRecordContainer: true,
-                        button:{
-                            class_on:"pull-right glyphicon glyphicon-facetime-video btn btn-warning mediaButton",
-                            html_on:"",
-                            class_off:"pull-right glyphicon glyphicon-facetime-video btn btn-default mediaButton",
-                            html_off:""
-                        }
-                    },
-        snapshot :{
-                        active: true,
-                        snapshotContainer: true,
-                        button:{
-                            class_on:"pull-right glyphicon glyphicon-camera btn btn-default mediaButton",
-                            html_on:""
-                        }
-                    }, 
-        drawCanvas  :{
-                        active: true,
-                        drawCanvasContainer: "widget-drawContainer",
-                        button:{
-                            class_on:"btn btn-warning glyphicon glyphicon-edit topPanelButton",
-                            html_on:"close Draw",
-                            class_off:"btn btn-success glyphicon glyphicon-edit topPanelButton",
-                            html_off:"Draw"
-                        }
-                    }, 
-        texteditor  :{
-                        active: false
-                    },                   
-        reconnect   :{
-                        active: true,
-                        button:{
-                            class:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
-                            html:"Reconnect",
-                            resyncfiles:false
-                        }
-                    }, 
-        mute        :{
-                    active: true,
-                    audio   :{
+                        },
+            chat        :{
                             active: true,
+                            chatContainer: "",
+                            input:{
+                                id:"chatInput"
+                            },
                             button:{
-                                class_on:"pull-right glyphicon glyphicon-volume-up btn btn-default mediaButton",
+                                id:"chatInputButton",
+                                class:"form-control btn-primary buttonChatSend",
+                                html:"Send"
+                            }
+                        },
+            fileShare   :{
+                            active : true,
+                            fileShareContainer : "fileSharingRow",
+                            fileListContainer : "fileListingRow",
+                            button :{
+                                id:"fileShareButton"
+                            }
+                        },
+            location    :{
+                             active : false
+                        },
+            screenrecord:{
+                            active: true,
+                            autoscreenrecord:false,
+                            screenrecordContainer: null,
+                            button:{
+                                class_on:"btn btn-warning glyphicon glyphicon-refresh topPanelButton",
+                                html_on:"Stop",
+                                class_off:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
+                                html_off:"Record"
+                            }
+                        }, 
+            screenshare : {
+                            active:true,
+                            screenshareContainer: "widget-screenshareContainer",
+                            extensionID: props.extensionID,
+                            button:{
+                                installButton:{
+                                    class_on:"btn btn-warning glyphicon glyphicon-inbox topPanelButton",
+                                    html_on:"Stop Install",
+                                    class_off:"btn btn-success glyphicon glyphicon-inbox topPanelButton",
+                                    html_off:"Install Screen Share"
+                                },
+                                shareButton:{
+                                    class_on:"btn btn-warning  glyphicon glyphicon-expand topPanelButton",
+                                    html_on:"Stop Sharing",
+                                    class_off:"btn btn-success glyphicon glyphicon-expand topPanelButton",
+                                    html_off:"ScreenShare"
+                                },
+                                viewButton:{
+                                    class_on:"btn btn-warning  glyphicon glyphicon-expand topPanelButton",
+                                    html_on:"Stop Viewing",
+                                    class_off:"btn btn-success glyphicon glyphicon-expand topPanelButton",
+                                    html_off:"View Screen"
+                                }
+                            }
+                        },
+            videoRecord :{
+                            active: true,
+                            videoRecordContainer: true,
+                            button:{
+                                class_on:"pull-right glyphicon glyphicon-facetime-video btn btn-warning mediaButton",
                                 html_on:"",
-                                class_off:"pull-right glyphicon glyphicon-volume-off btn btn-danger mediaButton",
+                                class_off:"pull-right glyphicon glyphicon-facetime-video btn btn-default mediaButton",
                                 html_off:""
                             }
                         },
-                    video : {
+            snapshot :{
+                            active: true,
+                            snapshotContainer: true,
+                            button:{
+                                class_on:"pull-right glyphicon glyphicon-camera btn btn-default mediaButton",
+                                html_on:""
+                            }
+                        }, 
+            drawCanvas  :{
+                            active: true,
+                            drawCanvasContainer: "widget-drawContainer",
+                            button:{
+                                class_on:"btn btn-warning glyphicon glyphicon-edit topPanelButton",
+                                html_on:"close Draw",
+                                class_off:"btn btn-success glyphicon glyphicon-edit topPanelButton",
+                                html_off:"Draw"
+                            }
+                        }, 
+            texteditor  :{
+                            active: false
+                        },                   
+            reconnect   :{
                             active: true,
                             button:{
-                                class_on:"pull-right glyphicon glyphicon-eye-open btn btn-default videoButtonClass mediaButton",
-                                html_on:"",
-                                class_off:"pull-right glyphicon glyphicon-eye-close  btn btn-danger videoButtonClass mediaButton",
-                                html_off:""
+                                class:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
+                                html:"Reconnect",
+                                resyncfiles:false
+                            }
+                        }, 
+            mute        :{
+                        active: true,
+                        audio   :{
+                                active: true,
+                                button:{
+                                    class_on:"pull-right glyphicon glyphicon-volume-up btn btn-default mediaButton",
+                                    html_on:"",
+                                    class_off:"pull-right glyphicon glyphicon-volume-off btn btn-danger mediaButton",
+                                    html_off:""
+                                }
+                            },
+                        video : {
+                                active: true,
+                                button:{
+                                    class_on:"pull-right glyphicon glyphicon-eye-open btn btn-default videoButtonClass mediaButton",
+                                    html_on:"",
+                                    class_off:"pull-right glyphicon glyphicon-eye-close  btn btn-danger videoButtonClass mediaButton",
+                                    html_off:""
+                                }
                             }
                         }
-                    }
-    };
+        };
 
-    var webrtcdevobj = new WebRTCdev ( 
-        session, widgets
-    );
-    startcall(webrtcdevobj);
+        var webrtcdevobj = new WebRTCdev ( 
+            session, widgets
+        );
+        startcall(webrtcdevobj);
+
+    });
+
+    onSessionConnect=function(){
+        console.log(" some one connected ");
+
+    });
 });
 </script>
 </html>

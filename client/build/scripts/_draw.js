@@ -126,7 +126,7 @@ function createdrawButton(){
 
 function assigndrawButton(btnid){
     drawButton = document.getElementById(btnid);
-    drawButton.className= drawCanvasobj.button.class_off ;
+    drawButton.className= drawCanvasobj.button.class_off;
     drawButton.innerHTML= drawCanvasobj.button.html_off;
     drawButton.onclick=function(){
         if(drawButton.className==drawCanvasobj.button.class_off){
