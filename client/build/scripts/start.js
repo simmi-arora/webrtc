@@ -60,7 +60,7 @@ try{
 
         if(localobj.hasOwnProperty('userdetails')){
             console.log("userdetails " , localobj.userdetails);
-            selfusername = (localobj.userdetails.username  == undefined ? "LOCAL": localobj.userdetails.username);
+            selfusername = (!localobj.userdetails.username ? "LOCAL": localobj.userdetails.username);
             selfcolor    = (localobj.userdetails.usercolor == undefined ? "orange": localobj.userdetails.usercolor);
             selfemail    = (localobj.userdetails.useremail == undefined ? "unknown": localobj.userdetails.useremail);
             role         = (localobj.userdetails.role  == undefined ? "participant": localobj.userdetails.role);
@@ -68,7 +68,7 @@ try{
 
         if(remoteobj.hasOwnProperty('userdetails')){
             console.log("userdetails " , remoteobj.userdetails);
-            remoteusername = (remoteobj.userdetails.username  == undefined ? "REMOTE": remoteobj.userdetails.username);
+            remoteusername = (!remoteobj.userdetails.username ? "REMOTE": remoteobj.userdetails.username);
             remotecolor    = (remoteobj.userdetails.usercolor == undefined ? "orange": remoteobj.userdetails.usercolor);
             remoteemail    = (remoteobj.userdetails.useremail == undefined ? "unknown": remoteobj.userdetails.useremail);
         }
