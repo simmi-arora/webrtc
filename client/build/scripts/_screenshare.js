@@ -26,22 +26,26 @@ function getSourceId(callback, audioPlusTab) {
 }
 
 function getChromeExtensionStatus(extensionid, callback) {
-    if (2 != arguments.length && (callback = extensionid,
-    extensionid = window.RMCExtensionID || "ajhifddimkapgcifgcodmmfdlknahffk"),
-    isFirefox)
+    if (2 != arguments.length && (callback = extensionid, extensionid = window.RMCExtensionID || "ajhifddimkapgcifgcodmmfdlknahffk"), isFirefox)
         return callback("not-chrome");
-
-    var image = document.createElement("img");
-    image.src = "chrome-extension://" + extensionid + "/icon.png",
-    image.onload = function() {
-        chromeMediaSource = "screen",
-        window.postMessage("webrtcdev-extension-presence", "*"),
-        setTimeout(function() {
-            callback("screen" == chromeMediaSource ? extensionid == extensionid ? "installed-enabled" : "installed-disabled" : "installed-enabled")
-        }, 2e3);
-    },
-    image.onerror = function() {
-        callback("not-installed")
+    try{
+        var image = document.createElement("img");
+        image.src = "chrome-extension://" + extensionid + "/icon.png",
+        image.onload = function() {
+            console.info("screenshare extension " , image.src);
+            chromeMediaSource = "screen",
+            window.postMessage("webrtcdev-extension-presence", "*"),
+            setTimeout(function() {
+                callback("screen" == chromeMediaSource ? extensionid == extensionid ? "installed-enabled" : "installed-disabled" : "installed-enabled")
+            }, 2e3);
+        },
+        image.onerror = function() {
+            console.error("No screenshare extension " , image.src);
+            callback("not-installed");
+        }
+    }catch(e){
+        console.error("Screenshare extension image not found chrome-extension://" , extensionid , "/icon.png" , e)
+        callback("not-installed");
     }
 }
 
@@ -510,16 +514,16 @@ function createScreenInstallButton(extensionID){
     document.getElementById("topIconHolder_ul").appendChild(li);
 }
 
-function assignScreenInstallButton(){
+function assignScreenInstallButton(extensionID){
     var button=document.getElementById(screenshareobj.button.installButton.id);
     button.onclick= function(e) {    
         chrome.webstore.install("https://chrome.google.com/webstore/detail/"+extensionID,
             function(){
                 console.log("Chrome extension inline installation - success");
-                screenShareButton.hidden=true;
+                button.hidden = true;
                 createOrAssignScreenshareButton();
-            },function (err){
-                console.log("Chrome extension inline installation - fail " , err);
+            },function (e){
+                console.error("Chrome extension inline installation - fail " , e);
             });
         // Prevent the opening of the Web Store page
         e.preventDefault();
@@ -533,13 +537,14 @@ function hideScreenInstallButton(){
 }
 
 function createOrAssignScreenshareButton(){
-    if(screenshareobj.button.shareButton.id && document.getElementById(screenshareobj.button.shareButton.id)) 
-    {
+    if(screenshareobj.button.shareButton.id && document.getElementById(screenshareobj.button.shareButton.id)) {
         assignScreenShareButton();
         hideScreenInstallButton();
+        showScreenShareButton();
     }    
-    else
+    else{
         createScreenShareButton();
+    }
 }
 
 function createScreenshareButton(){
@@ -580,6 +585,18 @@ function assignScreenShareButton(){
     return button;
 }
 
+function hideScreenShareButton(){
+    var button=document.getElementById(screenshareobj.button.shareButton.id);
+    button.hidden=true;
+    button.setAttribute("style","display:none");
+}
+
+function showScreenShareButton(){
+    var button=document.getElementById(screenshareobj.button.shareButton.id);
+    button.removeAttribute("hidden");
+    button.setAttribute("style","display:block");
+}
+
 /*
 //shifted to start.js
 window.addEventListener('message', onScreenshareExtensionCallback);*/
@@ -605,9 +622,7 @@ function detectExtension(extensionID , callback){
     getChromeExtensionStatus(extensionID, function(status) {  
         console.log( "detectExtensionScreenshare for ", extensionID, " -> " , status);
         //reset extension's local storage objects 
-        
         window.postMessage("reset-webrtcdev-extension", "*");
-
         callback(status);
     });
 

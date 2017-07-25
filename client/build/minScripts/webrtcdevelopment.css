@@ -79,17 +79,7 @@ a:hover {
     color: #043877;
 }
 
-/*-------------------------------------------------------------*/
-.design-surface
-{
-    background-color: white;
-}
-.design-surface canvas {
-    position: absolute;
-}
-.design-surface canvas:last-child {
-    position: static;
-}
+
 /*-------------------------------------------------------------*/
 .tool-box
 {
@@ -580,7 +570,6 @@ input:focus {
 }
 
 video {
-    position: absolute;
     top: 0;
     left: 0;
     transition: width .5s ease;

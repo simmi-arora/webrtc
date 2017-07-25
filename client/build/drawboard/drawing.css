@@ -2,3 +2,15 @@ html, body  {
 	height:100%;
 	width: 100%
 }
+/*-------------------------------------------------------------*/
+.design-surface
+{
+	height: 100%;
+    background-color: white;
+}
+.design-surface canvas {
+    position: absolute;
+}
+.design-surface canvas:last-child {
+    position: static;
+}

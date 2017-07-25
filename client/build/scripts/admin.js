@@ -1,4 +1,8 @@
-var socket ;;
+/* ***************************************************************
+Admin
+******************************************************************/
+
+var socket ;
 var webrtcdevDataObj;
 var usersDataObj;
 var channelsFeed= document.getElementById("channelsFeed");
@@ -85,7 +89,6 @@ $('#channels_json').click(function () {
         format: 'json'
     });
 });
-
 
 $('#channel_clients').click(function () {
     socket.emit('admin_enquire', 

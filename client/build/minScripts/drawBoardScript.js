@@ -1,9 +1,2111 @@
-function fitToContainer(t,n){n.width=t.offsetWidth,n.height=t.offsetHeight}function addEvent(t,n,e){return t.addEventListener?(t.addEventListener(n,e,!1),!0):t.attachEvent?t.attachEvent("on"+n,e):(t["on"+n]=e,this)}function find(t){return document.getElementById(t)}function getContext(t){var n=find(t),e=n.getContext("2d");return e.lineWidth=lineWidth,e.strokeStyle=strokeStyle,e.fillStyle=fillStyle,e.font=font,e}function endLastPath(){var t=is;t.isArc?arcHandler.end():t.isQuadraticCurve?quadraticHandler.end():t.isBezierCurve&&bezierHandler.end(),drawHelper.redraw()}function copy(){endLastPath(),dragHelper.global.startingIndex=0,find("copy-last").checked?(copiedStuff=points[points.length-1],setSelection(find("drag-last-path"),"DragLastPath")):(copiedStuff=points,setSelection(find("drag-all-paths"),"DragAllPaths"))}function paste(){endLastPath(),dragHelper.global.startingIndex=0,find("copy-last").checked?(points[points.length]=copiedStuff,dragHelper.global={prevX:0,prevY:0,startingIndex:points.length-1},dragHelper.dragAllPaths(0,0),setSelection(find("drag-last-path"),"DragLastPath")):(dragHelper.global.startingIndex=points.length,points=points.concat(copiedStuff),setSelection(find("drag-all-paths"),"DragAllPaths"))}var parent=document.getElementById("drawBox");fitToContainer(parent,document.getElementById("main-canvas")),fitToContainer(parent,document.getElementById("temp-canvas"));var is={isLine:!1,isArc:!1,isDragLastPath:!1,isDragAllPaths:!1,isRectangle:!1,isQuadraticCurve:!1,isBezierCurve:!1,isPencil:!1,isEraser:!1,isText:!1,set:function(t){var n=this;n.isLine=n.isArc=n.isDragLastPath=n.isDragAllPaths=n.isRectangle=n.isQuadraticCurve=n.isBezierCurve=is.isPencil=is.isEraser=is.isText=!1,n["is"+t]=!0}},points=[],textarea=find("code-text"),lineWidth=2,strokeStyle="#6c96c8",fillStyle="transparent",globalAlpha=1,globalCompositeOperation="source-over",lineCap="butt",font="15px Verdana",lineJoin="miter",context=getContext("main-canvas"),tempContext=getContext("temp-canvas"),common={updateTextArea:function(){var t=common,n=t.toFixed,e=t.getPoint,o=find("is-absolute-points").checked,i=find("is-shorten-code").checked;o&&i&&t.absoluteShortened(),o&&!i&&t.absoluteNOTShortened(n),!o&&i&&t.relativeShortened(n,e),o||i||t.relativeNOTShortened(n,e)},toFixed:function(t){return Number(t).toFixed(1)},getPoint:function(t,n,e){return t=t>n?e+" + "+(t-n):t<n?e+" - "+(n-t):e},absoluteShortened:function(){var t,n="",e=points.length,o=0;for(o;o<e;o++)t=points[o],n+=this.shortenHelper(t[0],t[1],t[2]);n=n.substr(0,n.length-2),textarea.value="var points = ["+n+"], length = points.length, point, p, i = 0;\n\n"+this.forLoop,this.prevProps=null},absoluteNOTShortened:function(t){var n,e,o,i=[];for(n=0;n<points.length;n++)o=points[n],e=o[1],"pencil"===o[0]&&(i[n]=["context.beginPath();\ncontext.moveTo("+e[0]+", "+e[1]+");\ncontext.lineTo("+e[2]+", "+e[3]+");\n"+this.strokeOrFill(o[2])]),"eraser"===o[0]&&(i[n]=["context.beginPath();\ncontext.moveTo("+e[0]+", "+e[1]+");\ncontext.lineTo("+e[2]+", "+e[3]+");\n"+this.strokeOrFill(o[2])]),"line"===o[0]&&(i[n]=["context.beginPath();\ncontext.moveTo("+e[0]+", "+e[1]+");\ncontext.lineTo("+e[2]+", "+e[3]+");\n"+this.strokeOrFill(o[2])]),"text"===o[0]&&(i[n]=["context.fillText("+e[0]+", "+e[1]+", "+e[2]+");\n"+this.strokeOrFill(o[2])]),"arc"===o[0]&&(i[n]=["context.beginPath(); \ncontext.arc("+t(e[0])+","+t(e[1])+","+t(e[2])+","+t(e[3])+", 0,"+e[4]+"); \n"+this.strokeOrFill(o[2])]),"rect"===o[0]&&(i[n]=[this.strokeOrFill(o[2])+"\ncontext.strokeRect("+e[0]+", "+e[1]+","+e[2]+","+e[3]+");\ncontext.fillRect("+e[0]+", "+e[1]+","+e[2]+","+e[3]+");"]),"quadratic"===o[0]&&(i[n]=["context.beginPath();\ncontext.moveTo("+e[0]+", "+e[1]+");\ncontext.quadraticCurveTo("+e[2]+", "+e[3]+", "+e[4]+", "+e[5]+");\n"+this.strokeOrFill(o[2])]),"bezier"===o[0]&&(i[n]=["context.beginPath();\ncontext.moveTo("+e[0]+", "+e[1]+");\ncontext.bezierCurveTo("+e[2]+", "+e[3]+", "+e[4]+", "+e[5]+", "+e[6]+", "+e[7]+");\n"+this.strokeOrFill(o[2])]);textarea.value=i.join("\n\n")+this.strokeFillText,this.prevProps=null},relativeShortened:function(t,n){var e,o,i=0,r=points.length,l="",s=0,a=0;for(i;i<r;i++)o=points[i],e=o[1],0===i&&(s=e[0],a=e[1]),"text"===o[0]&&(s=e[1],a=e[2]),"pencil"===o[0]&&(l+=this.shortenHelper(o[0],[n(e[0],s,"x"),n(e[1],a,"y"),n(e[2],s,"x"),n(e[3],a,"y")],o[2])),"eraser"===o[0]&&(l+=this.shortenHelper(o[0],[n(e[0],s,"x"),n(e[1],a,"y"),n(e[2],s,"x"),n(e[3],a,"y")],o[2])),"line"===o[0]&&(l+=this.shortenHelper(o[0],[n(e[0],s,"x"),n(e[1],a,"y"),n(e[2],s,"x"),n(e[3],a,"y")],o[2])),"text"===o[0]&&(l+=this.shortenHelper(o[0],[e[0],n(e[1],s,"x"),n(e[2],a,"y")],o[2])),"arc"===o[0]&&(l+=this.shortenHelper(o[0],[n(e[0],s,"x"),n(e[1],a,"y"),e[2],e[3],e[4]],o[2])),"rect"===o[0]&&(l+=this.shortenHelper(o[0],[n(e[0],s,"x"),n(e[1],a,"y"),n(e[2],s,"x"),n(e[3],a,"y")],o[2])),"quadratic"===o[0]&&(l+=this.shortenHelper(o[0],[n(e[0],s,"x"),n(e[1],a,"y"),n(e[2],s,"x"),n(e[3],a,"y"),n(e[4],s,"x"),n(e[5],a,"y")],o[2])),"bezier"===o[0]&&(l+=this.shortenHelper(o[0],[n(e[0],s,"x"),n(e[1],a,"y"),n(e[2],s,"x"),n(e[3],a,"y"),n(e[4],s,"x"),n(e[5],a,"y"),n(e[6],s,"x"),n(e[7],a,"y")],o[2]));l=l.substr(0,l.length-2),textarea.value="var x = "+s+", y = "+a+", points = ["+l+"], length = points.length, point, p, i = 0;\n\n"+this.forLoop,this.prevProps=null},relativeNOTShortened:function(t,n){var e,o,i,r=points.length,l="",s=0,a=0;for(e=0;e<r;e++)i=points[e],o=i[1],0===e&&(s=o[0],a=o[1],"text"===i[0]&&(s=o[1],a=o[2]),l="var x = "+s+", y = "+a+";\n\n"),"arc"===i[0]&&(l+="context.beginPath();\ncontext.arc("+n(o[0],s,"x")+", "+n(o[1],a,"y")+", "+o[2]+", "+o[3]+", 0, "+o[4]+");\n"+this.strokeOrFill(i[2])),"pencil"===i[0]&&(l+="context.beginPath();\ncontext.moveTo("+n(o[0],s,"x")+", "+n(o[1],a,"y")+");\ncontext.lineTo("+n(o[2],s,"x")+", "+n(o[3],a,"y")+");\n"+this.strokeOrFill(i[2])),"eraser"===i[0]&&(l+="context.beginPath();\ncontext.moveTo("+n(o[0],s,"x")+", "+n(o[1],a,"y")+");\ncontext.lineTo("+n(o[2],s,"x")+", "+n(o[3],a,"y")+");\n"+this.strokeOrFill(i[2])),"line"===i[0]&&(l+="context.beginPath();\ncontext.moveTo("+n(o[0],s,"x")+", "+n(o[1],a,"y")+");\ncontext.lineTo("+n(o[2],s,"x")+", "+n(o[3],a,"y")+");\n"+this.strokeOrFill(i[2])),"text"===i[0]&&(l+="context.fillText("+o[0]+", "+n(o[1],s,"x")+", "+n(o[2],a,"y")+");\n"+this.strokeOrFill(i[2])),"rect"===i[0]&&(l+=this.strokeOrFill(i[2])+"\ncontext.strokeRect("+n(o[0],s,"x")+", "+n(o[1],a,"y")+", "+n(o[2],s,"x")+", "+n(o[3],a,"y")+");\ncontext.fillRect("+n(o[0],s,"x")+", "+n(o[1],a,"y")+", "+n(o[2],s,"x")+", "+n(o[3],a,"y")+");"),"quadratic"===i[0]&&(l+="context.beginPath();\ncontext.moveTo("+n(o[0],s,"x")+", "+n(o[1],a,"y")+");\ncontext.quadraticCurveTo("+n(o[2],s,"x")+", "+n(o[3],a,"y")+", "+n(o[4],s,"x")+", "+n(o[5],a,"y")+");\n"+this.strokeOrFill(i[2])),"bezier"===i[0]&&(l+="context.beginPath();\ncontext.moveTo("+n(o[0],s,"x")+", "+n(o[1],a,"y")+");\ncontext.bezierCurveTo("+n(o[2],s,"x")+", "+n(o[3],a,"y")+", "+n(o[4],s,"x")+", "+n(o[5],a,"y")+", "+n(o[6],s,"x")+", "+n(o[7],a,"y")+");\n"+this.strokeOrFill(i[2])),e!==r-1&&(l+="\n\n");textarea.value=l+this.strokeFillText,this.prevProps=null},forLoop:'for(i; i < length; i++) {\n\t p = points[i];\n\t point = p[1];\n\t context.beginPath();\n\n\t if(p[2]) { \n\t\t context.lineWidth = p[2][0];\n\t\t context.strokeStyle = p[2][1];\n\t\t context.fillStyle = p[2][2];\n\t\t context.globalAlpha = p[2][3];\n\t\t context.globalCompositeOperation = p[2][4];\n\t\t context.lineCap = p[2][5];\n\t\t context.lineJoin = p[2][6];\n\t\t context.font = p[2][7];\n\t }\n\n\t if(p[0] === "line") { \n\t\t context.moveTo(point[0], point[1]);\n\t\t context.lineTo(point[2], point[3]);\n\t }\n\n\t if(p[0] === "pencil") { \n\t\t context.moveTo(point[0], point[1]);\n\t\t context.lineTo(point[2], point[3]);\n\t }\n\n\t if(p[0] === "text") { \n\t\t context.fillText(point[0], point[1], point[2]);\n\t }\n\n\t if(p[0] === "eraser") { \n\t\t context.moveTo(point[0], point[1]);\n\t\t context.lineTo(point[2], point[3]);\n\t }\n\n\t if(p[0] === "arc") context.arc(point[0], point[1], point[2], point[3], 0, point[4]); \n\n\t if(p[0] === "rect") {\n\t\t context.strokeRect(point[0], point[1], point[2], point[3]);\n\t\t context.fillRect(point[0], point[1], point[2], point[3]);\n\t }\n\n\t if(p[0] === "quadratic") {\n\t\t context.moveTo(point[0], point[1]);\n\t\t context.quadraticCurveTo(point[2], point[3], point[4], point[5]);\n\t }\n\n\t if(p[0] === "bezier") {\n\t\t context.moveTo(point[0], point[1]);\n\t\t context.bezierCurveTo(point[2], point[3], point[4], point[5], point[6], point[7]);\n\t }\n\n\t context.stroke();\n\t context.fill();\n}',strokeFillText:"\n\nfunction strokeOrFill(lineWidth, strokeStyle, fillStyle, globalAlpha, globalCompositeOperation, lineCap, lineJoin, font) { \n\t if(lineWidth) { \n\t\t context.globalAlpha = globalAlpha;\n\t\t context.globalCompositeOperation = globalCompositeOperation;\n\t\t context.lineCap = lineCap;\n\t\t context.lineJoin = lineJoin;\n\t\t context.lineWidth = lineWidth;\n\t\t context.strokeStyle = strokeStyle;\n\t\t context.fillStyle = fillStyle;\n\t\t context.font = font;\n\t } \n\n\t context.stroke();\n\t context.fill();\n}",strokeOrFill:function(t){return this.prevProps&&this.prevProps===t.join(",")?"strokeOrFill();":(this.prevProps=t.join(","),'strokeOrFill("'+t.join('", "')+'");')},prevProps:null,shortenHelper:function(t,n,e){var o='["'+t+'", ['+n.join(", ")+"]";return this.prevProps&&this.prevProps===e.join(",")||(this.prevProps=e.join(","),o+=', ["'+e.join('", "')+'"]'),o+"], "}},copiedStuff=[],isControlKeyPressed;
-function make_base(e,t){base_image=new Image,base_image.onload=function(){alert(" make base decorator pencil ",e),t.drawImage(base_image,40,40)},base_image.src=e}function setSelection(e,t){endLastPath(),hideContainers(),is.set(t);var n=document.getElementsByClassName("selected-shape")[0];n&&(n.className=n.className.replace(/selected-shape/g,"")),e.className+=" selected-shape"}function hideContainers(){var e=find("additional-container"),t=find("colors-container"),n=find("line-width-container");e.style.display=t.style.display=n.style.display="none"}!function(){function e(e){return decodeURIComponent(e.replace(/\+/g," "))}for(var t,n={},l=/([^&=]+)=?([^&]*)/g,i=window.location.search;t=l.exec(i.substring(1));)n[e(t[1])]=e(t[2]);window.params=n}();var tools={line:!0,pencil:!0,dragSingle:!0,dragMultiple:!0,eraser:!0,rectangle:!0,arc:!0,bezier:!0,quadratic:!0,text:!0};params.tools&&(tools=JSON.parse(params.tools)),function(){function e(e){var t=find(e).getContext("2d");return t.lineWidth=2,t.strokeStyle="#6c96c8",t}function t(e,t){"Pencil"===t&&(lineCap=lineJoin="round"),params.selectedIcon?(params.selectedIcon=params.selectedIcon.split("")[0].toUpperCase()+params.selectedIcon.replace(params.selectedIcon.split("").shift(1),""),params.selectedIcon===t&&is.set(params.selectedIcon)):is.set("Pencil"),addEvent(e.canvas,"click",function(){dragHelper.global.startingIndex=0,setSelection(this,t),"drag-last-path"===this.id?(find("copy-last").checked=!0,find("copy-all").checked=!1):"drag-all-paths"===this.id&&(find("copy-all").checked=!0,find("copy-last").checked=!1),"pencil-icon"===this.id||"eraser-icon"===this.id?(v.lineCap=lineCap,v.lineJoin=lineJoin,lineCap=lineJoin="round"):v.lineCap&&v.lineJoin&&(lineCap=v.lineCap,lineJoin=v.lineJoin),"eraser-icon"===this.id?(v.strokeStyle=strokeStyle,v.fillStyle=fillStyle,v.lineWidth=lineWidth,strokeStyle="White",fillStyle="White",lineWidth=10):v.strokeStyle&&v.fillStyle&&"undefined"!=typeof v.lineWidth&&(strokeStyle=v.strokeStyle,fillStyle=v.fillStyle,lineWidth=v.lineWidth)})}function n(){var n,l,i=e("drag-last-path"),a=10,o=6,s="line",d=[[s,a,o,a+5,o+27],[s,a,o,a+18,o+19],[s,a+17,o+19,a+9,o+20],[s,a+9,o+20,a+5,o+27],[s,a+16,o+22,a+16,o+31],[s,a+12,o+27,a+20,o+27]],c=d.length;for(l=0;l<c;l++)n=d[l],"line"===n[0]&&(i.beginPath(),i.moveTo(n[1],n[2]),i.lineTo(n[3],n[4]),i.closePath(),i.stroke());i.fillStyle="Gray",i.font="9px Verdana",i.fillText("Last",18,12),t(i,"DragLastPath")}function l(){var n,l,i=e("drag-all-paths"),a=10,o=6,s="line",d=[[s,a,o,a+5,o+27],[s,a,o,a+18,o+19],[s,a+17,o+19,a+9,o+20],[s,a+9,o+20,a+5,o+27],[s,a+16,o+22,a+16,o+31],[s,a+12,o+27,a+20,o+27]],c=d.length;for(l=0;l<c;l++)n=d[l],"line"===n[0]&&(i.beginPath(),i.moveTo(n[1],n[2]),i.lineTo(n[3],n[4]),i.closePath(),i.stroke());i.fillStyle="Gray",i.font="10px Verdana",i.fillText("All",20,12),t(i,"DragAllPaths")}function i(){var n=e("line");n.moveTo(0,0),n.lineTo(40,40),n.stroke(),n.fillStyle="Gray",n.font="9px Verdana",n.fillText("Line",16,12),t(n,"Line")}function a(){var e=document.getElementById("pencil-icon").getContext("2d"),n=new Image;n.src="images/pencil.png",n.onload=function(){e.drawImage(n,0,0,35,35)},t(e,"Pencil")}function o(){var e=document.getElementById("eraser-icon").getContext("2d"),n=new Image;n.src="images/eraser.png",n.onload=function(){e.drawImage(n,0,0,35,35)},t(e,"Eraser")}function s(){var n=e("text-icon");n.font="22px Verdana",n.strokeText("T",15,30),t(n,"Text")}function d(){var n=e("arc");n.arc(20,20,16.3,2*Math.PI,0,1),n.stroke(),n.fillStyle="Gray",n.font="9px Verdana",n.fillText("Arc",10,24),t(n,"Arc")}function c(){var n=e("rectangle");n.strokeRect(5,5,30,30),n.fillStyle="Gray",n.font="9px Verdana",n.fillText("Rect",8,24),t(n,"Rectangle")}function r(){var n=e("quadratic-curve");n.moveTo(0,0),n.quadraticCurveTo(50,10,30,40),n.stroke(),n.fillStyle="Gray",n.font="9px Verdana",n.fillText("quad..",2,24),t(n,"QuadraticCurve")}function f(){var n=e("bezier-curve"),l=0,i=4;n.moveTo(l,i),n.bezierCurveTo(l+86,i+16,l-45,i+24,l+48,i+34),n.stroke(),n.fillStyle="Gray",n.font="9px Verdana",n.fillText("Bezier",10,8),t(n,"BezierCurve")}function p(){var e=document.getElementById("line-width").getContext("2d"),t=new Image;t.src="images/linesize.png",t.onload=function(){e.drawImage(t,0,0,35,35)};var n=find("line-width-container"),l=find("line-width-text"),i=find("line-width-done"),a=(document.getElementsByTagName("h1")[0],e.canvas);addEvent(a,"click",function(){hideContainers(),n.style.display="block",n.style.top=a.offsetTop+1+"px",n.style.left=a.offsetLeft+a.clientWidth+"px",l.focus()}),addEvent(i,"click",function(){n.style.display="none",lineWidth=l.value})}function y(){var e=document.getElementById("colors").getContext("2d"),t=new Image;t.src="images/color.png",t.onload=function(){e.drawImage(t,0,0,35,35)};var n=find("colors-container"),l=find("stroke-style"),i=find("fill-style"),a=find("colors-done"),o=(document.getElementsByTagName("h1")[0],e.canvas);addEvent(o,"click",function(){hideContainers(),n.style.display="block",n.style.top=o.offsetTop+1+"px",n.style.left=o.offsetLeft+o.clientWidth+"px",l.focus()}),addEvent(a,"click",function(){n.style.display="none",strokeStyle=l.value,fillStyle=i.value})}function u(){var t=e("additional");t.fillStyle="#6c96c8",t.font="35px Verdana",t.fillText("»",10,27),t.fillStyle="Gray",t.font="9px Verdana",t.fillText("Extras!",2,38);var n=find("additional-container"),l=find("additional-close"),i=(document.getElementsByTagName("h1")[0],t.canvas),a=find("globalAlpha-select"),o=find("globalCompositeOperation-select");addEvent(i,"click",function(){hideContainers(),n.style.display="block",n.style.top=i.offsetTop+1+"px",n.style.left=i.offsetLeft+i.clientWidth+"px"}),addEvent(l,"click",function(){n.style.display="none",globalAlpha=a.value,globalCompositeOperation=o.value,lineCap=x.value,lineJoin=k.value})}function m(){T.parentNode.style.display="none",S.style.display="none",hideContainers(),endLastPath()}function g(){T.parentNode.style.display="block",S.style.display="block",T.focus(),common.updateTextArea(),h(),hideContainers(),endLastPath()}function h(){T.style.width=innerWidth-S.clientWidth-30+"px",T.style.height=innerHeight-40+"px",T.style.marginLeft=S.clientWidth+"px",S.style.height=innerHeight+"px"}var v={},x=find("lineCap-select"),k=find("lineJoin-select"),I=find("tool-box");I.style.height="100%",tools.dragSingle===!0?n():document.getElementById("drag-last-path").style.display="none",tools.dragMultiple===!0?l():document.getElementById("drag-all-paths").style.display="none",tools.line===!0?i():document.getElementById("line").style.display="none",tools.pencil===!0?a():document.getElementById("pencil-icon").style.display="none",tools.eraser===!0?o():document.getElementById("eraser-icon").style.display="none",tools.text===!0?s():document.getElementById("text-icon").style.display="none",tools.arc===!0?d():document.getElementById("arc").style.display="none",tools.rectangle===!0?c():document.getElementById("rectangle").style.display="none",tools.quadratic===!0?r():document.getElementById("quadratic-curve").style.display="none",tools.bezier===!0?f():document.getElementById("bezier-curve").style.display="none",p(),y(),u();var C=find("design-preview"),E=find("code-preview");window.selectBtn=function(e,t){E.className=C.className="",e==C?C.className="preview-selected":E.className="preview-selected",!t&&window.connection&&connection.numberOfConnectedUsers>=1?connection.send({btnSelected:e.id}):e==C?m():g()},addEvent(C,"click",function(){selectBtn(C),m()}),addEvent(E,"click",function(){selectBtn(E),g()});var T=find("code-text"),S=find("options-container"),b=find("is-absolute-points"),w=find("is-shorten-code");addEvent(w,"change",common.updateTextArea),addEvent(b,"change",common.updateTextArea)}();
-var drawHelper={redraw:function(t){tempContext.clearRect(0,0,innerWidth,innerHeight),context.clearRect(0,0,innerWidth,innerHeight);var e,i,n=points.length;for(e=0;e<n;e++)i=points[e],this[i[0]](context,i[1],i[2]);t||syncPoints()},getOptions:function(){return[lineWidth,strokeStyle,fillStyle,globalAlpha,globalCompositeOperation,lineCap,lineJoin,font]},handleOptions:function(t,e,i){e=e||this.getOptions(),t.globalAlpha=e[3],t.globalCompositeOperation=e[4],t.lineCap=e[5],t.lineJoin=e[6],t.lineWidth=e[0],t.strokeStyle=e[1],t.fillStyle=e[2],i||(t.stroke(),t.fill())},line:function(t,e,i){t.beginPath(),t.moveTo(e[0],e[1]),t.lineTo(e[2],e[3]),this.handleOptions(t,i)},text:function(t,e,i){var n=fillStyle;t.fillStyle="transparent"===fillStyle||"White"===fillStyle?"Black":fillStyle,t.font="15px Verdana",t.fillText(e[0].substr(1,e[0].length-2),e[1],e[2]),fillStyle=n,this.handleOptions(t,i)},arc:function(t,e,i){t.beginPath(),t.arc(e[0],e[1],e[2],e[3],0,e[4]),this.handleOptions(t,i)},rect:function(t,e,i){this.handleOptions(t,i,!0),t.strokeRect(e[0],e[1],e[2],e[3]),t.fillRect(e[0],e[1],e[2],e[3])},quadratic:function(t,e,i){t.beginPath(),t.moveTo(e[0],e[1]),t.quadraticCurveTo(e[2],e[3],e[4],e[5]),this.handleOptions(t,i)},bezier:function(t,e,i){t.beginPath(),t.moveTo(e[0],e[1]),t.bezierCurveTo(e[2],e[3],e[4],e[5],e[6],e[7]),this.handleOptions(t,i)}};
-var dragHelper={global:{prevX:0,prevY:0,ismousedown:!1,pointsToMove:"all",startingIndex:0},mousedown:function(t){isControlKeyPressed&&(copy(),paste(),isControlKeyPressed=!1);var n=dragHelper,o=n.global,e=t.pageX-canvas.offsetLeft,i=t.pageY-canvas.offsetTop;if(o.prevX=e,o.prevY=i,o.pointsToMove="all",points.length){var s=points[points.length-1],a=s[1];"line"===s[0]&&(n.isPointInPath(e,i,a[0],a[1])&&(o.pointsToMove="head"),n.isPointInPath(e,i,a[2],a[3])&&(o.pointsToMove="tail")),"rect"===s[0]&&n.isPointInPath(e,i,a[0]+a[2],a[1]+a[3])&&(o.pointsToMove="stretch"),"quadratic"===s[0]&&(n.isPointInPath(e,i,a[0],a[1])&&(o.pointsToMove="starting-points"),n.isPointInPath(e,i,a[2],a[3])&&(o.pointsToMove="control-points"),n.isPointInPath(e,i,a[4],a[5])&&(o.pointsToMove="ending-points")),"bezier"===s[0]&&(n.isPointInPath(e,i,a[0],a[1])&&(o.pointsToMove="starting-points"),n.isPointInPath(e,i,a[2],a[3])&&(o.pointsToMove="1st-control-points"),n.isPointInPath(e,i,a[4],a[5])&&(o.pointsToMove="2nd-control-points"),n.isPointInPath(e,i,a[6],a[7])&&(o.pointsToMove="ending-points"))}o.ismousedown=!0},mouseup:function(){var t=this.global;is.isDragLastPath&&(tempContext.clearRect(0,0,innerWidth,innerHeight),context.clearRect(0,0,innerWidth,innerHeight),this.end()),t.ismousedown=!1},mousemove:function(t){var n=t.pageX-canvas.offsetLeft,o=t.pageY-canvas.offsetTop,e=this.global;drawHelper.redraw(),e.ismousedown&&this.dragShape(n,o),is.isDragLastPath&&this.init()},init:function(){if(points.length){var t=points[points.length-1],n=t[1],o=this.global;o.ismousedown?tempContext.fillStyle="rgba(255,85 ,154,.9)":tempContext.fillStyle="rgba(255,85 ,154,.4)","quadratic"===t[0]&&(tempContext.beginPath(),tempContext.arc(n[0],n[1],10,2*Math.PI,0,!1),tempContext.arc(n[2],n[3],10,2*Math.PI,0,!1),tempContext.arc(n[4],n[5],10,2*Math.PI,0,!1),tempContext.fill()),"bezier"===t[0]&&(tempContext.beginPath(),tempContext.arc(n[0],n[1],10,2*Math.PI,0,!1),tempContext.arc(n[2],n[3],10,2*Math.PI,0,!1),tempContext.arc(n[4],n[5],10,2*Math.PI,0,!1),tempContext.arc(n[6],n[7],10,2*Math.PI,0,!1),tempContext.fill()),"line"===t[0]&&(tempContext.beginPath(),tempContext.arc(n[0],n[1],10,2*Math.PI,0,!1),tempContext.arc(n[2],n[3],10,2*Math.PI,0,!1),tempContext.fill()),"text"===t[0]&&(tempContext.font="15px Verdana",tempContext.fillText(n[0],n[1],n[2])),"rect"===t[0]&&(tempContext.beginPath(),tempContext.arc(n[0]+n[2],n[1]+n[3],10,2*Math.PI,0,!1),tempContext.fill())}},isPointInPath:function(t,n,o,e){return t>o-10&&t<o+10&&n>e-10&&n<e+10},getPoint:function(t,n,o){return t=t>n?o+(t-n):o-(n-t)},dragShape:function(t,n){if(this.global.ismousedown){tempContext.clearRect(0,0,innerWidth,innerHeight),is.isDragLastPath&&this.dragLastPath(t,n),is.isDragAllPaths&&this.dragAllPaths(t,n);var o=this.global;o.prevX=t,o.prevY=n}},end:function(){if(points.length){tempContext.clearRect(0,0,innerWidth,innerHeight);var t=points[points.length-1];drawHelper[t[0]](context,t[1],t[2])}},dragAllPaths:function(t,n){var o,e,i=this.global,s=i.prevX,a=i.prevY,p=points.length,r=this.getPoint,l=i.startingIndex;for(l;l<p;l++)o=points[l],e=o[1],"line"===o[0]&&(points[l]=[o[0],[r(t,s,e[0]),r(n,a,e[1]),r(t,s,e[2]),r(n,a,e[3])],o[2]]),"text"===o[0]&&(points[l]=[o[0],[e[0],r(t,s,e[1]),r(n,a,e[2])],o[2]]),"arc"===o[0]&&(points[l]=[o[0],[r(t,s,e[0]),r(n,a,e[1]),e[2],e[3],e[4]],o[2]]),"rect"===o[0]&&(points[l]=[o[0],[r(t,s,e[0]),r(n,a,e[1]),e[2],e[3]],o[2]]),"quadratic"===o[0]&&(points[l]=[o[0],[r(t,s,e[0]),r(n,a,e[1]),r(t,s,e[2]),r(n,a,e[3]),r(t,s,e[4]),r(n,a,e[5])],o[2]]),"bezier"===o[0]&&(points[l]=[o[0],[r(t,s,e[0]),r(n,a,e[1]),r(t,s,e[2]),r(n,a,e[3]),r(t,s,e[4]),r(n,a,e[5]),r(t,s,e[6]),r(n,a,e[7])],o[2]])},dragLastPath:function(t,n){var o=this.global,e=o.prevX,i=o.prevY,s=points[points.length-1],a=s[1],p=this.getPoint,r="all"===o.pointsToMove;"line"===s[0]&&(("head"===o.pointsToMove||r)&&(a[0]=p(t,e,a[0]),a[1]=p(n,i,a[1])),("tail"===o.pointsToMove||r)&&(a[2]=p(t,e,a[2]),a[3]=p(n,i,a[3])),points[points.length-1]=[s[0],a,s[2]]),"text"===s[0]&&(("head"===o.pointsToMove||r)&&(a[1]=p(t,e,a[1]),a[2]=p(n,i,a[2])),points[points.length-1]=[s[0],a,s[2]]),"arc"===s[0]&&(a[0]=p(t,e,a[0]),a[1]=p(n,i,a[1]),points[points.length-1]=[s[0],a,s[2]]),"rect"===s[0]&&(r&&(a[0]=p(t,e,a[0]),a[1]=p(n,i,a[1])),"stretch"===o.pointsToMove&&(a[2]=p(t,e,a[2]),a[3]=p(n,i,a[3])),points[points.length-1]=[s[0],a,s[2]]),"quadratic"===s[0]&&(("starting-points"===o.pointsToMove||r)&&(a[0]=p(t,e,a[0]),a[1]=p(n,i,a[1])),("control-points"===o.pointsToMove||r)&&(a[2]=p(t,e,a[2]),a[3]=p(n,i,a[3])),("ending-points"===o.pointsToMove||r)&&(a[4]=p(t,e,a[4]),a[5]=p(n,i,a[5])),points[points.length-1]=[s[0],a,s[2]]),"bezier"===s[0]&&(("starting-points"===o.pointsToMove||r)&&(a[0]=p(t,e,a[0]),a[1]=p(n,i,a[1])),("1st-control-points"===o.pointsToMove||r)&&(a[2]=p(t,e,a[2]),a[3]=p(n,i,a[3])),("2nd-control-points"===o.pointsToMove||r)&&(a[4]=p(t,e,a[4]),a[5]=p(n,i,a[5])),("ending-points"===o.pointsToMove||r)&&(a[6]=p(t,e,a[6]),a[7]=p(n,i,a[7])),points[points.length-1]=[s[0],a,s[2]])}};
-var pencilHandler={ismousedown:!1,prevX:0,prevY:0,mousedown:function(e){var p=e.pageX-canvas.offsetLeft,n=e.pageY-canvas.offsetTop,o=this;o.prevX=p,o.prevY=n,o.ismousedown=!0,tempContext.lineCap="round",drawHelper.line(tempContext,[o.prevX,o.prevY,p,n]),points[points.length]=["line",[o.prevX,o.prevY,p,n],drawHelper.getOptions()],o.prevX=p,o.prevY=n},mouseup:function(e){this.ismousedown=!1},mousemove:function(e){var p=e.pageX-canvas.offsetLeft,n=e.pageY-canvas.offsetTop,o=this;o.ismousedown&&(tempContext.lineCap="round",drawHelper.line(tempContext,[o.prevX,o.prevY,p,n]),points[points.length]=["line",[o.prevX,o.prevY,p,n],drawHelper.getOptions()],o.prevX=p,o.prevY=n)}};
-var eraserHandler={ismousedown:!1,prevX:0,prevY:0,mousedown:function(e){var p=e.pageX-canvas.offsetLeft,n=e.pageY-canvas.offsetTop,o=this;o.prevX=p,o.prevY=n,o.ismousedown=!0,tempContext.lineCap="round",drawHelper.line(tempContext,[o.prevX,o.prevY,p,n]),points[points.length]=["line",[o.prevX,o.prevY,p,n],drawHelper.getOptions()],o.prevX=p,o.prevY=n},mouseup:function(e){this.ismousedown=!1},mousemove:function(e){var p=e.pageX-canvas.offsetLeft,n=e.pageY-canvas.offsetTop,o=this;o.ismousedown&&(tempContext.lineCap="round",drawHelper.line(tempContext,[o.prevX,o.prevY,p,n]),points[points.length]=["line",[o.prevX,o.prevY,p,n],drawHelper.getOptions()],o.prevX=p,o.prevY=n)}};
-var lineHandler={ismousedown:!1,prevX:0,prevY:0,mousedown:function(e){var n=e.pageX-canvas.offsetLeft,o=e.pageY-canvas.offsetTop,s=this;s.prevX=n,s.prevY=o,s.ismousedown=!0},mouseup:function(e){var n=e.pageX-canvas.offsetLeft,o=e.pageY-canvas.offsetTop,s=this;s.ismousedown&&(points[points.length]=["line",[s.prevX,s.prevY,n,o],drawHelper.getOptions()],s.ismousedown=!1)},mousemove:function(e){var n=e.pageX-canvas.offsetLeft,o=e.pageY-canvas.offsetTop,s=this;s.ismousedown&&(tempContext.clearRect(0,0,innerWidth,innerHeight),drawHelper.line(tempContext,[s.prevX,s.prevY,n,o]))}};
-var rectHandler={ismousedown:!1,prevX:0,prevY:0,mousedown:function(e){var o=e.pageX-canvas.offsetLeft,t=e.pageY-canvas.offsetTop,s=this;s.prevX=o,s.prevY=t,s.ismousedown=!0},mouseup:function(e){var o=e.pageX-canvas.offsetLeft,t=e.pageY-canvas.offsetTop,s=this;s.ismousedown&&(points[points.length]=["rect",[s.prevX,s.prevY,o-s.prevX,t-s.prevY],drawHelper.getOptions()],s.ismousedown=!1)},mousemove:function(e){var o=e.pageX-canvas.offsetLeft,t=e.pageY-canvas.offsetTop,s=this;s.ismousedown&&(tempContext.clearRect(0,0,innerWidth,innerHeight),drawHelper.rect(tempContext,[s.prevX,s.prevY,o-s.prevX,t-s.prevY]))}};
-function onkeydown(e){keyCode=e.keyCode,isControlKeyPressed||17!==keyCode||(isControlKeyPressed=!0)}function onkeyup(e){keyCode=e.keyCode,isControlKeyPressed&&90===keyCode&&points.length&&(points.length=points.length-1,drawHelper.redraw()),isControlKeyPressed&&65===keyCode&&(dragHelper.global.startingIndex=0,endLastPath(),setSelection(find("drag-all-paths"),"DragAllPaths")),isControlKeyPressed&&67===keyCode&&points.length&&copy(),isControlKeyPressed&&86===keyCode&&copiedStuff.length&&paste(),17===keyCode&&(isControlKeyPressed=!1)}function syncPoints(){lastPoint.length||(lastPoint=points.join("")),points.join("")!=lastPoint&&(syncData(points||[]),lastPoint=points.join(""))}function syncData(e){parent.postMessage({canvasDesignerSyncData:e,sender:selfId},"*")}var canvas=tempContext.canvas,isTouch="createTouch"in document;addEvent(canvas,isTouch?"touchstart":"mousedown",function(e){isTouch&&(e=e.pageX?e:e.touches.length?e.touches[0]:{pageX:0,pageY:0});var s=is;console.log(" canvas coordinates x ->",e.pageX,"||",canvas.offsetLeft),console.log(" canvas coordinates y ->",e.pageY," ||",canvas.offsetTop),s.isLine?lineHandler.mousedown(e):s.isArc?arcHandler.mousedown(e):s.isRectangle?rectHandler.mousedown(e):s.isQuadraticCurve?quadraticHandler.mousedown(e):s.isBezierCurve?bezierHandler.mousedown(e):s.isDragLastPath||s.isDragAllPaths?dragHelper.mousedown(e):is.isPencil?pencilHandler.mousedown(e):is.isEraser?eraserHandler.mousedown(e):is.isText&&textHandler.mousedown(e),drawHelper.redraw()}),addEvent(canvas,isTouch?"touchend":"mouseup",function(e){isTouch&&(e=e.pageX?e:e.touches.length?e.touches[0]:{pageX:0,pageY:0});var s=is;s.isLine?lineHandler.mouseup(e):s.isArc?arcHandler.mouseup(e):s.isRectangle?rectHandler.mouseup(e):s.isQuadraticCurve?quadraticHandler.mouseup(e):s.isBezierCurve?bezierHandler.mouseup(e):s.isDragLastPath||s.isDragAllPaths?dragHelper.mouseup(e):is.isPencil?pencilHandler.mouseup(e):is.isEraser?eraserHandler.mouseup(e):is.isText&&textHandler.mouseup(e),drawHelper.redraw()}),addEvent(canvas,isTouch?"touchmove":"mousemove",function(e){isTouch&&(e=e.pageX?e:e.touches.length?e.touches[0]:{pageX:0,pageY:0});var s=is;s.isLine?lineHandler.mousemove(e):s.isArc?arcHandler.mousemove(e):s.isRectangle?rectHandler.mousemove(e):s.isQuadraticCurve?quadraticHandler.mousemove(e):s.isBezierCurve?bezierHandler.mousemove(e):s.isDragLastPath||s.isDragAllPaths?dragHelper.mousemove(e):is.isPencil?pencilHandler.mousemove(e):is.isEraser?eraserHandler.mousemove(e):is.isText&&textHandler.mousemove(e)});var keyCode;addEvent(document,"keydown",onkeydown),addEvent(document,"keyup",onkeyup);var lastPoint=[],selfId=parent.document.getElementById("username").innerHTML;window.addEventListener("message",function(e){e.data&&e.data.canvasDesignerSyncData&&(e.data.sender&&e.data.sender==selfId||(points=e.data.canvasDesignerSyncData,lastPoint.length||(lastPoint=points.join("")),drawHelper.redraw(!0)))},!1);
+/* ***********************************************
+common 
+*********************************************/
+
+function fitToContainer(parent , canvas){
+    try{
+        /*  canvas.style.width ='100%';
+        canvas.style.height='100%';*/
+        canvas.width  = parent.offsetWidth;
+        canvas.height = parent.offsetHeight;
+    }catch(e){
+        console.log(e);
+    }
+}
+
+function setContext(canv) {
+    var ctx=null;
+    try{ 
+         ctx = canv.getContext('2d');
+         ctx.lineWidth = lineWidth;
+         ctx.strokeStyle = strokeStyle;
+         ctx.fillStyle = fillStyle;
+         ctx.font = font;
+    }catch(e){
+        console.error(" canvas context not set " , canv);
+        console.error(e);
+    }
+    return ctx;
+}
+
+var mainCanvas  = document.getElementById("main-canvas");
+var canvas  = document.getElementById("temp-canvas");
+var context = setContext(mainCanvas);
+var tempContext = setContext(canvas);
+var parentBox = document.getElementById("drawBox");
+
+console.log("Main Canvas : " , mainCanvas , context);
+console.log("Temp Canvas : " , canvas , tempContext );
+
+
+fitToContainer( parentBox , mainCanvas );
+fitToContainer( parentBox , canvas );
+
+if(document.getElementById("trashBtn")){
+    document.getElementById("trashBtn").onclick = function() {
+        tempContext.clearRect(0, 0, canvas.width, canvas.height);
+        console.log(" cleared temp canvas" , canvas  );
+
+        context.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+        console.log(" cleared main canvas " , mainCanvas);
+
+        window.location.reload();
+    };
+}else{
+    console.error("trash button not found");
+}
+
+
+if(document.getElementById("saveBtn")){
+
+    document.getElementById("saveBtn").onclick = function() {
+        var aref = document.createElement("a");
+        aref.href = mainCanvas.toDataURL("image/png") ;
+        aref.download = "drawBox.png";
+        /*        <a href="blob:https://localhost:8084/1b9e4a15-ec9e-4017-b538-c73dc276d190" download="media-20161205.jpg"><i class="fa fa-download" style="font-size: 25px;"></i> </a>
+        */
+        aref.click();
+        /*document.getElementById("saveBtn").appendChild(aref);*/
+        //window.open(mainCanvas.toDataURL("image/png") , "canvasDiagram");
+        /*var e = mainCanvas.toDataURL("image/png"),
+        a = window.open("about:blank", "image from canvas");
+        a.document.write("<img src='" + e + "' alt='from canvas'/>");*/
+    };
+}else{
+    console.error("save button not found");
+}
+
+/*-----------------------------------------------*/
+
+var is = {
+    isLine: false,
+    isArc: false,
+    isDragLastPath: false,
+    isDragAllPaths: false,
+    isRectangle: false,
+    isQuadraticCurve: false,
+    isBezierCurve: false,
+    isPencil: false,
+    isEraser: false,
+    isText: false,
+
+    set: function(shape) {
+        var cache = this;
+        cache.isLine = cache.isArc = cache.isDragLastPath = cache.isDragAllPaths = cache.isRectangle = cache.isQuadraticCurve = cache.isBezierCurve = is.isPencil = is.isEraser = is.isText = false;
+        cache['is' + shape] = true;
+    }
+};
+
+
+function addEvent(element, eventType, callback) {
+    if (element.addEventListener) {
+        element.addEventListener(eventType, callback, !1);
+        return true;
+    } else if (element.attachEvent) return element.attachEvent('on' + eventType, callback);
+    else element['on' + eventType] = callback;
+    return this;
+}
+
+
+function find(selector) {
+    return document.getElementById(selector);
+}
+
+
+var points = [],
+    textarea = find('code-text'),
+    lineWidth = 2,
+    strokeStyle = '#6c96c8',
+    fillStyle = 'transparent',
+    globalAlpha = 1,
+    globalCompositeOperation = 'source-over',
+    lineCap = 'butt',
+    font = '15px Verdana',
+    lineJoin = 'miter';
+
+
+var common = {
+
+    updateTextArea: function() {
+        var c = common,
+            toFixed = c.toFixed,
+            getPoint = c.getPoint,
+
+            isAbsolutePoints = find('is-absolute-points').checked,
+            isShortenCode = find('is-shorten-code').checked;
+
+        if (isAbsolutePoints && isShortenCode) c.absoluteShortened();
+        if (isAbsolutePoints && !isShortenCode) c.absoluteNOTShortened(toFixed);
+        if (!isAbsolutePoints && isShortenCode) c.relativeShortened(toFixed, getPoint);
+        if (!isAbsolutePoints && !isShortenCode) c.relativeNOTShortened(toFixed, getPoint);
+    },
+
+
+
+    toFixed: function(input) {
+        return Number(input).toFixed(1);
+    },
+
+
+
+    getPoint: function(pointToCompare, compareWith, prefix) {
+        if (pointToCompare > compareWith) pointToCompare = prefix + ' + ' + (pointToCompare - compareWith);
+        else if (pointToCompare < compareWith) pointToCompare = prefix + ' - ' + (compareWith - pointToCompare);
+        else pointToCompare = prefix;
+
+        return pointToCompare;
+    },
+
+
+
+    absoluteShortened: function() {
+
+        var output = '',
+            length = points.length,
+            i = 0,
+            point;
+        for (i; i < length; i++) {
+            point = points[i];
+            output += this.shortenHelper(point[0], point[1], point[2]);
+        }
+
+        output = output.substr(0, output.length - 2);
+        textarea.value = 'var points = [' + output + '], length = points.length, point, p, i = 0;\n\n' + this.forLoop;
+
+        this.prevProps = null;
+    },
+
+
+    absoluteNOTShortened: function(toFixed) {
+        var tempArray = [],
+            i, point, p;
+
+        for (i = 0; i < points.length; i++) {
+            p = points[i];
+            point = p[1];
+
+            if (p[0] === 'pencil') {
+                tempArray[i] = ['context.beginPath();\n' + 'context.moveTo(' + point[0] + ', ' + point[1] + ');\n' + 'context.lineTo(' + point[2] + ', ' + point[3] + ');\n' + this.strokeOrFill(p[2])];
+            }
+
+            if (p[0] === 'eraser') {
+                tempArray[i] = ['context.beginPath();\n' + 'context.moveTo(' + point[0] + ', ' + point[1] + ');\n' + 'context.lineTo(' + point[2] + ', ' + point[3] + ');\n' + this.strokeOrFill(p[2])];
+            }
+
+            if (p[0] === 'line') {
+                tempArray[i] = ['context.beginPath();\n' + 'context.moveTo(' + point[0] + ', ' + point[1] + ');\n' + 'context.lineTo(' + point[2] + ', ' + point[3] + ');\n' + this.strokeOrFill(p[2])];
+            }
+
+            if (p[0] === 'text') {
+                tempArray[i] = ['context.fillText(' + point[0] + ', ' + point[1] + ', ' + point[2] + ');\n' + this.strokeOrFill(p[2])];
+            }
+
+            if (p[0] === 'arc') {
+                tempArray[i] = ['context.beginPath(); \n' + 'context.arc(' + toFixed(point[0]) + ',' + toFixed(point[1]) + ',' + toFixed(point[2]) + ',' + toFixed(point[3]) + ', 0,' + point[4] + '); \n' + this.strokeOrFill(p[2])];
+            }
+
+            if (p[0] === 'rect') {
+                tempArray[i] = [this.strokeOrFill(p[2]) + '\n' + 'context.strokeRect(' + point[0] + ', ' + point[1] + ',' + point[2] + ',' + point[3] + ');\n' + 'context.fillRect(' + point[0] + ', ' + point[1] + ',' + point[2] + ',' + point[3] + ');'];
+            }
+
+            if (p[0] === 'quadratic') {
+                tempArray[i] = ['context.beginPath();\n' + 'context.moveTo(' + point[0] + ', ' + point[1] + ');\n' + 'context.quadraticCurveTo(' + point[2] + ', ' + point[3] + ', ' + point[4] + ', ' + point[5] + ');\n' + this.strokeOrFill(p[2])];
+            }
+
+            if (p[0] === 'bezier') {
+                tempArray[i] = ['context.beginPath();\n' + 'context.moveTo(' + point[0] + ', ' + point[1] + ');\n' + 'context.bezierCurveTo(' + point[2] + ', ' + point[3] + ', ' + point[4] + ', ' + point[5] + ', ' + point[6] + ', ' + point[7] + ');\n' + this.strokeOrFill(p[2])];
+            }
+
+        }
+        textarea.value = tempArray.join('\n\n') + this.strokeFillText;
+
+        this.prevProps = null;
+    },
+
+
+    relativeShortened: function(toFixed, getPoint) {
+        var i = 0,
+            point, p, length = points.length,
+            output = '',
+            x = 0,
+            y = 0;
+
+        for (i; i < length; i++) {
+            p = points[i];
+            point = p[1];
+
+            if (i === 0) {
+                x = point[0];
+                y = point[1];
+            }
+
+            if (p[0] === 'text') {
+                x = point[1];
+                y = point[2];
+            }
+
+            if (p[0] === 'pencil') {
+                output += this.shortenHelper(p[0], [
+                    getPoint(point[0], x, 'x'),
+                    getPoint(point[1], y, 'y'),
+                    getPoint(point[2], x, 'x'),
+                    getPoint(point[3], y, 'y')
+                ], p[2]);
+            }
+
+            if (p[0] === 'eraser') {
+                output += this.shortenHelper(p[0], [
+                    getPoint(point[0], x, 'x'),
+                    getPoint(point[1], y, 'y'),
+                    getPoint(point[2], x, 'x'),
+                    getPoint(point[3], y, 'y')
+                ], p[2]);
+            }
+
+            if (p[0] === 'line') {
+                output += this.shortenHelper(p[0], [
+                    getPoint(point[0], x, 'x'),
+                    getPoint(point[1], y, 'y'),
+                    getPoint(point[2], x, 'x'),
+                    getPoint(point[3], y, 'y')
+                ], p[2]);
+            }
+
+            if (p[0] === 'text') {
+                output += this.shortenHelper(p[0], [
+                    point[0],
+                    getPoint(point[1], x, 'x'),
+                    getPoint(point[2], y, 'y')
+                ], p[2]);
+            }
+
+            if (p[0] === 'arc') {
+                output += this.shortenHelper(p[0], [
+                    getPoint(point[0], x, 'x'),
+                    getPoint(point[1], y, 'y'),
+                    point[2],
+                    point[3],
+                    point[4]
+                ], p[2]);
+            }
+
+            if (p[0] === 'rect') {
+                output += this.shortenHelper(p[0], [
+                    getPoint(point[0], x, 'x'),
+                    getPoint(point[1], y, 'y'),
+                    getPoint(point[2], x, 'x'),
+                    getPoint(point[3], y, 'y')
+                ], p[2]);
+            }
+
+            if (p[0] === 'quadratic') {
+                output += this.shortenHelper(p[0], [
+                    getPoint(point[0], x, 'x'),
+                    getPoint(point[1], y, 'y'),
+                    getPoint(point[2], x, 'x'),
+                    getPoint(point[3], y, 'y'),
+                    getPoint(point[4], x, 'x'),
+                    getPoint(point[5], y, 'y')
+                ], p[2]);
+            }
+
+            if (p[0] === 'bezier') {
+                output += this.shortenHelper(p[0], [
+                    getPoint(point[0], x, 'x'),
+                    getPoint(point[1], y, 'y'),
+                    getPoint(point[2], x, 'x'),
+                    getPoint(point[3], y, 'y'),
+                    getPoint(point[4], x, 'x'),
+                    getPoint(point[5], y, 'y'),
+                    getPoint(point[6], x, 'x'),
+                    getPoint(point[7], y, 'y')
+                ], p[2]);
+            }
+        }
+
+        output = output.substr(0, output.length - 2);
+        textarea.value = 'var x = ' + x + ', y = ' + y + ', points = [' + output + '], length = points.length, point, p, i = 0;\n\n' + this.forLoop;
+
+        this.prevProps = null;
+    },
+
+
+    relativeNOTShortened: function(toFixed, getPoint) {
+        var i, point, p, length = points.length,
+            output = '',
+            x = 0,
+            y = 0;
+
+        for (i = 0; i < length; i++) {
+            p = points[i];
+            point = p[1];
+
+            if (i === 0) {
+                x = point[0];
+                y = point[1];
+
+                if (p[0] === 'text') {
+                    x = point[1];
+                    y = point[2];
+                }
+
+                output = 'var x = ' + x + ', y = ' + y + ';\n\n';
+            }
+
+            if (p[0] === 'arc') {
+                output += 'context.beginPath();\n' + 'context.arc(' + getPoint(point[0], x, 'x') + ', ' + getPoint(point[1], y, 'y') + ', ' + point[2] + ', ' + point[3] + ', 0, ' + point[4] + ');\n'
+
+                + this.strokeOrFill(p[2]);
+            }
+
+            if (p[0] === 'pencil') {
+                output += 'context.beginPath();\n' + 'context.moveTo(' + getPoint(point[0], x, 'x') + ', ' + getPoint(point[1], y, 'y') + ');\n' + 'context.lineTo(' + getPoint(point[2], x, 'x') + ', ' + getPoint(point[3], y, 'y') + ');\n'
+
+                + this.strokeOrFill(p[2]);
+            }
+
+            if (p[0] === 'eraser') {
+                output += 'context.beginPath();\n' + 'context.moveTo(' + getPoint(point[0], x, 'x') + ', ' + getPoint(point[1], y, 'y') + ');\n' + 'context.lineTo(' + getPoint(point[2], x, 'x') + ', ' + getPoint(point[3], y, 'y') + ');\n'
+
+                + this.strokeOrFill(p[2]);
+            }
+
+            if (p[0] === 'line') {
+                output += 'context.beginPath();\n' + 'context.moveTo(' + getPoint(point[0], x, 'x') + ', ' + getPoint(point[1], y, 'y') + ');\n' + 'context.lineTo(' + getPoint(point[2], x, 'x') + ', ' + getPoint(point[3], y, 'y') + ');\n'
+
+                + this.strokeOrFill(p[2]);
+            }
+
+            if (p[0] === 'text') {
+                output += 'context.fillText(' + point[0] + ', ' + getPoint(point[1], x, 'x') + ', ' + getPoint(point[2], y, 'y') + ');\n' + this.strokeOrFill(p[2]);
+            }
+
+            if (p[0] === 'rect') {
+                output += this.strokeOrFill(p[2]) + '\n' + 'context.strokeRect(' + getPoint(point[0], x, 'x') + ', ' + getPoint(point[1], y, 'y') + ', ' + getPoint(point[2], x, 'x') + ', ' + getPoint(point[3], y, 'y') + ');\n' + 'context.fillRect(' + getPoint(point[0], x, 'x') + ', ' + getPoint(point[1], y, 'y') + ', ' + getPoint(point[2], x, 'x') + ', ' + getPoint(point[3], y, 'y') + ');';
+            }
+
+            if (p[0] === 'quadratic') {
+                output += 'context.beginPath();\n' + 'context.moveTo(' + getPoint(point[0], x, 'x') + ', ' + getPoint(point[1], y, 'y') + ');\n' + 'context.quadraticCurveTo(' + getPoint(point[2], x, 'x') + ', ' + getPoint(point[3], y, 'y') + ', ' + getPoint(point[4], x, 'x') + ', ' + getPoint(point[5], y, 'y') + ');\n'
+
+                + this.strokeOrFill(p[2]);
+            }
+
+            if (p[0] === 'bezier') {
+                output += 'context.beginPath();\n' + 'context.moveTo(' + getPoint(point[0], x, 'x') + ', ' + getPoint(point[1], y, 'y') + ');\n' + 'context.bezierCurveTo(' + getPoint(point[2], x, 'x') + ', ' + getPoint(point[3], y, 'y') + ', ' + getPoint(point[4], x, 'x') + ', ' + getPoint(point[5], y, 'y') + ', ' + getPoint(point[6], x, 'x') + ', ' + getPoint(point[7], y, 'y') + ');\n'
+
+                + this.strokeOrFill(p[2]);
+            }
+
+            if (i !== length - 1) output += '\n\n';
+        }
+        textarea.value = output + this.strokeFillText;
+
+        this.prevProps = null;
+    },
+
+
+
+    forLoop: 'for(i; i < length; i++) {\n' + '\t p = points[i];\n' + '\t point = p[1];\n' + '\t context.beginPath();\n\n'
+
+   
+        + '\t if(p[2]) { \n' + '\t\t context.lineWidth = p[2][0];\n' + '\t\t context.strokeStyle = p[2][1];\n' + '\t\t context.fillStyle = p[2][2];\n'
+
+        + '\t\t context.globalAlpha = p[2][3];\n' + '\t\t context.globalCompositeOperation = p[2][4];\n' + '\t\t context.lineCap = p[2][5];\n' + '\t\t context.lineJoin = p[2][6];\n' + '\t\t context.font = p[2][7];\n' + '\t }\n\n'
+
+    
+        + '\t if(p[0] === "line") { \n' + '\t\t context.moveTo(point[0], point[1]);\n' + '\t\t context.lineTo(point[2], point[3]);\n' + '\t }\n\n'
+
+   
+        + '\t if(p[0] === "pencil") { \n' + '\t\t context.moveTo(point[0], point[1]);\n' + '\t\t context.lineTo(point[2], point[3]);\n' + '\t }\n\n'
+
+    
+        + '\t if(p[0] === "text") { \n' + '\t\t context.fillText(point[0], point[1], point[2]);\n' + '\t }\n\n'
+
+
+        + '\t if(p[0] === "eraser") { \n' + '\t\t context.moveTo(point[0], point[1]);\n' + '\t\t context.lineTo(point[2], point[3]);\n' + '\t }\n\n'
+
+
+
+        + '\t if(p[0] === "arc") context.arc(point[0], point[1], point[2], point[3], 0, point[4]); \n\n'
+
+        + '\t if(p[0] === "rect") {\n' + '\t\t context.strokeRect(point[0], point[1], point[2], point[3]);\n' + '\t\t context.fillRect(point[0], point[1], point[2], point[3]);\n'
+
+        + '\t }\n\n'
+
+        + '\t if(p[0] === "quadratic") {\n' + '\t\t context.moveTo(point[0], point[1]);\n' + '\t\t context.quadraticCurveTo(point[2], point[3], point[4], point[5]);\n' + '\t }\n\n'
+
+        + '\t if(p[0] === "bezier") {\n' + '\t\t context.moveTo(point[0], point[1]);\n' + '\t\t context.bezierCurveTo(point[2], point[3], point[4], point[5], point[6], point[7]);\n' + '\t }\n\n'
+
+        + '\t context.stroke();\n' + '\t context.fill();\n'
+
+        + '}',
+
+    strokeFillText: '\n\nfunction strokeOrFill(lineWidth, strokeStyle, fillStyle, globalAlpha, globalCompositeOperation, lineCap, lineJoin, font) { \n' + '\t if(lineWidth) { \n' + '\t\t context.globalAlpha = globalAlpha;\n' + '\t\t context.globalCompositeOperation = globalCompositeOperation;\n' + '\t\t context.lineCap = lineCap;\n' + '\t\t context.lineJoin = lineJoin;\n'
+
+        + '\t\t context.lineWidth = lineWidth;\n' + '\t\t context.strokeStyle = strokeStyle;\n' + '\t\t context.fillStyle = fillStyle;\n' + '\t\t context.font = font;\n' + '\t } \n\n'
+
+        + '\t context.stroke();\n' + '\t context.fill();\n'
+
+        + '}',
+
+
+    strokeOrFill: function(p) {
+        if (!this.prevProps || this.prevProps !== p.join(',')) {
+            this.prevProps = p.join(',');
+
+            return 'strokeOrFill("' + p.join('", "') + '");';
+        }
+
+        return 'strokeOrFill();';
+    },
+
+
+    prevProps: null,
+    shortenHelper: function(name, p1, p2) {
+        var result = '["' + name + '", [' + p1.join(', ') + ']';
+
+        if (!this.prevProps || this.prevProps !== p2.join(',')) {
+            this.prevProps = p2.join(',');
+            result += ', ["' + p2.join('", "') + '"]';
+        }
+
+        return result + '], ';
+    }
+
+    // -------------------------------------------------------------
+};
+
+// -------------------------------------------------------------
+
+function endLastPath() {
+    var cache = is;
+
+    if (cache.isArc) arcHandler.end();
+    else if (cache.isQuadraticCurve) quadraticHandler.end();
+    else if (cache.isBezierCurve) bezierHandler.end();
+
+    drawHelper.redraw();
+}
+
+// -------------------------------------------------------------
+
+var copiedStuff = [],
+    isControlKeyPressed;
+
+// -------------------------------------------------------------
+
+function copy() {
+    endLastPath();
+
+    dragHelper.global.startingIndex = 0;
+
+    if (find('copy-last').checked) {
+        copiedStuff = points[points.length - 1];
+        setSelection(find('drag-last-path'), 'DragLastPath');
+    } else {
+        copiedStuff = points;
+        setSelection(find('drag-all-paths'), 'DragAllPaths');
+    }
+}
+
+// -------------------------------------------------------------
+
+function paste() {
+    endLastPath();
+
+    dragHelper.global.startingIndex = 0;
+
+    if (find('copy-last').checked) {
+        points[points.length] = copiedStuff;
+
+        dragHelper.global = {
+            prevX: 0,
+            prevY: 0,
+            startingIndex: points.length - 1
+        };
+
+        dragHelper.dragAllPaths(0, 0);
+        setSelection(find('drag-last-path'), 'DragLastPath');
+    } else {
+
+        dragHelper.global.startingIndex = points.length;
+        points = points.concat(copiedStuff);
+        setSelection(find('drag-all-paths'), 'DragAllPaths');
+    }
+}
+
+// -------------------------------------------------------------
+
+
+/* ***********************************************
+Decorator
+*********************************************/
+
+function make_base(imgsrc , context)
+{
+  base_image = new Image();
+  //base_image.src = 'img/base.png';
+  
+  base_image.onload = function(){
+    alert(" make base decorator pencil ", imgsrc);
+    context.drawImage(base_image, 40, 40);
+  }
+  base_image.src=imgsrc;
+}
+
+// -------------------------------------------------------------
+(function() {
+    var params = {},
+        r = /([^&=]+)=?([^&]*)/g;
+
+    function d(s) {
+        return decodeURIComponent(s.replace(/\+/g, ' '));
+    }
+
+    var match, search = window.location.search;
+    while (match = r.exec(search.substring(1)))
+        params[d(match[1])] = d(match[2]);
+
+    window.params = params;
+})();
+
+var tools = {
+    line: true,
+    pencil: true,
+    dragSingle: true,
+    dragMultiple: true,
+    eraser: true,
+    rectangle: true,
+    arc: true,
+    bezier: true,
+    quadratic: true,
+    text: true
+};
+
+if (params.tools) {
+    tools = JSON.parse(params.tools);
+}
+
+function setSelection(element, prop) {
+    endLastPath();
+    hideContainers();
+
+    is.set(prop);
+
+    var selected = document.getElementsByClassName('selected-shape')[0];
+    if (selected) selected.className = selected.className.replace(/selected-shape/g, '');
+
+    element.className += ' selected-shape';
+}
+
+// -------------------------------------------------------------
+
+(function() {
+
+    var cache = {};
+
+    var lineCapSelect = find('lineCap-select');
+    var lineJoinSelect = find('lineJoin-select');
+
+
+    function getContext(id) {
+        var context = find(id).getContext('2d');
+        context.lineWidth = 2;
+        context.strokeStyle = '#6c96c8';
+        return context;
+    }
+
+
+    function bindEvent(context, shape) {
+        if (shape === 'Pencil') {
+            lineCap = lineJoin = 'round';
+        }
+
+        /* Default: setting default selected shape!! */
+        if(params.selectedIcon) {
+            params.selectedIcon = params.selectedIcon.split('')[0].toUpperCase() + params.selectedIcon.replace(params.selectedIcon.split('').shift(1), '');
+            if(params.selectedIcon === shape) {
+                is.set(params.selectedIcon);
+            }
+        }
+        else is.set('Pencil');
+
+        addEvent(context.canvas, 'click', function() {
+            
+            dragHelper.global.startingIndex = 0;
+
+            setSelection(this, shape);
+
+            if (this.id === 'drag-last-path') {
+                find('copy-last').checked = true;
+                find('copy-all').checked = false;
+            } else if (this.id === 'drag-all-paths') {
+                find('copy-all').checked = true;
+                find('copy-last').checked = false;
+            }
+
+            if (this.id === 'pencil-icon' || this.id === 'eraser-icon') {
+                cache.lineCap = lineCap;
+                cache.lineJoin = lineJoin;
+
+                lineCap = lineJoin = 'round';
+            } else if (cache.lineCap && cache.lineJoin) {
+                lineCap = cache.lineCap;
+                lineJoin = cache.lineJoin;
+            }
+
+            if (this.id === 'eraser-icon') {
+                cache.strokeStyle = strokeStyle;
+                cache.fillStyle = fillStyle;
+                cache.lineWidth = lineWidth;
+
+                strokeStyle = 'White';
+                fillStyle = 'White';
+                lineWidth = 10;
+            } else if (cache.strokeStyle && cache.fillStyle && typeof cache.lineWidth !== 'undefined') {
+                strokeStyle = cache.strokeStyle;
+                fillStyle = cache.fillStyle;
+                lineWidth = cache.lineWidth;
+            }
+        });
+    }
+
+    var toolBox = find('tool-box');
+    //toolBox.style.height = (innerHeight /* - toolBox.offsetTop - 77 */ ) + 'px';
+    toolBox.style.height="100%";
+
+
+
+    function decorateDragLastPath() {
+        var context = getContext('drag-last-path');
+
+        var x = 10,
+            y = 6,
+            line = "line",
+            points = [
+                [line, x, y, x + 5, y + 27],
+                [line, x, y, x + 18, y + 19],
+                [line, x + 17, y + 19, x + 9, y + 20],
+                [line, x + 9, y + 20, x + 5, y + 27],
+                [line, x + 16, y + 22, x + 16, y + 31],
+                [line, x + 12, y + 27, x + 20, y + 27]
+            ],
+            length = points.length,
+            point, i;
+
+        for (i = 0; i < length; i++) {
+            point = points[i];
+
+            if (point[0] === "line") {
+                context.beginPath();
+                context.moveTo(point[1], point[2]);
+                context.lineTo(point[3], point[4]);
+                context.closePath();
+                context.stroke();
+            }
+        }
+
+        context.fillStyle = 'Gray';
+        context.font = '9px Verdana';
+        context.fillText('Last', 18, 12);
+
+        bindEvent(context, 'DragLastPath');
+    }
+
+    if (tools.dragSingle === true) {
+        decorateDragLastPath();
+    } else document.getElementById('drag-last-path').style.display = 'none';
+
+
+    function decorateDragAllPaths() {
+        var context = getContext('drag-all-paths');
+
+        var x = 10,
+            y = 6,
+            line = "line",
+            points = [
+                [line, x, y, x + 5, y + 27],
+                [line, x, y, x + 18, y + 19],
+                [line, x + 17, y + 19, x + 9, y + 20],
+                [line, x + 9, y + 20, x + 5, y + 27],
+                [line, x + 16, y + 22, x + 16, y + 31],
+                [line, x + 12, y + 27, x + 20, y + 27]
+            ],
+            length = points.length,
+            point, i;
+
+        for (i = 0; i < length; i++) {
+            point = points[i];
+
+            if (point[0] === "line") {
+                context.beginPath();
+                context.moveTo(point[1], point[2]);
+                context.lineTo(point[3], point[4]);
+                context.closePath();
+                context.stroke();
+            }
+        }
+
+        context.fillStyle = 'Gray';
+        context.font = '10px Verdana';
+        context.fillText('All', 20, 12);
+
+        bindEvent(context, 'DragAllPaths');
+    }
+
+    if (tools.dragMultiple === true) {
+        decorateDragAllPaths();
+    } else document.getElementById('drag-all-paths').style.display = 'none';
+
+    // -------------------------------------------------------------
+
+    function decorateLine() {
+        var context = getContext('line');
+
+        context.moveTo(0, 0);
+        context.lineTo(40, 40);
+        context.stroke();
+
+        context.fillStyle = 'Gray';
+        context.font = '9px Verdana';
+        context.fillText('Line', 16, 12);
+
+        bindEvent(context, 'Line');
+    }
+
+    if (tools.line === true) {
+        decorateLine();
+    } else document.getElementById('line').style.display = 'none';
+
+    // -------------------------------------------------------------
+
+    function decoratePencil() {
+        //console.log(document.getElementById('pencil-icon'));
+        var context = document.getElementById('pencil-icon').getContext('2d');
+        var imageObj = new Image();
+        imageObj.src = 'images/pencil.png';
+        imageObj.onload = function() {
+            context.drawImage(imageObj, 0, 0 , 35, 35);
+        };
+        
+
+       /* var context = getContext('pencil-icon');
+        context.lineWidth = 5;
+        context.lineCap = 'round';
+        context.moveTo(35, 20);
+        context.lineTo(5, 35);
+        context.stroke();
+
+        context.fillStyle = 'Gray';
+        context.font = '9px Verdana';
+        context.fillText('Pencil', 6, 12);*/
+
+        //make_base('/images/pencil.png', context);
+
+        bindEvent(context, 'Pencil');
+    }
+
+    if (tools.pencil === true) {
+        decoratePencil();
+    } else document.getElementById('pencil-icon').style.display = 'none';
+
+    // -------------------------------------------------------------
+
+    function decorateEraser() {
+
+        var context = document.getElementById('eraser-icon').getContext('2d');
+        var imageObj = new Image();
+        imageObj.src = 'images/eraser.png';
+        imageObj.onload = function() {
+            context.drawImage(imageObj, 0, 0 , 35, 35);
+        };
+
+/*        var context = getContext('eraser-icon');
+
+        context.lineWidth = 9;
+        context.lineCap = 'round';
+        context.moveTo(35, 20);
+        context.lineTo(5, 25);
+        context.stroke();
+
+        context.fillStyle = 'Gray';
+        context.font = '9px Verdana';
+        context.fillText('Eraser', 6, 12);*/
+
+        bindEvent(context, 'Eraser');
+    }
+
+    if (tools.eraser === true) {
+        decorateEraser();
+    } else document.getElementById('eraser-icon').style.display = 'none';
+
+    // -------------------------------------------------------------
+
+    function decorateText() {
+        var context = getContext('text-icon');
+
+        context.font = '22px Verdana';
+        context.strokeText('T', 15, 30);
+
+        bindEvent(context, 'Text');
+    }
+
+    if (tools.text === true) {
+        decorateText();
+    } else document.getElementById('text-icon').style.display = 'none';
+
+    // -------------------------------------------------------------
+
+    function decorateArc() {
+        var context = getContext('arc');
+
+        context.arc(20, 20, 16.3, Math.PI * 2, 0, 1);
+        context.stroke();
+
+        context.fillStyle = 'Gray';
+        context.font = '9px Verdana';
+        context.fillText('Arc', 10, 24);
+
+        bindEvent(context, 'Arc');
+    }
+
+    if (tools.arc === true) {
+        decorateArc();
+    } else document.getElementById('arc').style.display = 'none';
+
+    // -------------------------------------------------------------
+
+    function decorateRect() {
+        var context = getContext('rectangle');
+
+        context.strokeRect(5, 5, 30, 30);
+
+        context.fillStyle = 'Gray';
+        context.font = '9px Verdana';
+        context.fillText('Rect', 8, 24);
+
+        bindEvent(context, 'Rectangle');
+    }
+
+    if (tools.rectangle === true) {
+        decorateRect();
+    } else document.getElementById('rectangle').style.display = 'none';
+
+    // -------------------------------------------------------------
+
+    function decorateQuadratic() {
+        var context = getContext('quadratic-curve');
+
+        context.moveTo(0, 0);
+        context.quadraticCurveTo(50, 10, 30, 40);
+        context.stroke();
+
+        context.fillStyle = 'Gray';
+        context.font = '9px Verdana';
+        context.fillText('quad..', 2, 24);
+
+        bindEvent(context, 'QuadraticCurve');
+    }
+
+    if (tools.quadratic === true) {
+        decorateQuadratic();
+    } else document.getElementById('quadratic-curve').style.display = 'none';
+
+    // -------------------------------------------------------------
+
+    function decorateBezier() {
+        var context = getContext('bezier-curve');
+
+        var x = 0,
+            y = 4;
+
+        context.moveTo(x, y);
+        context.bezierCurveTo(x + 86, y + 16, x - 45, y + 24, x + 48, y + 34);
+
+        context.stroke();
+
+        context.fillStyle = 'Gray';
+        context.font = '9px Verdana';
+        context.fillText('Bezier', 10, 8);
+
+        bindEvent(context, 'BezierCurve');
+    }
+
+    if (tools.bezier === true) {
+        decorateBezier();
+    } else document.getElementById('bezier-curve').style.display = 'none';
+
+    // -------------------------------------------------------------
+
+    function tempStrokeTheLine(context, width, mx, my, lx, ly) {
+        context.beginPath();
+        context.lineWidth = width;
+        context.moveTo(mx, my);
+        context.lineTo(lx, ly);
+        context.stroke();
+    }
+
+    function decorateLineWidth() {
+/*        var context = getContext('line-width');
+
+        tempStrokeTheLine(context, 2, 5, 15, 35, 15);
+        tempStrokeTheLine(context, 3, 5, 20, 35, 20);
+        tempStrokeTheLine(context, 4, 5, 26, 35, 26);
+
+        context.fillStyle = 'Gray';
+        context.font = '9px Verdana';
+        context.fillText('Line', 8, 12);
+        context.fillText('Width', 6, 38);*/
+
+        var context = document.getElementById('line-width').getContext('2d');
+        var imageObj = new Image();
+        imageObj.src = 'images/linesize.png';
+        imageObj.onload = function() {
+            context.drawImage(imageObj, 0, 0 , 35, 35);
+        };
+
+        var lineWidthContainer = find('line-width-container'),
+            lineWidthText = find('line-width-text'),
+            btnLineWidthDone = find('line-width-done'),
+            h1 = document.getElementsByTagName('h1')[0],
+            canvas = context.canvas;
+
+        addEvent(canvas, 'click', function() {
+            hideContainers();
+
+            lineWidthContainer.style.display = 'block';
+            lineWidthContainer.style.top = (canvas.offsetTop + 1) + 'px';
+            lineWidthContainer.style.left = (canvas.offsetLeft + canvas.clientWidth) + 'px';
+
+            lineWidthText.focus();
+        });
+
+        addEvent(btnLineWidthDone, 'click', function() {
+            lineWidthContainer.style.display = 'none';
+            lineWidth = lineWidthText.value;
+        });
+    }
+
+    decorateLineWidth();
+
+    // -------------------------------------------------------------
+    function decorateColors() {
+/*        var context = getContext('colors');
+
+        context.fillStyle = 'red';
+        context.fillRect(5, 3, 30, 10);
+
+        context.fillStyle = 'green';
+        context.fillRect(5, 15, 30, 10);
+
+        context.fillStyle = 'blue';
+        context.fillRect(5, 27, 30, 10);*/
+
+        var context = document.getElementById('colors').getContext('2d');
+        var imageObj = new Image();
+        imageObj.src = 'images/color.png';
+        imageObj.onload = function() {
+            context.drawImage(imageObj, 0, 0 , 35, 35);
+        };
+
+        var colorsContainer = find('colors-container'),
+            strokeStyleText = find('stroke-style'),
+            fillStyleText = find('fill-style'),
+            btnColorsDone = find('colors-done'),
+            h1 = document.getElementsByTagName('h1')[0],
+            canvas = context.canvas;
+
+        addEvent(canvas, 'click', function() {
+            hideContainers();
+
+            colorsContainer.style.display = 'block';
+            colorsContainer.style.top = (canvas.offsetTop + 1) + 'px';
+            colorsContainer.style.left = (canvas.offsetLeft + canvas.clientWidth) + 'px';
+
+            strokeStyleText.focus();
+        });
+
+        addEvent(btnColorsDone, 'click', function() {
+            colorsContainer.style.display = 'none';
+            strokeStyle = strokeStyleText.value;
+            fillStyle = fillStyleText.value;
+        });
+    }
+
+    decorateColors();
+
+    // -------------------------------------------------------------
+    function decorateAdditionalOptions() {
+        var context = getContext('additional');
+
+        context.fillStyle = '#6c96c8';
+        context.font = '35px Verdana';
+        context.fillText('»', 10, 27);
+
+        context.fillStyle = 'Gray';
+        context.font = '9px Verdana';
+        context.fillText('Extras!', 2, 38);
+
+        var additionalContainer = find('additional-container'),
+            btnAdditionalClose = find('additional-close'),
+            h1 = document.getElementsByTagName('h1')[0],
+            canvas = context.canvas,
+            globalAlphaSelect = find('globalAlpha-select'),
+            globalCompositeOperationSelect = find('globalCompositeOperation-select');
+
+        addEvent(canvas, 'click', function() {
+            hideContainers();
+
+            additionalContainer.style.display = 'block';
+            additionalContainer.style.top = (canvas.offsetTop + 1) + 'px';
+            additionalContainer.style.left = (canvas.offsetLeft + canvas.clientWidth) + 'px';
+        });
+
+        addEvent(btnAdditionalClose, 'click', function() {
+            additionalContainer.style.display = 'none';
+
+            globalAlpha = globalAlphaSelect.value;
+            globalCompositeOperation = globalCompositeOperationSelect.value;
+            lineCap = lineCapSelect.value;
+            lineJoin = lineJoinSelect.value;
+        });
+    }
+
+    decorateAdditionalOptions();
+
+    // -------------------------------------------------------------
+
+    var designPreview = find('design-preview'),
+        codePreview = find('code-preview');
+
+    // -------------------------------------------------------------
+
+    // todo: use this function in share-drawings.js
+    // to sync buttons' states
+    window.selectBtn = function(btn, isSkipWebRTCMessage) {
+        codePreview.className = designPreview.className = '';
+
+        if (btn == designPreview) designPreview.className = 'preview-selected';
+        else codePreview.className = 'preview-selected';
+
+        if (!isSkipWebRTCMessage && window.connection && connection.numberOfConnectedUsers >= 1) {
+            connection.send({
+                btnSelected: btn.id
+            });
+        } else {
+            // to sync buttons' UI-states
+            if (btn == designPreview) btnDesignerPreviewClicked();
+            else btnCodePreviewClicked();
+        }
+    };
+
+    // -------------------------------------------------------------
+
+    addEvent(designPreview, 'click', function() {
+        selectBtn(designPreview);
+        btnDesignerPreviewClicked();
+    });
+
+    function btnDesignerPreviewClicked() {
+        codeText.parentNode.style.display = 'none';
+        optionsContainer.style.display = 'none';
+
+        hideContainers();
+        endLastPath();
+    }
+
+    // -------------------------------------------------------------
+
+    addEvent(codePreview, 'click', function() {
+        selectBtn(codePreview);
+        btnCodePreviewClicked();
+    });
+
+    function btnCodePreviewClicked() {
+        codeText.parentNode.style.display = 'block';
+        optionsContainer.style.display = 'block';
+
+        codeText.focus();
+        common.updateTextArea();
+
+        setHeightForCodeAndOptionsContainer();
+
+        hideContainers();
+        endLastPath();
+    }
+
+    // -------------------------------------------------------------
+
+    var codeText = find('code-text'),
+        optionsContainer = find('options-container');
+
+    // -------------------------------------------------------------
+
+    function setHeightForCodeAndOptionsContainer() {
+        codeText.style.width = (innerWidth - optionsContainer.clientWidth - 30) + 'px';
+        codeText.style.height = (innerHeight - 40) + 'px';
+
+        codeText.style.marginLeft = (optionsContainer.clientWidth) + 'px';
+        optionsContainer.style.height = (innerHeight) + 'px';
+    }
+
+    // -------------------------------------------------------------
+
+    var isAbsolute = find('is-absolute-points'),
+        isShorten = find('is-shorten-code');
+
+    addEvent(isShorten, 'change', common.updateTextArea);
+    addEvent(isAbsolute, 'change', common.updateTextArea);
+
+
+})();
+
+
+
+function hideContainers() {
+    var additionalContainer = find('additional-container'),
+        colorsContainer = find('colors-container'),
+        lineWidthContainer = find('line-width-container');
+
+    additionalContainer.style.display = colorsContainer.style.display = lineWidthContainer.style.display = 'none';
+}
+
+// -------------------------------------------------------------
+
+
+
+
+/* ***********************************************
+Draw helper
+*********************************************/
+var drawHelper = {
+
+
+    redraw: function (skipSync) {
+        tempContext.clearRect(0, 0, innerWidth, innerHeight);
+        context.clearRect(0, 0, innerWidth, innerHeight);
+
+        var i, point, length = points.length;
+        for (i = 0; i < length; i++) {
+            point = points[i];
+            this[point[0]](context, point[1], point[2]);
+        }
+        
+        if(!skipSync) {
+            syncPoints();
+        }
+    },
+
+
+    getOptions: function () {
+        return [lineWidth, strokeStyle, fillStyle, globalAlpha, globalCompositeOperation, lineCap, lineJoin, font];
+    },
+
+
+
+    handleOptions: function (context, opt, isNoFillStroke) {
+        opt = opt || this.getOptions();
+
+        context.globalAlpha = opt[3];
+        context.globalCompositeOperation = opt[4];
+
+        context.lineCap = opt[5];
+        context.lineJoin = opt[6];
+        context.lineWidth = opt[0];
+
+        context.strokeStyle = opt[1];
+        context.fillStyle = opt[2];
+        
+        if (!isNoFillStroke) {
+            context.stroke();
+            context.fill();
+        }
+    },
+
+
+    line: function (context, point, options) {
+        context.beginPath();
+        context.moveTo(point[0], point[1]);
+        context.lineTo(point[2], point[3]);
+
+        this.handleOptions(context, options);
+    },
+
+
+    text: function (context, point, options) {
+        var oldFillStyle = fillStyle;
+        context.fillStyle = fillStyle === 'transparent' || fillStyle === 'White' ? 'Black' : fillStyle;
+        context.font = '15px Verdana';
+		context.fillText(point[0].substr(1, point[0].length - 2), point[1], point[2]);
+        fillStyle = oldFillStyle;
+
+        this.handleOptions(context, options);
+    },
+
+
+    arc: function (context, point, options) {
+        context.beginPath();
+        context.arc(point[0], point[1], point[2], point[3], 0, point[4]);
+
+        this.handleOptions(context, options);
+    },
+
+
+
+    rect: function (context, point, options) {
+        this.handleOptions(context, options, true);
+
+        context.strokeRect(point[0], point[1], point[2], point[3]);
+        context.fillRect(point[0], point[1], point[2], point[3]);
+    },
+
+
+
+    quadratic: function (context, point, options) {
+        context.beginPath();
+        context.moveTo(point[0], point[1]);
+        context.quadraticCurveTo(point[2], point[3], point[4], point[5]);
+
+        this.handleOptions(context, options);
+    },
+
+
+    bezier: function (context, point, options) {
+        context.beginPath();
+        context.moveTo(point[0], point[1]);
+        context.bezierCurveTo(point[2], point[3], point[4], point[5], point[6], point[7]);
+
+        this.handleOptions(context, options);
+    }
+
+
+};
+
+/* ***********************************************
+Drag helper
+*********************************************/
+var dragHelper = {
+
+    // -------------------------------------------------------------
+
+    global: {
+        prevX: 0,
+        prevY: 0,
+        ismousedown: false,
+        pointsToMove: 'all',
+        startingIndex: 0
+    },
+
+    // -------------------------------------------------------------
+
+    mousedown: function (e) {
+
+        // -------------------------------------------------------------
+
+        if (isControlKeyPressed) {
+            copy();
+            paste();
+            isControlKeyPressed = false;
+        }
+
+        // -------------------------------------------------------------
+
+        var dHelper = dragHelper,
+            g = dHelper.global;
+
+        var x = e.pageX - canvas.offsetLeft,
+            y = e.pageY - canvas.offsetTop;
+
+        g.prevX = x;
+        g.prevY = y;
+
+        g.pointsToMove = 'all';
+
+        if (points.length) {
+            var p = points[points.length - 1],
+                point = p[1];
+
+            if (p[0] === 'line') {
+
+                if (dHelper.isPointInPath(x, y, point[0], point[1])) {
+                    g.pointsToMove = 'head';
+                }
+
+                if (dHelper.isPointInPath(x, y, point[2], point[3])) {
+                    g.pointsToMove = 'tail';
+                }
+            }
+
+            if (p[0] === 'rect') {
+
+                if (dHelper.isPointInPath(x, y, point[0] + point[2], point[1] + point[3])) {
+                    g.pointsToMove = 'stretch';
+                }
+            }
+
+            if (p[0] === 'quadratic') {
+
+                if (dHelper.isPointInPath(x, y, point[0], point[1])) {
+                    g.pointsToMove = 'starting-points';
+                }
+
+                if (dHelper.isPointInPath(x, y, point[2], point[3])) {
+                    g.pointsToMove = 'control-points';
+                }
+
+                if (dHelper.isPointInPath(x, y, point[4], point[5])) {
+                    g.pointsToMove = 'ending-points';
+                }
+            }
+
+            if (p[0] === 'bezier') {
+
+                if (dHelper.isPointInPath(x, y, point[0], point[1])) {
+                    g.pointsToMove = 'starting-points';
+                }
+
+                if (dHelper.isPointInPath(x, y, point[2], point[3])) {
+                    g.pointsToMove = '1st-control-points';
+                }
+
+                if (dHelper.isPointInPath(x, y, point[4], point[5])) {
+                    g.pointsToMove = '2nd-control-points';
+                }
+
+                if (dHelper.isPointInPath(x, y, point[6], point[7])) {
+                    g.pointsToMove = 'ending-points';
+                }
+            }
+        }
+
+        g.ismousedown = true;
+    },
+
+    // -------------------------------------------------------------
+
+    mouseup: function () {
+        var g = this.global;
+
+        if (is.isDragLastPath) {
+            tempContext.clearRect(0, 0, innerWidth, innerHeight);
+            context.clearRect(0, 0, innerWidth, innerHeight);
+            this.end();
+        }
+
+        g.ismousedown = false;
+    },
+
+    // -------------------------------------------------------------
+
+    mousemove: function (e) {
+        var x = e.pageX - canvas.offsetLeft,
+            y = e.pageY - canvas.offsetTop,
+            g = this.global;
+
+        drawHelper.redraw();
+
+        if (g.ismousedown) {
+            this.dragShape(x, y);
+        }
+
+        if (is.isDragLastPath) this.init();
+    },
+
+    // -------------------------------------------------------------
+
+    init: function () {
+        if (!points.length) return;
+
+        var p = points[points.length - 1],
+            point = p[1],
+            g = this.global;
+
+        if (g.ismousedown) tempContext.fillStyle = 'rgba(255,85 ,154,.9)';
+        else tempContext.fillStyle = 'rgba(255,85 ,154,.4)';
+
+        if (p[0] === 'quadratic') {
+
+            tempContext.beginPath();
+
+            tempContext.arc(point[0], point[1], 10, Math.PI * 2, 0, !1);
+            tempContext.arc(point[2], point[3], 10, Math.PI * 2, 0, !1);
+            tempContext.arc(point[4], point[5], 10, Math.PI * 2, 0, !1);
+
+            tempContext.fill();
+        }
+
+        if (p[0] === 'bezier') {
+
+            tempContext.beginPath();
+
+            tempContext.arc(point[0], point[1], 10, Math.PI * 2, 0, !1);
+            tempContext.arc(point[2], point[3], 10, Math.PI * 2, 0, !1);
+            tempContext.arc(point[4], point[5], 10, Math.PI * 2, 0, !1);
+            tempContext.arc(point[6], point[7], 10, Math.PI * 2, 0, !1);
+
+            tempContext.fill();
+        }
+
+        if (p[0] === 'line') {
+
+            tempContext.beginPath();
+
+            tempContext.arc(point[0], point[1], 10, Math.PI * 2, 0, !1);
+            tempContext.arc(point[2], point[3], 10, Math.PI * 2, 0, !1);
+
+            tempContext.fill();
+        }
+        
+        if (p[0] === 'text') {
+            tempContext.font = "15px Verdana";
+            tempContext.fillText(point[0], point[1], point[2]);
+        }
+
+        if (p[0] === 'rect') {
+
+            tempContext.beginPath();
+            tempContext.arc(point[0] + point[2], point[1] + point[3], 10, Math.PI * 2, 0, !1);
+            tempContext.fill();
+        }
+    },
+
+    // -------------------------------------------------------------
+
+    isPointInPath: function (x, y, first, second) {
+        return x > first - 10 && x < first + 10
+            && y > second - 10 && y < second + 10;
+    },
+
+    // -------------------------------------------------------------
+
+    getPoint: function (point, prev, otherPoint) {
+        if (point > prev) point = otherPoint + (point - prev);
+        else point = otherPoint - (prev - point);
+
+        return point;
+    },
+
+    // -------------------------------------------------------------
+
+    dragShape: function (x, y) {
+        if (!this.global.ismousedown) return;
+
+        tempContext.clearRect(0, 0, innerWidth, innerHeight);
+
+        if (is.isDragLastPath) {
+            this.dragLastPath(x, y);
+        }
+
+        if (is.isDragAllPaths) {
+            this.dragAllPaths(x, y);
+        }
+
+        var g = this.global;
+
+        g.prevX = x;
+        g.prevY = y;
+    },
+
+    // -------------------------------------------------------------
+
+    end: function () {
+        if (!points.length) return;
+
+        tempContext.clearRect(0, 0, innerWidth, innerHeight);
+
+        var point = points[points.length - 1];
+        drawHelper[point[0]](context, point[1], point[2]);
+    },
+
+    // -------------------------------------------------------------
+
+    dragAllPaths: function (x, y) {
+        var g = this.global,
+            prevX = g.prevX,
+            prevY = g.prevY, p, point,
+            length = points.length,
+            getPoint = this.getPoint,
+            i = g.startingIndex;
+
+        for (i; i < length; i++) {
+            p = points[i];
+            point = p[1];
+
+            if (p[0] === 'line') {
+                points[i] = [p[0], [
+                    getPoint(x, prevX, point[0]),
+                    getPoint(y, prevY, point[1]),
+                    getPoint(x, prevX, point[2]),
+                    getPoint(y, prevY, point[3])
+                ], p[2]];
+
+            }
+            
+            if (p[0] === 'text') {
+                points[i] = [p[0], [
+                    point[0],
+                    getPoint(x, prevX, point[1]),
+                    getPoint(y, prevY, point[2])
+                ], p[2]];
+            }
+
+            if (p[0] === 'arc') {
+                points[i] = [p[0], [
+                    getPoint(x, prevX, point[0]),
+                    getPoint(y, prevY, point[1]),
+                    point[2],
+                    point[3],
+                    point[4]
+                ], p[2]];
+            }
+
+            if (p[0] === 'rect') {
+                points[i] = [p[0], [
+                    getPoint(x, prevX, point[0]),
+                    getPoint(y, prevY, point[1]),
+                    point[2],
+                    point[3]
+                ], p[2]];
+            }
+
+            if (p[0] === 'quadratic') {
+                points[i] = [p[0], [
+                    getPoint(x, prevX, point[0]),
+                    getPoint(y, prevY, point[1]),
+                    getPoint(x, prevX, point[2]),
+                    getPoint(y, prevY, point[3]),
+                    getPoint(x, prevX, point[4]),
+                    getPoint(y, prevY, point[5])
+                ], p[2]];
+            }
+
+            if (p[0] === 'bezier') {
+                points[i] = [p[0], [
+                    getPoint(x, prevX, point[0]),
+                    getPoint(y, prevY, point[1]),
+                    getPoint(x, prevX, point[2]),
+                    getPoint(y, prevY, point[3]),
+                    getPoint(x, prevX, point[4]),
+                    getPoint(y, prevY, point[5]),
+                    getPoint(x, prevX, point[6]),
+                    getPoint(y, prevY, point[7])
+                ], p[2]];
+            }
+        }
+    },
+
+    // -------------------------------------------------------------
+
+    dragLastPath: function (x, y) {
+        var g = this.global,
+            prevX = g.prevX,
+            prevY = g.prevY,
+            p = points[points.length - 1],
+            point = p[1],
+            getPoint = this.getPoint,
+            isMoveAllPoints = g.pointsToMove === 'all';
+
+        if (p[0] === 'line') {
+
+            if (g.pointsToMove === 'head' || isMoveAllPoints) {
+                point[0] = getPoint(x, prevX, point[0]);
+                point[1] = getPoint(y, prevY, point[1]);
+            }
+
+            if (g.pointsToMove === 'tail' || isMoveAllPoints) {
+                point[2] = getPoint(x, prevX, point[2]);
+                point[3] = getPoint(y, prevY, point[3]);
+            }
+
+            points[points.length - 1] = [p[0], point, p[2]];
+        }
+        
+        if (p[0] === 'text') {
+
+            if (g.pointsToMove === 'head' || isMoveAllPoints) {
+                point[1] = getPoint(x, prevX, point[1]);
+                point[2] = getPoint(y, prevY, point[2]);
+            }
+
+            points[points.length - 1] = [p[0], point, p[2]];
+        }
+
+        if (p[0] === 'arc') {
+            point[0] = getPoint(x, prevX, point[0]);
+            point[1] = getPoint(y, prevY, point[1]);
+
+            points[points.length - 1] = [p[0], point, p[2]];
+        }
+
+        if (p[0] === 'rect') {
+
+            if (isMoveAllPoints) {
+                point[0] = getPoint(x, prevX, point[0]);
+                point[1] = getPoint(y, prevY, point[1]);
+            }
+
+            if (g.pointsToMove === 'stretch') {
+                point[2] = getPoint(x, prevX, point[2]);
+                point[3] = getPoint(y, prevY, point[3]);
+            }
+
+            points[points.length - 1] = [p[0], point, p[2]];
+        }
+
+        if (p[0] === 'quadratic') {
+
+            if (g.pointsToMove === 'starting-points' || isMoveAllPoints) {
+                point[0] = getPoint(x, prevX, point[0]);
+                point[1] = getPoint(y, prevY, point[1]);
+            }
+
+            if (g.pointsToMove === 'control-points' || isMoveAllPoints) {
+                point[2] = getPoint(x, prevX, point[2]);
+                point[3] = getPoint(y, prevY, point[3]);
+            }
+
+            if (g.pointsToMove === 'ending-points' || isMoveAllPoints) {
+                point[4] = getPoint(x, prevX, point[4]);
+                point[5] = getPoint(y, prevY, point[5]);
+            }
+
+            points[points.length - 1] = [p[0], point, p[2]];
+        }
+
+        if (p[0] === 'bezier') {
+
+            if (g.pointsToMove === 'starting-points' || isMoveAllPoints) {
+                point[0] = getPoint(x, prevX, point[0]);
+                point[1] = getPoint(y, prevY, point[1]);
+            }
+
+            if (g.pointsToMove === '1st-control-points' || isMoveAllPoints) {
+                point[2] = getPoint(x, prevX, point[2]);
+                point[3] = getPoint(y, prevY, point[3]);
+            }
+
+            if (g.pointsToMove === '2nd-control-points' || isMoveAllPoints) {
+                point[4] = getPoint(x, prevX, point[4]);
+                point[5] = getPoint(y, prevY, point[5]);
+            }
+
+            if (g.pointsToMove === 'ending-points' || isMoveAllPoints) {
+                point[6] = getPoint(x, prevX, point[6]);
+                point[7] = getPoint(y, prevY, point[7]);
+            }
+
+            points[points.length - 1] = [p[0], point, p[2]];
+        }
+    }
+
+    // -------------------------------------------------------------
+
+};
+// -------------------------------------------------------------
+/* ***********************************************
+pencil Handler 
+*********************************************/
+var pencilHandler = {
+
+    ismousedown: false,
+    prevX: 0,
+    prevY: 0,
+
+    mousedown: function(e) {
+
+        var x = e.pageX - canvas.offsetLeft,
+            y = e.pageY - canvas.offsetTop;
+            
+        var t = this;
+
+        t.prevX = x;
+        t.prevY = y;
+
+        t.ismousedown = true;
+
+        tempContext.lineCap = 'round';
+        drawHelper.line(tempContext, [t.prevX, t.prevY, x, y]);
+
+        points[points.length] = ['line', [t.prevX, t.prevY, x, y], drawHelper.getOptions()];
+
+        t.prevX = x;
+        t.prevY = y;
+    },
+
+
+    mouseup: function(e) {
+        this.ismousedown = false;
+    },
+
+
+    mousemove: function(e) {
+        var x = e.pageX - canvas.offsetLeft,
+            y = e.pageY - canvas.offsetTop;
+
+        var t = this;
+
+        if (t.ismousedown) {
+            tempContext.lineCap = 'round';
+            drawHelper.line(tempContext, [t.prevX, t.prevY, x, y]);
+
+            points[points.length] = ['line', [t.prevX, t.prevY, x, y], drawHelper.getOptions()];
+
+            t.prevX = x;
+            t.prevY = y;
+        }
+    }
+};
+
+
+/* ***********************************************
+Eraser Handler 
+*********************************************/
+
+var eraserHandler = {
+
+
+    ismousedown: false,
+    prevX: 0,
+    prevY: 0,
+
+    mousedown: function(e) {
+        var x = e.pageX - canvas.offsetLeft,
+            y = e.pageY - canvas.offsetTop;
+
+        var t = this;
+
+        t.prevX = x;
+        t.prevY = y;
+
+        t.ismousedown = true;
+
+        // make sure that pencil is drawing shapes even 
+        // if mouse is down but mouse isn't moving
+        tempContext.lineCap = 'round';
+        drawHelper.line(tempContext, [t.prevX, t.prevY, x, y]);
+
+        points[points.length] = ['line', [t.prevX, t.prevY, x, y], drawHelper.getOptions()];
+
+        t.prevX = x;
+        t.prevY = y;
+    },
+
+
+    mouseup: function(e) {
+        this.ismousedown = false;
+    },
+
+
+    mousemove: function(e) {
+        var x = e.pageX - canvas.offsetLeft,
+            y = e.pageY - canvas.offsetTop;
+
+        var t = this;
+
+        if (t.ismousedown) {
+            tempContext.lineCap = 'round';
+            drawHelper.line(tempContext, [t.prevX, t.prevY, x, y]);
+
+            points[points.length] = ['line', [t.prevX, t.prevY, x, y], drawHelper.getOptions()];
+
+            t.prevX = x;
+            t.prevY = y;
+        }
+    }
+
+
+};
+/* ***********************************************
+Line Handler 
+*********************************************/
+
+var lineHandler = {
+
+    ismousedown: false,
+    prevX: 0,
+    prevY: 0,
+
+    mousedown: function (e) {
+        var x = e.pageX - canvas.offsetLeft,
+            y = e.pageY - canvas.offsetTop;
+
+        var t = this;
+
+        t.prevX = x;
+        t.prevY = y;
+
+        t.ismousedown = true;
+    },
+
+    mouseup: function (e) {
+        var x = e.pageX - canvas.offsetLeft,
+            y = e.pageY - canvas.offsetTop;
+
+        var t = this;
+        if (t.ismousedown) {
+            points[points.length] = ['line', [t.prevX, t.prevY, x, y], drawHelper.getOptions()];
+
+            t.ismousedown = false;
+        }
+    },
+
+    mousemove: function (e) {
+        var x = e.pageX - canvas.offsetLeft,
+            y = e.pageY - canvas.offsetTop;
+
+        var t = this;
+
+        if (t.ismousedown) {
+            tempContext.clearRect(0, 0, innerWidth, innerHeight);
+
+            drawHelper.line(tempContext, [t.prevX, t.prevY, x, y]);
+        }
+    }
+
+};
+
+/* ***********************************************
+rect Handler 
+*********************************************/
+var rectHandler = {
+
+
+    ismousedown: false,
+    prevX: 0,
+    prevY: 0,
+
+    // -------------------------------------------------------------
+
+    mousedown: function (e) {
+        var x = e.pageX - canvas.offsetLeft,
+            y = e.pageY - canvas.offsetTop;
+
+        var t = this;
+        
+        t.prevX = x;
+        t.prevY = y;
+
+        t.ismousedown = true;
+    },
+
+    // -------------------------------------------------------------
+
+    mouseup: function (e) {
+        var x = e.pageX - canvas.offsetLeft,
+            y = e.pageY - canvas.offsetTop;
+
+        var t = this;
+        if (t.ismousedown) {
+            points[points.length] = ['rect', [t.prevX, t.prevY, x - t.prevX, y - t.prevY], drawHelper.getOptions()];
+
+            t.ismousedown = false;
+        }
+
+    },
+
+    // -------------------------------------------------------------
+
+    mousemove: function (e) {
+        var x = e.pageX - canvas.offsetLeft,
+            y = e.pageY - canvas.offsetTop;
+        
+        var t = this;
+        if (t.ismousedown) {
+            tempContext.clearRect(0, 0, innerWidth, innerHeight);
+
+            drawHelper.rect(tempContext, [t.prevX, t.prevY, x - t.prevX, y - t.prevY]);
+        }
+    }
+
+};
+
+/* ***********************************************
+Events handler 
+*********************************************/
+
+var selfId = parent.selfuserid;
+
+var isTouch = 'createTouch' in document;
+
+addEvent(canvas, isTouch ? 'touchstart' : 'mousedown', function (e) {
+    if (isTouch) e = e.pageX ? e : e.touches.length ? e.touches[0] : { pageX: 0, pageY: 0 };
+
+    var cache = is;
+
+    console.log(" canvas coordinates x ->" , e.pageX , "||", canvas.offsetLeft);
+    console.log(" canvas coordinates y ->" , e.pageY ," ||", canvas.offsetTop);
+
+    if (cache.isLine){
+ lineHandler.mousedown(e);
+}
+    else if (cache.isArc) {
+arcHandler.mousedown(e);
+}
+    else if (cache.isRectangle){
+ rectHandler.mousedown(e);
+}
+    else if (cache.isQuadraticCurve){
+ quadraticHandler.mousedown(e);
+}
+    else if (cache.isBezierCurve){
+ bezierHandler.mousedown(e);
+}
+    else if (cache.isDragLastPath || cache.isDragAllPaths){
+ dragHelper.mousedown(e);
+}
+    else if (is.isPencil){
+pencilHandler.mousedown(e);
+}
+    else if (is.isEraser){
+ eraserHandler.mousedown(e);
+}
+    else if (is.isText){
+ textHandler.mousedown(e);
+}
+else{
+console.log(" none of the event matched ");
+return;
+}   
+    drawHelper.redraw();
+});
+
+
+addEvent(canvas, isTouch ? 'touchend' : 'mouseup', function (e) {
+    if (isTouch) e = e.pageX ? e : e.touches.length ? e.touches[0] : { pageX: 0, pageY: 0 };
+    
+    var cache = is;
+
+    if (cache.isLine) lineHandler.mouseup(e);
+    else if (cache.isArc) arcHandler.mouseup(e);
+    else if (cache.isRectangle) rectHandler.mouseup(e);
+    else if (cache.isQuadraticCurve) quadraticHandler.mouseup(e);
+    else if (cache.isBezierCurve) bezierHandler.mouseup(e);
+    else if (cache.isDragLastPath || cache.isDragAllPaths) dragHelper.mouseup(e);
+    else if (is.isPencil) pencilHandler.mouseup(e);
+    else if (is.isEraser) eraserHandler.mouseup(e);
+    else if (is.isText) textHandler.mouseup(e);
+
+    drawHelper.redraw();
+});
+
+
+addEvent(canvas, isTouch ? 'touchmove' : 'mousemove', function (e) {
+    if (isTouch) e = e.pageX ? e : e.touches.length ? e.touches[0] : { pageX: 0, pageY: 0 };
+    
+    var cache = is;
+
+    if (cache.isLine) lineHandler.mousemove(e);
+    else if (cache.isArc) arcHandler.mousemove(e);
+    else if (cache.isRectangle) rectHandler.mousemove(e);
+    else if (cache.isQuadraticCurve) quadraticHandler.mousemove(e);
+    else if (cache.isBezierCurve) bezierHandler.mousemove(e);
+    else if (cache.isDragLastPath || cache.isDragAllPaths) dragHelper.mousemove(e);
+    else if (is.isPencil) pencilHandler.mousemove(e);
+    else if (is.isEraser) eraserHandler.mousemove(e);
+    else if (is.isText) textHandler.mousemove(e);
+});
+
+
+
+var keyCode;
+
+
+
+function onkeydown(e) {
+    keyCode = e.keyCode;
+
+    if (!isControlKeyPressed && keyCode === 17) {
+        isControlKeyPressed = true;
+    }
+}
+
+addEvent(document, 'keydown', onkeydown);
+
+
+
+function onkeyup(e) {
+    keyCode = e.keyCode;
+
+    /*-------------------------- Ctrl + Z --------------------------*/
+    
+    if (isControlKeyPressed && keyCode === 90) {
+        if (points.length) {
+            points.length = points.length - 1;
+            drawHelper.redraw();
+        }
+    }
+
+    /*-------------------------- Ctrl + A --------------------------*/
+
+    if (isControlKeyPressed && keyCode === 65) {
+        dragHelper.global.startingIndex = 0;
+
+        endLastPath();
+        
+        setSelection(find('drag-all-paths'), 'DragAllPaths');
+    }
+
+    /*-------------------------- Ctrl + C --------------------------*/
+    
+    if (isControlKeyPressed && keyCode === 67 && points.length) {
+        copy();
+    }
+
+    /*-------------------------- Ctrl + V --------------------------*/
+    if (isControlKeyPressed && keyCode === 86 && copiedStuff.length) {
+        paste();
+    }
+
+    /*-------------------------- Ending the Control Key --------------------------*/
+    
+    if (keyCode === 17) {
+        isControlKeyPressed = false;
+    }
+}
+
+addEvent(document, 'keyup', onkeyup);
+
+
+var lastPoint = [];
+
+window.addEventListener('message', function(event) {
+
+    console.log(" window message" , event);
+
+    if (!event.data || !event.data.canvasDesignerSyncData) return;
+
+    if (event.data.sender && event.data.sender == selfId) return;
+
+    // drawing is shared here (array of points)
+    points = event.data.canvasDesignerSyncData;
+
+    // to support two-way sharing
+    if (!lastPoint.length) {
+        lastPoint = points.join('');
+    }
+    drawHelper.redraw(true);
+}, false);
+
+function syncPoints() {
+
+    if (!lastPoint.length) {
+        lastPoint = points.join('');
+    }
+    
+    if (points.join('') != lastPoint) {
+        syncData(points || []);
+        lastPoint = points.join('');
+    }
+}
+
+function syncData(data) {
+    parent.postMessage({
+        canvasDesignerSyncData: data,
+        sender: selfId
+    }, '*');
+}
+
+
+// parent post message is wokring 
+// test this by 
+// window.frames[0].parent.postMessage("hi", '*')

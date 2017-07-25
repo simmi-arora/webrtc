@@ -1,16 +1,79 @@
-function fitToContainer(parent , canvas){
-  // Make it visually fill the positioned parent
-/*  canvas.style.width ='100%';
-  canvas.style.height='100%';*/
+/* ***********************************************
+common 
+*********************************************/
 
-  // ...then set the internal size to match
-  canvas.width  = parent.offsetWidth;
-  canvas.height = parent.offsetHeight;
+function fitToContainer(parent , canvas){
+    try{
+        /*  canvas.style.width ='100%';
+        canvas.style.height='100%';*/
+        canvas.width  = parent.offsetWidth;
+        canvas.height = parent.offsetHeight;
+    }catch(e){
+        console.log(e);
+    }
 }
 
-var parent = document.getElementById("drawBox");
-fitToContainer(parent, document.getElementById("main-canvas"));
-fitToContainer(parent, document.getElementById("temp-canvas"));
+function setContext(canv) {
+    var ctx=null;
+    try{ 
+         ctx = canv.getContext('2d');
+         ctx.lineWidth = lineWidth;
+         ctx.strokeStyle = strokeStyle;
+         ctx.fillStyle = fillStyle;
+         ctx.font = font;
+    }catch(e){
+        console.error(" canvas context not set " , canv);
+        console.error(e);
+    }
+    return ctx;
+}
+
+var mainCanvas  = document.getElementById("main-canvas");
+var canvas  = document.getElementById("temp-canvas");
+var context = setContext(mainCanvas);
+var tempContext = setContext(canvas);
+var parentBox = document.getElementById("drawBox");
+
+console.log("Main Canvas : " , mainCanvas , context);
+console.log("Temp Canvas : " , canvas , tempContext );
+
+
+fitToContainer( parentBox , mainCanvas );
+fitToContainer( parentBox , canvas );
+
+if(document.getElementById("trashBtn")){
+    document.getElementById("trashBtn").onclick = function() {
+        tempContext.clearRect(0, 0, canvas.width, canvas.height);
+        console.log(" cleared temp canvas" , canvas  );
+
+        context.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+        console.log(" cleared main canvas " , mainCanvas);
+
+        window.location.reload();
+    };
+}else{
+    console.error("trash button not found");
+}
+
+
+if(document.getElementById("saveBtn")){
+
+    document.getElementById("saveBtn").onclick = function() {
+        var aref = document.createElement("a");
+        aref.href = mainCanvas.toDataURL("image/png") ;
+        aref.download = "drawBox.png";
+        /*        <a href="blob:https://localhost:8084/1b9e4a15-ec9e-4017-b538-c73dc276d190" download="media-20161205.jpg"><i class="fa fa-download" style="font-size: 25px;"></i> </a>
+        */
+        aref.click();
+        /*document.getElementById("saveBtn").appendChild(aref);*/
+        //window.open(mainCanvas.toDataURL("image/png") , "canvasDiagram");
+        /*var e = mainCanvas.toDataURL("image/png"),
+        a = window.open("about:blank", "image from canvas");
+        a.document.write("<img src='" + e + "' alt='from canvas'/>");*/
+    };
+}else{
+    console.error("save button not found");
+}
 
 /*-----------------------------------------------*/
 
@@ -60,20 +123,6 @@ var points = [],
     font = '15px Verdana',
     lineJoin = 'miter';
 
-
-function getContext(id) {
-    var canv = find(id),
-    ctx = canv.getContext('2d');
-    ctx.lineWidth = lineWidth;
-    ctx.strokeStyle = strokeStyle;
-    ctx.fillStyle = fillStyle;
-    ctx.font = font;
-    return ctx;
-}
-
-
-var context = getContext('main-canvas'),
-    tempContext = getContext('temp-canvas');
 
 var common = {
 

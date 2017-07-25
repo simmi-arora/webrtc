@@ -1,3 +1,7 @@
+/* ***********************************************
+Record
+*********************************************/
+
 function createRecordButton(controlBarName, peerinfo, streamid, stream){
     var recordButton=document.createElement("div");
     recordButton.id=controlBarName+"recordButton";
@@ -27,8 +31,8 @@ var listOfRecorders = {};
 
 function startRecord(peerinfo , streamid, stream){
     var recorder = RecordRTC(stream, {
-        type: 'video        recorderType: MediaStreamRecorder',
-
+        type: 'video'  , 
+        recorderType: MediaStreamRecorder,
     });
     recorder.startRecording();
     listOfRecorders[streamid] = recorder;

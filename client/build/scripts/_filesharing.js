@@ -39,6 +39,9 @@ function sendFile(file){
 
 function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelperclassName ){
     try{
+        if(!peerinfo){
+            console.log(" Progress helpler cannot be added for one peer as its absent")
+        }
         console.log(" progresshelper " , uuid , peerinfo , filename , fileSize,  progressHelperclassName );
         var progressDiv = document.createElement("div");
         progressDiv.id = filename,
@@ -100,9 +103,10 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     }else{
         showRemoveButton=false;
     }*/
-
+    var _filename=null;
     if(filetype=="sessionRecording"){
         filename = filename.videoname+"_"+filename.audioname;
+        _filename = filename;
     }
 
     var name = document.createElement("div");
@@ -112,10 +116,148 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     name.id = "name"+filename;
 
     var downloadButton = document.createElement("div");
+    downloadButton.id = "downloadButton"+filename;
     downloadButton.style.float="right";
     /*downloadButton.setAttribute("class" , "btn btn-primary");*/
     /*downloadButton.setAttribute("style", "color:white");*/
-    downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '">'+'<i class="fa fa-download" style="font-size: 25px;"></i>'+' </a>';
+    //downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '">'+'<i class="fa fa-download" style="font-size: 25px;"></i>'+' </a>';
+    downloadButton.innerHTML='<i class="fa fa-download" style="font-size: 25px;"></i>';
+    downloadButton.onclick=function(){
+       if(filetype=="sessionRecording"){
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+            a.href = fileurl.audiofileurl;
+            a.download = _filename.audioname+".wav";
+            a.click();
+            window.URL.revokeObjectURL(fileurl.audiofileurl);
+
+            var v = document.createElement("a");
+            document.body.appendChild(v);
+            v.style = "display: none";
+            v.href = fileurl.videofileurl;
+            v.download = _filename.videoname+".webm";
+            v.click();
+            window.URL.revokeObjectURL(fileurl.videofileurl);
+
+            /*window.open(fileurl.audiofileurl , filename.audioname+".wav");
+            window.open(fileurl.videofileurl , filename.videoname+".webm");*/
+            alert("Files Saved");
+/*            var zip = new JSZip();
+            zip.file(filename.videoname , filename.videofileurl);
+            var audio = zip.folder("audio");
+            audio.file(filename.audioname, fileurl.audiofileurl);
+            zip.generateAsync({type:"blob"})
+            .then(function(content) {
+                // see FileSaver.js
+                //saveAs(content, "sessionRecording.zip");
+                window.open(content , "sessionRecording.zip");
+            });*/
+        }else{ 
+            window.open(fileurl , "downloadedDocument");
+        }
+    };
+
+    var saveButton = document.createElement("div");
+    saveButton.id= "saveButton"+filename;
+    saveButton.style.float="right";
+    saveButton.setAttribute("data-toggle","modal");
+    saveButton.setAttribute("data-target" , "#saveModal");
+    saveButton.innerHTML='<i class="fa fa-floppy-o" style="font-size: 25px;"></i>';
+    saveButton.onclick=function(){
+       /* alert("Right Click on above file, then select Save As");*/
+
+        var modalBox=document.createElement("div");
+        modalBox.className="modal fade";
+        modalBox.setAttribute("role" , "dialog");
+        modalBox.id="saveModal";
+
+        var modalinnerBox=document.createElement("div");
+        modalinnerBox.className="modal-dialog";
+
+        var modal=document.createElement("div");
+        modal.className = "modal-content";
+
+        var modalheader= document.createElement("div");
+        modalheader.className = "modal-header";
+
+        var closeButton= document.createElement("button");
+        closeButton.className="close";
+        closeButton.setAttribute("data-dismiss", "modal");
+        closeButton.innerHTML="&times;";
+
+        var title=document.createElement("h4");
+        title.className="modal-title";
+        title.innerHTML="Save File";   
+
+        modalheader.appendChild(title);
+        modalheader.appendChild(closeButton);
+
+
+        var modalbody = document.createElement("div");
+        modalbody.className = "modal-body";
+        modalbody.innerHTML = "";
+
+        var body=document.createElement("div");
+        switch(filetype){
+            case "application/pdf":
+                var d1= document.createElement("div");
+                d1.innerHTML='Click DOWNLOAD on top of the doc . Click SAVE AS when window opens up';
+                var i1 = document.createElement("img");
+                i1.src= "images/savefile.PNG";
+                body.appendChild(d1);
+                body.appendChild(i1);
+                break; 
+            // browser supported formats 
+            case "image/jpeg":
+            case "image/png":
+            case "video/mov": 
+            case "video/webm":
+            case "imagesnapshot":
+                var d1=document.createElement("div");
+                d1.innerHTML='Right Click on the FILE . Click SAVE AS when window opens up';
+                body.appendChild(d1);
+                break; 
+            // browser supported audio formats    
+            case "audio/mp3":
+                var d1= document.createElement("div");
+                d1.innerHTML="Right Click on the FILE (play display line). Click SAVE AS when window opens up";
+                body.appendChild(d1);
+                break;
+            // propertiary stuff that will not open in browser 
+            case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+            case "application/vnd.ms-excel":
+            case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+            case "application/vnd.openxmlformats-officedocument.wordprocessingml.document": 
+            case "video/x-ms-wmv":
+                var d1= document.createElement("div");
+                d1.innerHTML="Click bottom DOWNLOAD in Uploaded Files box . File shows up below the Uploaded Files box. Click arrow on right, then select OPEN  . File Opens in New Window, then 'Save As'.";
+                body.appendChild(d1);
+                break; 
+            case "sessionRecording":
+                var d1=document.createElement("div");
+                d1.innerHTML='Extract the video and audio recording from the dowloaded compresed file and play together ';
+                body.appendChild(d1);
+                break;
+            default :
+                var d1=document.createElement("div");
+                d1.innerHTML='Document is Unrecognizable, cannot be saved, but can be shared with Remote. Use/Click Screen Share for Remote to view your screen. Then open the document on your screen.';
+                body.appendChild(d1);
+                break;
+        }
+
+        modalbody.appendChild(body);
+        modal.appendChild(modalheader);
+        modal.appendChild(modalbody);
+
+        modalinnerBox.appendChild(modal);
+        modalBox.appendChild(modalinnerBox);
+
+        var mainDiv= document.getElementById("mainDiv");
+        mainDiv.appendChild(modalBox);
+
+
+    };
 
     var showButton = document.createElement("div");
     showButton.id= "showButton"+filename;
@@ -213,6 +355,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         if(showDownloadButton) 
             filedom.appendChild(downloadButton);
         filedom.appendChild(showButton);
+        filedom.appendChild(saveButton);
         filedom.appendChild(hideButton);
         if(showRemoveButton) 
             filedom.appendChild(removeButton);
@@ -228,7 +371,8 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
     if(filetype.indexOf("msword")>-1 || filetype.indexOf("officedocument")>-1) {
         var divNitofcation= document.createElement("div");
         divNitofcation.className="alert alert-warning";
-        divNitofcation.innerHTML= "Microsoft and Libra word file cannt be opened in browser";
+        divNitofcation.innerHTML= "Microsoft and Libra word file cannot be opened in browser. " +
+        "Click bottom DOWNLOAD in UF box . File shows up below the UF box. Click arrow on right, then select OPEN  . File Opens in New Window, then 'Save As'.";
         elementDisplay=divNitofcation;
 
     }else if(filetype.indexOf("image")>-1){
@@ -248,10 +392,10 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
 
         var video = document.createElement('video');
         video.src = fileurl.videofileurl;
-        video.control="controls";
+        video.controls="controls";
         
         var audio = document.createElement('audio');
-        audio.controls = false;
+        audio.controls = "controls";
         audio.src = fileurl.audiofileurl;
         //audio.hidden=true;
 
@@ -384,7 +528,7 @@ function createFileSharingBox(peerinfo, parent){
 
     var fileControlBar=document.createElement("p");
     fileControlBar.id =peerinfo.fileShare.container+"controlBar";
-    fileControlBar.appendChild(document.createTextNode("File Viewer "+ peerinfo.name+ "     "));
+    fileControlBar.appendChild(document.createTextNode("File Viewer "+ peerinfo.name));
 
     var minButton= document.createElement("span");
     /*    minButton.className="btn btn-default glyphicon glyphicon-import closeButton";
@@ -482,9 +626,6 @@ function createFileListingBox(peerinfo, parent){
     fileHelpButton.innerHTML="Help";
     /*fileListControlBar.appendChild(fileHelpButton);*/
 
-    var fileControlBar=document.createElement("p");
-    fileControlBar.appendChild(document.createTextNode("File Viewer for "+ peerinfo.name));
-
     var minButton= document.createElement("span");
     minButton.innerHTML='<i class="fa fa-minus-square" style="font-size: 20px;></i>';
     minButton.id=peerinfo.fileShare.minButton;
@@ -534,7 +675,7 @@ function createFileListingBox(peerinfo, parent){
 }
 
 function createFileSharingDiv(peerinfo){
-
+    console.log(" -------createFileSharingDiv  " , peerinfo);
     if (!document.getElementById(peerinfo.fileShare.outerbox)){
         var parentFileShareContainer = document.getElementById(fileshareobj.fileShareContainer);
         createFileSharingBox(peerinfo , parentFileShareContainer);
@@ -549,7 +690,7 @@ function createFileSharingDiv(peerinfo){
 /* ************* file sharing container button functions --------------- */
 function closeFV(userid,  buttonId , selectedFileSharingBox){
     document.getElementById(selectedFileSharingBox).innerHTML="";
-    syncButton(buttonId);
+    /*syncButton(buttonId);*/
 }
 
 function resizeFV(userid,  buttonId , selectedFileSharingBox){
@@ -572,7 +713,8 @@ function minFV(userid, buttonId , selectedFileSharingBox){
     document.getElementById(selectedFileSharingBox).hidden=false;
     document.getElementById(selectedFileSharingBox).style.width="50%";
     document.getElementById(selectedFileSharingBox).style.height="10%";
-    syncButton(buttonId);
+    
+    /*syncButton(buttonId);*/
 }
 
 function maxFV(userid,  buttonId ,  selectedFileSharingBox){
@@ -586,5 +728,5 @@ function maxFV(userid,  buttonId ,  selectedFileSharingBox){
         }
     }
 
-    syncButton(buttonId);  
+    /*syncButton(buttonId);  */
 }
