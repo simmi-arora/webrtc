@@ -1,5 +1,8 @@
-   // TranslationHandler.js
+/* ***********************************************
+Translator
+*********************************************/
 
+   // TranslationHandler.js
 
     var TranslationHandler = (function() {
         function handle(connection) {

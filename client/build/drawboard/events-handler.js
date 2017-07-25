@@ -1,7 +1,10 @@
-// -------------------------------------------------------------
+/* ***********************************************
+Events handler 
+*********************************************/
 
-var canvas = tempContext.canvas,
-    isTouch = 'createTouch' in document;
+var selfId = parent.selfuserid;
+
+var isTouch = 'createTouch' in document;
 
 addEvent(canvas, isTouch ? 'touchstart' : 'mousedown', function (e) {
     if (isTouch) e = e.pageX ? e : e.touches.length ? e.touches[0] : { pageX: 0, pageY: 0 };
@@ -11,20 +14,40 @@ addEvent(canvas, isTouch ? 'touchstart' : 'mousedown', function (e) {
     console.log(" canvas coordinates x ->" , e.pageX , "||", canvas.offsetLeft);
     console.log(" canvas coordinates y ->" , e.pageY ," ||", canvas.offsetTop);
 
-    if (cache.isLine) lineHandler.mousedown(e);
-    else if (cache.isArc) arcHandler.mousedown(e);
-    else if (cache.isRectangle) rectHandler.mousedown(e);
-    else if (cache.isQuadraticCurve) quadraticHandler.mousedown(e);
-    else if (cache.isBezierCurve) bezierHandler.mousedown(e);
-    else if (cache.isDragLastPath || cache.isDragAllPaths) dragHelper.mousedown(e);
-    else if (is.isPencil) pencilHandler.mousedown(e);
-    else if (is.isEraser) eraserHandler.mousedown(e);
-    else if (is.isText) textHandler.mousedown(e);
-
+    if (cache.isLine){
+ lineHandler.mousedown(e);
+}
+    else if (cache.isArc) {
+arcHandler.mousedown(e);
+}
+    else if (cache.isRectangle){
+ rectHandler.mousedown(e);
+}
+    else if (cache.isQuadraticCurve){
+ quadraticHandler.mousedown(e);
+}
+    else if (cache.isBezierCurve){
+ bezierHandler.mousedown(e);
+}
+    else if (cache.isDragLastPath || cache.isDragAllPaths){
+ dragHelper.mousedown(e);
+}
+    else if (is.isPencil){
+pencilHandler.mousedown(e);
+}
+    else if (is.isEraser){
+ eraserHandler.mousedown(e);
+}
+    else if (is.isText){
+ textHandler.mousedown(e);
+}
+else{
+console.log(" none of the event matched ");
+return;
+}   
     drawHelper.redraw();
 });
 
-// -------------------------------------------------------------
 
 addEvent(canvas, isTouch ? 'touchend' : 'mouseup', function (e) {
     if (isTouch) e = e.pageX ? e : e.touches.length ? e.touches[0] : { pageX: 0, pageY: 0 };
@@ -44,7 +67,6 @@ addEvent(canvas, isTouch ? 'touchend' : 'mouseup', function (e) {
     drawHelper.redraw();
 });
 
-// -------------------------------------------------------------
 
 addEvent(canvas, isTouch ? 'touchmove' : 'mousemove', function (e) {
     if (isTouch) e = e.pageX ? e : e.touches.length ? e.touches[0] : { pageX: 0, pageY: 0 };
@@ -62,11 +84,11 @@ addEvent(canvas, isTouch ? 'touchmove' : 'mousemove', function (e) {
     else if (is.isText) textHandler.mousemove(e);
 });
 
-// -------------------------------------------------------------
+
 
 var keyCode;
 
-// -------------------------------------------------------------
+
 
 function onkeydown(e) {
     keyCode = e.keyCode;
@@ -78,7 +100,7 @@ function onkeydown(e) {
 
 addEvent(document, 'keydown', onkeydown);
 
-// -------------------------------------------------------------
+
 
 function onkeyup(e) {
     keyCode = e.keyCode;
@@ -122,16 +144,12 @@ function onkeyup(e) {
 
 addEvent(document, 'keyup', onkeyup);
 
-// -------------------------------------------------------------
-
 
 var lastPoint = [];
 
-//var selfId = (Math.random() * 10000).toString().replace('.', '');
-//var selfId = window.frames[0].parent.document.getElementById("username").innerHTML;
-var selfId = parent.document.getElementById("username").innerHTML;
-
 window.addEventListener('message', function(event) {
+
+    console.log(" window message" , event);
 
     if (!event.data || !event.data.canvasDesignerSyncData) return;
 
@@ -160,13 +178,13 @@ function syncPoints() {
 }
 
 function syncData(data) {
-
     parent.postMessage({
         canvasDesignerSyncData: data,
         sender: selfId
     }, '*');
 }
 
-//parent post message is wokring 
+
+// parent post message is wokring 
 // test this by 
 // window.frames[0].parent.postMessage("hi", '*')

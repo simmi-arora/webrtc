@@ -398,7 +398,7 @@ function mergeStreams(videoBlob, audioBlob) {
     var fileurl2=URL.createObjectURL(audioBlob);
 
     var sessionRecordfileurl={
-        videofileurl:fileurl,
+        videofileurl: fileurl,
         audiofileurl: fileurl2
     };
 
@@ -407,7 +407,7 @@ function mergeStreams(videoBlob, audioBlob) {
         audioname: recordAudioname
     };
 
-   displayList(peerinfo.uuid , peerinfo  ,sessionRecordfileurl , sessionRecordName , "sessionRecording");
+   displayList(peerinfo.uuid , peerinfo , sessionRecordfileurl , sessionRecordName , "sessionRecording");
    displayFile(peerinfo.uuid , peerinfo , sessionRecordfileurl , sessionRecordName , "sessionRecording"); 
 
 }

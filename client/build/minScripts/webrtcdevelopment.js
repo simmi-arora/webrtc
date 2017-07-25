@@ -9,12 +9,12 @@ var currentTimeTicker = '';
 if(window.location.href.indexOf("s=1")>=0){
 
 }else{
-	currentTimeTicker = new Date().getTime();
+  currentTimeTicker = new Date().getTime();
 }
 */
 
 /********************************************************************
-	global variables
+  global variables
 **********************************************************************/
 
 var t = " ";
@@ -83,134 +83,178 @@ var role="participant";
 
 function init( autoload , callback ){
 
-	if(autoload && !location.hash.replace('#', '').length) {
-		// When Session should autogenerate ssid and locationbar doesnt have a session name
-		location.href = location.href.split('#')[0] + '#' + (Math.random() * 100).toString().replace('.', '');
-		location.reload();
-	}else if(autoload && location.href.replace('#', '').length){
-		// When Session should autogenerate ssid and locationbar doesnt have a session name
-		if(location.href.indexOf('?')>-1){
-			sessionid = (location.hash.substring(0,location.hash.indexOf('?'))).replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
-		}else{
-			sessionid = location.hash.replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
-		}
-		callback(sessionid);
+  if(autoload && !location.hash.replace('#', '').length) {
+    // When Session should autogenerate ssid and locationbar doesnt have a session name
+    location.href = location.href.split('#')[0] + '#' + (Math.random() * 100).toString().replace('.', '');
+    location.reload();
+  }else if(autoload && location.href.replace('#', '').length){
+    // When Session should autogenerate ssid and locationbar doesnt have a session name
+    if(location.href.indexOf('?')>-1){
+      sessionid = (location.hash.substring(0,location.hash.indexOf('?'))).replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
+    }else{
+      sessionid = location.hash.replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
+    }
+    callback(sessionid);
 
-	}else{
-		sessionid = prompt("Enter session ", "");
-		callback(sessionid);
-	}
+  }else{
+    sessionid = prompt("Enter session ", "");
+    callback(sessionid);
+  }
 }
 
 
 function loadjscssfile(filename, filetype){
-	if (filetype=="js"){ //if filename is a external JavaScript file
-		var fileref=document.createElement('script')
-		fileref.setAttribute("type","text/javascript")
-		fileref.setAttribute("src", filename)
-	}
-	else if (filetype=="css"){ //if filename is an external CSS file
-		var fileref=document.createElement("link")
-		fileref.setAttribute("rel", "stylesheet")
-		fileref.setAttribute("type", "text/css")
-		fileref.setAttribute("href", filename)
-	}
-	if (typeof fileref!="undefined")
-		document.getElementsByTagName("head")[0].appendChild(fileref)
+  if (filetype=="js"){ //if filename is a external JavaScript file
+    var fileref=document.createElement('script')
+    fileref.setAttribute("type","text/javascript")
+    fileref.setAttribute("src", filename)
+  }
+  else if (filetype=="css"){ //if filename is an external CSS file
+    var fileref=document.createElement("link")
+    fileref.setAttribute("rel", "stylesheet")
+    fileref.setAttribute("type", "text/css")
+    fileref.setAttribute("href", filename)
+  }
+  if (typeof fileref!="undefined")
+    document.getElementsByTagName("head")[0].appendChild(fileref)
 }
 
 function loadScript(src, onload) {
-	var script = document.createElement('script');
-	script.src = src;
-	script.async = true;
-	document.documentElement.appendChild(script);
+  var script = document.createElement('script');
+  script.src = src;
+  script.async = true;
+  document.documentElement.appendChild(script);
 }
 
 function isData(session) {
-	return !session.audio && !session.video && !session.screen && session.data;
+  return !session.audio && !session.video && !session.screen && session.data;
 }
 
 function isNull(obj) {
-	return typeof obj == 'undefined';
+  return typeof obj == 'undefined';
 }
 
 function isString(obj) {
-	return typeof obj == 'string';
+  return typeof obj == 'string';
 }
 
 function isEmpty(session) {
-	var length = 0;
-	for (var s in session) {
-		length++;
-	}
-	return length == 0;
+  var length = 0;
+  for (var s in session) {
+    length++;
+  }
+  return length == 0;
 }
 
 // this method converts array-buffer into string
 function ab2str(buf) {
-	var result = '';
-	try {
-		result = String.fromCharCode.apply(null, new Uint16Array(buf));
-	} catch (e) {}
-	return result;
+  var result = '';
+  try {
+    result = String.fromCharCode.apply(null, new Uint16Array(buf));
+  } catch (e) {}
+  return result;
 }
 
 // this method converts string into array-buffer
 function str2ab(str) {
-	if (!isString(str)) str = JSON.stringify(str);
+  if (!isString(str)) str = JSON.stringify(str);
 
-	var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
-	var bufView = new Uint16Array(buf);
-	for (var i = 0, strLen = str.length; i < strLen; i++) {
-		bufView[i] = str.charCodeAt(i);
-	}
-	return buf;
+  var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+  var bufView = new Uint16Array(buf);
+  for (var i = 0, strLen = str.length; i < strLen; i++) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return buf;
 }
 
 function toStr(obj) {
-	return JSON.stringify(obj, function(key, value) {
-		if (value && value.sdp) {
-			log(value.sdp.type, '\t', value.sdp.sdp);
-			return '';
-		} else return value;
-	}, '\t');
+  return JSON.stringify(obj, function(key, value) {
+    if (value && value.sdp) {
+      log(value.sdp.type, '\t', value.sdp.sdp);
+      return '';
+    } else return value;
+  }, '\t');
 }
 
 function getLength(obj) {
-	var length = 0;
-	for (var o in obj)
-		if (o) length++;
-	return length;
+  var length = 0;
+  for (var o in obj)
+    if (o) length++;
+  return length;
 }
 function log() {
-	console.log(arguments);
+  console.log(arguments);
 }
 
 function error() {
-	console.error(arguments);
+  console.error(arguments);
 }
 
 function warn() {
-	console.warn(arguments);
+  console.warn(arguments);
+}
+
+function error(arg1 , arg2){
+    console.log(arg1, arg2);
+}
+
+function getElement(e) {
+    return document.querySelector(e)
+}
+
+function getRandomColor() {
+    for (var e = "0123456789ABCDEF".split(""), t = "#", n = 0; 6 > n; n++) t += e[Math.round(15 * Math.random())];
+    return t
+}
+
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
+}
+
+
+function getUserinfo(e, t) {
+    return e ? '<video src="' + e + '" autoplay></vide>' : '<img src="' + t + '">';
+}
+
+function fireClickEvent(e) {
+    var t = new MouseEvent("click", {
+        view: window,
+        bubbles: !0,
+        cancelable: !0
+    });
+    e.dispatchEvent(t)
+}
+
+function bytesToSize(e) {
+    var t = ["Bytes", "KB", "MB", "GB", "TB"];
+    if (0 == e) return "0 Bytes";
+    var n = parseInt(Math.floor(Math.log(e) / Math.log(1024)));
+    return Math.round(e / Math.pow(1024, n), 2) + " " + t[n]
 }
 
 function shownotification(message){
 
-	if(document.getElementById("alertBox")){
-		var alertDiv =document.createElement("div");
-		alertDiv.className="alert alert-success fade in";
-		alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ message;
+  if(document.getElementById("alertBox")){
+    var alertDiv =document.createElement("div");
+    alertDiv.className="alert alert-success fade in";
+    alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ message;
 
-		document.getElementById("alertBox").hidden=false;
-		document.getElementById("alertBox").innerHTML="";
-		document.getElementById("alertBox").appendChild(alertDiv);
+    document.getElementById("alertBox").hidden=false;
+    document.getElementById("alertBox").innerHTML="";
+    document.getElementById("alertBox").appendChild(alertDiv);
 
-		setTimeout(function() {
-			document.getElementById("alertBox").hidden=true;
-		}, 3000);
-	}else{
-		alert(message);
-	}
+    setTimeout(function() {
+      document.getElementById("alertBox").hidden=true;
+    }, 3000);
+  }else{
+    alert(message);
+  }
 
 }
 
@@ -237,29 +281,29 @@ function shownotificationWarning(message){
 function showdesktopnotification() {
   // Let's check if the browser supports notifications
   if (!("Notification" in window)) {
-	   alert("This browser does not support desktop notification");
+     alert("This browser does not support desktop notification");
   }
 
   // Let's check whether notification permissions have already been granted
   else if (Notification.permission === "granted") {
-	   // If it's okay let's create a notification
+     // If it's okay let's create a notification
       var options = {
           body: "The remote has joined the session",
           icon: "images/villagexpertslogo2.png"
       };
 
-	   var notification = new Notification("Vilageexperts" , options);
+     var notification = new Notification("Vilageexperts" , options);
   }
 
   // Otherwise, we need to ask the user for permission
   else if (Notification.permission !== 'denied') {
-  	Notification.requestPermission(function (permission) {
-  	  // If the user accepts, let's create a notification
-  	  if (permission === "granted") {
-  		  var notification = new Notification("villageexpsrts");
-  	  }
+    Notification.requestPermission(function (permission) {
+      // If the user accepts, let's create a notification
+      if (permission === "granted") {
+        var notification = new Notification("villageexpsrts");
+      }
 
-  	});
+    });
 
   }
 
@@ -273,114 +317,14 @@ Notification.requestPermission().then(function(result) {
 
 function spawnNotification(theBody,theIcon,theTitle) {
   var options = {
-	  body: theBody,
-	  icon: theIcon
+    body: theBody,
+    icon: theIcon
   }
   var n = new Notification(theTitle,options);
 }
 
 
 
-    /**
-     * function to check devices like speakers , webcam ,  microphone etc
-     * @method
-     * @name checkDevices
-     * @param {object} connection
-     */
-    function checkDevices(obj){
-        console.log(" obj.DetectRTC  " , obj.DetectRTC);
-        if(obj.DetectRTC.hasMicrophone) {
-            // seems current system has at least one audio input device
-            console.log("has Microphone");
-        }else{
-            console.log("doesnt have  hasMicrophone");
-        }
-
-        if(obj.DetectRTC.hasSpeakers) {
-            console.log("has Speakers");
-            // seems current system has at least one audio output device
-        }else{
-            console.log("doesnt have  Speakers");
-        }
-
-        if(obj.DetectRTC.hasWebcam) {
-            console.log("has Webcam");
-            // seems current system has at least one video input device
-        }else{
-            console.log("doesnt have Webcam");
-        }
-    }
-
-    /**
-     * function to check browser support for webrtc apis
-     * @name checkWebRTCSupport
-     * @param {object} connection
-     */
-    function checkWebRTCSupport(obj){
-        if(obj.DetectRTC.isWebRTCSupported) {
-        // seems WebRTC compatible client
-        }
-
-        if(obj.DetectRTC.isAudioContextSupported) {
-            // seems Web-Audio compatible client
-        }
-
-        if(obj.DetectRTC.isScreenCapturingSupported) {
-            // seems WebRTC screen capturing feature is supported on this client
-        }
-
-        if(obj.DetectRTC.isSctpDataChannelsSupported) {
-            // seems WebRTC SCTP data channels feature are supported on this client
-        }
-
-        if(obj.DetectRTC.isRtpDataChannelsSupported) {
-            // seems WebRTC (old-fashioned) RTP data channels feature are supported on this client
-        }
-    }
-
-    function error(arg1 , arg2){
-        console.log(arg1, arg2);
-    }
-
-    function getElement(e) {
-        return document.querySelector(e)
-    }
-
-    function getRandomColor() {
-        for (var e = "0123456789ABCDEF".split(""), t = "#", n = 0; 6 > n; n++) t += e[Math.round(15 * Math.random())];
-        return t
-    }
-
-    function guid() {
-      function s4() {
-        return Math.floor((1 + Math.random()) * 0x10000)
-          .toString(16)
-          .substring(1);
-      }
-      return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-        s4() + '-' + s4() + s4() + s4();
-    }
-
-
-    function getUserinfo(e, t) {
-        return e ? '<video src="' + e + '" autoplay></vide>' : '<img src="' + t + '">';
-    }
-
-    function fireClickEvent(e) {
-        var t = new MouseEvent("click", {
-            view: window,
-            bubbles: !0,
-            cancelable: !0
-        });
-        e.dispatchEvent(t)
-    }
-
-    function bytesToSize(e) {
-        var t = ["Bytes", "KB", "MB", "GB", "TB"];
-        if (0 == e) return "0 Bytes";
-        var n = parseInt(Math.floor(Math.log(e) / Math.log(1024)));
-        return Math.round(e / Math.pow(1024, n), 2) + " " + t[n]
-    }
 // Last time updated: 2016-08-12 5:21:05 AM UTC
 // _____________________
 // RTCMultiConnection-v3
@@ -3891,22 +3835,26 @@ function getSourceId(callback, audioPlusTab) {
 }
 
 function getChromeExtensionStatus(extensionid, callback) {
-    if (2 != arguments.length && (callback = extensionid,
-    extensionid = window.RMCExtensionID || "ajhifddimkapgcifgcodmmfdlknahffk"),
-    isFirefox)
+    if (2 != arguments.length && (callback = extensionid, extensionid = window.RMCExtensionID || "ajhifddimkapgcifgcodmmfdlknahffk"), isFirefox)
         return callback("not-chrome");
-
-    var image = document.createElement("img");
-    image.src = "chrome-extension://" + extensionid + "/icon.png",
-    image.onload = function() {
-        chromeMediaSource = "screen",
-        window.postMessage("webrtcdev-extension-presence", "*"),
-        setTimeout(function() {
-            callback("screen" == chromeMediaSource ? extensionid == extensionid ? "installed-enabled" : "installed-disabled" : "installed-enabled")
-        }, 2e3);
-    },
-    image.onerror = function() {
-        callback("not-installed")
+    try{
+        var image = document.createElement("img");
+        image.src = "chrome-extension://" + extensionid + "/icon.png",
+        image.onload = function() {
+            console.info("screenshare extension " , image.src);
+            chromeMediaSource = "screen",
+            window.postMessage("webrtcdev-extension-presence", "*"),
+            setTimeout(function() {
+                callback("screen" == chromeMediaSource ? extensionid == extensionid ? "installed-enabled" : "installed-disabled" : "installed-enabled")
+            }, 2e3);
+        },
+        image.onerror = function() {
+            console.error("No screenshare extension " , image.src);
+            callback("not-installed");
+        }
+    }catch(e){
+        console.error("Screenshare extension image not found chrome-extension://" , extensionid , "/icon.png" , e)
+        callback("not-installed");
     }
 }
 
@@ -4375,16 +4323,16 @@ function createScreenInstallButton(extensionID){
     document.getElementById("topIconHolder_ul").appendChild(li);
 }
 
-function assignScreenInstallButton(){
+function assignScreenInstallButton(extensionID){
     var button=document.getElementById(screenshareobj.button.installButton.id);
     button.onclick= function(e) {    
         chrome.webstore.install("https://chrome.google.com/webstore/detail/"+extensionID,
             function(){
                 console.log("Chrome extension inline installation - success");
-                screenShareButton.hidden=true;
+                button.hidden = true;
                 createOrAssignScreenshareButton();
-            },function (err){
-                console.log("Chrome extension inline installation - fail " , err);
+            },function (e){
+                console.error("Chrome extension inline installation - fail " , e);
             });
         // Prevent the opening of the Web Store page
         e.preventDefault();
@@ -4398,13 +4346,14 @@ function hideScreenInstallButton(){
 }
 
 function createOrAssignScreenshareButton(){
-    if(screenshareobj.button.shareButton.id && document.getElementById(screenshareobj.button.shareButton.id)) 
-    {
+    if(screenshareobj.button.shareButton.id && document.getElementById(screenshareobj.button.shareButton.id)) {
         assignScreenShareButton();
         hideScreenInstallButton();
+        showScreenShareButton();
     }    
-    else
+    else{
         createScreenShareButton();
+    }
 }
 
 function createScreenshareButton(){
@@ -4445,6 +4394,18 @@ function assignScreenShareButton(){
     return button;
 }
 
+function hideScreenShareButton(){
+    var button=document.getElementById(screenshareobj.button.shareButton.id);
+    button.hidden=true;
+    button.setAttribute("style","display:none");
+}
+
+function showScreenShareButton(){
+    var button=document.getElementById(screenshareobj.button.shareButton.id);
+    button.removeAttribute("hidden");
+    button.setAttribute("style","display:block");
+}
+
 /*
 //shifted to start.js
 window.addEventListener('message', onScreenshareExtensionCallback);*/
@@ -4470,9 +4431,7 @@ function detectExtension(extensionID , callback){
     getChromeExtensionStatus(extensionID, function(status) {  
         console.log( "detectExtensionScreenshare for ", extensionID, " -> " , status);
         //reset extension's local storage objects 
-        
         window.postMessage("reset-webrtcdev-extension", "*");
-
         callback(status);
     });
 
@@ -5538,6 +5497,66 @@ var WebRTCdetect=function() {
         });
     }
 };
+/**
+ * function to check devices like speakers , webcam ,  microphone etc
+ * @method
+ * @name checkDevices
+ * @param {object} connection
+ */
+function checkDevices(obj){
+    console.log(" obj.DetectRTC  " , obj.DetectRTC);
+    if(obj.DetectRTC.hasMicrophone) {
+        // seems current system has at least one audio input device
+        console.log("has Microphone");
+    }else{
+        console.log("doesnt have  hasMicrophone");
+    }
+
+    if(obj.DetectRTC.hasSpeakers) {
+        console.log("has Speakers");
+        // seems current system has at least one audio output device
+    }else{
+        console.log("doesnt have  Speakers");
+    }
+
+    if(obj.DetectRTC.hasWebcam) {
+        console.log("has Webcam");
+        // seems current system has at least one video input device
+    }else{
+        console.log("doesnt have Webcam");
+    }
+}
+
+/**
+ * function to check browser support for webrtc apis
+ * @name checkWebRTCSupport
+ * @param {object} connection
+ */
+function checkWebRTCSupport(obj){
+    if(obj.DetectRTC.isWebRTCSupported) {
+    // seems WebRTC compatible client
+    }
+
+    if(obj.DetectRTC.isAudioContextSupported) {
+        // seems Web-Audio compatible client
+    }
+
+    if(obj.DetectRTC.isScreenCapturingSupported) {
+        // seems WebRTC screen capturing feature is supported on this client
+    }
+
+    if(obj.DetectRTC.isSctpDataChannelsSupported) {
+        // seems WebRTC SCTP data channels feature are supported on this client
+    }
+
+    if(obj.DetectRTC.isRtpDataChannelsSupported) {
+        // seems WebRTC (old-fashioned) RTP data channels feature are supported on this client
+    }
+}
+/* ***********************************************
+settings
+*********************************************/
+
 function setSettingsAttributes(){
     
     $("#channelname").val(rtcConn.channel);
@@ -5608,12 +5627,12 @@ function EmailPartnerLink(){
 
 
 function getAllPeerInfo(){
-    console.log(webcallpeers);
+    console.info(webcallpeers);
 }
 
 $("#SettingsButton").click(function() {
     
-    console.log(localobj.userdetails);
+    console.info(localobj.userdetails);
 
     if(localobj.userdisplay.latitude){
         /*$('#'+localobj.userdisplay.latitude).val(latitude);*/
@@ -14676,6 +14695,9 @@ function syncSnapshot(datasnapshot , datatype , dataname ){
     console.log("snaspshot ",datasnapshot);
 }*/
 
+/* ***********************************************
+geolocation
+*********************************************/
 
 if (navigator.geolocation) {
     /*console.log(navigator);*/
@@ -14802,7 +14824,7 @@ function createChatBox(obj){
 
 function assignChatBox(obj){
 
-    var chatInput= document.getElementById(chatobj.inputBox.text_id);
+    var chatInput = document.getElementById(chatobj.inputBox.text_id);
     chatInput.onkeypress=function(e){
         if (e.keyCode == 13) {
             var peerinfo = findPeerInfo( selfuserid );
@@ -15213,6 +15235,10 @@ function attachMediaStream(element, stream) {
 function reattachMediaStream(to, from) {
     to.src = from.src;
 }
+/* ***********************************************
+Record
+*********************************************/
+
 function createRecordButton(controlBarName, peerinfo, streamid, stream){
     var recordButton=document.createElement("div");
     recordButton.id=controlBarName+"recordButton";
@@ -15242,8 +15268,8 @@ var listOfRecorders = {};
 
 function startRecord(peerinfo , streamid, stream){
     var recorder = RecordRTC(stream, {
-        type: 'video        recorderType: MediaStreamRecorder',
-
+        type: 'video'  , 
+        recorderType: MediaStreamRecorder,
     });
     recorder.startRecording();
     listOfRecorders[streamid] = recorder;
@@ -15339,6 +15365,7 @@ function stopRecord(){
         }
     }, {audio:true, video:true} );
 }*/
+
 /************************************************************************
 Canvas Record 
 *************************************************************************/
@@ -15739,7 +15766,7 @@ function mergeStreams(videoBlob, audioBlob) {
     var fileurl2=URL.createObjectURL(audioBlob);
 
     var sessionRecordfileurl={
-        videofileurl:fileurl,
+        videofileurl: fileurl,
         audiofileurl: fileurl2
     };
 
@@ -15748,7 +15775,7 @@ function mergeStreams(videoBlob, audioBlob) {
         audioname: recordAudioname
     };
 
-   displayList(peerinfo.uuid , peerinfo  ,sessionRecordfileurl , sessionRecordName , "sessionRecording");
+   displayList(peerinfo.uuid , peerinfo , sessionRecordfileurl , sessionRecordName , "sessionRecording");
    displayFile(peerinfo.uuid , peerinfo , sessionRecordfileurl , sessionRecordName , "sessionRecording"); 
 
 }
@@ -15922,6 +15949,9 @@ function sendFile(file){
 
 function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelperclassName ){
     try{
+        if(!peerinfo){
+            console.log(" Progress helpler cannot be added for one peer as its absent")
+        }
         console.log(" progresshelper " , uuid , peerinfo , filename , fileSize,  progressHelperclassName );
         var progressDiv = document.createElement("div");
         progressDiv.id = filename,
@@ -15983,9 +16013,10 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     }else{
         showRemoveButton=false;
     }*/
-
+    var _filename=null;
     if(filetype=="sessionRecording"){
         filename = filename.videoname+"_"+filename.audioname;
+        _filename = filename;
     }
 
     var name = document.createElement("div");
@@ -15995,10 +16026,148 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     name.id = "name"+filename;
 
     var downloadButton = document.createElement("div");
+    downloadButton.id = "downloadButton"+filename;
     downloadButton.style.float="right";
     /*downloadButton.setAttribute("class" , "btn btn-primary");*/
     /*downloadButton.setAttribute("style", "color:white");*/
-    downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '">'+'<i class="fa fa-download" style="font-size: 25px;"></i>'+' </a>';
+    //downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '">'+'<i class="fa fa-download" style="font-size: 25px;"></i>'+' </a>';
+    downloadButton.innerHTML='<i class="fa fa-download" style="font-size: 25px;"></i>';
+    downloadButton.onclick=function(){
+       if(filetype=="sessionRecording"){
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+            a.href = fileurl.audiofileurl;
+            a.download = _filename.audioname+".wav";
+            a.click();
+            window.URL.revokeObjectURL(fileurl.audiofileurl);
+
+            var v = document.createElement("a");
+            document.body.appendChild(v);
+            v.style = "display: none";
+            v.href = fileurl.videofileurl;
+            v.download = _filename.videoname+".webm";
+            v.click();
+            window.URL.revokeObjectURL(fileurl.videofileurl);
+
+            /*window.open(fileurl.audiofileurl , filename.audioname+".wav");
+            window.open(fileurl.videofileurl , filename.videoname+".webm");*/
+            alert("Files Saved");
+/*            var zip = new JSZip();
+            zip.file(filename.videoname , filename.videofileurl);
+            var audio = zip.folder("audio");
+            audio.file(filename.audioname, fileurl.audiofileurl);
+            zip.generateAsync({type:"blob"})
+            .then(function(content) {
+                // see FileSaver.js
+                //saveAs(content, "sessionRecording.zip");
+                window.open(content , "sessionRecording.zip");
+            });*/
+        }else{ 
+            window.open(fileurl , "downloadedDocument");
+        }
+    };
+
+    var saveButton = document.createElement("div");
+    saveButton.id= "saveButton"+filename;
+    saveButton.style.float="right";
+    saveButton.setAttribute("data-toggle","modal");
+    saveButton.setAttribute("data-target" , "#saveModal");
+    saveButton.innerHTML='<i class="fa fa-floppy-o" style="font-size: 25px;"></i>';
+    saveButton.onclick=function(){
+       /* alert("Right Click on above file, then select Save As");*/
+
+        var modalBox=document.createElement("div");
+        modalBox.className="modal fade";
+        modalBox.setAttribute("role" , "dialog");
+        modalBox.id="saveModal";
+
+        var modalinnerBox=document.createElement("div");
+        modalinnerBox.className="modal-dialog";
+
+        var modal=document.createElement("div");
+        modal.className = "modal-content";
+
+        var modalheader= document.createElement("div");
+        modalheader.className = "modal-header";
+
+        var closeButton= document.createElement("button");
+        closeButton.className="close";
+        closeButton.setAttribute("data-dismiss", "modal");
+        closeButton.innerHTML="&times;";
+
+        var title=document.createElement("h4");
+        title.className="modal-title";
+        title.innerHTML="Save File";   
+
+        modalheader.appendChild(title);
+        modalheader.appendChild(closeButton);
+
+
+        var modalbody = document.createElement("div");
+        modalbody.className = "modal-body";
+        modalbody.innerHTML = "";
+
+        var body=document.createElement("div");
+        switch(filetype){
+            case "application/pdf":
+                var d1= document.createElement("div");
+                d1.innerHTML='Click DOWNLOAD on top of the doc . Click SAVE AS when window opens up';
+                var i1 = document.createElement("img");
+                i1.src= "images/savefile.PNG";
+                body.appendChild(d1);
+                body.appendChild(i1);
+                break; 
+            // browser supported formats 
+            case "image/jpeg":
+            case "image/png":
+            case "video/mov": 
+            case "video/webm":
+            case "imagesnapshot":
+                var d1=document.createElement("div");
+                d1.innerHTML='Right Click on the FILE . Click SAVE AS when window opens up';
+                body.appendChild(d1);
+                break; 
+            // browser supported audio formats    
+            case "audio/mp3":
+                var d1= document.createElement("div");
+                d1.innerHTML="Right Click on the FILE (play display line). Click SAVE AS when window opens up";
+                body.appendChild(d1);
+                break;
+            // propertiary stuff that will not open in browser 
+            case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+            case "application/vnd.ms-excel":
+            case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+            case "application/vnd.openxmlformats-officedocument.wordprocessingml.document": 
+            case "video/x-ms-wmv":
+                var d1= document.createElement("div");
+                d1.innerHTML="Click bottom DOWNLOAD in Uploaded Files box . File shows up below the Uploaded Files box. Click arrow on right, then select OPEN  . File Opens in New Window, then 'Save As'.";
+                body.appendChild(d1);
+                break; 
+            case "sessionRecording":
+                var d1=document.createElement("div");
+                d1.innerHTML='Extract the video and audio recording from the dowloaded compresed file and play together ';
+                body.appendChild(d1);
+                break;
+            default :
+                var d1=document.createElement("div");
+                d1.innerHTML='Document is Unrecognizable, cannot be saved, but can be shared with Remote. Use/Click Screen Share for Remote to view your screen. Then open the document on your screen.';
+                body.appendChild(d1);
+                break;
+        }
+
+        modalbody.appendChild(body);
+        modal.appendChild(modalheader);
+        modal.appendChild(modalbody);
+
+        modalinnerBox.appendChild(modal);
+        modalBox.appendChild(modalinnerBox);
+
+        var mainDiv= document.getElementById("mainDiv");
+        mainDiv.appendChild(modalBox);
+
+
+    };
 
     var showButton = document.createElement("div");
     showButton.id= "showButton"+filename;
@@ -16096,6 +16265,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         if(showDownloadButton) 
             filedom.appendChild(downloadButton);
         filedom.appendChild(showButton);
+        filedom.appendChild(saveButton);
         filedom.appendChild(hideButton);
         if(showRemoveButton) 
             filedom.appendChild(removeButton);
@@ -16111,7 +16281,8 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
     if(filetype.indexOf("msword")>-1 || filetype.indexOf("officedocument")>-1) {
         var divNitofcation= document.createElement("div");
         divNitofcation.className="alert alert-warning";
-        divNitofcation.innerHTML= "Microsoft and Libra word file cannt be opened in browser";
+        divNitofcation.innerHTML= "Microsoft and Libra word file cannot be opened in browser. " +
+        "Click bottom DOWNLOAD in UF box . File shows up below the UF box. Click arrow on right, then select OPEN  . File Opens in New Window, then 'Save As'.";
         elementDisplay=divNitofcation;
 
     }else if(filetype.indexOf("image")>-1){
@@ -16131,10 +16302,10 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
 
         var video = document.createElement('video');
         video.src = fileurl.videofileurl;
-        video.control=true;
+        video.controls="controls";
         
         var audio = document.createElement('audio');
-        audio.controls = false;
+        audio.controls = "controls";
         audio.src = fileurl.audiofileurl;
         //audio.hidden=true;
 
@@ -16267,7 +16438,7 @@ function createFileSharingBox(peerinfo, parent){
 
     var fileControlBar=document.createElement("p");
     fileControlBar.id =peerinfo.fileShare.container+"controlBar";
-    fileControlBar.appendChild(document.createTextNode("File Viewer "+ peerinfo.name+ "     "));
+    fileControlBar.appendChild(document.createTextNode("File Viewer "+ peerinfo.name));
 
     var minButton= document.createElement("span");
     /*    minButton.className="btn btn-default glyphicon glyphicon-import closeButton";
@@ -16365,9 +16536,6 @@ function createFileListingBox(peerinfo, parent){
     fileHelpButton.innerHTML="Help";
     /*fileListControlBar.appendChild(fileHelpButton);*/
 
-    var fileControlBar=document.createElement("p");
-    fileControlBar.appendChild(document.createTextNode("File Viewer for "+ peerinfo.name));
-
     var minButton= document.createElement("span");
     minButton.innerHTML='<i class="fa fa-minus-square" style="font-size: 20px;></i>';
     minButton.id=peerinfo.fileShare.minButton;
@@ -16417,7 +16585,7 @@ function createFileListingBox(peerinfo, parent){
 }
 
 function createFileSharingDiv(peerinfo){
-
+    console.log(" -------createFileSharingDiv  " , peerinfo);
     if (!document.getElementById(peerinfo.fileShare.outerbox)){
         var parentFileShareContainer = document.getElementById(fileshareobj.fileShareContainer);
         createFileSharingBox(peerinfo , parentFileShareContainer);
@@ -16432,7 +16600,7 @@ function createFileSharingDiv(peerinfo){
 /* ************* file sharing container button functions --------------- */
 function closeFV(userid,  buttonId , selectedFileSharingBox){
     document.getElementById(selectedFileSharingBox).innerHTML="";
-    syncButton(buttonId);
+    /*syncButton(buttonId);*/
 }
 
 function resizeFV(userid,  buttonId , selectedFileSharingBox){
@@ -16455,7 +16623,8 @@ function minFV(userid, buttonId , selectedFileSharingBox){
     document.getElementById(selectedFileSharingBox).hidden=false;
     document.getElementById(selectedFileSharingBox).style.width="50%";
     document.getElementById(selectedFileSharingBox).style.height="10%";
-    syncButton(buttonId);
+    
+    /*syncButton(buttonId);*/
 }
 
 function maxFV(userid,  buttonId ,  selectedFileSharingBox){
@@ -16469,127 +16638,91 @@ function maxFV(userid,  buttonId ,  selectedFileSharingBox){
         }
     }
 
-    syncButton(buttonId);  
+    /*syncButton(buttonId);  */
 }
 
 /**************************************************************************8
 draw 
 ******************************************************************************/
-var CanvasDesigner=null;
-if(drawCanvasobj.active){
-    CanvasDesigner = (function() {
-        var iframe;
-        var tools = {
-            line: true,
-            pencil: true,
-            dragSingle: true,
-            dragMultiple: true,
-            eraser: true,
-            rectangle: true,
-            arc: true,
-            bezier: true,
-            quadratic: true,
-            text: true
-        };
+var CanvasDesigner;
+var isDrawOpened = false ;
 
-        var selectedIcon = 'pencil';
+function webrtcdevCanvasDesigner(drawCanvasobj){
 
-        function syncData(data) {
-            if (!iframe) return;
+    if(document.getElementById(drawCanvasobj.drawCanvasContainer).innerHTML.indexOf("iframe")<0){
+        try{
+            CanvasDesigner.addSyncListener(function(data) {
+                rtcConn.send({type:"canvas", draw:data});
+            });
 
-            iframe.contentWindow.postMessage({
-                canvasDesignerSyncData: data
-            }, '*');
+            CanvasDesigner.setSelected('pencil');
+
+            CanvasDesigner.setTools({
+                pencil: true,
+                eraser: true
+            });
+
+            CanvasDesigner.appendTo(document.getElementById(drawCanvasobj.drawCanvasContainer));
+        }catch(e){
+            console.error(" Canvas drawing not supported " , e);
         }
+    }else{
+        console.log("CanvasDesigner already started .iframe is attached ");
+    }
 
-        var syncDataListener = function(data) {
-            console.log("syncDataListener" , data);
-        };
-        
-        function onMessage() {
-            if (!event.data || !event.data.canvasDesignerSyncData) return;
-            syncDataListener(event.data.canvasDesignerSyncData);
-        }
-
-        /*window.addEventListener('message', onMessage, false);*/
-
-        var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
-        var eventer = window[eventMethod];
-        var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
-
-        // Listen to message from child window
-        eventer(messageEvent,function(e) {
-            console.log('CanvasDesigner parent received message!:  ',e.data);
-            if (!e.data || !e.data.canvasDesignerSyncData) return;
-            syncDataListener(e.data.canvasDesignerSyncData);
-        },false);
-
-        return {
-            appendTo: function(parentNode) {
-                iframe = document.createElement('iframe');
-                iframe.id="drawboard";
-                iframe.src = 'widget.html?tools=' + JSON.stringify(tools) + '&selectedIcon=' + selectedIcon;
-                iframe.style.width ="100%";
-                iframe.style.height="100%";
-                iframe.style.border = 0;
-                parentNode.appendChild(iframe);
-            },
-            destroy: function() {
-                if(iframe) {
-                    iframe.parentNode.removeChild(iframe);
-                }
-                window.removeEventListener('message', onMessage);
-            },
-            addSyncListener: function(callback) {
-                syncDataListener = callback;
-            },
-            syncData: syncData,
-            setTools: function(_tools) {
-                tools = _tools;
-            },
-            setSelected: function(icon) {
-                if (typeof tools[icon] !== 'undefined') {
-                    selectedIcon = icon;
-                }
-            }
-        };
-    })();
 }
 
-function webrtcdevCanvasDesigner(){
-    try{
-        CanvasDesigner.addSyncListener(function(data) {
-            rtcConn.send({type:"canvas", draw:data});
-        });
-
-        CanvasDesigner.setSelected('pencil');
-
-        CanvasDesigner.setTools({
-            pencil: true,
-            eraser: true
-        });
-
-        CanvasDesigner.appendTo(document.getElementById(drawCanvasobj.drawCanvasContainer));
-    }catch( e){
-        console.log(" Canvas drawing not supported ");
-        console.log(e);
+function syncDrawBoard(bdata){
+    if(document.getElementById(bdata.button.id)){
+        document.getElementById(bdata.button.id).click();
+    }else{
+        console.error(" Receieved sync board evenet but no button id found");
     }
 }
 
-function createdrawButton(){
+function createdrawButton(drawCanvasobj){
     var drawButton= document.createElement("span");
     drawButton.className=drawCanvasobj.button.class_off ;
     drawButton.innerHTML=drawCanvasobj.button.html_off;
     drawButton.onclick=function(){
-        if(drawButton.className==drawCanvasobj.button.class_off){
+        if(drawButton.className==drawCanvasobj.button.class_off  && document.getElementById(drawCanvasobj.drawCanvasContainer).hidden){
+            alert(" Draw Board Opened ");
             drawButton.className= drawCanvasobj.button.class_on ;
             drawButton.innerHTML= drawCanvasobj.button.html_on;
-            webrtcdevCanvasDesigner();
-            document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=false;
-        }else if(drawButton.className==drawCanvasobj.button.class_on){
+            if(document.getElementById(drawCanvasobj.container.id))
+                document.getElementById(drawCanvasobj.container.id).hidden=false;
+            else
+                console.error("Draw : container-" , drawCanvasobj.container.id , " doesnt exist");
+            
+            if(document.getElementById(drawCanvasobj.drawCanvasContainer)){
+                document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=false;
+                document.getElementById(drawCanvasobj.drawCanvasContainer).focus();
+                var bdata={
+                    event : "open",
+                    from : "remote",
+                    board : drawCanvasobj.drawCanvasContainer,
+                    button : drawCanvasobj.button
+                };
+                rtcConn.send({type:"canvas", board:bdata});
+            }else{
+                console.error("Draw : canvascontainer-" , drawCanvasobj.drawCanvasContainer , " doesnt exist");
+            }
+            webrtcdevCanvasDesigner(drawCanvasobj);
+
+        }else if(drawButton.className==drawCanvasobj.button.class_on &&  !document.getElementById(drawCanvasobj.drawCanvasContainer).hidden){
             drawButton.className= drawCanvasobj.button.class_off ;
             drawButton.innerHTML= drawCanvasobj.button.html_off;
-            document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=true;
+            if(document.getElementById(drawCanvasobj.container.id))
+                document.getElementById(drawCanvasobj.container.id).hidden=true;
+            else
+                console.error("Draw : container-" , drawCanvasobj.container.id , " doesnt exist");
+            
+            if(document.getElementById(drawCanvasobj.drawCanvasContainer))
+                document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=true;
+            else
+                console.error("Draw : canvascontainer-" , drawCanvasobj.drawCanvasContainer , " doesnt exist");
+
+
         }
     };
     var li =document.createElement("li");
@@ -16597,20 +16730,56 @@ function createdrawButton(){
     document.getElementById("topIconHolder_ul").appendChild(li);
 }
 
-function assigndrawButton(btnid){
-    drawButton = document.getElementById(btnid);
+function assigndrawButton(drawCanvasobj){
+    drawButton = document.getElementById(drawCanvasobj.button.id);
     drawButton.className= drawCanvasobj.button.class_off;
     drawButton.innerHTML= drawCanvasobj.button.html_off;
     drawButton.onclick=function(){
-        if(drawButton.className==drawCanvasobj.button.class_off){
+        if(drawButton.className==drawCanvasobj.button.class_off  && document.getElementById(drawCanvasobj.drawCanvasContainer).hidden){
+            //alert(" Draw Board Opened ");
             drawButton.className= drawCanvasobj.button.class_on ;
             drawButton.innerHTML= drawCanvasobj.button.html_on;
-            webrtcdevCanvasDesigner();
-            document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=false;
-        }else if(drawButton.className==drawCanvasobj.button.class_on){
+            if(document.getElementById(drawCanvasobj.container.id))
+                document.getElementById(drawCanvasobj.container.id).hidden=false;
+            else
+                console.error("Draw : container-" , drawCanvasobj.container.id , " doesnt exist");
+            
+            if(document.getElementById(drawCanvasobj.drawCanvasContainer)){
+                document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=false;
+                document.getElementById(drawCanvasobj.drawCanvasContainer).focus();
+                isDrawOpened = true;
+                var bdata={
+                    event : "open",
+                    from : "remote",
+                    board : drawCanvasobj.drawCanvasContainer,
+                    button : drawCanvasobj.button
+                };
+                rtcConn.send({type:"canvas", board:bdata});
+            }else{
+                console.error("Draw : canvascontainer-" , drawCanvasobj.drawCanvasContainer , " doesnt exist");
+            }
+            webrtcdevCanvasDesigner(drawCanvasobj);
+
+        }else if(drawButton.className==drawCanvasobj.button.class_on &&  !document.getElementById(drawCanvasobj.drawCanvasContainer).hidden){
             drawButton.className= drawCanvasobj.button.class_off ;
             drawButton.innerHTML= drawCanvasobj.button.html_off;
-            document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=true;
+            if(document.getElementById(drawCanvasobj.container.id))
+                document.getElementById(drawCanvasobj.container.id).hidden=true;
+            else
+                console.error("Draw : container-" , drawCanvasobj.container.id , " doesnt exist");
+            
+            if(document.getElementById(drawCanvasobj.drawCanvasContainer)){
+                document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=true;
+                isDrawOpened = false ;
+                var bdata={
+                    event : "close",
+                    from : "remote",
+                    board : drawCanvasobj.drawCanvasContainer,
+                    button : drawCanvasobj.button
+                };
+                rtcConn.send({type:"canvas", board:bdata});
+            }else
+                console.error("Draw : canvascontainer-" , drawCanvasobj.drawCanvasContainer , " doesnt exist");
         }
     };
 }
@@ -16667,12 +16836,67 @@ function assignButtonRedial(id){
         }
     };
 }
-if(document.getElementById("ListenInButton")){
-	document.getElementById("ListenInButton").onclick=function(){
-		alert(window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0');
-	}
-}
+/* **********************************************
+Listen -In
+*************************************************/
 
+if(document.getElementById("ListenInButton")){
+
+  	var modalBox=document.createElement("div");
+  	modalBox.className="modal fade";
+  	modalBox.setAttribute("role" , "dialog");
+  	modalBox.id="myModal";
+
+  	var modalinnerBox=document.createElement("div");
+  	modalinnerBox.className="modal-dialog";
+
+	var modal=document.createElement("div");
+	modal.className = "modal-content";
+
+	var modalheader= document.createElement("div");
+	modalheader.className = "modal-header";
+
+	var closeButton= document.createElement("button");
+	closeButton.className="close";
+	closeButton.setAttribute("data-dismiss", "modal");
+	closeButton.innerHTML="&times;";
+
+	var title=document.createElement("h4");
+	title.className="modal-title";
+	title.innerHTML="Listen-In Link";	
+
+	modalheader.appendChild(title);
+	modalheader.appendChild(closeButton);
+
+
+	var modalbody = document.createElement("div");
+	modalbody.className="modal-body";
+
+	var link = document.createElement("div");
+	link.innerHTML = window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0';
+
+	var mail=document.createElement("div");
+	mail.innerHTML='<a href="mailto:?Subject=Hello%20again" target="_top">Send Mail</a>';
+
+	modalbody.appendChild(link);
+	modalbody.appendChild(mail);
+
+	modal.appendChild(modalheader);
+	modal.appendChild(modalbody);
+
+	modalinnerBox.appendChild(modal);
+	modalBox.appendChild(modalinnerBox);
+
+	var mainDiv= document.getElementById("mainDiv");
+	mainDiv.appendChild(modalBox);
+
+	console.log(" -----------------sppenedd modal dialog ListenIn" , modalBox);
+	//document.body.appendChild(modalBox);
+
+	/*document.getElementById("ListenInButton").onclick=function(){
+		//alert(window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0');
+	}*/
+}
 /***************************************************************************
 cursor sharing 
 ***************************************************************************/
@@ -16981,7 +17205,6 @@ function getICEServer(username , secretkey , domain , appname , roomname , secur
         '&domain='+domain +'&application='+appname+
         '&room='+ roomname+'&secure='+secure);
 }
-
 /**************************************************8
 Timer 
 ***************************************************/
@@ -17137,10 +17360,6 @@ function checkTime(i) {
     if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
     return i;
 }
-
-
-
-
 // ___________
 // getStats.js
 // an abstraction layer runs top over RTCPeerConnection.getStats API
@@ -17445,24 +17664,21 @@ function activateBandwidthButtons(timerobj){
 try{
 
     var RTCPeerConnection = null;
-
     var webrtcDetectedBrowser = null;
     var webrtcDetectedVersion = null;
     /*var usersList       = document.getElementById("userslist");
     var numbersOfUsers  = document.getElementById("numbersofusers");
     var usersContainer  = document.getElementById("usersContainer");*/
-
     var tempuserid ;
-
     var sessions = {};
 
     /**
      * Represents a webrtc dom startup.
      * @constructor
-     * @param {json} _localObj - The title of the book.
-     * @param {json} _remoteObj - The author of the book.
-     * @param {json} incoming - The title of the book.
-     * @param {json} outgoing - The author of the book.
+     * @param {json} _localObj - local object.
+     * @param {json} _remoteObj - remote object.
+     * @param {json} incoming - incoming media stream.
+     * @param {json} outgoing - outgoing media stream.
      */
     var WebRTCdom= function(  _localObj , _remoteObj , incoming, outgoing){
 
@@ -17499,7 +17715,7 @@ try{
         }
 
         if(localobj.hasOwnProperty('userdetails')){
-            console.log("userdetails " , localobj.userdetails);
+            console.info("localobj userdetails " , localobj.userdetails);
             selfusername = (localobj.userdetails.username  == undefined ? "LOCAL": localobj.userdetails.username);
             selfcolor    = (localobj.userdetails.usercolor == undefined ? "orange": localobj.userdetails.usercolor);
             selfemail    = (localobj.userdetails.useremail == undefined ? "unknown": localobj.userdetails.useremail);
@@ -17507,7 +17723,7 @@ try{
         }
 
         if(remoteobj.hasOwnProperty('userdetails')){
-            console.log("userdetails " , remoteobj.userdetails);
+            console.info("remoteobj userdetails " , remoteobj.userdetails);
             remoteusername = (remoteobj.userdetails.username  == undefined ? "REMOTE": remoteobj.userdetails.username);
             remotecolor    = (remoteobj.userdetails.usercolor == undefined ? "orange": remoteobj.userdetails.usercolor);
             remoteemail    = (remoteobj.userdetails.useremail == undefined ? "unknown": remoteobj.userdetails.useremail);
@@ -17515,6 +17731,12 @@ try{
 
     };
 
+    /**
+     * Assigns ICE gateways and  widgets 
+     * @constructor
+     * @param {json} session - session object.
+     * @param {json} widgets - widgets object.
+     */
     var WebRTCdev= function(session, widgets){
         try{
             sessionid  = session.sessionid;
@@ -17584,7 +17806,7 @@ try{
                     if(!webrtcdevIceServers) {
                         return;
                     }
-                    console.log(" WebRTC dev Icesservers " , webrtcdevIceServers);
+                    console.info(" WebRTC dev Icesservers " , webrtcdevIceServers);
                     rtcConn.iceServers = webrtcdevIceServers;       
                     window.clearInterval(repeatInitilization);
                 }  
@@ -17648,7 +17870,7 @@ try{
                 },
 
                 rtcConn.onstream = function(event) {
-                    console.log("on streamStrated event " , event);
+                    console.log("on stream Started event " , event);
                     /*                  
                     var width = parseInt(connection.videosContainer.clientWidth / 2) - 20;
                     var mediaElement = getMediaElement(event.mediaElement, {
@@ -17664,8 +17886,8 @@ try{
                     mediaElement.id = event.streamid;*/
                     var peerinfo = findPeerInfo(event.userid);
                     if(!peerinfo){
-                        console.log(" PeerInfo not present in webcallpeers " , event.userid , rtcConn );
-                        alert(" PeerInfo not present in webcallpeers");
+                        console.error(" PeerInfo not present in webcallpeers " , event.userid , rtcConn );
+                        alert(" Cannot create session for Peer");
                     }else{
                         peerinfo.type = event.type;
                         peerinfo.stream = event.stream;
@@ -17763,7 +17985,20 @@ try{
                                 }); 
                             break;
                             case "canvas":
-                                CanvasDesigner.syncData( e.data.draw );
+                                if(e.data.draw){
+                                    CanvasDesigner.syncData( e.data.draw );
+                                }else if(e.data.board){
+                                    console.log(" Canvas : " , e.data);
+                                    if(e.data.board.from=="remote"){
+
+                                        if(e.data.board.event=="open" && isDrawOpened != true)
+                                            syncDrawBoard( e.data.board );
+                                        else if(e.data.board.event=="close" && isDrawOpened == true)
+                                            syncDrawBoard( e.data.board );
+                                    }
+                                }else{
+                                    console.warn(" Board data mismatch" , e.data);
+                                }
                             break;
                             case "texteditor":
                                 receiveWebrtcdevTexteditorSync(e.data.data);
@@ -17797,7 +18032,7 @@ try{
                                 }
                             break;
                             default:
-                                console.log(" unrecognizable message from peer  ",e);
+                                console.warn(" unrecognizable message from peer  ",e);
                             break;
                         }
                     } 
@@ -17858,7 +18093,7 @@ try{
 
                 rtcConn.onFileEnd = function(file) {
                     console.log("On file End "+ file.name );
-                    var peerinfo=findPeerInfo(file.userid);
+                    var peerinfo = findPeerInfo(file.userid);
                     if(peerinfo!=null)
                         peerinfo.filearray.push(file.name);
                     displayFile(file.uuid , peerinfo , file.url , file.name , file.type);
@@ -17890,17 +18125,9 @@ try{
     };
 
     /**
-     * event handler for when session is connected with a peer
-     * @method
-     * @name onSessionConnect
+     * set Widgets.
      */
-    var onSessionConnect=function(){
-        //alert("on session connect do anothing ");
-        //eventhandler for session onConnect , overwrite in client lib 
-        console.log(" On session connect ");
-    };
-
-    function setWidgets(){
+   function setWidgets(){
         if(chatobj.active){
             /* 
            if(chatobj.button.id && document.getElementById(chatobj.button.id)){
@@ -17909,7 +18136,7 @@ try{
                 createChatButton(chatobj);
             }*/
 
-            if(chatobj.inputBox.text_id && document.getElementById(chatobj.inputBox.text_id)){
+            if( chatobj.inputBox && chatobj.inputBox.text_id && document.getElementById(chatobj.inputBox.text_id)){
                 assignChatBox(chatobj);
             }else{
                 createChatBox(chatobj);
@@ -17919,12 +18146,6 @@ try{
         }
 
         if(screenrecordobj && screenrecordobj.active){
-            /*           
-            if(screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)){
-                assignScreenRecordButton(screenrecordobj);
-            }else{
-                createScreenRecordButton();
-            }*/
 
             detectExtension(screenshareobj.extensionID , function(status){
 
@@ -17934,7 +18155,7 @@ try{
                     if(screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)){
                         assignScreenRecordButton(screenrecordobj);
                     }else{
-                        createScreenRecordButton();
+                        createScreenRecordButton(screenrecordobj);
                     }
                 }
                 
@@ -17943,7 +18164,7 @@ try{
                     if(screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)){
                         assignScreenRecordButton(screenrecordobj);
                     }else{
-                        createScreenRecordButton();
+                        createScreenRecordButton(screenrecordobj);
                     }
                 }
                 
@@ -17979,14 +18200,17 @@ try{
                 }
                 
                 if(status == 'not-installed') {
-                    if(screenshareobj.button.installButton.id && document.getElementById(screenshareobj.button.installButton.id)) 
-                        assignScreenInstallButton(extensionID);
-                    else
-                        createScreenInstallButton(extensionID);
+                    hideScreenShareButton();
+                    if(screenshareobj.button.installButton.id && document.getElementById(screenshareobj.button.installButton.id)) {
+                        assignScreenInstallButton(screenshareobj.extensionID);
+                    } else {
+                        createScreenInstallButton(screenshareobj.extensionID);
+                    }
                 }
                 
                 if(status == 'not-chrome') {
                     // using non-chrome browser
+                    alert(" Screen share extension only works in Chrome for now ");
                 }
             }); 
         }   
@@ -17995,8 +18219,9 @@ try{
             if(reconnectobj.button.id && document.getElementById(reconnectobj.button.id)){
                 assignButtonRedial(reconnectobj.button.id);
             }else{
-                createButtonRedial();
+                createButtonRedial(reconnectobj);
             }
+
         }else if(reconnectobj && !reconnectobj.active){
             if(reconnectobj.button.id && document.getElementById(reconnectobj.button.id)){
                 document.getElementById(reconnectobj.button.id).className="inactiveButton";
@@ -18032,12 +18257,93 @@ try{
         }
 
         if(drawCanvasobj && drawCanvasobj.active){
-            
-            if(drawCanvasobj.button.id && document.getElementById(drawCanvasobj.button.id)){
-                assigndrawButton(drawCanvasobj.button.id);
-            }else{
-                createdrawButton();
+            if(drawCanvasobj.container && drawCanvasobj.container.id && document.getElementById(drawCanvasobj.container.id)){
+                document.getElementById(drawCanvasobj.container.id).hidden=true;
             }
+            if(drawCanvasobj.button.id && document.getElementById(drawCanvasobj.button.id)){
+                assigndrawButton(drawCanvasobj);
+            }else{
+                createdrawButton(drawCanvasobj);
+            }
+
+                CanvasDesigner = (function() {
+                    var iframe;
+                    var tools = {
+                        line: true,
+                        pencil: true,
+                        dragSingle: true,
+                        dragMultiple: true,
+                        eraser: true,
+                        rectangle: true,
+                        arc: true,
+                        bezier: true,
+                        quadratic: true,
+                        text: true
+                    };
+
+                    var selectedIcon = 'pencil';
+
+                    function syncData(data) {
+                        if (!iframe) return;
+
+                        iframe.contentWindow.postMessage({
+                            canvasDesignerSyncData: data
+                        }, '*');
+                    }
+
+                    var syncDataListener = function(data) {
+                        console.log("syncDataListener" , data);
+                    };
+                    
+                    function onMessage() {
+                        if (!event.data || !event.data.canvasDesignerSyncData) return;
+                        syncDataListener(event.data.canvasDesignerSyncData);
+                    }
+
+                    /*window.addEventListener('message', onMessage, false);*/
+
+                    var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+                    var eventer = window[eventMethod];
+                    var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+
+                    // Listen to message from child window
+                    eventer(messageEvent,function(e) {
+                        console.log('CanvasDesigner parent received message!:  ',e.data);
+                        if (!e.data || !e.data.canvasDesignerSyncData) return;
+                        syncDataListener(e.data.canvasDesignerSyncData);
+                    },false);
+
+                    return {
+                        appendTo: function(parentNode) {
+                            iframe = document.createElement('iframe');
+                            iframe.id="drawboard";
+                            iframe.src = 'widget.html?tools=' + JSON.stringify(tools) + '&selectedIcon=' + selectedIcon;
+                            iframe.style.width ="100%";
+                            iframe.style.height="100%";
+                            iframe.style.border = 0;
+                            parentNode.appendChild(iframe);
+                        },
+                        destroy: function() {
+                            if(iframe) {
+                                iframe.parentNode.removeChild(iframe);
+                            }
+                            window.removeEventListener('message', onMessage);
+                        },
+                        addSyncListener: function(callback) {
+                            syncDataListener = callback;
+                        },
+                        syncData: syncData,
+                        setTools: function(_tools) {
+                            tools = _tools;
+                        },
+                        setSelected: function(icon) {
+                            if (typeof tools[icon] !== 'undefined') {
+                                selectedIcon = icon;
+                            }
+                        }
+                    };
+                })();
+            
         }else if(drawCanvasobj && !drawCanvasobj.active){
             if(drawCanvasobj.button.id && document.getElementById(drawCanvasobj.button.id)){
                 document.getElementById(drawCanvasobj.button.id).className="inactiveButton";
@@ -18108,7 +18414,7 @@ try{
         });
 
         socket.on("open-channel-resp",function(event) {
-            console.log("opened-channel" , event , event.status  , event.channel==sessionid);
+            console.log("========================== opened-channel" , event , event.status  , event.channel==sessionid);
             if(event.status && event.channel==sessionid){
                 try{
                     rtcConn.connectionType="open",
@@ -18142,7 +18448,7 @@ try{
                         }
 
                         updatePeerInfo( selfuserid , selfusername , selfcolor, selfemail, "local" );
-                        console.log(" trying to open a channel on WebRTC SDP ");
+                        console.info(" trying to open a channel on WebRTC SDP ");
                         rtcConn.dontCaptureUserMedia = false,
                         rtcConn.getUserMedia();
                     });
@@ -18169,16 +18475,13 @@ try{
                     OfferToReceiveVideo: outgoingVideo
                 },
                 rtcConn.remoteUsers = event.users,
-                updatePeerInfo( rtcConn.userid , selfusername , selfcolor, selfemail, "local" );
+                updatePeerInfo( rtcConn.userid , selfusername , selfcolor, selfemail, rtcConn.type );
 
                 for (x in rtcConn.remoteUsers){
                     updatePeerInfo(rtcConn.remoteUsers[x] , remoteusername , remotecolor , remoteemail, "remote");
-                    /*
-                    if(role!="inspector"){
-                        
-                    }else{
+                    if(role=="inspector"){
                         shownotificationWarning("This session is being inspected ");
-                    }*/
+                    }
                 }
 
                 rtcConn.connectionDescription = rtcConn.join(event.channel);
@@ -18197,7 +18500,11 @@ try{
                 if(event.status){
                     var peerinfo = findPeerInfo(event.data.sender);
                     if(!peerinfo){
-                        updatePeerInfo(event.data.sender , event.data.extra.name , "#BFD9DA" , event.data.extra.email, "remote");
+                        if(event.data.extra.name == "LOCAL"){
+                            event.data.extra.name = "REMOTE";
+                            event.data.extra.color = remotecolor;
+                        }
+                        updatePeerInfo(event.data.sender , event.data.extra.name , event.data.extra.color , event.data.extra.email, "remote");
                         shownotification(event.type);
                     }
                 }else{
@@ -18207,11 +18514,18 @@ try{
         });
     }
 
+
+    /**
+     * Update local cache of user sesssion based object called peerinfo
+     * @method
+     * @name updateWebCallView
+     * @param {json} peerInfo
+     */
     function updateWebCallView(peerInfo){
         console.log("updateWebCallView - start with peerInfo" , peerInfo);
 
         if(peerInfo.vid.indexOf("videolocal") > -1){
-/*            $("#"+localobj.videoContainer).show();
+/*          $("#"+localobj.videoContainer).show();
             $("#"+remoteobj.videoContainer).hide();*/
             $("[id="+localobj.videoContainer+"]").show();
             $("[id="+remoteobj.videoContainer+"]").hide();
@@ -18263,7 +18577,7 @@ try{
                     if(localobj.userMetaDisplay && webcallpeers[0].userid)
                         attachMetaUserDetails( selfvid, webcallpeers[0] ); 
 
-                    if(fileshareobj.active){
+/*                    if(fileshareobj.active){
                         createFileSharingDiv(webcallpeers[0]);
 
                         if(fileshareobj.props.fileShare=="single"){
@@ -18273,7 +18587,7 @@ try{
                         if(fileshareobj.props.fileList=="single"){
                             document.getElementById(peerInfo.fileList.outerbox).style.width="100%";
                         }
-                    }
+                    }*/
                 }
             }
 
@@ -18312,7 +18626,7 @@ try{
                 if(remoteobj.userMetaDisplay && peerInfo.userid)
                     attachMetaUserDetails( remvid, peerInfo ); 
       
-                if(fileshareobj.active){
+/*                if(fileshareobj.active){
 
                     if(fileshareobj.props.fileShare){
                         if(fileshareobj.props.fileShare=="divided")
@@ -18322,7 +18636,7 @@ try{
                         else
                             console.log("props undefined ");
                     }
-                }
+                }*/
             }else{
                 alert(" remote Video containers not defined");
             }
@@ -18331,9 +18645,9 @@ try{
 
         console.log(" updateWebCallView - finish");
     }
-
+  
     /********************************************************************************** 
-            Session call and Updateing Peer Info
+            Session call and Updating Peer Info
     ************************************************************************************/
     var repeatInitilization = null;
 
@@ -18507,10 +18821,37 @@ try{
      * @param {string} userid
      * @param {string} remoteUsers
      */
-    connectWebRTC=function(type, channel , userid , remoteUsers){
-        console.log(" ConnectWebRTC "+ type);
+    connectWebRTC=function(type, channel, userid ,remoteUsers){
+        console.info(" ConnectWebRTC : " , type, channel , userid , remoteUsers);
 
-        void(document.title = channel);
+        /*void(document.title = channel);*/
+
+
+        if(fileshareobj.active){
+            
+            var peerinfo = findPeerInfo(userid);
+
+            if(fileshareobj.props.fileShare=="single"){
+                createFileSharingDiv(peerinfo);
+                document.getElementById(peerInfo.fileShare.outerbox).style.width="100%";
+            } else if(fileshareobj.props.fileShare=="divided"){
+                createFileSharingDiv(webcallpeers[0]);
+                createFileSharingDiv(peerInfo);
+            }else{
+                console.error("fileshareobj.props.fileShare undefined ");
+            }
+            
+
+            if(fileshareobj.props.fileList=="single"){
+                document.getElementById(peerInfo.fileList.outerbox).style.width="100%";
+            }else if(fileshareobj.props.fileShare!="single"){
+                console.log("No Seprate div created for this peer since fileshare container is single");
+            }else{
+                console.error("fileshareobj.props.fileShare undefined ");
+            }
+
+        }
+
 
         /*localStorage.setItem("channel", channel);
         localStorage.setItem("userid", userid);
@@ -18587,7 +18928,11 @@ try{
 }catch(e){
     console.log("exception in start " , e);
 }
-var socket ;;
+/* ***************************************************************
+Admin
+******************************************************************/
+
+var socket ;
 var webrtcdevDataObj;
 var usersDataObj;
 var channelsFeed= document.getElementById("channelsFeed");
@@ -18674,7 +19019,6 @@ $('#channels_json').click(function () {
         format: 'json'
     });
 });
-
 
 $('#channel_clients').click(function () {
     socket.emit('admin_enquire', 

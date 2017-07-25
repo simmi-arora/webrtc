@@ -5,24 +5,21 @@
 try{
 
     var RTCPeerConnection = null;
-
     var webrtcDetectedBrowser = null;
     var webrtcDetectedVersion = null;
     /*var usersList       = document.getElementById("userslist");
     var numbersOfUsers  = document.getElementById("numbersofusers");
     var usersContainer  = document.getElementById("usersContainer");*/
-
     var tempuserid ;
-
     var sessions = {};
 
     /**
      * Represents a webrtc dom startup.
      * @constructor
-     * @param {json} _localObj - The title of the book.
-     * @param {json} _remoteObj - The author of the book.
-     * @param {json} incoming - The title of the book.
-     * @param {json} outgoing - The author of the book.
+     * @param {json} _localObj - local object.
+     * @param {json} _remoteObj - remote object.
+     * @param {json} incoming - incoming media stream.
+     * @param {json} outgoing - outgoing media stream.
      */
     var WebRTCdom= function(  _localObj , _remoteObj , incoming, outgoing){
 
@@ -59,22 +56,28 @@ try{
         }
 
         if(localobj.hasOwnProperty('userdetails')){
-            console.log("userdetails " , localobj.userdetails);
-            selfusername = (!localobj.userdetails.username ? "LOCAL": localobj.userdetails.username);
+            console.info("localobj userdetails " , localobj.userdetails);
+            selfusername = (localobj.userdetails.username  == undefined ? "LOCAL": localobj.userdetails.username);
             selfcolor    = (localobj.userdetails.usercolor == undefined ? "orange": localobj.userdetails.usercolor);
             selfemail    = (localobj.userdetails.useremail == undefined ? "unknown": localobj.userdetails.useremail);
             role         = (localobj.userdetails.role  == undefined ? "participant": localobj.userdetails.role);
         }
 
         if(remoteobj.hasOwnProperty('userdetails')){
-            console.log("userdetails " , remoteobj.userdetails);
-            remoteusername = (!remoteobj.userdetails.username ? "REMOTE": remoteobj.userdetails.username);
+            console.info("remoteobj userdetails " , remoteobj.userdetails);
+            remoteusername = (remoteobj.userdetails.username  == undefined ? "REMOTE": remoteobj.userdetails.username);
             remotecolor    = (remoteobj.userdetails.usercolor == undefined ? "orange": remoteobj.userdetails.usercolor);
             remoteemail    = (remoteobj.userdetails.useremail == undefined ? "unknown": remoteobj.userdetails.useremail);
         }
 
     };
 
+    /**
+     * Assigns ICE gateways and  widgets 
+     * @constructor
+     * @param {json} session - session object.
+     * @param {json} widgets - widgets object.
+     */
     var WebRTCdev= function(session, widgets){
         try{
             sessionid  = session.sessionid;
@@ -144,7 +147,7 @@ try{
                     if(!webrtcdevIceServers) {
                         return;
                     }
-                    console.log(" WebRTC dev Icesservers " , webrtcdevIceServers);
+                    console.info(" WebRTC dev Icesservers " , webrtcdevIceServers);
                     rtcConn.iceServers = webrtcdevIceServers;       
                     window.clearInterval(repeatInitilization);
                 }  
@@ -208,7 +211,7 @@ try{
                 },
 
                 rtcConn.onstream = function(event) {
-                    console.log("on streamStrated event " , event);
+                    console.log("on stream Started event " , event);
                     /*                  
                     var width = parseInt(connection.videosContainer.clientWidth / 2) - 20;
                     var mediaElement = getMediaElement(event.mediaElement, {
@@ -224,8 +227,8 @@ try{
                     mediaElement.id = event.streamid;*/
                     var peerinfo = findPeerInfo(event.userid);
                     if(!peerinfo){
-                        console.log(" PeerInfo not present in webcallpeers " , event.userid , rtcConn );
-                        alert(" PeerInfo not present in webcallpeers");
+                        console.error(" PeerInfo not present in webcallpeers " , event.userid , rtcConn );
+                        alert(" Cannot create session for Peer");
                     }else{
                         peerinfo.type = event.type;
                         peerinfo.stream = event.stream;
@@ -323,7 +326,20 @@ try{
                                 }); 
                             break;
                             case "canvas":
-                                CanvasDesigner.syncData( e.data.draw );
+                                if(e.data.draw){
+                                    CanvasDesigner.syncData( e.data.draw );
+                                }else if(e.data.board){
+                                    console.log(" Canvas : " , e.data);
+                                    if(e.data.board.from=="remote"){
+
+                                        if(e.data.board.event=="open" && isDrawOpened != true)
+                                            syncDrawBoard( e.data.board );
+                                        else if(e.data.board.event=="close" && isDrawOpened == true)
+                                            syncDrawBoard( e.data.board );
+                                    }
+                                }else{
+                                    console.warn(" Board data mismatch" , e.data);
+                                }
                             break;
                             case "texteditor":
                                 receiveWebrtcdevTexteditorSync(e.data.data);
@@ -357,7 +373,7 @@ try{
                                 }
                             break;
                             default:
-                                console.log(" unrecognizable message from peer  ",e);
+                                console.warn(" unrecognizable message from peer  ",e);
                             break;
                         }
                     } 
@@ -418,7 +434,7 @@ try{
 
                 rtcConn.onFileEnd = function(file) {
                     console.log("On file End "+ file.name );
-                    var peerinfo=findPeerInfo(file.userid);
+                    var peerinfo = findPeerInfo(file.userid);
                     if(peerinfo!=null)
                         peerinfo.filearray.push(file.name);
                     displayFile(file.uuid , peerinfo , file.url , file.name , file.type);
@@ -450,17 +466,9 @@ try{
     };
 
     /**
-     * event handler for when session is connected with a peer
-     * @method
-     * @name onSessionConnect
+     * set Widgets.
      */
-    var onSessionConnect=function(){
-        //alert("on session connect do anothing ");
-        //eventhandler for session onConnect , overwrite in client lib 
-        console.log(" On session connect ");
-    };
-
-    function setWidgets(){
+   function setWidgets(){
         if(chatobj.active){
             /* 
            if(chatobj.button.id && document.getElementById(chatobj.button.id)){
@@ -479,12 +487,6 @@ try{
         }
 
         if(screenrecordobj && screenrecordobj.active){
-            /*           
-            if(screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)){
-                assignScreenRecordButton(screenrecordobj);
-            }else{
-                createScreenRecordButton();
-            }*/
 
             detectExtension(screenshareobj.extensionID , function(status){
 
@@ -494,7 +496,7 @@ try{
                     if(screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)){
                         assignScreenRecordButton(screenrecordobj);
                     }else{
-                        createScreenRecordButton();
+                        createScreenRecordButton(screenrecordobj);
                     }
                 }
                 
@@ -503,7 +505,7 @@ try{
                     if(screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)){
                         assignScreenRecordButton(screenrecordobj);
                     }else{
-                        createScreenRecordButton();
+                        createScreenRecordButton(screenrecordobj);
                     }
                 }
                 
@@ -539,10 +541,12 @@ try{
                 }
                 
                 if(status == 'not-installed') {
-                    if(screenshareobj.button.installButton.id && document.getElementById(screenshareobj.button.installButton.id)) 
+                    hideScreenShareButton();
+                    if(screenshareobj.button.installButton.id && document.getElementById(screenshareobj.button.installButton.id)) {
                         assignScreenInstallButton(screenshareobj.extensionID);
-                    else
+                    } else {
                         createScreenInstallButton(screenshareobj.extensionID);
+                    }
                 }
                 
                 if(status == 'not-chrome') {
@@ -556,8 +560,9 @@ try{
             if(reconnectobj.button.id && document.getElementById(reconnectobj.button.id)){
                 assignButtonRedial(reconnectobj.button.id);
             }else{
-                createButtonRedial();
+                createButtonRedial(reconnectobj);
             }
+
         }else if(reconnectobj && !reconnectobj.active){
             if(reconnectobj.button.id && document.getElementById(reconnectobj.button.id)){
                 document.getElementById(reconnectobj.button.id).className="inactiveButton";
@@ -593,12 +598,93 @@ try{
         }
 
         if(drawCanvasobj && drawCanvasobj.active){
-            
-            if(drawCanvasobj.button.id && document.getElementById(drawCanvasobj.button.id)){
-                assigndrawButton(drawCanvasobj.button.id);
-            }else{
-                createdrawButton();
+            if(drawCanvasobj.container && drawCanvasobj.container.id && document.getElementById(drawCanvasobj.container.id)){
+                document.getElementById(drawCanvasobj.container.id).hidden=true;
             }
+            if(drawCanvasobj.button.id && document.getElementById(drawCanvasobj.button.id)){
+                assigndrawButton(drawCanvasobj);
+            }else{
+                createdrawButton(drawCanvasobj);
+            }
+
+                CanvasDesigner = (function() {
+                    var iframe;
+                    var tools = {
+                        line: true,
+                        pencil: true,
+                        dragSingle: true,
+                        dragMultiple: true,
+                        eraser: true,
+                        rectangle: true,
+                        arc: true,
+                        bezier: true,
+                        quadratic: true,
+                        text: true
+                    };
+
+                    var selectedIcon = 'pencil';
+
+                    function syncData(data) {
+                        if (!iframe) return;
+
+                        iframe.contentWindow.postMessage({
+                            canvasDesignerSyncData: data
+                        }, '*');
+                    }
+
+                    var syncDataListener = function(data) {
+                        console.log("syncDataListener" , data);
+                    };
+                    
+                    function onMessage() {
+                        if (!event.data || !event.data.canvasDesignerSyncData) return;
+                        syncDataListener(event.data.canvasDesignerSyncData);
+                    }
+
+                    /*window.addEventListener('message', onMessage, false);*/
+
+                    var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+                    var eventer = window[eventMethod];
+                    var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+
+                    // Listen to message from child window
+                    eventer(messageEvent,function(e) {
+                        console.log('CanvasDesigner parent received message!:  ',e.data);
+                        if (!e.data || !e.data.canvasDesignerSyncData) return;
+                        syncDataListener(e.data.canvasDesignerSyncData);
+                    },false);
+
+                    return {
+                        appendTo: function(parentNode) {
+                            iframe = document.createElement('iframe');
+                            iframe.id="drawboard";
+                            iframe.src = 'widget.html?tools=' + JSON.stringify(tools) + '&selectedIcon=' + selectedIcon;
+                            iframe.style.width ="100%";
+                            iframe.style.height="100%";
+                            iframe.style.border = 0;
+                            parentNode.appendChild(iframe);
+                        },
+                        destroy: function() {
+                            if(iframe) {
+                                iframe.parentNode.removeChild(iframe);
+                            }
+                            window.removeEventListener('message', onMessage);
+                        },
+                        addSyncListener: function(callback) {
+                            syncDataListener = callback;
+                        },
+                        syncData: syncData,
+                        setTools: function(_tools) {
+                            tools = _tools;
+                        },
+                        setSelected: function(icon) {
+                            if (typeof tools[icon] !== 'undefined') {
+                                selectedIcon = icon;
+                            }
+                        }
+                    };
+                })();
+            
         }else if(drawCanvasobj && !drawCanvasobj.active){
             if(drawCanvasobj.button.id && document.getElementById(drawCanvasobj.button.id)){
                 document.getElementById(drawCanvasobj.button.id).className="inactiveButton";
@@ -669,7 +755,7 @@ try{
         });
 
         socket.on("open-channel-resp",function(event) {
-            console.log("opened-channel" , event , event.status  , event.channel==sessionid);
+            console.log("========================== opened-channel" , event , event.status  , event.channel==sessionid);
             if(event.status && event.channel==sessionid){
                 try{
                     rtcConn.connectionType="open",
@@ -703,7 +789,7 @@ try{
                         }
 
                         updatePeerInfo( selfuserid , selfusername , selfcolor, selfemail, "local" );
-                        console.log(" trying to open a channel on WebRTC SDP ");
+                        console.info(" trying to open a channel on WebRTC SDP ");
                         rtcConn.dontCaptureUserMedia = false,
                         rtcConn.getUserMedia();
                     });
@@ -730,16 +816,13 @@ try{
                     OfferToReceiveVideo: outgoingVideo
                 },
                 rtcConn.remoteUsers = event.users,
-                updatePeerInfo( rtcConn.userid , selfusername , selfcolor, selfemail, "local" );
+                updatePeerInfo( rtcConn.userid , selfusername , selfcolor, selfemail, rtcConn.type );
 
                 for (x in rtcConn.remoteUsers){
                     updatePeerInfo(rtcConn.remoteUsers[x] , remoteusername , remotecolor , remoteemail, "remote");
-                    /*
-                    if(role!="inspector"){
-                        
-                    }else{
+                    if(role=="inspector"){
                         shownotificationWarning("This session is being inspected ");
-                    }*/
+                    }
                 }
 
                 rtcConn.connectionDescription = rtcConn.join(event.channel);
@@ -758,7 +841,11 @@ try{
                 if(event.status){
                     var peerinfo = findPeerInfo(event.data.sender);
                     if(!peerinfo){
-                        updatePeerInfo(event.data.sender , event.data.extra.name , "#BFD9DA" , event.data.extra.email, "remote");
+                        if(event.data.extra.name == "LOCAL"){
+                            event.data.extra.name = "REMOTE";
+                            event.data.extra.color = remotecolor;
+                        }
+                        updatePeerInfo(event.data.sender , event.data.extra.name , event.data.extra.color , event.data.extra.email, "remote");
                         shownotification(event.type);
                     }
                 }else{
@@ -768,11 +855,18 @@ try{
         });
     }
 
+
+    /**
+     * Update local cache of user sesssion based object called peerinfo
+     * @method
+     * @name updateWebCallView
+     * @param {json} peerInfo
+     */
     function updateWebCallView(peerInfo){
         console.log("updateWebCallView - start with peerInfo" , peerInfo);
 
         if(peerInfo.vid.indexOf("videolocal") > -1){
-/*            $("#"+localobj.videoContainer).show();
+/*          $("#"+localobj.videoContainer).show();
             $("#"+remoteobj.videoContainer).hide();*/
             $("[id="+localobj.videoContainer+"]").show();
             $("[id="+remoteobj.videoContainer+"]").hide();
@@ -824,7 +918,7 @@ try{
                     if(localobj.userMetaDisplay && webcallpeers[0].userid)
                         attachMetaUserDetails( selfvid, webcallpeers[0] ); 
 
-                    if(fileshareobj.active){
+/*                    if(fileshareobj.active){
                         createFileSharingDiv(webcallpeers[0]);
 
                         if(fileshareobj.props.fileShare=="single"){
@@ -834,7 +928,7 @@ try{
                         if(fileshareobj.props.fileList=="single"){
                             document.getElementById(peerInfo.fileList.outerbox).style.width="100%";
                         }
-                    }
+                    }*/
                 }
             }
 
@@ -873,7 +967,7 @@ try{
                 if(remoteobj.userMetaDisplay && peerInfo.userid)
                     attachMetaUserDetails( remvid, peerInfo ); 
       
-                if(fileshareobj.active){
+/*                if(fileshareobj.active){
 
                     if(fileshareobj.props.fileShare){
                         if(fileshareobj.props.fileShare=="divided")
@@ -883,7 +977,7 @@ try{
                         else
                             console.log("props undefined ");
                     }
-                }
+                }*/
             }else{
                 alert(" remote Video containers not defined");
             }
@@ -892,9 +986,9 @@ try{
 
         console.log(" updateWebCallView - finish");
     }
-
+  
     /********************************************************************************** 
-            Session call and Updateing Peer Info
+            Session call and Updating Peer Info
     ************************************************************************************/
     var repeatInitilization = null;
 
@@ -1068,10 +1162,37 @@ try{
      * @param {string} userid
      * @param {string} remoteUsers
      */
-    connectWebRTC=function(type, channel , userid , remoteUsers){
-        console.log(" ConnectWebRTC "+ type);
+    connectWebRTC=function(type, channel, userid ,remoteUsers){
+        console.info(" ConnectWebRTC : " , type, channel , userid , remoteUsers);
 
-        void(document.title = channel);
+        /*void(document.title = channel);*/
+
+
+        if(fileshareobj.active){
+            
+            var peerinfo = findPeerInfo(userid);
+
+            if(fileshareobj.props.fileShare=="single"){
+                createFileSharingDiv(peerinfo);
+                document.getElementById(peerInfo.fileShare.outerbox).style.width="100%";
+            } else if(fileshareobj.props.fileShare=="divided"){
+                createFileSharingDiv(webcallpeers[0]);
+                createFileSharingDiv(peerInfo);
+            }else{
+                console.error("fileshareobj.props.fileShare undefined ");
+            }
+            
+
+            if(fileshareobj.props.fileList=="single"){
+                document.getElementById(peerInfo.fileList.outerbox).style.width="100%";
+            }else if(fileshareobj.props.fileShare!="single"){
+                console.log("No Seprate div created for this peer since fileshare container is single");
+            }else{
+                console.error("fileshareobj.props.fileShare undefined ");
+            }
+
+        }
+
 
         /*localStorage.setItem("channel", channel);
         localStorage.setItem("userid", userid);

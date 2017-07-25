@@ -79,17 +79,7 @@ a:hover {
     color: #043877;
 }
 
-/*-------------------------------------------------------------*/
-.design-surface
-{
-    background-color: white;
-}
-.design-surface canvas {
-    position: absolute;
-}
-.design-surface canvas:last-child {
-    position: static;
-}
+
 /*-------------------------------------------------------------*/
 .tool-box
 {

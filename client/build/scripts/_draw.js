@@ -1,122 +1,85 @@
-
 /**************************************************************************8
 draw 
 ******************************************************************************/
-var CanvasDesigner=null;
-if(drawCanvasobj.active){
-    CanvasDesigner = (function() {
-        var iframe;
-        var tools = {
-            line: true,
-            pencil: true,
-            dragSingle: true,
-            dragMultiple: true,
-            eraser: true,
-            rectangle: true,
-            arc: true,
-            bezier: true,
-            quadratic: true,
-            text: true
-        };
+var CanvasDesigner;
+var isDrawOpened = false ;
 
-        var selectedIcon = 'pencil';
+function webrtcdevCanvasDesigner(drawCanvasobj){
 
-        function syncData(data) {
-            if (!iframe) return;
+    if(document.getElementById(drawCanvasobj.drawCanvasContainer).innerHTML.indexOf("iframe")<0){
+        try{
+            CanvasDesigner.addSyncListener(function(data) {
+                rtcConn.send({type:"canvas", draw:data});
+            });
 
-            iframe.contentWindow.postMessage({
-                canvasDesignerSyncData: data
-            }, '*');
+            CanvasDesigner.setSelected('pencil');
+
+            CanvasDesigner.setTools({
+                pencil: true,
+                eraser: true
+            });
+
+            CanvasDesigner.appendTo(document.getElementById(drawCanvasobj.drawCanvasContainer));
+        }catch(e){
+            console.error(" Canvas drawing not supported " , e);
         }
+    }else{
+        console.log("CanvasDesigner already started .iframe is attached ");
+    }
 
-        var syncDataListener = function(data) {
-            console.log("syncDataListener" , data);
-        };
-        
-        function onMessage() {
-            if (!event.data || !event.data.canvasDesignerSyncData) return;
-            syncDataListener(event.data.canvasDesignerSyncData);
-        }
-
-        /*window.addEventListener('message', onMessage, false);*/
-
-        var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
-        var eventer = window[eventMethod];
-        var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
-
-        // Listen to message from child window
-        eventer(messageEvent,function(e) {
-            console.log('CanvasDesigner parent received message!:  ',e.data);
-            if (!e.data || !e.data.canvasDesignerSyncData) return;
-            syncDataListener(e.data.canvasDesignerSyncData);
-        },false);
-
-        return {
-            appendTo: function(parentNode) {
-                iframe = document.createElement('iframe');
-                iframe.id="drawboard";
-                iframe.src = 'widget.html?tools=' + JSON.stringify(tools) + '&selectedIcon=' + selectedIcon;
-                iframe.style.width ="100%";
-                iframe.style.height="100%";
-                iframe.style.border = 0;
-                parentNode.appendChild(iframe);
-            },
-            destroy: function() {
-                if(iframe) {
-                    iframe.parentNode.removeChild(iframe);
-                }
-                window.removeEventListener('message', onMessage);
-            },
-            addSyncListener: function(callback) {
-                syncDataListener = callback;
-            },
-            syncData: syncData,
-            setTools: function(_tools) {
-                tools = _tools;
-            },
-            setSelected: function(icon) {
-                if (typeof tools[icon] !== 'undefined') {
-                    selectedIcon = icon;
-                }
-            }
-        };
-    })();
 }
 
-function webrtcdevCanvasDesigner(){
-    try{
-        CanvasDesigner.addSyncListener(function(data) {
-            rtcConn.send({type:"canvas", draw:data});
-        });
-
-        CanvasDesigner.setSelected('pencil');
-
-        CanvasDesigner.setTools({
-            pencil: true,
-            eraser: true
-        });
-
-        CanvasDesigner.appendTo(document.getElementById(drawCanvasobj.drawCanvasContainer));
-    }catch( e){
-        console.log(" Canvas drawing not supported ");
-        console.log(e);
+function syncDrawBoard(bdata){
+    if(document.getElementById(bdata.button.id)){
+        document.getElementById(bdata.button.id).click();
+    }else{
+        console.error(" Receieved sync board evenet but no button id found");
     }
 }
 
-function createdrawButton(){
+function createdrawButton(drawCanvasobj){
     var drawButton= document.createElement("span");
     drawButton.className=drawCanvasobj.button.class_off ;
     drawButton.innerHTML=drawCanvasobj.button.html_off;
     drawButton.onclick=function(){
-        if(drawButton.className==drawCanvasobj.button.class_off){
+        if(drawButton.className==drawCanvasobj.button.class_off  && document.getElementById(drawCanvasobj.drawCanvasContainer).hidden){
+            alert(" Draw Board Opened ");
             drawButton.className= drawCanvasobj.button.class_on ;
             drawButton.innerHTML= drawCanvasobj.button.html_on;
-            webrtcdevCanvasDesigner();
-            document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=false;
-        }else if(drawButton.className==drawCanvasobj.button.class_on){
+            if(document.getElementById(drawCanvasobj.container.id))
+                document.getElementById(drawCanvasobj.container.id).hidden=false;
+            else
+                console.error("Draw : container-" , drawCanvasobj.container.id , " doesnt exist");
+            
+            if(document.getElementById(drawCanvasobj.drawCanvasContainer)){
+                document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=false;
+                document.getElementById(drawCanvasobj.drawCanvasContainer).focus();
+                var bdata={
+                    event : "open",
+                    from : "remote",
+                    board : drawCanvasobj.drawCanvasContainer,
+                    button : drawCanvasobj.button
+                };
+                rtcConn.send({type:"canvas", board:bdata});
+            }else{
+                console.error("Draw : canvascontainer-" , drawCanvasobj.drawCanvasContainer , " doesnt exist");
+            }
+            webrtcdevCanvasDesigner(drawCanvasobj);
+
+        }else if(drawButton.className==drawCanvasobj.button.class_on &&  !document.getElementById(drawCanvasobj.drawCanvasContainer).hidden){
             drawButton.className= drawCanvasobj.button.class_off ;
             drawButton.innerHTML= drawCanvasobj.button.html_off;
-            document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=true;
+            if(document.getElementById(drawCanvasobj.container.id))
+                document.getElementById(drawCanvasobj.container.id).hidden=true;
+            else
+                console.error("Draw : container-" , drawCanvasobj.container.id , " doesnt exist");
+            
+            if(document.getElementById(drawCanvasobj.drawCanvasContainer))
+                document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=true;
+            else
+                console.error("Draw : canvascontainer-" , drawCanvasobj.drawCanvasContainer , " doesnt exist");
+
+
         }
     };
     var li =document.createElement("li");
@@ -124,20 +87,56 @@ function createdrawButton(){
     document.getElementById("topIconHolder_ul").appendChild(li);
 }
 
-function assigndrawButton(btnid){
-    drawButton = document.getElementById(btnid);
+function assigndrawButton(drawCanvasobj){
+    drawButton = document.getElementById(drawCanvasobj.button.id);
     drawButton.className= drawCanvasobj.button.class_off;
     drawButton.innerHTML= drawCanvasobj.button.html_off;
     drawButton.onclick=function(){
-        if(drawButton.className==drawCanvasobj.button.class_off){
+        if(drawButton.className==drawCanvasobj.button.class_off  && document.getElementById(drawCanvasobj.drawCanvasContainer).hidden){
+            //alert(" Draw Board Opened ");
             drawButton.className= drawCanvasobj.button.class_on ;
             drawButton.innerHTML= drawCanvasobj.button.html_on;
-            webrtcdevCanvasDesigner();
-            document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=false;
-        }else if(drawButton.className==drawCanvasobj.button.class_on){
+            if(document.getElementById(drawCanvasobj.container.id))
+                document.getElementById(drawCanvasobj.container.id).hidden=false;
+            else
+                console.error("Draw : container-" , drawCanvasobj.container.id , " doesnt exist");
+            
+            if(document.getElementById(drawCanvasobj.drawCanvasContainer)){
+                document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=false;
+                document.getElementById(drawCanvasobj.drawCanvasContainer).focus();
+                isDrawOpened = true;
+                var bdata={
+                    event : "open",
+                    from : "remote",
+                    board : drawCanvasobj.drawCanvasContainer,
+                    button : drawCanvasobj.button
+                };
+                rtcConn.send({type:"canvas", board:bdata});
+            }else{
+                console.error("Draw : canvascontainer-" , drawCanvasobj.drawCanvasContainer , " doesnt exist");
+            }
+            webrtcdevCanvasDesigner(drawCanvasobj);
+
+        }else if(drawButton.className==drawCanvasobj.button.class_on &&  !document.getElementById(drawCanvasobj.drawCanvasContainer).hidden){
             drawButton.className= drawCanvasobj.button.class_off ;
             drawButton.innerHTML= drawCanvasobj.button.html_off;
-            document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=true;
+            if(document.getElementById(drawCanvasobj.container.id))
+                document.getElementById(drawCanvasobj.container.id).hidden=true;
+            else
+                console.error("Draw : container-" , drawCanvasobj.container.id , " doesnt exist");
+            
+            if(document.getElementById(drawCanvasobj.drawCanvasContainer)){
+                document.getElementById(drawCanvasobj.drawCanvasContainer).hidden=true;
+                isDrawOpened = false ;
+                var bdata={
+                    event : "close",
+                    from : "remote",
+                    board : drawCanvasobj.drawCanvasContainer,
+                    button : drawCanvasobj.button
+                };
+                rtcConn.send({type:"canvas", board:bdata});
+            }else
+                console.error("Draw : canvascontainer-" , drawCanvasobj.drawCanvasContainer , " doesnt exist");
         }
     };
 }

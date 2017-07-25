@@ -1,4 +1,8 @@
-﻿function make_base(imgsrc , context)
+﻿/* ***********************************************
+Decorator
+*********************************************/
+
+function make_base(imgsrc , context)
 {
   base_image = new Image();
   //base_image.src = 'img/base.png';
@@ -64,7 +68,6 @@ function setSelection(element, prop) {
     var lineCapSelect = find('lineCap-select');
     var lineJoinSelect = find('lineJoin-select');
 
-    // -------------------------------------------------------------
 
     function getContext(id) {
         var context = find(id).getContext('2d');
@@ -73,7 +76,6 @@ function setSelection(element, prop) {
         return context;
     }
 
-    // -------------------------------------------------------------
 
     function bindEvent(context, shape) {
         if (shape === 'Pencil') {
@@ -129,14 +131,10 @@ function setSelection(element, prop) {
         });
     }
 
-    // -------------------------------------------------------------
-
     var toolBox = find('tool-box');
     //toolBox.style.height = (innerHeight /* - toolBox.offsetTop - 77 */ ) + 'px';
     toolBox.style.height="100%";
 
-    
-    // -------------------------------------------------------------
 
 
     function decorateDragLastPath() {
@@ -179,7 +177,6 @@ function setSelection(element, prop) {
         decorateDragLastPath();
     } else document.getElementById('drag-last-path').style.display = 'none';
 
-    // -------------------------------------------------------------
 
     function decorateDragAllPaths() {
         var context = getContext('drag-all-paths');
@@ -621,11 +618,10 @@ function setSelection(element, prop) {
     addEvent(isShorten, 'change', common.updateTextArea);
     addEvent(isAbsolute, 'change', common.updateTextArea);
 
-    // -------------------------------------------------------------
 
 })();
 
-// -------------------------------------------------------------
+
 
 function hideContainers() {
     var additionalContainer = find('additional-container'),

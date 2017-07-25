@@ -1,3 +1,7 @@
+/* ***********************************************
+settings
+*********************************************/
+
 function setSettingsAttributes(){
     
     $("#channelname").val(rtcConn.channel);
@@ -68,12 +72,12 @@ function EmailPartnerLink(){
 
 
 function getAllPeerInfo(){
-    console.log(webcallpeers);
+    console.info(webcallpeers);
 }
 
 $("#SettingsButton").click(function() {
     
-    console.log(localobj.userdetails);
+    console.info(localobj.userdetails);
 
     if(localobj.userdisplay.latitude){
         /*$('#'+localobj.userdisplay.latitude).val(latitude);*/
