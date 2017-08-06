@@ -2657,7 +2657,8 @@ function spawnNotification(theBody,theIcon,theTitle) {
                 return isFirefoxExtensionAvailable(callback);
             if ("desktop" == chromeMediaSource)
                 return callback(!0);
-            window.postMessage("are-you-there", "*"),
+            //window.postMessage("are-you-there", "*"),
+            window.postMessage("webrtcdev-extension-presence", "*"),
             setTimeout(function() {
                 callback("screen" == chromeMediaSource ? !1 : !0)
             }, 2e3)
@@ -3987,12 +3988,12 @@ function webrtcdevPrepareScreenShare(callback){
 
     console.log(" webrtcdevscreenshare calling callback for socket.io operations");
 
-    alert(" Preparing fresh Screenshare "+ screenRoomid);
+    alert(" Preparing Screenshare "+ screenRoomid);
     callback(screenRoomid);
 }
 
 function webrtcdevSharescreen() {
-    console.log("webrtcdevSharescreen");
+    console.log("webrtcdevSharescreen . screenRoomid = " , screenRoomid );
 
     webrtcdevPrepareScreenShare(function(screenRoomid){
 
@@ -4016,7 +4017,8 @@ function webrtcdevSharescreen() {
             if(event) connectScrWebRTC("open" , screenRoomid, selfuserid, []); 
         });
 
-/*        rtcConn.send({
+        /*        
+        rtcConn.send({
             type:"screenshare", 
             screenid: screenRoomid,
             screenStreamid:screenStreamId,
@@ -4038,7 +4040,7 @@ function webrtcdevSharescreen() {
         return ;
     }*/
 
-    console.log("webrtcdevscreenshare" , scrConn , rtcConn);
+    console.log("webrtcdevscreenshare . srcConn = " , scrConn , " | rtcConn = " ,  rtcConn);
 }
 
 function connectScrWebRTC(type, channel , userid , remoteUsers){
@@ -4303,15 +4305,15 @@ function removeScreenViewButton(){
 
 function createScreenInstallButton(extensionID){
     var button= document.createElement("span");
-    button.className=screenshareobj.button.installButton.class_off;
-    button.innerHTML=screenshareobj.button.installButton.html_off;
+    button.className = screenshareobj.button.installButton.class_off;
+    button.innerHTML = screenshareobj.button.installButton.html_off;
     button.id="screeninstallButton";
     button.onclick = function(e) {    
         chrome.webstore.install("https://chrome.google.com/webstore/detail/"+extensionID,
         function(){
-            console.log("Chrome extension inline installation - success");
-            button.hidden=true;
-            createOrAssignScreenshareButton();
+            console.log("Chrome extension inline installation - success . createOrAssignScreenshareButton with " , screenshareobj);
+            button.hidden = true;
+            createOrAssignScreenshareButton(screenshareobj);
         },function (err){
             console.log("Chrome extension inline installation - fail " , err);
         });
@@ -4324,13 +4326,13 @@ function createScreenInstallButton(extensionID){
 }
 
 function assignScreenInstallButton(extensionID){
-    var button=document.getElementById(screenshareobj.button.installButton.id);
+    var button = document.getElementById(screenshareobj.button.installButton.id);
     button.onclick= function(e) {    
         chrome.webstore.install("https://chrome.google.com/webstore/detail/"+extensionID,
             function(){
-                console.log("Chrome extension inline installation - success");
+                console.log("Chrome extension inline installation - success from assignScreenInstallButton . Now  createOrAssignScreenshareButton with " , screenshareobj);
                 button.hidden = true;
-                createOrAssignScreenshareButton();
+                createOrAssignScreenshareButton(screenshareobj);
             },function (e){
                 console.error("Chrome extension inline installation - fail " , e);
             });
@@ -4345,7 +4347,7 @@ function hideScreenInstallButton(){
     button.setAttribute("style","display:none");
 }
 
-function createOrAssignScreenshareButton(){
+function createOrAssignScreenshareButton(screenshareobj){
     if(screenshareobj.button.shareButton.id && document.getElementById(screenshareobj.button.shareButton.id)) {
         assignScreenShareButton();
         hideScreenInstallButton();
@@ -4449,6 +4451,8 @@ function screenshareNotification(message , type){
 
     if(document.getElementById("alertBox")){
         
+        document.getElementById("alertBox").innerHTML="";
+
         if(type=="screenshareBegin"){
 
             var alertDiv =document.createElement("div");
@@ -4459,7 +4463,7 @@ function screenshareNotification(message , type){
             document.getElementById("alertBox").appendChild(alertDiv);
 
             setTimeout(function() {
-                var alertDiv =document.createElement("div");
+                var alertDiv = document.createElement("div");
                 document.getElementById("alertBox").hidden=false;
                 document.getElementById("alertBox").innerHTML="";
                 alertDiv.className="alert alert-danger";
@@ -4477,6 +4481,13 @@ function screenshareNotification(message , type){
             document.getElementById("alertBox").appendChild(alertDiv);
 
         }else if(type=="screenshareError"){
+
+            var alertDiv = document.createElement("div");
+            document.getElementById("alertBox").hidden=false;
+            document.getElementById("alertBox").innerHTML="";
+            alertDiv.className="alert alert-danger";
+            alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ "There was a error while sharing screen , please contact support ";
+            document.getElementById("alertBox").appendChild(alertDiv);
 
         }else{
 
@@ -14997,6 +15008,7 @@ function attachUserDetails(vid , peerinfo){
     var nameBox=document.createElement("span");
     //nameBox.className="well well-sm";
     nameBox.setAttribute("style","background-color:"+ peerinfo.color);
+    nameBox.className = "widgetBtnClass";
     nameBox.innerHTML = peerinfo.name+"<br/>";
     // vid.parentNode.appendChild(nameBox); 
     vid.parentNode.insertBefore(nameBox, vid.parentNode.firstChild);
@@ -15914,6 +15926,7 @@ File sharing
 
 var progressHelper = {};
 
+
 function createFileShareButton(fileshareobj){
     widgetholder= "topIconHolder_ul";
 
@@ -16052,8 +16065,8 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
 
             /*window.open(fileurl.audiofileurl , filename.audioname+".wav");
             window.open(fileurl.videofileurl , filename.videoname+".webm");*/
-            alert("Files Saved");
-/*            var zip = new JSZip();
+
+/*          var zip = new JSZip();
             zip.file(filename.videoname , filename.videofileurl);
             var audio = zip.folder("audio");
             audio.file(filename.audioname, fileurl.audiofileurl);
@@ -16076,97 +16089,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     saveButton.innerHTML='<i class="fa fa-floppy-o" style="font-size: 25px;"></i>';
     saveButton.onclick=function(){
        /* alert("Right Click on above file, then select Save As");*/
-
-        var modalBox=document.createElement("div");
-        modalBox.className="modal fade";
-        modalBox.setAttribute("role" , "dialog");
-        modalBox.id="saveModal";
-
-        var modalinnerBox=document.createElement("div");
-        modalinnerBox.className="modal-dialog";
-
-        var modal=document.createElement("div");
-        modal.className = "modal-content";
-
-        var modalheader= document.createElement("div");
-        modalheader.className = "modal-header";
-
-        var closeButton= document.createElement("button");
-        closeButton.className="close";
-        closeButton.setAttribute("data-dismiss", "modal");
-        closeButton.innerHTML="&times;";
-
-        var title=document.createElement("h4");
-        title.className="modal-title";
-        title.innerHTML="Save File";   
-
-        modalheader.appendChild(title);
-        modalheader.appendChild(closeButton);
-
-
-        var modalbody = document.createElement("div");
-        modalbody.className = "modal-body";
-        modalbody.innerHTML = "";
-
-        var body=document.createElement("div");
-        switch(filetype){
-            case "application/pdf":
-                var d1= document.createElement("div");
-                d1.innerHTML='Click DOWNLOAD on top of the doc . Click SAVE AS when window opens up';
-                var i1 = document.createElement("img");
-                i1.src= "images/savefile.PNG";
-                body.appendChild(d1);
-                body.appendChild(i1);
-                break; 
-            // browser supported formats 
-            case "image/jpeg":
-            case "image/png":
-            case "video/mov": 
-            case "video/webm":
-            case "imagesnapshot":
-                var d1=document.createElement("div");
-                d1.innerHTML='Right Click on the FILE . Click SAVE AS when window opens up';
-                body.appendChild(d1);
-                break; 
-            // browser supported audio formats    
-            case "audio/mp3":
-                var d1= document.createElement("div");
-                d1.innerHTML="Right Click on the FILE (play display line). Click SAVE AS when window opens up";
-                body.appendChild(d1);
-                break;
-            // propertiary stuff that will not open in browser 
-            case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-            case "application/vnd.ms-excel":
-            case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
-            case "application/vnd.openxmlformats-officedocument.wordprocessingml.document": 
-            case "video/x-ms-wmv":
-                var d1= document.createElement("div");
-                d1.innerHTML="Click bottom DOWNLOAD in Uploaded Files box . File shows up below the Uploaded Files box. Click arrow on right, then select OPEN  . File Opens in New Window, then 'Save As'.";
-                body.appendChild(d1);
-                break; 
-            case "sessionRecording":
-                var d1=document.createElement("div");
-                d1.innerHTML='Extract the video and audio recording from the dowloaded compresed file and play together ';
-                body.appendChild(d1);
-                break;
-            default :
-                var d1=document.createElement("div");
-                d1.innerHTML='Document is Unrecognizable, cannot be saved, but can be shared with Remote. Use/Click Screen Share for Remote to view your screen. Then open the document on your screen.';
-                body.appendChild(d1);
-                break;
-        }
-
-        modalbody.appendChild(body);
-        modal.appendChild(modalheader);
-        modal.appendChild(modalbody);
-
-        modalinnerBox.appendChild(modal);
-        modalBox.appendChild(modalinnerBox);
-
-        var mainDiv= document.getElementById("mainDiv");
-        mainDiv.appendChild(modalBox);
-
-
+        createModalPopup(filetype);
     };
 
     var showButton = document.createElement("div");
@@ -16641,6 +16564,115 @@ function maxFV(userid,  buttonId ,  selectedFileSharingBox){
     /*syncButton(buttonId);  */
 }
 
+
+function createModalPopup(filetype ){
+        console.log( " create Modal popup for filetype " , filetype);
+
+        var mainDiv= document.getElementById("mainDiv");
+
+        if(document.getElementById("saveModal")){
+            mainDiv.removeChild(document.getElementById("saveModal"));
+        }
+
+        var modalBox=document.createElement("div");
+        modalBox.className="modal fade";
+        modalBox.setAttribute("role" , "dialog");
+        modalBox.id="saveModal";
+
+        var modalinnerBox=document.createElement("div");
+        modalinnerBox.className="modal-dialog";
+
+        var modal=document.createElement("div");
+        modal.className = "modal-content";
+
+        var modalheader= document.createElement("div");
+        modalheader.className = "modal-header";
+
+        var closeButton= document.createElement("button");
+        closeButton.className="close";
+        closeButton.setAttribute("data-dismiss", "modal");
+        closeButton.innerHTML="&times;";
+
+        var title=document.createElement("h4");
+        title.className="modal-title";
+        title.innerHTML="Save File";   
+        title.setAttribute("float" ,  "left");
+        modalheader.appendChild(title);
+        modalheader.appendChild(closeButton);
+
+        var modalbody = document.createElement("div");
+        modalbody.className = "modal-body";
+        modalbody.innerHTML = "";
+
+        var body=document.createElement("div");
+        switch(filetype){
+            case  "blobcanvas":
+                title.innerHTML="Save Drawing";  
+                var d1=document.createElement("div");
+                d1.innerHTML= "Right Click on Save, pop up window gives following info: Right Click on Draw image, Click Save As when window opens up.";
+                body.appendChild(d1);
+                break;
+            case "application/pdf":
+                title.innerHTML="Save PDF"; 
+                var d1= document.createElement("div");
+                d1.innerHTML='Click DOWNLOAD on top of the doc . Click SAVE AS when window opens up';
+                var i1 = document.createElement("img");
+                i1.src= "images/savefile.PNG";
+                body.appendChild(d1);
+                body.appendChild(i1);
+                break; 
+            // browser supported formats 
+            case "image/jpeg":
+            case "image/png":
+            case "video/mov": 
+            case "video/webm":
+            case "imagesnapshot":
+                title.innerHTML="Save Picture / Video"; 
+                var d1=document.createElement("div");
+                d1.innerHTML='Right Click on the FILE . Click SAVE AS when window opens up';
+                body.appendChild(d1);
+                break; 
+            // browser supported audio formats    
+            case "audio/mp3":
+                title.innerHTML="Save Music File"; 
+                var d1= document.createElement("div");
+                d1.innerHTML="Right Click on the FILE (play display line). Click SAVE AS when window opens up";
+                body.appendChild(d1);
+                break;
+            // propertiary stuff that will not open in browser 
+            case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+            case "application/vnd.ms-excel":
+            case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+            case "application/vnd.openxmlformats-officedocument.wordprocessingml.document": 
+            case "video/x-ms-wmv":
+                title.innerHTML="Save Microsoft Office / Libra / Open Office Documents"; 
+                var d1= document.createElement("div");
+                d1.innerHTML="Click bottom DOWNLOAD in Uploaded Files box . File shows up below the Uploaded Files box. Click arrow on right, then select OPEN  . File Opens in New Window, then 'Save As'.";
+                body.appendChild(d1);
+                break; 
+            case "sessionRecording":
+                title.innerHTML="Save Session Recording"; 
+                var d1=document.createElement("div");
+                d1.innerHTML='Extract the video and audio recording from the dowloaded compresed file and play together ';
+                body.appendChild(d1);
+                break;
+            default :
+                var d1=document.createElement("div");
+                d1.innerHTML='Document is Unrecognizable, cannot be saved, but can be shared with Remote. Use/Click Screen Share for Remote to view your screen. Then open the document on your screen.';
+                body.appendChild(d1);
+                break;
+        }
+
+        modalbody.appendChild(body);
+        modal.appendChild(modalheader);
+        modal.appendChild(modalbody);
+
+        modalinnerBox.appendChild(modal);
+        modalBox.appendChild(modalinnerBox);
+
+        mainDiv.appendChild(modalBox);
+
+}
 /**************************************************************************8
 draw 
 ******************************************************************************/
@@ -16783,6 +16815,16 @@ function assigndrawButton(drawCanvasobj){
         }
     };
 }
+
+
+var saveButtonCanvas = document.createElement("div");
+saveButtonCanvas.id = "saveButtonCanvasDraw";
+saveButtonCanvas.setAttribute("data-toggle","modal");
+saveButtonCanvas.setAttribute("data-target","#saveModal");
+saveButtonCanvas.onclick=function(){
+   createModalPopup( "blobcanvas" );
+};
+document.body.appendChild(saveButtonCanvas);
 /**********************************
 Reconnect 
 ****************************************/
@@ -18186,16 +18228,16 @@ try{
         if(screenshareobj.active){
             detectExtension(screenshareobj.extensionID , function(status){
 
-                console.log(" screenshareobj " , screenshareobj);
+                console.log(" screenshareobj " , screenshareobj , " || status " , status);
 
                 if(status == 'installed-enabled') {
-                    var screenShareButton=createOrAssignScreenshareButton();
+                    var screenShareButton=createOrAssignScreenshareButton(screenshareobj);
                     hideScreenInstallButton();
                 }
                 
                 if(status == 'installed-disabled') {
                     shownotification("chrome extension is installed but disabled.");
-                    var screenShareButton=createOrAssignScreenshareButton();
+                    var screenShareButton=createOrAssignScreenshareButton(screenshareobj);
                     hideScreenInstallButton();
                 }
                 
@@ -18308,9 +18350,22 @@ try{
 
                     // Listen to message from child window
                     eventer(messageEvent,function(e) {
-                        console.log('CanvasDesigner parent received message!:  ',e.data);
-                        if (!e.data || !e.data.canvasDesignerSyncData) return;
-                        syncDataListener(e.data.canvasDesignerSyncData);
+                        console.log("CanvasDesigner parent received message : ",e.data);
+
+                         if ( e.data.modalpopup){
+                            saveButtonCanvas.click();
+                            return;
+
+                        } else if (e.data || e.data.canvasDesignerSyncData){
+                            syncDataListener(e.data.canvasDesignerSyncData);
+                        } 
+
+                        if(!e.data || !e.data.canvasDesignerSyncData ){
+                            console.log("parent received unexpected message");
+                            return;
+                        }
+                        
+
                     },false);
 
                     return {

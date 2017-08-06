@@ -178,12 +178,12 @@ function webrtcdevPrepareScreenShare(callback){
 
     console.log(" webrtcdevscreenshare calling callback for socket.io operations");
 
-    alert(" Preparing fresh Screenshare "+ screenRoomid);
+    alert(" Preparing Screenshare "+ screenRoomid);
     callback(screenRoomid);
 }
 
 function webrtcdevSharescreen() {
-    console.log("webrtcdevSharescreen");
+    console.log("webrtcdevSharescreen . screenRoomid = " , screenRoomid );
 
     webrtcdevPrepareScreenShare(function(screenRoomid){
 
@@ -207,7 +207,8 @@ function webrtcdevSharescreen() {
             if(event) connectScrWebRTC("open" , screenRoomid, selfuserid, []); 
         });
 
-/*        rtcConn.send({
+        /*        
+        rtcConn.send({
             type:"screenshare", 
             screenid: screenRoomid,
             screenStreamid:screenStreamId,
@@ -229,7 +230,7 @@ function webrtcdevSharescreen() {
         return ;
     }*/
 
-    console.log("webrtcdevscreenshare" , scrConn , rtcConn);
+    console.log("webrtcdevscreenshare . srcConn = " , scrConn , " | rtcConn = " ,  rtcConn);
 }
 
 function connectScrWebRTC(type, channel , userid , remoteUsers){
@@ -494,15 +495,15 @@ function removeScreenViewButton(){
 
 function createScreenInstallButton(extensionID){
     var button= document.createElement("span");
-    button.className=screenshareobj.button.installButton.class_off;
-    button.innerHTML=screenshareobj.button.installButton.html_off;
+    button.className = screenshareobj.button.installButton.class_off;
+    button.innerHTML = screenshareobj.button.installButton.html_off;
     button.id="screeninstallButton";
     button.onclick = function(e) {    
         chrome.webstore.install("https://chrome.google.com/webstore/detail/"+extensionID,
         function(){
-            console.log("Chrome extension inline installation - success");
-            button.hidden=true;
-            createOrAssignScreenshareButton();
+            console.log("Chrome extension inline installation - success . createOrAssignScreenshareButton with " , screenshareobj);
+            button.hidden = true;
+            createOrAssignScreenshareButton(screenshareobj);
         },function (err){
             console.log("Chrome extension inline installation - fail " , err);
         });
@@ -515,13 +516,13 @@ function createScreenInstallButton(extensionID){
 }
 
 function assignScreenInstallButton(extensionID){
-    var button=document.getElementById(screenshareobj.button.installButton.id);
+    var button = document.getElementById(screenshareobj.button.installButton.id);
     button.onclick= function(e) {    
         chrome.webstore.install("https://chrome.google.com/webstore/detail/"+extensionID,
             function(){
-                console.log("Chrome extension inline installation - success");
+                console.log("Chrome extension inline installation - success from assignScreenInstallButton . Now  createOrAssignScreenshareButton with " , screenshareobj);
                 button.hidden = true;
-                createOrAssignScreenshareButton();
+                createOrAssignScreenshareButton(screenshareobj);
             },function (e){
                 console.error("Chrome extension inline installation - fail " , e);
             });
@@ -536,7 +537,7 @@ function hideScreenInstallButton(){
     button.setAttribute("style","display:none");
 }
 
-function createOrAssignScreenshareButton(){
+function createOrAssignScreenshareButton(screenshareobj){
     if(screenshareobj.button.shareButton.id && document.getElementById(screenshareobj.button.shareButton.id)) {
         assignScreenShareButton();
         hideScreenInstallButton();
@@ -640,6 +641,8 @@ function screenshareNotification(message , type){
 
     if(document.getElementById("alertBox")){
         
+        document.getElementById("alertBox").innerHTML="";
+
         if(type=="screenshareBegin"){
 
             var alertDiv =document.createElement("div");
@@ -650,7 +653,7 @@ function screenshareNotification(message , type){
             document.getElementById("alertBox").appendChild(alertDiv);
 
             setTimeout(function() {
-                var alertDiv =document.createElement("div");
+                var alertDiv = document.createElement("div");
                 document.getElementById("alertBox").hidden=false;
                 document.getElementById("alertBox").innerHTML="";
                 alertDiv.className="alert alert-danger";
@@ -668,6 +671,13 @@ function screenshareNotification(message , type){
             document.getElementById("alertBox").appendChild(alertDiv);
 
         }else if(type=="screenshareError"){
+
+            var alertDiv = document.createElement("div");
+            document.getElementById("alertBox").hidden=false;
+            document.getElementById("alertBox").innerHTML="";
+            alertDiv.className="alert alert-danger";
+            alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ "There was a error while sharing screen , please contact support ";
+            document.getElementById("alertBox").appendChild(alertDiv);
 
         }else{
 

@@ -31,6 +31,7 @@ function attachUserDetails(vid , peerinfo){
     var nameBox=document.createElement("span");
     //nameBox.className="well well-sm";
     nameBox.setAttribute("style","background-color:"+ peerinfo.color);
+    nameBox.className = "widgetBtnClass";
     nameBox.innerHTML = peerinfo.name+"<br/>";
     // vid.parentNode.appendChild(nameBox); 
     vid.parentNode.insertBefore(nameBox, vid.parentNode.firstChild);

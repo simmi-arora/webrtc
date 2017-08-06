@@ -140,3 +140,13 @@ function assigndrawButton(drawCanvasobj){
         }
     };
 }
+
+
+var saveButtonCanvas = document.createElement("div");
+saveButtonCanvas.id = "saveButtonCanvasDraw";
+saveButtonCanvas.setAttribute("data-toggle","modal");
+saveButtonCanvas.setAttribute("data-target","#saveModal");
+saveButtonCanvas.onclick=function(){
+   createModalPopup( "blobcanvas" );
+};
+document.body.appendChild(saveButtonCanvas);

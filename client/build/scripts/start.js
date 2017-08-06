@@ -527,16 +527,16 @@ try{
         if(screenshareobj.active){
             detectExtension(screenshareobj.extensionID , function(status){
 
-                console.log(" screenshareobj " , screenshareobj);
+                console.log(" screenshareobj " , screenshareobj , " || status " , status);
 
                 if(status == 'installed-enabled') {
-                    var screenShareButton=createOrAssignScreenshareButton();
+                    var screenShareButton=createOrAssignScreenshareButton(screenshareobj);
                     hideScreenInstallButton();
                 }
                 
                 if(status == 'installed-disabled') {
                     shownotification("chrome extension is installed but disabled.");
-                    var screenShareButton=createOrAssignScreenshareButton();
+                    var screenShareButton=createOrAssignScreenshareButton(screenshareobj);
                     hideScreenInstallButton();
                 }
                 
@@ -649,9 +649,22 @@ try{
 
                     // Listen to message from child window
                     eventer(messageEvent,function(e) {
-                        console.log('CanvasDesigner parent received message!:  ',e.data);
-                        if (!e.data || !e.data.canvasDesignerSyncData) return;
-                        syncDataListener(e.data.canvasDesignerSyncData);
+                        console.log("CanvasDesigner parent received message : ",e.data);
+
+                         if ( e.data.modalpopup){
+                            saveButtonCanvas.click();
+                            return;
+
+                        } else if (e.data || e.data.canvasDesignerSyncData){
+                            syncDataListener(e.data.canvasDesignerSyncData);
+                        } 
+
+                        if(!e.data || !e.data.canvasDesignerSyncData ){
+                            console.log("parent received unexpected message");
+                            return;
+                        }
+                        
+
                     },false);
 
                     return {
