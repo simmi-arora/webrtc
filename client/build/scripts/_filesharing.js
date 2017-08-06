@@ -4,6 +4,7 @@ File sharing
 
 var progressHelper = {};
 
+
 function createFileShareButton(fileshareobj){
     widgetholder= "topIconHolder_ul";
 
@@ -142,8 +143,8 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
 
             /*window.open(fileurl.audiofileurl , filename.audioname+".wav");
             window.open(fileurl.videofileurl , filename.videoname+".webm");*/
-            alert("Files Saved");
-/*            var zip = new JSZip();
+
+/*          var zip = new JSZip();
             zip.file(filename.videoname , filename.videofileurl);
             var audio = zip.folder("audio");
             audio.file(filename.audioname, fileurl.audiofileurl);
@@ -166,97 +167,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     saveButton.innerHTML='<i class="fa fa-floppy-o" style="font-size: 25px;"></i>';
     saveButton.onclick=function(){
        /* alert("Right Click on above file, then select Save As");*/
-
-        var modalBox=document.createElement("div");
-        modalBox.className="modal fade";
-        modalBox.setAttribute("role" , "dialog");
-        modalBox.id="saveModal";
-
-        var modalinnerBox=document.createElement("div");
-        modalinnerBox.className="modal-dialog";
-
-        var modal=document.createElement("div");
-        modal.className = "modal-content";
-
-        var modalheader= document.createElement("div");
-        modalheader.className = "modal-header";
-
-        var closeButton= document.createElement("button");
-        closeButton.className="close";
-        closeButton.setAttribute("data-dismiss", "modal");
-        closeButton.innerHTML="&times;";
-
-        var title=document.createElement("h4");
-        title.className="modal-title";
-        title.innerHTML="Save File";   
-
-        modalheader.appendChild(title);
-        modalheader.appendChild(closeButton);
-
-
-        var modalbody = document.createElement("div");
-        modalbody.className = "modal-body";
-        modalbody.innerHTML = "";
-
-        var body=document.createElement("div");
-        switch(filetype){
-            case "application/pdf":
-                var d1= document.createElement("div");
-                d1.innerHTML='Click DOWNLOAD on top of the doc . Click SAVE AS when window opens up';
-                var i1 = document.createElement("img");
-                i1.src= "images/savefile.PNG";
-                body.appendChild(d1);
-                body.appendChild(i1);
-                break; 
-            // browser supported formats 
-            case "image/jpeg":
-            case "image/png":
-            case "video/mov": 
-            case "video/webm":
-            case "imagesnapshot":
-                var d1=document.createElement("div");
-                d1.innerHTML='Right Click on the FILE . Click SAVE AS when window opens up';
-                body.appendChild(d1);
-                break; 
-            // browser supported audio formats    
-            case "audio/mp3":
-                var d1= document.createElement("div");
-                d1.innerHTML="Right Click on the FILE (play display line). Click SAVE AS when window opens up";
-                body.appendChild(d1);
-                break;
-            // propertiary stuff that will not open in browser 
-            case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-            case "application/vnd.ms-excel":
-            case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
-            case "application/vnd.openxmlformats-officedocument.wordprocessingml.document": 
-            case "video/x-ms-wmv":
-                var d1= document.createElement("div");
-                d1.innerHTML="Click bottom DOWNLOAD in Uploaded Files box . File shows up below the Uploaded Files box. Click arrow on right, then select OPEN  . File Opens in New Window, then 'Save As'.";
-                body.appendChild(d1);
-                break; 
-            case "sessionRecording":
-                var d1=document.createElement("div");
-                d1.innerHTML='Extract the video and audio recording from the dowloaded compresed file and play together ';
-                body.appendChild(d1);
-                break;
-            default :
-                var d1=document.createElement("div");
-                d1.innerHTML='Document is Unrecognizable, cannot be saved, but can be shared with Remote. Use/Click Screen Share for Remote to view your screen. Then open the document on your screen.';
-                body.appendChild(d1);
-                break;
-        }
-
-        modalbody.appendChild(body);
-        modal.appendChild(modalheader);
-        modal.appendChild(modalbody);
-
-        modalinnerBox.appendChild(modal);
-        modalBox.appendChild(modalinnerBox);
-
-        var mainDiv= document.getElementById("mainDiv");
-        mainDiv.appendChild(modalBox);
-
-
+        createModalPopup(filetype);
     };
 
     var showButton = document.createElement("div");
@@ -729,4 +640,114 @@ function maxFV(userid,  buttonId ,  selectedFileSharingBox){
     }
 
     /*syncButton(buttonId);  */
+}
+
+
+function createModalPopup(filetype ){
+        console.log( " create Modal popup for filetype " , filetype);
+
+        var mainDiv= document.getElementById("mainDiv");
+
+        if(document.getElementById("saveModal")){
+            mainDiv.removeChild(document.getElementById("saveModal"));
+        }
+
+        var modalBox=document.createElement("div");
+        modalBox.className="modal fade";
+        modalBox.setAttribute("role" , "dialog");
+        modalBox.id="saveModal";
+
+        var modalinnerBox=document.createElement("div");
+        modalinnerBox.className="modal-dialog";
+
+        var modal=document.createElement("div");
+        modal.className = "modal-content";
+
+        var modalheader= document.createElement("div");
+        modalheader.className = "modal-header";
+
+        var closeButton= document.createElement("button");
+        closeButton.className="close";
+        closeButton.setAttribute("data-dismiss", "modal");
+        closeButton.innerHTML="&times;";
+
+        var title=document.createElement("h4");
+        title.className="modal-title";
+        title.innerHTML="Save File";   
+        title.setAttribute("float" ,  "left");
+        modalheader.appendChild(title);
+        modalheader.appendChild(closeButton);
+
+        var modalbody = document.createElement("div");
+        modalbody.className = "modal-body";
+        modalbody.innerHTML = "";
+
+        var body=document.createElement("div");
+        switch(filetype){
+            case  "blobcanvas":
+                title.innerHTML="Save Drawing";  
+                var d1=document.createElement("div");
+                d1.innerHTML= "Right Click on Save, pop up window gives following info: Right Click on Draw image, Click Save As when window opens up.";
+                body.appendChild(d1);
+                break;
+            case "application/pdf":
+                title.innerHTML="Save PDF"; 
+                var d1= document.createElement("div");
+                d1.innerHTML='Click DOWNLOAD on top of the doc . Click SAVE AS when window opens up';
+                var i1 = document.createElement("img");
+                i1.src= "images/savefile.PNG";
+                body.appendChild(d1);
+                body.appendChild(i1);
+                break; 
+            // browser supported formats 
+            case "image/jpeg":
+            case "image/png":
+            case "video/mov": 
+            case "video/webm":
+            case "imagesnapshot":
+                title.innerHTML="Save Picture / Video"; 
+                var d1=document.createElement("div");
+                d1.innerHTML='Right Click on the FILE . Click SAVE AS when window opens up';
+                body.appendChild(d1);
+                break; 
+            // browser supported audio formats    
+            case "audio/mp3":
+                title.innerHTML="Save Music File"; 
+                var d1= document.createElement("div");
+                d1.innerHTML="Right Click on the FILE (play display line). Click SAVE AS when window opens up";
+                body.appendChild(d1);
+                break;
+            // propertiary stuff that will not open in browser 
+            case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+            case "application/vnd.ms-excel":
+            case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+            case "application/vnd.openxmlformats-officedocument.wordprocessingml.document": 
+            case "video/x-ms-wmv":
+                title.innerHTML="Save Microsoft Office / Libra / Open Office Documents"; 
+                var d1= document.createElement("div");
+                d1.innerHTML="Click bottom DOWNLOAD in Uploaded Files box . File shows up below the Uploaded Files box. Click arrow on right, then select OPEN  . File Opens in New Window, then 'Save As'.";
+                body.appendChild(d1);
+                break; 
+            case "sessionRecording":
+                title.innerHTML="Save Session Recording"; 
+                var d1=document.createElement("div");
+                d1.innerHTML='Extract the video and audio recording from the dowloaded compresed file and play together ';
+                body.appendChild(d1);
+                break;
+            default :
+                var d1=document.createElement("div");
+                d1.innerHTML='Document is Unrecognizable, cannot be saved, but can be shared with Remote. Use/Click Screen Share for Remote to view your screen. Then open the document on your screen.';
+                body.appendChild(d1);
+                break;
+        }
+
+        modalbody.appendChild(body);
+        modal.appendChild(modalheader);
+        modal.appendChild(modalbody);
+
+        modalinnerBox.appendChild(modal);
+        modalBox.appendChild(modalinnerBox);
+
+        mainDiv.appendChild(modalBox);
+
 }

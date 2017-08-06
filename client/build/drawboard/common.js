@@ -59,12 +59,20 @@ if(document.getElementById("trashBtn")){
 if(document.getElementById("saveBtn")){
 
     document.getElementById("saveBtn").onclick = function() {
+
+        /*        
         var aref = document.createElement("a");
         aref.href = mainCanvas.toDataURL("image/png") ;
         aref.download = "drawBox.png";
-        /*        <a href="blob:https://localhost:8084/1b9e4a15-ec9e-4017-b538-c73dc276d190" download="media-20161205.jpg"><i class="fa fa-download" style="font-size: 25px;"></i> </a>
-        */
-        aref.click();
+        aref.click();*/
+
+        parent.postMessage({
+            modalpopup : {
+                filetype : "blobcanvas" ,   
+            }, 
+            sender: selfId
+        }, '*');
+
         /*document.getElementById("saveBtn").appendChild(aref);*/
         //window.open(mainCanvas.toDataURL("image/png") , "canvasDiagram");
         /*var e = mainCanvas.toDataURL("image/png"),
@@ -101,8 +109,11 @@ function addEvent(element, eventType, callback) {
     if (element.addEventListener) {
         element.addEventListener(eventType, callback, !1);
         return true;
-    } else if (element.attachEvent) return element.attachEvent('on' + eventType, callback);
-    else element['on' + eventType] = callback;
+    } else if (element.attachEvent) {
+        return element.attachEvent('on' + eventType, callback);
+    } else {
+        element['on' + eventType] = callback;
+    }
     return this;
 }
 
@@ -425,7 +436,6 @@ var common = {
         + '\t if(p[0] === "eraser") { \n' + '\t\t context.moveTo(point[0], point[1]);\n' + '\t\t context.lineTo(point[2], point[3]);\n' + '\t }\n\n'
 
 
-
         + '\t if(p[0] === "arc") context.arc(point[0], point[1], point[2], point[3], 0, point[4]); \n\n'
 
         + '\t if(p[0] === "rect") {\n' + '\t\t context.strokeRect(point[0], point[1], point[2], point[3]);\n' + '\t\t context.fillRect(point[0], point[1], point[2], point[3]);\n'
@@ -472,7 +482,6 @@ var common = {
         return result + '], ';
     }
 
-    // -------------------------------------------------------------
 };
 
 // -------------------------------------------------------------

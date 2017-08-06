@@ -2330,7 +2330,8 @@
                 return isFirefoxExtensionAvailable(callback);
             if ("desktop" == chromeMediaSource)
                 return callback(!0);
-            window.postMessage("are-you-there", "*"),
+            //window.postMessage("are-you-there", "*"),
+            window.postMessage("webrtcdev-extension-presence", "*"),
             setTimeout(function() {
                 callback("screen" == chromeMediaSource ? !1 : !0)
             }, 2e3)
