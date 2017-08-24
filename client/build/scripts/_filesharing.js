@@ -91,8 +91,8 @@ function simulateClick(buttonName){
 }
 
 function displayList(uuid , peerinfo , fileurl , filename , filetype ){
-    console.log("DisplayList peerinfo->",peerinfo);
-    var showDownloadButton=true , showRemoveButton=true; 
+    console.log("DisplayList peerinfo->", peerinfo, fileurl, filename, filetype);
+    var showDownloadButton = true , showRemoveButton=true; 
 
     var elementList = peerinfo.fileList.container;
     var elementDisplay = peerinfo.fileShare.container;
@@ -105,7 +105,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         showRemoveButton=false;
     }*/
     var _filename=null;
-    if(filetype=="sessionRecording"){
+    if (filetype =="sessionRecording"){
         filename = filename.videoname+"_"+filename.audioname;
         _filename = filename;
     }
@@ -123,13 +123,18 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     /*downloadButton.setAttribute("style", "color:white");*/
     //downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '">'+'<i class="fa fa-download" style="font-size: 25px;"></i>'+' </a>';
     downloadButton.innerHTML='<i class="fa fa-download" style="font-size: 25px;"></i>';
-    downloadButton.onclick=function(){
-       if(filetype=="sessionRecording"){
+    downloadButton.onclick = function () {
+
+        alert(" downloadButton filetype ", filetype);
+        console.log(" downloadButton _filename ", _filename);
+
+        if (filetype =="sessionRecording"){
             var a = document.createElement("a");
             document.body.appendChild(a);
             a.style = "display: none";
             a.href = fileurl.audiofileurl;
-            a.download = _filename.audioname+".wav";
+            //a.download = _filename.audioname+".wav";
+            a.download = peerinfo.filearray[0] + ".wav";
             a.click();
             window.URL.revokeObjectURL(fileurl.audiofileurl);
 
@@ -137,7 +142,8 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
             document.body.appendChild(v);
             v.style = "display: none";
             v.href = fileurl.videofileurl;
-            v.download = _filename.videoname+".webm";
+            //v.download = _filename.videoname+".webm";
+            v.download = peerinfo.filearray[1] + ".webm";
             v.click();
             window.URL.revokeObjectURL(fileurl.videofileurl);
 
@@ -176,9 +182,12 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     /*    
     showButton.setAttribute("class" , "btn btn-primary");
     showButton.innerHTML='show';*/
-    showButton.innerHTML='<i class="fa fa-eye" style="font-size: 25px;"></i>';
-    showButton.onclick=function(){
-        if(repeatFlagShowButton != filename){
+    showButton.innerHTML = '<i class="fa fa-eye-slash" style="font-size: 25px;"></i>';
+    repeatFlagHideButton = filename;
+    //repeatFlagShowButton = filename;
+    showButton.onclick = function () {
+        console.log(" filehsare - show/hide button ", repeatFlagShowButton);
+        if (repeatFlagShowButton != filename && repeatFlagHideButton == filename){
             showFile(uuid , elementDisplay , fileurl , filename , filetype);
             rtcConn.send({
                 type:"shareFileShow", 
@@ -188,19 +197,35 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
                 _filename : filename, 
                 _filetype : filetype
             }); 
-            repeatFlagShowButton= filename;       
-        }else if(repeatFlagShowButton == filename){
-            repeatFlagShowButton= "";
+            repeatFlagShowButton = filename;
+            repeatFlagHideButton = "";
+            showButton.innerHTML = '<i class="fa fa-eye-slash" style="font-size: 25px;"></i>';
+            console.log(" Executed script to show the file and set repeatFlagShowButton =  ", repeatFlagShowButton, " and set repeatFlagHideButton =", repeatFlagHideButton);
+        } else if (repeatFlagShowButton == filename && repeatFlagHideButton != filename){
+            repeatFlagShowButton = "";
+            hideFile(uuid, elementDisplay, fileurl, filename, filetype);
+            rtcConn.send({
+                type: "shareFileHide",
+                _uuid: uuid,
+                _element: elementDisplay,
+                _fileurl: fileurl,
+                _filename: filename,
+                _filetype: filetype
+            });
+            repeatFlagHideButton = filename;
+            showButton.innerHTML = '<i class="fa fa-eye" style="font-size: 25px;"></i>';
+            console.log(" Executed script to hide the file and set repeatFlagShowButton =  ", repeatFlagShowButton, " and set repeatFlagHideButton =", repeatFlagHideButton);
         }
     };
 
+    /*
     var hideButton = document.createElement("div");
     hideButton.id= "hideButton"+filename;
     hideButton.style.float="right";
-    /*    
-    hideButton.setAttribute("class" , "btn btn-primary");
-    hideButton.innerHTML='hide';*/
-    hideButton.innerHTML='<i class="fa fa-eye-slash" style="font-size: 25px;"></i>';
+       
+    //hideButton.setAttribute("class" , "btn btn-primary");
+    //hideButton.innerHTML='hide';
+    //hideButton.innerHTML='<i class="fa fa-eye-slash" style="font-size: 25px;"></i>';
     hideButton.onclick=function(event){
         if(repeatFlagHideButton != filename){
             hideFile(uuid , elementDisplay , fileurl , filename , filetype);
@@ -217,6 +242,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
             repeatFlagHideButton= "";
         }
     };
+    */
 
     var removeButton = document.createElement("div");
     removeButton.id= "removeButton"+filename;
@@ -267,7 +293,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
             filedom.appendChild(downloadButton);
         filedom.appendChild(showButton);
         filedom.appendChild(saveButton);
-        filedom.appendChild(hideButton);
+        //filedom.appendChild(hideButton);
         if(showRemoveButton) 
             filedom.appendChild(removeButton);
     }
@@ -294,7 +320,9 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
         image.id= "display"+filename; 
         elementDisplay=image;
 
-    }else if(filetype=="sessionRecording"){
+    } else if (filetype == "sessionRecording") {
+
+        alert(" Session Reording");
         var filename = filename.videoname+"_"+filename.audioname;
         var div =  document.createElement("div");
         div.setAttribute("background-color","black");
@@ -303,11 +331,18 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
 
         var video = document.createElement('video');
         video.src = fileurl.videofileurl;
-        video.controls="controls";
-        
+        //video.type = "video/webm";
+        video.setAttribute("type", "audvideo/webm");
+        video.setAttribute("name", "videofile");
+        video.controls = "controls";
+        video.title = filename.videoname + ".webm";
+
         var audio = document.createElement('audio');
-        audio.controls = "controls";
         audio.src = fileurl.audiofileurl;
+        audio.setAttribute("type" , "audio/wav");
+        audio.controls = "controls";
+        audio.title = filename.videoname + ".wav";
+    
         //audio.hidden=true;
 
         div.appendChild(video);

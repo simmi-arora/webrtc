@@ -1,0 +1,17 @@
+.cursor1Class{
+    box-sizing: border-box; 
+    -moz-box-sizing: border-box
+    width: 0px !important;
+    border-bottom: 20px solid #9999FF;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+}
+
+.cursor2Class{
+    box-sizing: border-box; 
+    -moz-box-sizing: border-box
+    width: 0px !important;
+    border-bottom: 20px solid #666699;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+}
