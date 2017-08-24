@@ -1,6 +1,6 @@
 {
   "name": "webrtcdevelopment",
-  "version": "1.6.249",
+  "version": "1.6.253",
   "description": "webrtc based communication and collaboration client . contains lot of experiments modules ",
   "main": "webrtcserver.js",
   "engines": {
@@ -12,7 +12,7 @@
     "socket.io": "0.9.*",
     "supervisor": "^0.10.0",
     "restify": "*",
-    "log":"*"
+    "log": "*"
   },
   "devDependencies": {
     "apidoc": "*",
@@ -38,7 +38,7 @@
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha client/tests",
-    "run":"gulp & node webrtcserver.js",
+    "run": "gulp & node webrtcserver.js",
     "prestart": "gulp production & apidoc -v -i /home/altanai/webrtcWSwksppace/webrtcdevelopment/ -e node_modules/  -o client/build/api/doc",
     "start": "supervisor -i ./public/ webrtcserver.js"
   },

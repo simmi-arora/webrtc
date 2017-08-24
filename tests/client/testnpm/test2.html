@@ -1,0 +1,125 @@
+<html lang=en>
+<head>
+    <title>WebRTC Call</title>
+    
+    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel=stylesheet href="minScripts/webrtcdevelopment_header.css">
+    <script src="minScripts/webrtcdevelopment_header.js"> </script>
+
+    <style type="text/css">
+        video{
+            width:100% !important;
+        }
+        body{
+            background: #2B2B2B;
+        }
+    </style>
+</head>
+
+<body id="pagebody">
+
+    <div  id="elementToShare" class="container-fluid">
+        <!-- ................................ top panel ....................... -->
+        <div class="row topPanelClass" >    
+            <div id="topIconHolder" >
+                <ul id="topIconHolder_ul">
+                    <li hidden> <span id="username" class="userName" hidden>a</span></li>
+                    <li hidden> <span id="numbersofusers" class="numbers-of-users" hidden></span></li>
+                    <li> <span id="HelpButton" class="btn btn-info glyphicon glyphicon-question-sign topPanelButton" data-toggle="modal" data-target="#helpModal" > Help </span> </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- .............alerts................. -->
+        
+        <div class="row" id="alertBox" hidden="true"></div>
+
+        <!-- .......................... Row ................................ -->
+        <div class="row thirdPanelClass"> 
+            <div class="col-xs-8 videoBox merge" id="videoHold">
+                <div class="row users-container merge" id="usersContainer" >
+                    <div class="CardClass" id="card">
+                        
+                        <!-- when no remote -->
+                        <div id="local" class="row" hidden="">
+                            <video name="localVideo" autoplay="autoplay" muted="true" />
+                        </div>
+
+                        <!-- when remote is connected -->
+                        <div id ="remote" class="row" style="display:inline" hidden>
+                            <div class="col-sm-4 merge" class="leftVideoClass" id="leftVideo">
+                                <video name="video1" hidden autoplay="autoplay" muted="true" ></video>
+                            </div>
+                            <div class="col-sm-4 merge" class="rightVideoClass" id="rightVideo" >
+                                <video name="video2" hidden autoplay="autoplay" ></video>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div> 
+
+        </div>
+
+        <!--modal help -->
+
+        <div class="modal fade" id="helpModal" role="dialog">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">Help</h4>
+                </div>
+                <div class="modal-body">
+                  <p>WebRTC Runs in only https due to getusermedia security contraints </p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+<script src="minScripts/webrtcdevelopment.css"></script>
+<script src="minScripts/webrtcdevelopment.js"></script>
+
+<script>
+$('document').ready(function(){
+
+    sessionid= init(true);
+
+    var local={
+        localVideo: "localVideo",
+        videoClass:"",
+        userDisplay:false,
+        userMetaDisplay:false  
+    };
+
+    var remote={
+        remotearr: ["video1" , "video2"],
+        videoClass:"",
+        userDisplay:false,
+        userMetaDisplay:false    
+    };
+
+    webrtcdomobj= new WebRTCdom(
+        local,remote
+    );
+
+    var session ={
+        sessionid : sessionid,
+        socketAddr: "https://localhost:8084/"
+    };
+
+    var webrtcdevobj = new WebRTCdev ( session,  null,  null ,  null );
+
+    startcall();
+});
+</script>
+</html>

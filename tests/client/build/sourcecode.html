@@ -1,0 +1,435 @@
+<html lang=en>
+<head>
+    <title>WebRTC Call</title>
+    <meta name="google-site-verification" content="8NqEkVsX8mkRCn13Qov4K0njgF0T6t97_a-NZNIXkpE" />
+    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/elfbfompfpakbefoaicaeoabnnoihoac">
+    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel=stylesheet href="minScripts/webrtcdevelopment_header.css">
+    <script src="minScripts/webrtcdevelopment_header.js"> </script>
+   <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+
+    .fork-right {
+        background-repeat: no-repeat;
+        background-position: center center;
+        width: 290px;
+        height: 290px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: url('home_images/forkme.png');
+    }
+  </style>   
+</head>
+
+<body id="pagebody" class="bodyWhole">
+
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '144771182399738',
+          xfbml      : true,
+          version    : 'v2.6'
+        });
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Portfolio</a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="admin.html">Admin</a></li>
+                    <li class="active"><a href="sourcecode.html">Source Code</a></li>
+                    <li><a href="https://about.me/altanai">Contact</a></li>
+                </ul>
+                <!-- 
+                  <ul class="nav navbar-nav navbar-right">
+                      <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                  </ul> 
+                -->
+            </div>
+        </div>
+    </nav>
+
+    <a href="https://github.com/altanai/webrtc" class="fork-right"></a>
+    
+    <div class="jumbotron">
+        <div class="container text-center">
+            <h1>WebRTC Development</h1>
+            <p>Webrtc libraries and set of ready to use services , cabe be hosted right off-the-shelf </p>
+        </div>
+    </div>
+
+    <div
+      class="fb-like"
+      data-share="true"
+      data-width="450"
+      data-show-faces="true">
+    </div>
+
+    <h2> WebRTC Media Stack in Supported Browsers </h2>
+    <img src="https://s20.postimg.org/an415qqu5/Web_RTC_media_stack_Solution_Architecture.png"/>
+
+    <h2> WebrtcDevelopement SDK </h2>
+    <img src ="https://s20.postimg.org/klozs809p/webrtcdevelopment_SDK.png"/>
+
+
+<h2>Get Started </h2>
+
+
+To run this project following steps need to be followed in that order :
+
+##### 1. get the project from github 
+<pre>
+git clone https://github.com/altanai/webrtc.git webrtc
+</pre>
+
+##### 2. install nvm ( node version manager ) 
+<pre>
+sudo apt-get install nvm
+nvm use v5.0.0
+</pre>
+
+##### 3. install npm and update the dependencies 
+It will read the package.json and update the dependencies in node_modules folder on project location
+
+<pre>
+    sudo apt-get install npm
+    npm install 
+</pre>
+
+###### 4. Change ENV variables and Test
+
+To change the ports for running the https server and rest server, goto env.json
+<pre>
+{       "hostname"      : "host",        
+        "enviornment"   : "local",        
+        "host"          : "localhost",
+        "jsdebug"       :  true,          
+        "httpsPort"     :  8086,
+        "restPort"      :  8087,
+        "extensionID"   : "elfbfompfpakbefoaicaeoabnnoihoac"
+}
+</pre>
+
+To run the tests
+<pre>
+    npm test
+</pre>
+
+##### 5. Start up the Server 
+
+To start the Server in dev mode  and stop the server as soon as Ctrl+ C is hit or the terminal widnow is closed . 
+<pre>
+    node webrtcserver.js
+</pre>
+read more about [node](https://nodejs.org/en/about/ )
+
+To start the Server using npm start ( using package.json) , behaves same as earlier run using node. We use supervisor to restart the server incase of exceptions or new code .
+
+<pre>
+    npm start
+</pre>
+
+##### 6. JS and CSS Libs
+
+Make a webpage and give holders for video and button elements that SDK will use .
+
+##### 7. Configure
+
+
+Create the webrtc dom object
+<pre>
+var local={
+        localVideo: "localVideo",
+        videoClass:"",
+        userDisplay:false,
+        userMetaDisplay:false  
+    };
+
+    var remote={
+        remotearr: ["video1"],
+        remoteVideoCount: "unlimited",
+        remoteVideoContainer : "rightVideo",
+        videoClass:"",
+        userDisplay:false,
+        userMetaDisplay:false    
+    };
+
+    var webrtcdomobj= new WebRTCdom(
+        local,remote
+    );
+</pre>
+
+Get session id
+<pre>
+sessionid = init(true);
+</pre>
+
+Create a session json object with turn credentials nd the session created from above step
+
+set preference for the incoming and outgoing media connectection. Bydefault all are set to true . 
+<pre>
+    var incoming={
+        audio:  true,
+        video:  true,
+        data:   true,
+        screen: true
+    };
+
+    var outgoing={
+        audio:  true,
+        video:  true,
+        data:   true,
+        screen: true
+    };
+</pre>
+Set widgets and their properties . Currently available widgets are 
+    * Chat
+    * Fileshare
+    * Screen Record
+    * Screen Share
+    * Video Record
+    * Snapshot
+    * Draw on Canvas and Sync
+    * Text Editor and Sync
+    * Mute (audio amd video)
+    * Reconnect
+
+<pre>
+    var widgets={
+    }
+</pre>
+Initiate the webrtcdev contructor 
+<pre>
+    var webrtcdevobj = new WebRTCdev ( 
+        session,  incoming,  outgoing ,  widgets
+    );
+</pre>
+
+Start the session 
+<pre>
+    startcall();
+</pre>
+
+##### 8. VOIP calls and conf
+open tab on chrome or mozilla browser and add a link to the https server using nodejs script
+https://127.0.0.1:8086/multiparty_fullfeatures.html
+
+
+    <pre>
+
+        $('document').ready(function(){
+            sessionid = init(true);
+
+            var searchParams = new URLSearchParams(window.location);
+            var webrtcdomobj;
+
+            var local={
+                localVideo: "localVideo",
+                videoClass:"",
+                userDisplay:false,
+                userMetaDisplay:false  
+            };
+
+            var remote={
+                remotearr: ["video1"],
+                remoteVideoCount: "unlimited",
+                remoteVideoContainer : "rightVideo",
+                videoClass:"",
+                userDisplay:false,
+                userMetaDisplay:false    
+            };
+
+            webrtcdomobj= new WebRTCdom(
+                local,remote
+            );
+
+            var session ={
+                sessionid : sessionid,
+                socketAddr: "https://localhost:8086/",
+                turn:{
+                        username: "your username",
+                        secretkey:"07e291ca-c387-11e5-9e90-92cac6d3a4e7",
+                        domain:"ec2-54-193-124-35.us-west-1.compute.amazonaws.com",
+                        application:"webrtc",
+                        room:"main",
+                        secure:1
+                    }
+            };
+
+            var incoming={
+                audio:  true,
+                video:  true,
+                data:   true,
+                screen: true
+            };
+
+            var outgoing={
+                audio:  true,
+                video:  true,
+                data:   true,
+                screen: true
+            };
+
+            var widgets={
+                chat        :{
+                                active: true,
+                                chatContainer: "",
+                                button:{
+                                    class:"form-control btn-primary buttonChatSend",
+                                    html:"Send",
+                                }
+                            },
+                fileShare   :{
+                                active : true,
+                                fileShareContainer : true
+                            },
+                screenrecord:{
+                                active: true,
+                                autoscreenrecord:false,
+                                screenrecordContainer: null,
+                                button:{
+                                    class_on:"btn btn-warning glyphicon glyphicon-refresh topPanelButton",
+                                    html_on:"Stop",
+                                    class_off:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
+                                    html_off:"Record"
+                                }
+                            }, 
+                screenshare : {
+                                active:false,
+                                screenshareContainer: "widget-screenshareContainer",
+                                extensionID: "elfbfompfpakbefoaicaeoabnnoihoac",
+                                button:{
+                                    shareButton:{
+                                        class_on:"btn btn-warning  glyphicon glyphicon-expand topPanelButton",
+                                        html_on:"Stop Sharing",
+                                        class_off:"btn btn-success glyphicon glyphicon-expand topPanelButton",
+                                        html_off:"ScreenShare"
+                                    },
+                                    viewButton:{
+                                        class_on:"btn btn-warning  glyphicon glyphicon-expand topPanelButton",
+                                        html_on:"Stop Viewing",
+                                        class_off:"btn btn-success glyphicon glyphicon-expand topPanelButton",
+                                        html_off:"View Screen"
+                                    }
+                                }
+                            },
+                videoRecord :{
+                                active: true,
+                                videoRecordContainer: true,
+                                button:{
+                                    class_on:"pull-right glyphicon glyphicon-facetime-video btn btn-warning mediaButton",
+                                    html_on:"Stop",
+                                    class_off:"pull-right glyphicon glyphicon-facetime-video btn btn-default mediaButton",
+                                    html_off:"Record"
+                                }
+                            },
+                snapshot :{
+                                active: true,
+                                snapshotContainer: true,
+                                button:{
+                                    class_on:"pull-right glyphicon glyphicon-camera btn btn-default mediaButton",
+                                    html_on:"Snapshot"
+                                }
+                            }, 
+                drawCanvas  :{
+                                active: true,
+                                drawCanvasContainer: "widget-drawContainer",
+                                button:{
+                                    class_on:"btn btn-warning glyphicon glyphicon-edit topPanelButton",
+                                    html_on:"close Draw",
+                                    class_off:"btn btn-success glyphicon glyphicon-edit topPanelButton",
+                                    html_off:"Draw"
+                                }
+                            }, 
+                texteditor  :{
+                                active: true,
+                                texteditorContainer: "widget-texteditorContainer",
+                                button:{
+                                    class_on:"btn btn-warning glyphicon glyphicon-edit topPanelButton",
+                                    html_on:"close Text",
+                                    class_off:"btn btn-success glyphicon glyphicon-edit topPanelButton",
+                                    html_off:"Text"
+                                }
+                            },                   
+                reconnect   :{
+                                active: true,
+                                button:{
+                                    class:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
+                                    html:"Reconnect",
+                                    resyncfiles:false
+                                }
+                            }, 
+                mute        :{
+                            active: true,
+                            audio   :{
+                                    button:{
+                                        class_on:"pull-right glyphicon glyphicon-volume-up btn btn-default mediaButton",
+                                        html_on:"Audio is On",
+                                        class_off:"pull-right glyphicon glyphicon-volume-off btn btn-danger mediaButton",
+                                        html_off:"Audio is Off"
+                                    }
+                                },
+                            video : {
+                                    button:{
+                                        class_on:"pull-right glyphicon glyphicon-eye-open btn btn-default videoButtonClass mediaButton",
+                                        html_on:"Video is On",
+                                        class_off:"pull-right glyphicon glyphicon-eye-close  btn btn-danger videoButtonClass mediaButton",
+                                        html_off:"Video is Off"
+                                    }
+                                }
+                            }
+            };
+
+            var webrtcdevobj = new WebRTCdev ( 
+                session,  incoming,  outgoing ,  widgets
+            );
+            startcall();
+        });
+    </pre>
+    
+    <footer class="container-fluid text-center">
+      <p>Open source Software  - 2016 ( altanai - https://altanaitelecom.wordpress.com )</p>
+    </footer>
+</body>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-38614709-4', 'auto');
+  ga('send', 'webrtc development pageview');
+</script>
+
+
+</html>

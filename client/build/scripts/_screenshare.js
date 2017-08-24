@@ -70,8 +70,8 @@ function webrtcdevPrepareScreenShare(callback){
     console.log(" webrtcdevPrepareScreenShare" + screenRoomid);
     console.log(" Screenshare ||  filling up iceServers " , turn , webrtcdevIceServers);
 
-    scrConn             = new RTCMultiConnection();
-    if(turn!='none'){
+    scrConn  = new RTCMultiConnection();
+    if(turn && turn!='none'){
         if(!webrtcdevIceServers) {
             alert("ICE server not found yet in screenshare session ");
         }
@@ -178,8 +178,8 @@ function webrtcdevPrepareScreenShare(callback){
 
     console.log(" webrtcdevscreenshare calling callback for socket.io operations");
 
-    alert(" Preparing Screenshare "+ screenRoomid);
-    callback(screenRoomid);
+    //alert(" Preparing Screenshare "+ screenRoomid);
+    setTimeout(callback(screenRoomid), 3000);
 }
 
 function webrtcdevSharescreen() {
@@ -236,10 +236,8 @@ function webrtcdevSharescreen() {
 function connectScrWebRTC(type, channel , userid , remoteUsers){
     console.log("connectScrWebRTC -> " , type, channel , userid , remoteUsers);
     if(type=="open"){
-          
         scrConn.connect(screenRoomid);
         shownotification("Connected to "+ screenRoomid + " for screenshare ");
-
     }else if(type=="join"){
         scrConn.join(screenRoomid);
         shownotification("Connected with existing Screenshare channel "+ screenRoomid);
@@ -248,7 +246,9 @@ function connectScrWebRTC(type, channel , userid , remoteUsers){
     }
 }
 
-function webrtcdevScreenConstraints(chromeMediaSourceId){
+function webrtcdevScreenConstraints(chromeMediaSourceId) {
+    console.log(" webrtcdevScreenConstraints  - chromeMediaSourceId: ", chromeMediaSourceId);
+
     /*    
     screen_constraints = {
         audio: false,
@@ -263,7 +263,7 @@ function webrtcdevScreenConstraints(chromeMediaSourceId){
         }
     };*/
     
-    //screen_constraints = scrConn.modifyScreenConstraints(screen_constraints);
+    /*screen_constraints = scrConn.modifyScreenConstraints(screen_constraints); */
     
     /*    
     scrConn.getScreenConstraints = function(callback) {
@@ -273,7 +273,8 @@ function webrtcdevScreenConstraints(chromeMediaSourceId){
         callback(false, screen_constraints);
         return;
     };*/
-   try{
+    try {
+        console.log(" screen getusermedia ");
         navigator.getUserMedia(
             {
                 audio: false,
@@ -290,8 +291,6 @@ function webrtcdevScreenConstraints(chromeMediaSourceId){
             function stream(event) {
                 console.log("screen stream "  , event , screenshareobj.screenshareContainer);
                 //scrConn.onstream(event);
-                //var container = document.getElementById(screenshareobj.screenshareContainer);
-                //console.log("videosContainer "  , container);
                 //screenStreamId = event.streamid;
                 //var videosContainer = document.createElement("video");
                 //videosContainer.src = window.URL.createObjectURL(event);
@@ -353,7 +352,7 @@ function webrtcdevScreenConstraints(chromeMediaSourceId){
 
             },
             function error(err) {
-                console.log(" Error in webrtcdevScreenConstraints " , err);
+                console.error(" Error in webrtcdevScreenConstraints " , err);
                 if (isChrome && location.protocol === 'http:') {
                     alert('Please test this WebRTC experiment on HTTPS.');
                 } else if(isChrome) {
@@ -503,7 +502,9 @@ function createScreenInstallButton(extensionID){
         function(){
             console.log("Chrome extension inline installation - success . createOrAssignScreenshareButton with " , screenshareobj);
             button.hidden = true;
+            getSourceId(function () { }, true);
             createOrAssignScreenshareButton(screenshareobj);
+
         },function (err){
             console.log("Chrome extension inline installation - fail " , err);
         });
@@ -515,13 +516,14 @@ function createScreenInstallButton(extensionID){
     document.getElementById("topIconHolder_ul").appendChild(li);
 }
 
-function assignScreenInstallButton(extensionID){
+function assignScreenInstallButton(extensionID) {
     var button = document.getElementById(screenshareobj.button.installButton.id);
     button.onclick= function(e) {    
         chrome.webstore.install("https://chrome.google.com/webstore/detail/"+extensionID,
             function(){
                 console.log("Chrome extension inline installation - success from assignScreenInstallButton . Now  createOrAssignScreenshareButton with " , screenshareobj);
                 button.hidden = true;
+                getSourceId(function () { }, true);
                 createOrAssignScreenshareButton(screenshareobj);
             },function (e){
                 console.error("Chrome extension inline installation - fail " , e);
@@ -611,7 +613,7 @@ function onScreenshareExtensionCallback(event){
 
     if (event.data.sourceId) {
         if (event.data.sourceId === 'PermissionDeniedError') {
-            console.log('permission-denied');
+            console.error('permission-denied');
         } else{
             webrtcdevScreenConstraints(event.data.sourceId);
         }
@@ -619,11 +621,14 @@ function onScreenshareExtensionCallback(event){
 }
 
 function detectExtension(extensionID , callback){
-
-    getChromeExtensionStatus(extensionID, function(status) {  
-        console.log( "detectExtensionScreenshare for ", extensionID, " -> " , status);
+    console.log("detectExtension  ", extensionID);
+    getChromeExtensionStatus(extensionID, function (status) {  
+        //log sttaus 
+        console.log("status extension ", status);
         //reset extension's local storage objects 
-        window.postMessage("reset-webrtcdev-extension", "*");
+        console.log("reset extension ", extensionID);
+        if (status !="not-installed")
+            window.postMessage("reset-webrtcdev-extension", "*");
         callback(status);
     });
 
