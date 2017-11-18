@@ -129,7 +129,7 @@ function webrtcdevPrepareScreenShare(callback){
                 attachMediaStream(video, stream);
                 //video.id = peerInfo.videoContainer;
                 document.getElementById(screenshareobj.screenshareContainer).appendChild(video);
-            
+                document.getElementById(screenshareobj.screenshareContainer).hidden=false;
                 rtcConn.send({
                     type:"screenshare", 
                     screenid: screenRoomid,
