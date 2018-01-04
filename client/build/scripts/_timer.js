@@ -91,9 +91,15 @@ function startTime() {
     var s = today.getSeconds();
     m = checkTime(m);
     s = checkTime(s);
-    var timerspan=document.getElementById(timerobj.span.currentTime_id);
-    timerspan.innerHTML =   h + ":" + m + ":" + s;
-    var t = setTimeout(startTime, 500);
+
+    if(timerobj.span.currentTime_id && document.getElementById(timerobj.span.currentTime_id)){
+        var timerspan = document.getElementById(timerobj.span.currentTime_id);
+        timerspan.innerHTML =   h + ":" + m + ":" + s;
+        var t = setTimeout(startTime, 500);
+    }else{
+        console.error(" No place for timerobj.span.currentTime_id");
+    }
+
 }
 
 function timeZone(){
@@ -138,7 +144,7 @@ function startPeersTime(date,zone){
 }
 
 function activateBttons(timerobj){
-    if(document.getElementById(timerobj.container.minbutton_id)){
+    if(timerobj.container.minbutton_id && document.getElementById(timerobj.container.minbutton_id)){
         var button= document.getElementById(timerobj.container.minbutton_id);
         button.onclick=function(e){
             if(document.getElementById(timerobj.container.id).hidden)
