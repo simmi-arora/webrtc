@@ -49,18 +49,24 @@ function takeSnapshot(peerinfo , callback) {
     var connection = args.connection;*/
 
     function _takeSnapshot(video) {
-        var canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth || video.clientWidth;
-        canvas.height = video.videoHeight || video.clientHeight;
 
-        var context = canvas.getContext('2d');
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        if(video){
+            var canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth || video.clientWidth;
+            canvas.height = video.videoHeight || video.clientHeight;
 
-        /*
-        connection.snapshots[userid] = canvas.toDataURL('image/png');
-        args.callback && args.callback(connection.snapshots[userid]);*/
-    
-        callback(canvas.toDataURL('image/png'));
+            var context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            /*
+            connection.snapshots[userid] = canvas.toDataURL('image/png');
+            args.callback && args.callback(connection.snapshots[userid]);*/
+        
+            callback(canvas.toDataURL('image/png'));
+        }else{
+            callback("");
+        }
+
     }
 
     if (peerinfo.videoContainer) return _takeSnapshot(document.getElementById(peerinfo.videoContainer));

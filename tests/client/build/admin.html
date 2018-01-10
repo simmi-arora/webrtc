@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>WebRTC admin dashboard</title>
+        <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel=stylesheet href="minScripts/webrtcdevelopment_header.css">
+        <script src="minScripts/webrtcdevelopment_header.js"> </script>
+    </head>
+ 
+    <body>
+
+        <div class="container">
+            <h1>Admin Dashboard</h1>
+            <ul class="nav nav-tabs">
+              <li class="active"> <a data-toggle="tab" id="channels_list" href="#home">Sessions</a> </li>
+              <li><a data-toggle="tab" id="users_list" href="#menu1">Users</a></li>
+              <li><a data-toggle="tab" id="channels_table" href="#menu2">Tabular</a></li>
+              <li><a data-toggle="tab" id="channels_json" href="#menu3">Json</a></li>
+            </ul>
+
+            <div class="tab-content">
+              
+              <div id="home" class="tab-pane fade in active">
+                <h3>Channels List</h3>
+                <p>List of all channels ( active and inactive )</p>
+
+                <div class="row">
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="channelFindInput" placeholder="Search for specific channel">
+                      <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" id="channelFindBtn">Find</button>
+                      </span>
+                    </div><!-- /input-group -->
+                </div><!-- /.row -->
+
+                <div id="channellistArea">
+                    <ul class="list-group"> </ul>
+                </div>
+              </div>
+
+              <div id="menu1" class="tab-pane fade">
+                <h3>Users</h3>
+                <p>Displaying all users information</p>
+                <div id="userslistArea">
+                    <ul class="list-group"> </ul>
+                </div>
+              </div>
+              
+              <div id="menu2" class="tab-pane fade">
+                <h3>Tabular </h3>
+                <p>All information in tabular format</p>
+                <table class="table" id="webrtcdevTable">
+                    <thead>
+                          <tr>
+                            <th>S.no</th>
+                            <th>Channel</th>
+                            <th>Date Time Stamp</th>
+                            <th>Users</th>
+                            <th>Status</th>
+                            <th>End Time stamp</th>
+                            <th>Duration</th>
+                          </tr>
+                    </thead>
+                    <tbody id="webrtcdevTableBody">
+                    </tbody>
+                </table>
+              </div>
+              
+              <div id="menu3" class="tab-pane fade">
+                <h3>Raw Json Traces</h3>
+                <p>Raw Json races form the socket.io siganller</p>
+                <pre>
+                  <code id="channelsFeed"></code>
+                </pre>
+              </div>
+
+            </div>
+
+        </div>
+    
+        <script src="minScripts/webrtcdevelopment.js"></script>
+        <script src="scripts/admin.js"></script>
+
+        </script>
+        <script type="text/javascript">
+            var WebRTCdevadminobj = new WebRTCdevadmin ( 
+                "https://"+location.hostname+":8086"
+            );
+            onLoadAdmin();
+        </script>
+    </body>
+</html>

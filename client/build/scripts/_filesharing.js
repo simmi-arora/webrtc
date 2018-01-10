@@ -122,6 +122,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     /*downloadButton.setAttribute("class" , "btn btn-primary");*/
     /*downloadButton.setAttribute("style", "color:white");*/
     //downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '">'+'<i class="fa fa-download" style="font-size: 25px;"></i>'+' </a>';
+<<<<<<< HEAD
     
     if (fileshareobj.filelist.saveicon) {
         var img = document.createElement("img");
@@ -130,6 +131,9 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     } else {
         downloadButton.innerHTML = '<i class="fa fa-download" style=" color: #615aa8;padding: 10px; font-size: larger;"></i>';
     }
+=======
+    downloadButton.innerHTML='<i class="fa fa-download" style="font-size: 25px;"></i>';
+>>>>>>> 748f138506e060bb5f283aa7fc2c6f028d031c50
     downloadButton.onclick = function () {
 
         alert(" downloadButton filetype ", filetype);
@@ -195,6 +199,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     /*    
     showButton.setAttribute("class" , "btn btn-primary");
     showButton.innerHTML='show';*/
+<<<<<<< HEAD
     if (fileshareobj.filelist.saveicon) {
         var img = document.createElement("img");
         img.src = fileshareobj.filelist.showicon;
@@ -202,6 +207,9 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     } else {
         showButton.innerHTML = '<i class="fa fa-eye-slash" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
     }
+=======
+    showButton.innerHTML = '<i class="fa fa-eye-slash" style="font-size: 25px;"></i>';
+>>>>>>> 748f138506e060bb5f283aa7fc2c6f028d031c50
     repeatFlagHideButton = filename;
     //repeatFlagShowButton = filename;
     showButton.onclick = function () {
@@ -218,7 +226,11 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
             }); 
             repeatFlagShowButton = filename;
             repeatFlagHideButton = "";
+<<<<<<< HEAD
             showButton.innerHTML = '<i class="fa fa-eye-slash" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
+=======
+            showButton.innerHTML = '<i class="fa fa-eye-slash" style="font-size: 25px;"></i>';
+>>>>>>> 748f138506e060bb5f283aa7fc2c6f028d031c50
             console.log(" Executed script to show the file and set repeatFlagShowButton =  ", repeatFlagShowButton, " and set repeatFlagHideButton =", repeatFlagHideButton);
         } else if (repeatFlagShowButton == filename && repeatFlagHideButton != filename){
             repeatFlagShowButton = "";
@@ -232,7 +244,11 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
                 _filetype: filetype
             });
             repeatFlagHideButton = filename;
+<<<<<<< HEAD
             showButton.innerHTML = '<i class="fa fa-eye" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
+=======
+            showButton.innerHTML = '<i class="fa fa-eye" style="font-size: 25px;"></i>';
+>>>>>>> 748f138506e060bb5f283aa7fc2c6f028d031c50
             console.log(" Executed script to hide the file and set repeatFlagShowButton =  ", repeatFlagShowButton, " and set repeatFlagHideButton =", repeatFlagHideButton);
         }
     };
@@ -339,7 +355,9 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
         image.id= "display"+filename; 
         elementDisplay=image;
 
-    }else if(filetype=="sessionRecording"){
+    } else if (filetype == "sessionRecording") {
+
+        alert(" Session Reording");
         var filename = filename.videoname+"_"+filename.audioname;
         var div =  document.createElement("div");
         div.setAttribute("background-color","black");
@@ -348,11 +366,18 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
 
         var video = document.createElement('video');
         video.src = fileurl.videofileurl;
-        video.controls="controls";
-        
+        //video.type = "video/webm";
+        video.setAttribute("type", "audvideo/webm");
+        video.setAttribute("name", "videofile");
+        video.controls = "controls";
+        video.title = filename.videoname + ".webm";
+
         var audio = document.createElement('audio');
-        audio.controls = "controls";
         audio.src = fileurl.audiofileurl;
+        audio.setAttribute("type" , "audio/wav");
+        audio.controls = "controls";
+        audio.title = filename.videoname + ".wav";
+    
         //audio.hidden=true;
 
         div.appendChild(video);

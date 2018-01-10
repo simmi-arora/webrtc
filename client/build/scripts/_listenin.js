@@ -59,3 +59,7 @@ if(document.getElementById("ListenInButton")){
 		//alert(window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0');
 	}*/
 }
+
+if(document.getElementById('listenInLink')){
+document.getElementById("listenInLink").innerHTML = window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0';
+}
