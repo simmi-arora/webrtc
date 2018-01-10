@@ -1,0 +1,283 @@
+<html lang=en>
+<head>
+    <title>WebRTC Call</title>
+    <meta name="google-site-verification" content="8NqEkVsX8mkRCn13Qov4K0njgF0T6t97_a-NZNIXkpE" />
+    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel=stylesheet href="minScripts/webrtcdevelopment_header.css">
+    <script src="minScripts/webrtcdevelopment_header.js"> </script>
+
+    <style>
+    .class1{
+        background: rgba(210,255,82,1);
+        background: -moz-linear-gradient(left, rgba(210,255,82,1) 0%, rgba(145,232,66,1) 100%);
+        background: -webkit-gradient(left top, right top, color-stop(0%, rgba(210,255,82,1)), color-stop(100%, rgba(145,232,66,1)));
+        background: -webkit-linear-gradient(left, rgba(210,255,82,1) 0%, rgba(145,232,66,1) 100%);
+        background: -o-linear-gradient(left, rgba(210,255,82,1) 0%, rgba(145,232,66,1) 100%);
+        background: -ms-linear-gradient(left, rgba(210,255,82,1) 0%, rgba(145,232,66,1) 100%);
+        background: linear-gradient(to right, rgba(210,255,82,1) 0%, rgba(145,232,66,1) 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d2ff52', endColorstr='#91e842', GradientType=1 );
+    }
+    .class2{
+        background: rgba(73,155,234,1);
+        background: -moz-linear-gradient(left, rgba(73,155,234,1) 0%, rgba(32,124,229,1) 100%);
+        background: -webkit-gradient(left top, right top, color-stop(0%, rgba(73,155,234,1)), color-stop(100%, rgba(32,124,229,1)));
+        background: -webkit-linear-gradient(left, rgba(73,155,234,1) 0%, rgba(32,124,229,1) 100%);
+        background: -o-linear-gradient(left, rgba(73,155,234,1) 0%, rgba(32,124,229,1) 100%);
+        background: -ms-linear-gradient(left, rgba(73,155,234,1) 0%, rgba(32,124,229,1) 100%);
+        background: linear-gradient(to right, rgba(73,155,234,1) 0%, rgba(32,124,229,1) 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#499bea', endColorstr='#207ce5', GradientType=1 );
+    }
+    .class3{
+        background: rgba(241,231,103,1);
+        background: -moz-linear-gradient(left, rgba(241,231,103,1) 0%, rgba(254,182,69,1) 100%);
+        background: -webkit-gradient(left top, right top, color-stop(0%, rgba(241,231,103,1)), color-stop(100%, rgba(254,182,69,1)));
+        background: -webkit-linear-gradient(left, rgba(241,231,103,1) 0%, rgba(254,182,69,1) 100%);
+        background: -o-linear-gradient(left, rgba(241,231,103,1) 0%, rgba(254,182,69,1) 100%);
+        background: -ms-linear-gradient(left, rgba(241,231,103,1) 0%, rgba(254,182,69,1) 100%);
+        background: linear-gradient(to right, rgba(241,231,103,1) 0%, rgba(254,182,69,1) 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f1e767', endColorstr='#feb645', GradientType=1 );
+    }
+    .class4{
+        background: #8BC34A;    
+    }
+    .class5{
+        background: rgba(183,222,237,1);
+        background: -moz-linear-gradient(left, rgba(183,222,237,1) 0%, rgba(183,222,237,1) 16%, rgba(113,206,239,1) 51%, rgba(68,191,232,1) 75%, rgba(33,180,226,1) 94%);
+        background: -webkit-gradient(left top, right top, color-stop(0%, rgba(183,222,237,1)), color-stop(16%, rgba(183,222,237,1)), color-stop(51%, rgba(113,206,239,1)), color-stop(75%, rgba(68,191,232,1)), color-stop(94%, rgba(33,180,226,1)));
+        background: -webkit-linear-gradient(left, rgba(183,222,237,1) 0%, rgba(183,222,237,1) 16%, rgba(113,206,239,1) 51%, rgba(68,191,232,1) 75%, rgba(33,180,226,1) 94%);
+        background: -o-linear-gradient(left, rgba(183,222,237,1) 0%, rgba(183,222,237,1) 16%, rgba(113,206,239,1) 51%, rgba(68,191,232,1) 75%, rgba(33,180,226,1) 94%);
+        background: -ms-linear-gradient(left, rgba(183,222,237,1) 0%, rgba(183,222,237,1) 16%, rgba(113,206,239,1) 51%, rgba(68,191,232,1) 75%, rgba(33,180,226,1) 94%);
+        background: linear-gradient(to right, rgba(183,222,237,1) 0%, rgba(183,222,237,1) 16%, rgba(113,206,239,1) 51%, rgba(68,191,232,1) 75%, rgba(33,180,226,1) 94%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b7deed', endColorstr='#21b4e2', GradientType=1 );
+    }
+    .class6{
+        background-color: coral;
+    }
+    </style>
+
+</head>
+
+<body>
+
+    <div  class="container-fluid">
+
+        <!-- ................................ top panel ....................... -->
+        <div class="row topPanelClass" >    
+            <div id="topIconHolder" >
+                <ul id="topIconHolder_ul">
+                    <li hidden> <span id="username" class="userName" hidden>a</span></li>
+                    <li hidden> <span id="numbersofusers" class="numbers-of-users" hidden></span></li>
+                </ul>
+            </div>
+        </div>
+        <!-- .............  alerts ................. -->
+        
+        <div class="row" id="alertBox" hidden="true"></div>
+
+        <!-- .......................... Row 2 ................................ -->
+        <div class="row thirdPanelClass"> 
+            <div class="col-xs-12 videoBox merge" id="videoHold">
+                <div class="row users-container merge" id="usersContainer" ondblclick="enterFullScreen()">
+                    <div class="CardClass" id="card">
+                        
+                        <!-- when no remote -->
+                        <div id="local">
+                            <div class="col-sm-4 merge" > </div>
+                            <div class="col-sm-4 merge "> <video name="myVideo" autoplay="autoplay" muted="true" /></div>
+                            <div class="col-sm-4 merge" > </div>
+                        </div>
+
+                        <!-- when remote is connected -->
+                        <div id ="remote" class="conatiner" style="display: inline;">
+                            <div  class="row">
+                                <div class="col-sm-4 merge" >
+                                    <video hidden name="video1" autoplay="autoplay" muted="true" />
+                                </div>
+                                <div class="col-sm-4 merge" >
+                                    <video hidden name="video2" autoplay="autoplay" />
+                                </div>
+                                <div class="col-sm-4 merge" >
+                                    <video hidden name="video3" autoplay="autoplay" />
+                                </div>
+                            </div>
+                            <div  class="row">
+                                <div class="col-sm-4 merge" >
+                                    <video hidden name="video4" autoplay="autoplay" />
+                                </div>
+                                <div class="col-sm-4 merge">
+                                    <video hidden name="video5" autoplay="autoplay" />
+                                </div>
+                                <div class="col-sm-4 merge" >
+                                    <video hidden name="video6" autoplay="autoplay" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <div id="socialShareBox">
+            <!-- AddToAny BEGIN -->
+            <div class="a2a_kit a2a_kit_size_32 a2a_default_style">
+            <a class="a2a_button_facebook"></a>
+            <a class="a2a_button_twitter"></a>
+            <a class="a2a_button_google_plus"></a>
+            <a class="a2a_button_linkedin"></a>
+            <a class="a2a_button_email"></a>
+            <a class="a2a_button_evernote"></a>
+            <a class="a2a_button_skype"></a>
+            <a class="a2a_button_whatsapp"></a>
+            <a class="a2a_button_print"></a>
+            </div>
+            <script async src="https://static.addtoany.com/menu/page.js"></script>
+            <!-- AddToAny END -->
+        </div>
+    </div>
+</body>
+
+<script>
+var mediaControlButtonsPosition="bottom";
+var videoWidth="100% !important";
+var sessionId = window.location.hash;
+switch(Number(sessionId.substring(sessionId.length-1)) ){
+    case 1:
+    case 2:
+    document.body.className="class1";
+    break;
+    case 2:
+    case 3:
+    document.body.className="class2";
+    break;
+    case 4:
+    case 5:
+    document.body.className="class3";
+    break;
+    case 6:
+    case 7:
+    document.body.className="class4";
+    break;
+    case 8:
+    case 9:
+    document.body.className="class5";
+    break;
+    default:
+    document.body.className="class6";
+    break;
+}
+</script>
+
+<link rel=stylesheet href="minScripts/webrtcdevelopment.css">
+<script src="minScripts/webrtcdevelopment.js"></script>
+<!-- <script src="scripts/start.js"></script>  -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-38614709-4', 'auto');
+  ga('send', 'webrtc development pageview');
+</script>
+
+<script>
+$('document').ready(function(){
+
+    sessionid= init(false);
+    var webrtcdomobj;
+
+    var local={
+        localVideo: "myVideo",
+        videoClass:"",
+        userDisplay:false,
+        userMetaDisplay:false  
+    };
+
+    var remote={
+        remotearr : ["video1" , "video2", "video3", "video4" , "video5", "video6"],
+        videoClass:"",
+        userDisplay:false,
+        userMetaDisplay:false    
+    };
+
+    webrtcdomobj= new WebRTCdom(
+        local,remote
+    );
+
+    var session ={
+        sessionid : sessionid,
+        socketAddr: props.signaller,
+        turn:{
+                username    : props.xirsys.username,
+                secretkey   : props.xirsys.secretkey,
+                domain      : props.xirsys.domain,
+                application : props.xirsys.application,
+                room        : props.xirsys.room,
+                secure      : props.xirsys.secure
+            }
+    };
+
+    var incoming={
+        audio:  true,
+        video:  true,
+        data:   true,
+        screen: true
+    };
+
+    var outgoing={
+        audio:  true,
+        video:  true,
+        data:   true,
+        screen: true
+    };
+
+    var widgets={
+        chat        :{
+                       active: false
+                    },
+        fileShare   :{
+                        active : false
+                    },
+        screenrecord:{
+                        active: false,
+                    }, 
+        screenshare : {
+                        active:false
+                    },
+        videoRecord :{
+                        active: true,
+                        videoRecordContainer: true,
+                        button:{
+                            class_on:"pull-right glyphicon glyphicon-facetime-video btn btn-warning mediaButton",
+                            html_on:"Stop",
+                            class_off:"pull-right glyphicon glyphicon-facetime-video btn btn-default mediaButton",
+                            html_off:"Record"
+                        }
+                    },
+        snapshot :{
+                        active: true,
+                        snapshotContainer: true,
+                        button:{
+                            class_on:"pull-right glyphicon glyphicon-camera btn btn-default mediaButton",
+                            html_on:"Snapshot"
+                        }
+                    }, 
+        drawCanvas  :{
+                        active: false
+                    }, 
+        reconnect   :{
+                        active: false
+                    }, 
+    };
+
+    var webrtcdevobj = new WebRTCdev ( 
+        session,  incoming,  outgoing ,  widgets
+    );
+
+    startcall();
+
+});
+</script>
+</html>

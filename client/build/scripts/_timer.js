@@ -4,22 +4,28 @@ Timer
 var hours,mins,secs;
 
 function startsessionTimer(timerobj){
-    hours=document.getElementById(timerobj.counter.hours);
-    mins=document.getElementById(timerobj.counter.minutes);
-    secs=document.getElementById(timerobj.counter.seconds);
 
-    if(timerobj.type=="forward"){
-        startForwardTimer();
-        hours.innerHTML=0;
-        mins.innerHTML=0;
-        secs.innerHTML=0;
+    if(timerobj.counter.hours && timerobj.counter.minutes && timerobj.counter.seconds ){
+        hours = document.getElementById(timerobj.counter.hours);
+        mins = document.getElementById(timerobj.counter.minutes);
+        secs = document.getElementById(timerobj.counter.seconds);
 
-    }else if (timerobj.type=="backward"){
-        hours.innerHTML=0;
-        mins.innerHTML=3;
-        secs.innerHTML=0;
-        startBackwardTimer();
+        if(timerobj.type=="forward"){
+            startForwardTimer();
+            hours.innerHTML=0;
+            mins.innerHTML=0;
+            secs.innerHTML=0;
+
+        }else if (timerobj.type=="backward"){
+            hours.innerHTML=0;
+            mins.innerHTML=3;
+            secs.innerHTML=0;
+            startBackwardTimer();
+        }
+    }else{
+        console.error(" timerobj.counter DOM elemnts not found ");
     }
+
 }
 
 function startBackwardTimer(){
@@ -103,9 +109,14 @@ function startTime() {
 }
 
 function timeZone(){
-    zone=Intl.DateTimeFormat().resolvedOptions().timeZone;
-    var timerspan=document.getElementById(timerobj.span.currentTimeZone_id);
-    timerspan.innerHTML = zone;
+
+    if(timerobj.span.currentTimeZone_id && document.getElementById(timerobj.span.currentTimeZone_id)){
+        zone=Intl.DateTimeFormat().resolvedOptions().timeZone;
+        var timerspan=document.getElementById(timerobj.span.currentTimeZone_id);
+        timerspan.innerHTML = zone;
+    }else{
+        console.error(" timerobj.span.currentTimeZone_id DOM doesnt exist ");
+    }
 }
 
 function shareTimePeer(){
@@ -124,23 +135,32 @@ function startPeersTime(date,zone){
     smday.setMinutes(m);
     smday.setSeconds(s);*/
     console.log(" startPeersTime " , date , zone);
+
+    if(timerobj.span.remoteTimeZone_id && document.getElementById(timerobj.span.remoteTimeZone_id)){
+        var timerspan = document.getElementById(timerobj.span.remoteTimeZone_id);
+        timerspan.innerHTML = zone;
+    }else{
+        console.error("timerobj.span.remoteTimeZone_id DOM doesnt exist ");
+    }
     
-    var timerspan=document.getElementById(timerobj.span.remoteTimeZone_id);
-    timerspan.innerHTML = zone;
 
-    var remotedate = new Date(date);
-    //var remotedate = new Date().toLocaleString('en-US', { timeZone: zone });
-    console.log(" remotedate :" , remotedate);
-    var h = remotedate.getHours();
-    var m = remotedate.getMinutes();
-    var s = remotedate.getSeconds();
+    if(timerobj.span.remoteTime_id && document.getElementById(timerobj.span.remoteTime_id)){
+        var remotedate = new Date(date);
+        //var remotedate = new Date().toLocaleString('en-US', { timeZone: zone });
+        console.log(" remotedate :" , remotedate);
+        var h = remotedate.getHours();
+        var m = remotedate.getMinutes();
+        var s = remotedate.getSeconds();
 
-    h = checkTime(h);
-    m = checkTime(m);
-    s = checkTime(s);
-    var timerspan=document.getElementById(timerobj.span.remoteTime_id);
-    timerspan.innerHTML =   h + ":" + m + ":" + s;
-    var t = setTimeout(startTime, 500);
+        h = checkTime(h);
+        m = checkTime(m);
+        s = checkTime(s);
+        var timerspan=document.getElementById(timerobj.span.remoteTime_id);
+        timerspan.innerHTML =   h + ":" + m + ":" + s;
+        var t = setTimeout(startTime, 500);
+    }else{
+        console.error(" timerobj.span.remoteTime_id DOM does not exist");
+    }
 }
 
 function activateBttons(timerobj){

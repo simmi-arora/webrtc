@@ -76,7 +76,7 @@ var minmaxobj=false;
 var listeninobj=false;
 
 var screenshareobj=false;
-var screen , isScreenOn=0;
+var screen, isScreenOn = 0,  chromeMediaSourceId = null;
 var screen_roomid , screen_userid;
 
 var role="participant";
