@@ -250,14 +250,14 @@ gulp.task('develop', gulpSequence(
 )); 
 
 gulp.task('production', gulpSequence(
-    //'vendorjs',
+    'vendorjs',
     'drawjs' , 
     'drawcss',
     'codejs',
     'codecss',
     'webrtcdevelopmentjs',
     'screensharejs',
-    //'mainstyle',
+    'mainstyle',
     'webrtcdevelopmentcss',
     'serverjs'
 )); 
