@@ -14542,18 +14542,24 @@ function takeSnapshot(peerinfo , callback) {
     var connection = args.connection;*/
 
     function _takeSnapshot(video) {
-        var canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth || video.clientWidth;
-        canvas.height = video.videoHeight || video.clientHeight;
 
-        var context = canvas.getContext('2d');
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        if(video){
+            var canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth || video.clientWidth;
+            canvas.height = video.videoHeight || video.clientHeight;
 
-        /*
-        connection.snapshots[userid] = canvas.toDataURL('image/png');
-        args.callback && args.callback(connection.snapshots[userid]);*/
-    
-        callback(canvas.toDataURL('image/png'));
+            var context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            /*
+            connection.snapshots[userid] = canvas.toDataURL('image/png');
+            args.callback && args.callback(connection.snapshots[userid]);*/
+        
+            callback(canvas.toDataURL('image/png'));
+        }else{
+            callback("");
+        }
+
     }
 
     if (peerinfo.videoContainer) return _takeSnapshot(document.getElementById(peerinfo.videoContainer));
@@ -15921,8 +15927,6 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     /*downloadButton.setAttribute("class" , "btn btn-primary");*/
     /*downloadButton.setAttribute("style", "color:white");*/
     //downloadButton.innerHTML='<a href="' +fileurl + '" download="' + filename + '">'+'<i class="fa fa-download" style="font-size: 25px;"></i>'+' </a>';
-<<<<<<< HEAD
-    
     if (fileshareobj.filelist.saveicon) {
         var img = document.createElement("img");
         img.src = fileshareobj.filelist.downloadicon;
@@ -15930,9 +15934,6 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     } else {
         downloadButton.innerHTML = '<i class="fa fa-download" style=" color: #615aa8;padding: 10px; font-size: larger;"></i>';
     }
-=======
-    downloadButton.innerHTML='<i class="fa fa-download" style="font-size: 25px;"></i>';
->>>>>>> 748f138506e060bb5f283aa7fc2c6f028d031c50
     downloadButton.onclick = function () {
 
         alert(" downloadButton filetype ", filetype);
@@ -15998,7 +15999,6 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     /*    
     showButton.setAttribute("class" , "btn btn-primary");
     showButton.innerHTML='show';*/
-<<<<<<< HEAD
     if (fileshareobj.filelist.saveicon) {
         var img = document.createElement("img");
         img.src = fileshareobj.filelist.showicon;
@@ -16006,9 +16006,6 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     } else {
         showButton.innerHTML = '<i class="fa fa-eye-slash" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
     }
-=======
-    showButton.innerHTML = '<i class="fa fa-eye-slash" style="font-size: 25px;"></i>';
->>>>>>> 748f138506e060bb5f283aa7fc2c6f028d031c50
     repeatFlagHideButton = filename;
     //repeatFlagShowButton = filename;
     showButton.onclick = function () {
@@ -16025,11 +16022,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
             }); 
             repeatFlagShowButton = filename;
             repeatFlagHideButton = "";
-<<<<<<< HEAD
             showButton.innerHTML = '<i class="fa fa-eye-slash" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
-=======
-            showButton.innerHTML = '<i class="fa fa-eye-slash" style="font-size: 25px;"></i>';
->>>>>>> 748f138506e060bb5f283aa7fc2c6f028d031c50
             console.log(" Executed script to show the file and set repeatFlagShowButton =  ", repeatFlagShowButton, " and set repeatFlagHideButton =", repeatFlagHideButton);
         } else if (repeatFlagShowButton == filename && repeatFlagHideButton != filename){
             repeatFlagShowButton = "";
@@ -16043,11 +16036,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
                 _filetype: filetype
             });
             repeatFlagHideButton = filename;
-<<<<<<< HEAD
             showButton.innerHTML = '<i class="fa fa-eye" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
-=======
-            showButton.innerHTML = '<i class="fa fa-eye" style="font-size: 25px;"></i>';
->>>>>>> 748f138506e060bb5f283aa7fc2c6f028d031c50
             console.log(" Executed script to hide the file and set repeatFlagShowButton =  ", repeatFlagShowButton, " and set repeatFlagHideButton =", repeatFlagHideButton);
         }
     };
@@ -16873,6 +16862,8 @@ Listen -In
 
 if(document.getElementById("ListenInButton")){
 
+	var listeninLink = window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0';
+  	
   	var modalBox=document.createElement("div");
   	modalBox.className="modal fade";
   	modalBox.setAttribute("role" , "dialog");
@@ -16928,6 +16919,12 @@ if(document.getElementById("ListenInButton")){
 		//alert(window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0');
 	}*/
 }
+
+if(document.getElementById('listenInLink')){
+	var listeninLink = window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0';
+	document.getElementById("listenInLink").value = listenInLink;
+}
+
 /***************************************************************************
 cursor sharing 
 ***************************************************************************/
@@ -17242,22 +17239,28 @@ Timer
 var hours,mins,secs;
 
 function startsessionTimer(timerobj){
-    hours=document.getElementById(timerobj.counter.hours);
-    mins=document.getElementById(timerobj.counter.minutes);
-    secs=document.getElementById(timerobj.counter.seconds);
 
-    if(timerobj.type=="forward"){
-        startForwardTimer();
-        hours.innerHTML=0;
-        mins.innerHTML=0;
-        secs.innerHTML=0;
+    if(timerobj.counter.hours && timerobj.counter.minutes && timerobj.counter.seconds ){
+        hours = document.getElementById(timerobj.counter.hours);
+        mins = document.getElementById(timerobj.counter.minutes);
+        secs = document.getElementById(timerobj.counter.seconds);
 
-    }else if (timerobj.type=="backward"){
-        hours.innerHTML=0;
-        mins.innerHTML=3;
-        secs.innerHTML=0;
-        startBackwardTimer();
+        if(timerobj.type=="forward"){
+            startForwardTimer();
+            hours.innerHTML=0;
+            mins.innerHTML=0;
+            secs.innerHTML=0;
+
+        }else if (timerobj.type=="backward"){
+            hours.innerHTML=0;
+            mins.innerHTML=3;
+            secs.innerHTML=0;
+            startBackwardTimer();
+        }
+    }else{
+        console.error(" timerobj.counter DOM elemnts not found ");
     }
+
 }
 
 function startBackwardTimer(){
@@ -17341,9 +17344,14 @@ function startTime() {
 }
 
 function timeZone(){
-    zone=Intl.DateTimeFormat().resolvedOptions().timeZone;
-    var timerspan=document.getElementById(timerobj.span.currentTimeZone_id);
-    timerspan.innerHTML = zone;
+
+    if(timerobj.span.currentTimeZone_id && document.getElementById(timerobj.span.currentTimeZone_id)){
+        zone=Intl.DateTimeFormat().resolvedOptions().timeZone;
+        var timerspan=document.getElementById(timerobj.span.currentTimeZone_id);
+        timerspan.innerHTML = zone;
+    }else{
+        console.error(" timerobj.span.currentTimeZone_id DOM doesnt exist ");
+    }
 }
 
 function shareTimePeer(){
@@ -17362,23 +17370,32 @@ function startPeersTime(date,zone){
     smday.setMinutes(m);
     smday.setSeconds(s);*/
     console.log(" startPeersTime " , date , zone);
+
+    if(timerobj.span.remoteTimeZone_id && document.getElementById(timerobj.span.remoteTimeZone_id)){
+        var timerspan = document.getElementById(timerobj.span.remoteTimeZone_id);
+        timerspan.innerHTML = zone;
+    }else{
+        console.error("timerobj.span.remoteTimeZone_id DOM doesnt exist ");
+    }
     
-    var timerspan=document.getElementById(timerobj.span.remoteTimeZone_id);
-    timerspan.innerHTML = zone;
 
-    var remotedate = new Date(date);
-    //var remotedate = new Date().toLocaleString('en-US', { timeZone: zone });
-    console.log(" remotedate :" , remotedate);
-    var h = remotedate.getHours();
-    var m = remotedate.getMinutes();
-    var s = remotedate.getSeconds();
+    if(timerobj.span.remoteTime_id && document.getElementById(timerobj.span.remoteTime_id)){
+        var remotedate = new Date(date);
+        //var remotedate = new Date().toLocaleString('en-US', { timeZone: zone });
+        console.log(" remotedate :" , remotedate);
+        var h = remotedate.getHours();
+        var m = remotedate.getMinutes();
+        var s = remotedate.getSeconds();
 
-    h = checkTime(h);
-    m = checkTime(m);
-    s = checkTime(s);
-    var timerspan=document.getElementById(timerobj.span.remoteTime_id);
-    timerspan.innerHTML =   h + ":" + m + ":" + s;
-    var t = setTimeout(startTime, 500);
+        h = checkTime(h);
+        m = checkTime(m);
+        s = checkTime(s);
+        var timerspan=document.getElementById(timerobj.span.remoteTime_id);
+        timerspan.innerHTML =   h + ":" + m + ":" + s;
+        var t = setTimeout(startTime, 500);
+    }else{
+        console.error(" timerobj.span.remoteTime_id DOM does not exist");
+    }
 }
 
 function activateBttons(timerobj){

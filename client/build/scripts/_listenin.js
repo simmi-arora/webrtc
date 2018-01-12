@@ -4,6 +4,8 @@ Listen -In
 
 if(document.getElementById("ListenInButton")){
 
+	var listeninLink = window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0';
+  	
   	var modalBox=document.createElement("div");
   	modalBox.className="modal fade";
   	modalBox.setAttribute("role" , "dialog");
@@ -61,5 +63,6 @@ if(document.getElementById("ListenInButton")){
 }
 
 if(document.getElementById('listenInLink')){
-document.getElementById("listenInLink").innerHTML = window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0';
+	var listeninLink = window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0';
+	document.getElementById("listenInLink").value = listenInLink;
 }
