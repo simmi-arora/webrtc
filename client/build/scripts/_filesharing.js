@@ -338,7 +338,7 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
         image.id= "display"+filename; 
         elementDisplay=image;
 
-    } else if (filetype == "sessionRecording") {
+    }else if (filetype == "sessionRecording") {
 
         alert(" Session Reording");
         var filename = filename.videoname+"_"+filename.audioname;
@@ -370,7 +370,6 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
 
         video.play();
         audio.play();
-
 
     }else if(filetype.indexOf("videoScreenRecording")>-1){
         console.log("videoScreenRecording " , fileurl);
@@ -683,6 +682,9 @@ function createFileListingBox(peerinfo, parent){
 
 function createFileSharingDiv(peerinfo){
     console.log(" -------createFileSharingDiv  " , peerinfo);
+
+    if(peerinfo.role =="inspector") return;
+
     if (!document.getElementById(peerinfo.fileShare.outerbox)){
         var parentFileShareContainer = document.getElementById(fileshareobj.fileShareContainer);
         createFileSharingBox(peerinfo , parentFileShareContainer);

@@ -693,3 +693,75 @@ function screenshareNotification(message , type){
     }
 
 }
+
+function createExtensionInstallWindow (){
+    try{
+        var modalBox = document.createElement("div");
+        modalBox.className = "modal fade";
+        modalBox.setAttribute("role", "dialog");
+        modalBox.id = "screensharedialog";
+
+        var modalinnerBox = document.createElement("div");
+        modalinnerBox.className = "modal-dialog";
+
+        var modal = document.createElement("div");
+        modal.className = "modal-content";
+
+        var modalheader = document.createElement("div");
+        modalheader.className = "modal-header";
+
+        var closeButton = document.createElement("button");
+        closeButton.className = "close";
+        closeButton.setAttribute("data-dismiss", "modal");
+        closeButton.innerHTML = "&times;";
+
+        var title = document.createElement("h4");
+        title.className = "modal-title";
+        title.innerHTML = "Install extension";
+
+        modalheader.appendChild(title);
+        modalheader.appendChild(closeButton);
+
+
+        var modalbody = document.createElement("div");
+        modalbody.className = "modal-body";
+
+        var div = document.createElement("div");
+        div.innerHTML = "install screen share extension ";
+
+        var button = document.createElement("button");
+        button.innerHTML = " Install ";
+        button.onclick = function (e) {
+            chrome.webstore.install("https://chrome.google.com/webstore/detail/" + screenshareobj.extensionID,
+                function () {
+                    console.log("Chrome extension inline installation - success from assignScreenInstallButton . Now  createOrAssignScreenshareButton with ", screenshareobj);
+                    window.location.reload();
+                }, function (e) {
+                    console.error("Chrome extension inline installation - fail ", e);
+                });
+            // Prevent the opening of the Web Store page
+            e.preventDefault();
+        };
+
+        modalbody.appendChild(div);
+        modalbody.appendChild(button);
+
+        modal.appendChild(modalheader);
+        modal.appendChild(modalbody);
+
+        modalinnerBox.appendChild(modal);
+        modalBox.appendChild(modalinnerBox);
+
+        if(document.getElementById("mainDiv")){
+            var mainDiv = document.getElementById("mainDiv");
+            mainDiv.appendChild(modalBox);
+
+            //document.getElementById("screensharedialog").showModal();
+            $("#screensharedialog").modal("show");            
+        }
+
+    }catch(e){
+        console.error("[ createExtensionInstallWindow - Screenshare.js]" , e); 
+    }
+                                
+}
