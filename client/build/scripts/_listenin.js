@@ -63,6 +63,16 @@ if(document.getElementById("ListenInButton")){
 }
 
 if(document.getElementById('listenInLink')){
-	var listeninLink = window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0';
-	document.getElementById("listenInLink").value = listenInLink;
+	try{
+		var currSession =  window.location.href;
+		console.log(" Current Session ", currSession);
+	
+		var listeninSession = currSession+'?appname=webrtcwebcall&role=inspector&audio=0&video=0';
+		console.log(" Inspector Link " , listeninSession);
+
+		document.getElementById("listenInLink").value = listeninSession;
+	}catch(e){
+		console.error(" Listen In :". e);
+	}
+
 }

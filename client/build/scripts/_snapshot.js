@@ -44,32 +44,37 @@ function createSnapshotButton(controlBarName , peerinfo){
 Snapshot
 ************************************************/
 function takeSnapshot(peerinfo , callback) {
+    try{
+
+        function _takeSnapshot(video) {
+
+            if(video){
+                var canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth || video.clientWidth;
+                canvas.height = video.videoHeight || video.clientHeight;
+
+                var context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                /*
+                connection.snapshots[userid] = canvas.toDataURL('image/png');
+                args.callback && args.callback(connection.snapshots[userid]);*/
+            
+                callback(canvas.toDataURL('image/png'));
+            }else{
+                callback("");
+            }
+
+        }
+
+        if (peerinfo.videoContainer) return _takeSnapshot(document.getElementById(peerinfo.videoContainer));
+        else return "empty";
+    }catch(e){
+        console.error(" [Snapshot - take snapshot] " , e);
+    }
     /*
     var userid = args.userid;
     var connection = args.connection;*/
-
-    function _takeSnapshot(video) {
-
-        if(video){
-            var canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth || video.clientWidth;
-            canvas.height = video.videoHeight || video.clientHeight;
-
-            var context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            /*
-            connection.snapshots[userid] = canvas.toDataURL('image/png');
-            args.callback && args.callback(connection.snapshots[userid]);*/
-        
-            callback(canvas.toDataURL('image/png'));
-        }else{
-            callback("");
-        }
-
-    }
-
-    if (peerinfo.videoContainer) return _takeSnapshot(document.getElementById(peerinfo.videoContainer));
 
     /*
     for (var stream in connection.streams) {

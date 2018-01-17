@@ -250,20 +250,25 @@ function transitionToWaiting() {
 }
 
 function attachMediaStream(element, stream) {
-    console.log("element.src", typeof element.src ,typeof element.srcObject );
-    if (typeof element.src == 'string') {
-        element.src = URL.createObjectURL(stream);
-    }else if (typeof element.srcObject == 'object') {
-        element.srcObject = stream;
-    }else{
-        console.log('Error attaching stream to element.' , element , stream);
+    try{
+        console.log("[ Mediacontrol - attachMediaStream ] element.src", typeof element.src ,typeof element.srcObject , " || stream " + stream );
+        if (typeof element.src == 'string') {
+            element.src = URL.createObjectURL(stream);
+        }else if (typeof element.srcObject == 'object') {
+            element.srcObject = stream;
+        }else{
+            console.log('Error attaching stream to element.' , element , stream);
+        }
+
+        if(element.hidden){
+            element.hidden=false;
+        }
+
+        console.log(" Media Stream attached ");
+    }catch(e){
+        console.error(" error" , e);
     }
 
-    if(element.hidden){
-        element.hidden=false;
-    }
-
-    console.log(" Media Stream attached ");
 }
 
 

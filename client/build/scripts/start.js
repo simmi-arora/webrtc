@@ -164,75 +164,11 @@ try{
                             console.log("is extension installed  ? ", extensioninstalled);
 
                             if (extensioninstalled == 'not-installed') {
-
-                                var modalBox = document.createElement("div");
-                                modalBox.className = "modal fade";
-                                modalBox.setAttribute("role", "dialog");
-                                modalBox.id = "screensharedialog";
-
-                                var modalinnerBox = document.createElement("div");
-                                modalinnerBox.className = "modal-dialog";
-
-                                var modal = document.createElement("div");
-                                modal.className = "modal-content";
-
-                                var modalheader = document.createElement("div");
-                                modalheader.className = "modal-header";
-
-                                var closeButton = document.createElement("button");
-                                closeButton.className = "close";
-                                closeButton.setAttribute("data-dismiss", "modal");
-                                closeButton.innerHTML = "&times;";
-
-                                var title = document.createElement("h4");
-                                title.className = "modal-title";
-                                title.innerHTML = "Install extension";
-
-                                modalheader.appendChild(title);
-                                modalheader.appendChild(closeButton);
-
-
-                                var modalbody = document.createElement("div");
-                                modalbody.className = "modal-body";
-
-                                var div = document.createElement("div");
-                                div.innerHTML = "install screen share extension ";
-
-                                var button = document.createElement("button");
-                                button.innerHTML = " Install ";
-                                button.onclick = function (e) {
-                                    chrome.webstore.install("https://chrome.google.com/webstore/detail/" + screenshareobj.extensionID,
-                                        function () {
-                                            console.log("Chrome extension inline installation - success from assignScreenInstallButton . Now  createOrAssignScreenshareButton with ", screenshareobj);
-                                            window.location.reload();
-                                        }, function (e) {
-                                            console.error("Chrome extension inline installation - fail ", e);
-                                        });
-                                    // Prevent the opening of the Web Store page
-                                    e.preventDefault();
-                                };
-
-                                modalbody.appendChild(div);
-                                modalbody.appendChild(button);
-
-                                modal.appendChild(modalheader);
-                                modal.appendChild(modalbody);
-
-                                modalinnerBox.appendChild(modal);
-                                modalBox.appendChild(modalinnerBox);
-
-                                var mainDiv = document.getElementById("mainDiv");
-                                mainDiv.appendChild(modalBox);
-
-                                //document.getElementById("screensharedialog").showModal();
-                                $("#screensharedialog").modal("show");
-                            } else {
-                                console.log(" Resolve promise inside setwidgets as the screenshare extension is not not-installed ");
-                                setWidgets();
-                                startSession(rtcConn, sessionid);
-
+                                createExtensionInstallWindow();
                             }
-                        }) 
+                            setWidgets();
+                            startSession(rtcConn, sessionid);
+                        })
                 )
                 .catch(function (err) {
                     console.error(" Promise rejected " , err);
@@ -246,7 +182,7 @@ try{
     set Rtc connection
     */
     var setRtcConn = function () {
-            return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
 
             rtcConn.connectionType = null,
                 rtcConn.remoteUsers = [],
@@ -271,7 +207,7 @@ try{
                 rtcConn.onNewParticipant = function (participantId, userPreferences) {
                     console.log("onNewParticipant", participantId, userPreferences);
                     if (webcallpeers.length <= remoteobj.maxAllowed) {
-                        updatePeerInfo(participantId, remoteusername, remotecolor, "", "remote");
+                        updatePeerInfo(participantId, remoteusername, remotecolor, "", "role", "remote");
                     } else {
                         shownotificationWarning("Another user is trying to join this channel but max count [ " + remoteobj.maxAllowed + " ] is reached");
                     }
@@ -873,41 +809,49 @@ try{
                 console.log("========================== opened-channel", event, event.status, event.channel == sessionid);
                 if (event.status && event.channel == sessionid) {
                     try {
+
+                        console.log(" [open-channel-resp ] video:" ,  incomingVideo,
+                            " audio: " , incomingAudio ,
+                            " data: " , incomingData , 
+                            " OfferToReceiveAudio: " , outgoingAudio,
+                            " OfferToReceiveVideo: " ,outgoingVideo
+                        );
+
                         rtcConn.connectionType = "open",
 
-                            rtcConn.session = {
-                                video: incomingVideo,
-                                audio: incomingAudio,
-                                data: incomingData
-                            },
+                        rtcConn.session = {
+                            video: incomingVideo,
+                            audio: incomingAudio,
+                            data: incomingData
+                        },
 
-                            rtcConn.sdpConstraints.mandatory = {
-                                OfferToReceiveAudio: outgoingAudio,
-                                OfferToReceiveVideo: outgoingVideo
-                            },
+                        rtcConn.sdpConstraints.mandatory = {
+                            OfferToReceiveAudio: outgoingAudio,
+                            OfferToReceiveVideo: outgoingVideo
+                        },
 
-                            rtcConn.open(event.channel, function () {
+                        rtcConn.open(event.channel, function () {
 
-                                if (selfuserid == null) {
-                                    selfuserid = rtcConn.userid;
+                            if (selfuserid == null) {
+                                selfuserid = rtcConn.userid;
 
-                                    if (tempuserid != selfuserid)
-                                        socket.emit("update-channel", {
-                                            type: "change-userid",
-                                            channel: rtcConn.channel,
-                                            sender: selfuserid,
-                                            extra: {
-                                                old: tempuserid,
-                                                new: selfuserid
-                                            }
-                                        });
-                                }
+                                if (tempuserid != selfuserid)
+                                    socket.emit("update-channel", {
+                                        type: "change-userid",
+                                        channel: rtcConn.channel,
+                                        sender: selfuserid,
+                                        extra: {
+                                            old: tempuserid,
+                                            new: selfuserid
+                                        }
+                                    });
+                            }
 
-                                updatePeerInfo(selfuserid, selfusername, selfcolor, selfemail, "local");
-                                console.info(" trying to open a channel on WebRTC SDP ");
-                                rtcConn.dontCaptureUserMedia = false,
-                                rtcConn.getUserMedia();
-                            });
+                            updatePeerInfo(selfuserid, selfusername, selfcolor, selfemail, "role" , "local");
+                            console.info(" trying to open a channel on WebRTC SDP ");
+                            rtcConn.dontCaptureUserMedia = false,
+                            rtcConn.getUserMedia();
+                        });
                     } catch (e) {
                         console.error(e);
                     }
@@ -920,29 +864,41 @@ try{
             socket.on("join-channel-resp", function (event) {
                 console.log("===========================joined-channel", event);
                 if (event.status && event.channel == sessionid) {
+                    
+                    console.log(" [ join-channel-resp ] video:" ,  incomingVideo,
+                        " audio: " , incomingAudio ,
+                        " data: " , incomingData , 
+                        " OfferToReceiveAudio: " , outgoingAudio,
+                        " OfferToReceiveVideo: " , outgoingVideo
+                    ); 
+
                     rtcConn.connectionType = "join",
-                        rtcConn.session = {
-                            video: incomingVideo,
-                            audio: incomingAudio,
-                            data: incomingData
-                        },
-                        rtcConn.sdpConstraints.mandatory = {
-                            OfferToReceiveAudio: outgoingAudio,
-                            OfferToReceiveVideo: outgoingVideo
-                        },
-                        rtcConn.remoteUsers = event.users,
-                        updatePeerInfo(rtcConn.userid, selfusername, selfcolor, selfemail, rtcConn.type);
+                    rtcConn.session = {
+                        video: incomingVideo,
+                        audio: incomingAudio,
+                        data: incomingData
+                    },
+                    rtcConn.sdpConstraints.mandatory = {
+                        OfferToReceiveAudio: outgoingAudio,
+                        OfferToReceiveVideo: outgoingVideo
+                    },
+                    rtcConn.remoteUsers = event.users,
+                    updatePeerInfo(rtcConn.userid, selfusername, selfcolor, selfemail, role, rtcConn.type);
 
                     for (x in rtcConn.remoteUsers) {
-                        updatePeerInfo(rtcConn.remoteUsers[x], remoteusername, remotecolor, remoteemail, "remote");
+                        updatePeerInfo(rtcConn.remoteUsers[x], remoteusername, remotecolor, remoteemail, "remote role" , "remote");
                         if (role == "inspector") {
                             shownotificationWarning("This session is being inspected ");
                         }
                     }
 
                     rtcConn.connectionDescription = rtcConn.join(event.channel);
-                    rtcConn.dontCaptureUserMedia = false,
-                    rtcConn.getUserMedia();
+
+                    if(role != "inspector"){
+                        rtcConn.dontCaptureUserMedia = false,
+                        rtcConn.getUserMedia();                        
+                    }
+
                     console.log(" trying to join a channel on WebRTC SDP ");
                 } else {
                     alert("signaller doesnt allow you to join the channel");
@@ -960,8 +916,9 @@ try{
                                 event.data.extra.name = "REMOTE";
                                 event.data.extra.color = remotecolor;
                             }
-                            updatePeerInfo(event.data.sender, event.data.extra.name, event.data.extra.color, event.data.extra.email, "remote");
-                            shownotification(event.type);
+                            updatePeerInfo(event.data.sender, event.data.extra.name, event.data.extra.color, event.data.extra.email, event.data.extra.role , "remote");
+                            shownotification( event.data.extra.role  + "  " +event.type);
+
                         }
                     } else {
                         shownotification(event.msgtype + " : " + event.message);
@@ -1066,7 +1023,7 @@ try{
                     document.getElementById(remoteobj.dynamicVideos.videoContainer).appendChild(video);
                     remvid=remoteVideos[vi];
                 }else{
-                    remvid=document.getElementsByName(remoteVideos[vi])[0];
+                    remvid = document.getElementsByName(remoteVideos[vi])[0];
                     console.log("remote video not unlimited " , remvid);
                 }
 
@@ -1132,8 +1089,8 @@ try{
      * @param {string} usercolor
      * @param {string} type
      */
-    function updatePeerInfo(userid , username , usecolor , useremail,  type ){
-        console.log("updating peerInfo: " , userid , type);
+    function updatePeerInfo(userid , username , usecolor , useremail, userrole ,  type ){
+        console.log("updating peerInfo: " , userid , username , usecolor , useremail, userrole ,  type);
         for(x in webcallpeers){
             if(webcallpeers[x].userid==userid) {
                 console.log("UserID is already existing , webcallpeers");
@@ -1149,6 +1106,7 @@ try{
             name  :  username,
             color : usecolor,
             email : useremail,
+            role : userrole,
             controlBarName: "control-video"+userid,
             filearray : [],
             vid : "video"+type+"_"+userid
@@ -1324,6 +1282,7 @@ try{
      */
     joinWebRTC=function(channel , userid){
         shownotification("Joining an existing session "+channel+ " selfuserid "+ selfuserid);
+        console.log("Joining an existing session "+channel+ " selfuserid "+ selfuserid);
         
         if (selfuserid==null)
             selfuserid=tempuserid;
