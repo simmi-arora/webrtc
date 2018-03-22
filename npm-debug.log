@@ -1,0 +1,136 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files\\nodejs\\node.exe',
+1 verbose cli   'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'publish' ]
+2 info using npm@3.3.6
+3 info using node@v5.0.0
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec Result {
+7 silly cache add   raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: 'C:\\Users\\altan\\Documents\\webrtcdev\\webrtcdevelopment',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory C:\Users\altan\AppData\Roaming\npm-cache\webrtcdevelopment\1.6.420\package.tgz not in flight; packing
+9 info lifecycle webrtcdevelopment@1.6.420~prepublish: webrtcdevelopment@1.6.420
+10 silly lifecycle webrtcdevelopment@1.6.420~prepublish: no script for prepublish, continuing
+11 verbose tar pack [ 'C:\\Users\\altan\\AppData\\Roaming\\npm-cache\\webrtcdevelopment\\1.6.420\\package.tgz',
+11 verbose tar pack   'C:\\Users\\altan\\Documents\\webrtcdev\\webrtcdevelopment' ]
+12 verbose tarball C:\Users\altan\AppData\Roaming\npm-cache\webrtcdevelopment\1.6.420\package.tgz
+13 verbose folder C:\Users\altan\Documents\webrtcdev\webrtcdevelopment
+14 verbose addLocalTarball adding from inside cache C:\Users\altan\AppData\Roaming\npm-cache\webrtcdevelopment\1.6.420\package.tgz
+15 silly cache afterAdd webrtcdevelopment@1.6.420
+16 verbose afterAdd C:\Users\altan\AppData\Roaming\npm-cache\webrtcdevelopment\1.6.420\package\package.json not in flight; writing
+17 verbose afterAdd C:\Users\altan\AppData\Roaming\npm-cache\webrtcdevelopment\1.6.420\package\package.json written
+18 silly publish { name: 'webrtcdevelopment',
+18 silly publish   version: '1.6.420',
+18 silly publish   description: 'webrtc based communication and collaboration client . contains lot of experiments modules ',
+18 silly publish   main: 'webrtcserver.js',
+18 silly publish   engines: { node: '5.*' },
+18 silly publish   dependencies:
+18 silly publish    { googleapis: '^3.1.0',
+18 silly publish      'node-static': '^0.7.7',
+18 silly publish      'socket.io': '0.9.*',
+18 silly publish      supervisor: '^0.10.0',
+18 silly publish      restify: '*',
+18 silly publish      log: '*' },
+18 silly publish   devDependencies:
+18 silly publish    { apidoc: '*',
+18 silly publish      chai: '^3.5.0',
+18 silly publish      grunt: '~0.4.5',
+18 silly publish      'grunt-apidoc': '^0.11.0',
+18 silly publish      'grunt-contrib-copy': '^1.0.0',
+18 silly publish      'grunt-contrib-jshint': '~0.10.0',
+18 silly publish      'grunt-contrib-nodeunit': '~0.4.1',
+18 silly publish      'grunt-contrib-uglify': '~0.5.0',
+18 silly publish      'grunt-contrib-watch': '^1.0.0',
+18 silly publish      gulp: '*',
+18 silly publish      'gulp-add-src': '^0.2.0',
+18 silly publish      'gulp-base64': '^0.1.3',
+18 silly publish      'gulp-cat': '^0.3.3',
+18 silly publish      'gulp-concat': '^2.6.0',
+18 silly publish      'gulp-minify-css': '^1.2.4',
+18 silly publish      'gulp-remote-src': '^0.4.1',
+18 silly publish      'gulp-sequence': '^0.4.5',
+18 silly publish      'gulp-uglify': '^1.5.3',
+18 silly publish      jshint: '^2.6.0',
+18 silly publish      mocha: '*' },
+18 silly publish   scripts:
+18 silly publish    { test: './node_modules/mocha/bin/mocha client/tests',
+18 silly publish      run: 'gulp & node webrtcserver.js',
+18 silly publish      prestart: 'gulp production & apidoc -v -i /home/altanai/webrtcWSwksppace/webrtcdevelopment/ -e node_modules/  -o client/build/api/doc',
+18 silly publish      start: 'supervisor -i ./public/ webrtcserver.js' },
+18 silly publish   repository:
+18 silly publish    { type: 'git',
+18 silly publish      url: 'git+https://github.com/altanai/webrtc.git' },
+18 silly publish   keywords:
+18 silly publish    [ 'webrtc',
+18 silly publish      'tfx',
+18 silly publish      'communication',
+18 silly publish      'webcall',
+18 silly publish      'realtime',
+18 silly publish      'communication graphs' ],
+18 silly publish   author: { name: 'altanai', email: 'tara181989@gmail.com' },
+18 silly publish   license: 'MIT',
+18 silly publish   bugs: { url: 'https://github.com/altanai/webrtc/issues' },
+18 silly publish   homepage: 'https://github.com/altanai/webrtc#readme',
+18 silly publish   readme: '# webrtc\r\nweb real time communication platform \r\n\r\n![alt webrtc development ](http://s20.postimg.org/sywx5rjx5/webrtc_development_logo_1_1.png)\r\n\r\n[![Gitter][GS image]][Gitter]\r\n[![Build Status][BS img]][Build Status]\r\n[![Dependency Status][DS img]][Dependency Status]\r\n[![NPM Status][NS img]][NPM Status]\r\n\r\n[Gitter]: https://gitter.im/altanai/webrtc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge \r\n[Build Status]: https://travis-ci.org/altanai/webrtc\r\n[Dependency Status]: https://david-dm.org/altanai/webrtc\r\n[NPM Status]: https://www.npmjs.com/package/webrtcdevelopment\r\n\r\n[GS img]: https://badges.gitter.im/altanai/webrtc.svg\r\n[BS img]: https://api.travis-ci.org/altanai/webrtc.png\r\n[DS img]: https://david-dm.org/altanai/webrtc.svg\r\n[NS img]: https://nodei.co/npm/webrtcdevelopment.png\r\n\r\nThis is a ready to deploy webrtc SDK and SaaS for a customized and flexible communication and collaboration solution .\r\n\r\nSDK\r\n----\r\n\r\n##### Architecture \r\nThe Solution primarily contains nodejs frameworks for hosting the project and webbsockets over socket.io to perform offer - answer handshake and share SDP (Session description protocol ).\r\n![alt webrtc development architecture ](https://s32.postimg.org/uamq0uq9h/webrtcdevelopment_SDK.png)\r\n\r\n##### Technologies used \r\n\r\n1. WebRTC \r\nWeb based real time communication framework.\r\nread more on [webrtc](https://altanaitelecom.wordpress.com/2013/08/02/what-is-webrtc/ )\r\n\r\n2. Node (v5.0.0)\r\nAsynchronous event driven JavaScript runtime\r\n\r\n3. socket.io ( v0.9)\r\nCommunication and signalling \r\n\r\nNote  : while its possible to use any prtotocol like SIP , XMPP , AJAX , JSON etc for this purpose , modifying thsi libabry will require a lot of rework . It would be advisble to start from apprtc directly in that case .  \r\n\r\n4. Grunt\r\nIt is a task Runner and its used to automate running of command in gruntfile\r\n```\r\ngrunt -verbose\r\n```\r\n\r\nGet Started\r\n----\r\n\r\nTo run this project following steps need to be followed in that order :\r\n\r\n##### 1. get the project from github \r\n```\r\ngit clone https://github.com/altanai/webrtc.git webrtc\r\n```\r\n\r\n##### 2. install nvm ( node version manager ) \r\n```\r\ncurl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.2/install.sh | bash\r\n. ~/.nvm/nvm.sh\r\nnvm install v5.0.0\r\nnvm use v5.0.0\r\n```\r\n\r\n##### 3. install npm and update the dependencies \r\nIt will read the package.json and update the dependencies in node_modules folder on project location\r\n\r\n```\r\n\tsudo apt-get install npm\r\n\tnpm install \r\n```\r\n\r\n###### 4. Change ENV variables and Test\r\n\r\nTo change the ports for running the https server and rest server, goto env.json\r\n```\r\n{       \r\n    "hostname"      : "host",        \r\n\t"enviornment"   : "local",        \r\n\t"host"        \t: "localhost",\r\n\t"jsdebug"      :  true,          \r\n\t"httpsPort"    :  8086,\r\n\t"restPort"     :  8087,\r\n    "extensionID"   : "elfbfompfpakbefoaicaeoabnnoihoac"\r\n}\r\n```\r\n\r\nTo run the tests\r\n```\r\n\tnpm test\r\n```\r\n\r\n##### 5. Start up the Server \r\n\r\nTo start the Server in dev mode  and stop the server as soon as Ctrl+ C is hit or the terminal widnow is closed . \r\n```\r\n\tnode webrtcserver.js\r\n```\r\nread more about [node](https://nodejs.org/en/about/ )\r\n\r\nTo start the Server using npm start ( using package.json) , behaves same as earlier run using node. We use supervisor to restart the server incase of exceptions or new code .\r\n\r\n```\r\n\tnpm start\r\n```\r\n\r\n##### 6. JS and CSS Libs\r\n\r\nMake a webpage and give holders for video and button elements that SDK will use .\r\n\r\nInside the head tag of html\r\n    minScripts/webrtcdevelopment_header.css\r\n    minScripts/webrtcdevelopment_header.js\r\n\r\nAfter the body tag of html\r\n    minScripts/webrtcdevelopment.css\r\n    minScripts/webrtcdevelopment.js\r\n\r\n\r\n##### 7. Configure\r\n\r\n\r\nCreate the webrtc dom object with local and remote objects\r\n\r\nlocal object  :\r\n```\r\n    var local={\r\n        video: "myAloneVideo",              // name of the local video element\r\n        videoClass:"",                      // class of the localvideo\r\n        videoContainer : "singleVideoContainer", // outer container of the video element\r\n        userDisplay:false,                  // do you want to display user details\r\n        userMetaDisplay:false,\r\n        userdetails:{                       //users details include name , emeial , color\r\n            username: username,\r\n            usercolor: "#DDECEF",\r\n            useremail: useremail\r\n        }\r\n    };\r\n```\r\n\r\nremote object  :\r\n```\r\n    var remote={\r\n        videoarr: ["myConferenceVideo", "otherConferenceVideo"], // conatiners for the video after session is made \r\n                                                                // first one is usually the local video holder followed by remote video holders\r\n        videoClass:"",\r\n        maxAllowed: "6",\r\n        videoContainer : "confVideoContainer",\r\n        userDisplay:false,\r\n        userMetaDisplay:false,\r\n        dynamicVideos: false \r\n    };\r\n\r\n```\r\n\r\nIncoming and outgoing media configiration  ( self exlanatory ) :\r\n```\r\n    var incoming={\r\n        audio:  true,\r\n        video:  true,\r\n        data:   true,\r\n        screen: true\r\n    };\r\n\r\n    var outgoing={\r\n        audio:  true,\r\n        video:  true,\r\n        data:   true,\r\n        screen: true\r\n    };\r\n\r\n    webrtcdomobj= new WebRTCdom(\r\n        local, remote, incoming, outgoing\r\n    );\r\n```\r\n\r\n____\r\n\r\nGet session id automaically\r\n```\r\nsessionid = init(true);\r\n```\r\nor get session name from user\r\n```\r\nsessionid = init(false);\r\n```\r\n\r\n___\r\n\r\nCreate a session json object with turn credentials nd the session created from above step\r\n\r\nset preference for the incoming and outgoing media connectection. Bydefault all are set to true . \r\n```\r\n    var incoming={\r\n        audio:  true,\r\n        video:  true,\r\n        data:   true,\r\n        screen: true\r\n    };\r\n\r\n    var outgoing={\r\n        audio:  true,\r\n        video:  true,\r\n        data:   true,\r\n        screen: true\r\n    };\r\n```\r\nSet widgets and their properties . Currently available widgets are \r\n\t* Chat\r\n\t* Fileshare\r\n\t* Screen Record\r\n\t* Screen Share\r\n\t* Video Record\r\n\t* Snapshot\r\n\t* Draw on Canvas and Sync\r\n\t* Text Editor and Sync\r\n\t* Mute (audio amd video)\r\n\t* Reconnect\r\n\r\n```\r\n\tvar widgets={\r\n\t}\r\n```\r\nInitiate the webrtcdev contructor \r\n```\r\n    var webrtcdevobj = new WebRTCdev ( \r\n        session,  incoming,  outgoing ,  widgets\r\n    );\r\n```\r\n\r\nStart the session \r\n```\r\n    startcall();\r\n```\r\n\r\n##### 8. VOIP calls and conf\r\nopen tab on chrome or mozilla browser and add a link to the https server using nodejs script\r\nhttps://127.0.0.1:8086/multiparty_fullfeatures.html\r\n\r\n\r\nUsed Libs\r\n----\r\n\r\nFollowing are the additioanl libraries packed with the project \r\n\r\n###### Gulp\r\nMinify and concat the js and css files  into minscripts\r\n```\r\ngulp\r\n```\r\n\r\n###### forever \r\nKeeps running even when window is not active \r\n```\r\ncd WebCall\r\nforever start webrtcserver.js\r\n```\r\n\r\n###### PM2\r\nTo start the Server using PM2 ( a process manager for nodejs)\r\n\r\nLicense\r\n----\r\n\r\nMIT\r\n',
+18 silly publish   readmeFilename: 'README.md',
+18 silly publish   gitHead: '602a87746af8e7081803a9fcdc0ad683195b8198',
+18 silly publish   _id: 'webrtcdevelopment@1.6.420',
+18 silly publish   _shasum: '2ebd38b215062bcc429bb4bf541728ab9579f5b5',
+18 silly publish   _from: '.' }
+19 verbose getPublishConfig undefined
+20 silly mapToRegistry name webrtcdevelopment
+21 silly mapToRegistry using default registry
+22 silly mapToRegistry registry https://registry.npmjs.org/
+23 silly mapToRegistry uri https://registry.npmjs.org/webrtcdevelopment
+24 verbose publish registryBase https://registry.npmjs.org/
+25 silly publish uploading C:\Users\altan\AppData\Roaming\npm-cache\webrtcdevelopment\1.6.420\package.tgz
+26 verbose request uri https://registry.npmjs.org/webrtcdevelopment
+27 verbose request sending authorization for write operation
+28 info attempt registry request try #1 at 9:31:21 PM
+29 verbose request using bearer token for auth
+30 verbose request id 1080c4f12e67394d
+31 http request PUT https://registry.npmjs.org/webrtcdevelopment
+32 http 403 https://registry.npmjs.org/webrtcdevelopment
+33 verbose headers { 'content-type': 'application/json',
+33 verbose headers   'cache-control': 'max-age=300',
+33 verbose headers   'content-length': '95',
+33 verbose headers   'accept-ranges': 'bytes',
+33 verbose headers   date: 'Thu, 22 Mar 2018 16:01:51 GMT',
+33 verbose headers   via: '1.1 varnish',
+33 verbose headers   connection: 'keep-alive',
+33 verbose headers   'x-served-by': 'cache-lcy19233-LCY',
+33 verbose headers   'x-cache': 'MISS',
+33 verbose headers   'x-cache-hits': '0',
+33 verbose headers   'x-timer': 'S1521734484.910314,VS0,VE27145',
+33 verbose headers   vary: 'Accept-Encoding, Accept' }
+34 verbose request invalidating C:\Users\altan\AppData\Roaming\npm-cache\registry.npmjs.org\webrtcdevelopment on PUT
+35 error publish Failed PUT 403
+36 verbose stack Error: You cannot publish over the previously published versions: 1.6.420. : webrtcdevelopment
+36 verbose stack     at makeError (C:\Users\altan\AppData\Roaming\nvm\v5.0.0\node_modules\npm\node_modules\npm-registry-client\lib\request.js:264:12)
+36 verbose stack     at CachingRegistryClient.<anonymous> (C:\Users\altan\AppData\Roaming\nvm\v5.0.0\node_modules\npm\node_modules\npm-registry-client\lib\request.js:252:14)
+36 verbose stack     at Request._callback (C:\Users\altan\AppData\Roaming\nvm\v5.0.0\node_modules\npm\node_modules\npm-registry-client\lib\request.js:172:14)
+36 verbose stack     at Request.self.callback (C:\Users\altan\AppData\Roaming\nvm\v5.0.0\node_modules\npm\node_modules\request\request.js:198:22)
+36 verbose stack     at emitTwo (events.js:87:13)
+36 verbose stack     at Request.emit (events.js:172:7)
+36 verbose stack     at Request.<anonymous> (C:\Users\altan\AppData\Roaming\nvm\v5.0.0\node_modules\npm\node_modules\request\request.js:1063:14)
+36 verbose stack     at emitOne (events.js:82:20)
+36 verbose stack     at Request.emit (events.js:169:7)
+36 verbose stack     at IncomingMessage.<anonymous> (C:\Users\altan\AppData\Roaming\nvm\v5.0.0\node_modules\npm\node_modules\request\request.js:1009:12)
+37 verbose statusCode 403
+38 verbose pkgid webrtcdevelopment
+39 verbose cwd C:\Users\altan\Documents\webrtcdev\webrtcdevelopment
+40 error Windows_NT 10.0.16299
+41 error argv "C:\\Program Files\\nodejs\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "publish"
+42 error node v5.0.0
+43 error npm  v3.3.6
+44 error code E403
+45 error You cannot publish over the previously published versions: 1.6.420. : webrtcdevelopment
+46 error If you need help, you may report this error at:
+46 error     <https://github.com/npm/npm/issues>
+47 verbose exit [ 1, true ]

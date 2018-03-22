@@ -511,8 +511,9 @@ input:focus {
 
 
 .viewerIframeClass{
-    width:100%;
-    height: 100%;
+    width: 100%;
+    height: 98%;
+    position: relative;
 }
 
 .userName{
@@ -791,6 +792,25 @@ video::-webkit-media-controls-current-time-display {}*/
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
 }
+.drawContainerClass{
+    border: 5px solid #777;
+}
+
+.texteditorContainerClass{
+    border: 5px solid #777;
+}
+
+.locationContainerClass{
+    border: 5px solid #777;
+}
+
+.drawBox{
+    height: 30%;
+}
+
+.drawBoard{
+    margin-top: 0px;
+}
 #time{
   color: #000;
   background-color: #blue;
@@ -861,6 +881,7 @@ video::-webkit-media-controls-current-time-display {}*/
 }
 .filesharingWidget{
     overflow: auto;
+    height: 100%;
 }
 
 
