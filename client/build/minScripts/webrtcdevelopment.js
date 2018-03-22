@@ -18706,8 +18706,8 @@ try{
                         data: incomingData
                     },
                     rtcConn.sdpConstraints.mandatory = {
-                        OfferToReceiveAudio: (role == "inspector"?false :outgoingAudio),
-                        OfferToReceiveVideo: (role == "inspector"?false :outgoingVideo)
+                        OfferToReceiveAudio: outgoingAudio,
+                        OfferToReceiveVideo: outgoingVideo
                     },
                     rtcConn.remoteUsers = event.users,
                     updatePeerInfo(rtcConn.userid, selfusername, selfcolor, selfemail, role, rtcConn.type);
@@ -18721,10 +18721,10 @@ try{
 
                     rtcConn.connectionDescription = rtcConn.join(event.channel);
 
-                    /*if(role != "inspector"){*/
+                    if(role != "inspector"){
                         rtcConn.dontCaptureUserMedia = false,
                         rtcConn.getUserMedia();                        
-                    /*}*/
+                    }
 
                     console.log(" trying to join a channel on WebRTC SDP ");
                 } else {
@@ -18850,7 +18850,7 @@ try{
                     document.getElementById(remoteobj.dynamicVideos.videoContainer).appendChild(video);
                     remvid=remoteVideos[vi];
                 }else{
-                    remvid=document.getElementsByName(remoteVideos[vi])[0];
+                    remvid = document.getElementsByName(remoteVideos[vi])[0];
                     console.log("remote video not unlimited " , remvid);
                 }
 

@@ -1,0 +1,19 @@
+.drawContainerClass{
+    border: 5px solid #777;
+}
+
+.texteditorContainerClass{
+    border: 5px solid #777;
+}
+
+.locationContainerClass{
+    border: 5px solid #777;
+}
+
+.drawBox{
+    height: 30%;
+}
+
+.drawBoard{
+    margin-top: 0px;
+}

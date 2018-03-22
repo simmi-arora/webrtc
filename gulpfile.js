@@ -207,6 +207,7 @@ gulp.task('webrtcdevelopmentcss',function() {
       "client/build/css/styles.css",
       "client/build/css/chat.css",
       "client/build/css/cursor.css",
+      "client/build/css/draw.css",
       "client/build/css/timer.css",
       "client/build/css/filesharing.css",
       "client/build/css/screenshare.css"
@@ -250,7 +251,7 @@ gulp.task('develop', gulpSequence(
 )); 
 
 gulp.task('production', gulpSequence(
-    'vendorjs',
+    /*'vendorjs',*/
     'drawjs' , 
     'drawcss',
     'codejs',
