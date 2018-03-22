@@ -34,6 +34,7 @@
 }
 .filesharingWidget{
     overflow: auto;
+    height: 100%;
 }
 
 
