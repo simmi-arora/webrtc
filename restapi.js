@@ -68,14 +68,16 @@ exports.restapi = function(realtimecomm, options , app, properties) {
         if(!req.params.channelid){
             res.json({ 
                 type: true, 
-                result : req.params,
                 data: "channelid is required" 
             });
             return ;
         }
 
         var result = realtimecomm.getChannel(req.params.channelid, 'json');
-        res.json({ type:true , data : result });
+        res.json({ 
+            type:true , 
+            data : result 
+        });
     }
 
     /**
@@ -134,7 +136,7 @@ exports.restapi = function(realtimecomm, options , app, properties) {
     server.use(restify.plugins.dateParser());
     server.use(restify.plugins.queryParser());
     /*server.use(restify.jsonp());*/
-    server.use(restify.plugins.CORS());
+  /*  server.use(restify.plugins.CORS());*/
     /*server.use(restify.fullResponse());*/
     server.use(restify.plugins.bodyParser({ mapParams: true }));
     /*server.use(restify.bodyParser());*/
@@ -143,11 +145,11 @@ exports.restapi = function(realtimecomm, options , app, properties) {
     server.get('/webrtc/details',getWebRTCdetails);
 
     server.get('/session/all-sessions',getAllSessions);
-    server.get('/session/getsession',getSession);
+    server.get('/session/getsession/:channelid',getSession);
     server.get('/session/clients',getSessionClients);
 
     server.get('/user/all-users',getAllUsers);
-    server.get('/user/getuser',getUser);
+    server.get('/user/getuser/:userid',getUser);
 
     function unknownMethodHandler(req, res) {
       if (req.method.toLowerCase() === 'options') {

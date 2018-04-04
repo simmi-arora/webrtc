@@ -209,7 +209,6 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
             }
 
             callback(!!listOfUsers[userid], userid, extra);
-
         });
 
         socket.on('open-channel', function (data) {  
@@ -304,7 +303,7 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
         });
 
         socket.on('update-channel',function(data){
-             console.log("------------update channel------------- ", data.channel," by " , data.sender," -> ", data );
+            console.log("------------update channel------------- ", data.channel," by " , data.sender," -> ", data );
             switch (data.type){
                 case "change-userid":
                     var index = webrtcdevchannels[data.channel].users.indexOf(data.extra.old);
@@ -523,14 +522,14 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
     };
 
     module.getAllChannels=function(format){
-        var sessions=[];
+        var sessions = [];
         for (i in Object.keys(webrtcdevchannels)) { 
             sessions.push(Object.keys(webrtcdevchannels)[i]);
         }
         var output={
-            response:'all',
-            channels: sessions,
-            format:format
+            response : 'all',
+            channelinfo : sessions,
+            format : format
         };
         return output;
     };
@@ -538,9 +537,9 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
     module.getChannel=function(channelid , format){
 
         var output={
-                response:'users',
-                users:webrtcdevchannels[channelid],
-                format:format
+                response : 'channel',
+                channelinfo : webrtcdevchannels[channelid]?webrtcdevchannels[channelid]:null,
+                format : format
             };
         return output;
     };
@@ -581,6 +580,7 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
             };
         return output;
     };
+
     console.log("----------------realtimecomm----------------------");
     console.log(" Socket.io env => "+ properties.enviornment+ " running at\n "+properties.httpsPort);
 
