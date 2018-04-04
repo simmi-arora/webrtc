@@ -509,7 +509,7 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
         }
     }
 
-    /*module.getAll=function(format){
+    module.getAll=function(format){
         var channels=[];
         for (i in webrtcdevchannels) { 
             channels.push(webrtcdevchannels[i]);
@@ -580,7 +580,7 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
                 format:data.format
             };
         return output;
-    };*/
+    };
     console.log("----------------realtimecomm----------------------");
     console.log(" Socket.io env => "+ properties.enviornment+ " running at\n "+properties.httpsPort);
 

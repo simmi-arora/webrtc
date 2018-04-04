@@ -28,10 +28,10 @@ function createVideoContainer(e, style, callback) {
        User Detail attchmenet to Video Element
 *******************************************/
 function attachUserDetails(vid , peerinfo){
-    var nameBox=document.createElement("span");
+    var nameBox=document.createElement("div");
     //nameBox.className="well well-sm";
     nameBox.setAttribute("style","background-color:"+ peerinfo.color);
-    nameBox.className = "widgetBtnClass";
+    nameBox.className = "videoHeaderClass";
     nameBox.innerHTML = peerinfo.name+"<br/>";
     // vid.parentNode.appendChild(nameBox); 
     vid.parentNode.insertBefore(nameBox, vid.parentNode.firstChild);
@@ -67,7 +67,11 @@ function attachControlButtons( vid ,  peerinfo){
     // Conyrol bar holds media control elements like , mute unmute , fillscreen ,. recird , snapshot
     var controlBar= document.createElement("div");
     controlBar.id = controlBarName;
-    controlBar.className= "videoControlBarClass";
+
+    if(peerinfo.type=="local")
+        controlBar.className= "localVideoControlBarClass";
+    else
+        controlBar.className= "remoteVideoControlBarClass";
 
     if(muteobj.active){
         if(muteobj.audio.active){
