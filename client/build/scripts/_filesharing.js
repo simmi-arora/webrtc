@@ -255,10 +255,12 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         } else {
             showButton.innerHTML = '<i class="fa fa-eye-slash" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
         }
+        var countClicks=0;
         repeatFlagHideButton = filename;
-        //repeatFlagShowButton = filename;
+        repeatFlagShowButton = "";
         showButton.onclick = function () {
-            showHideFile(uuid , elementDisplay , fileurl , filename , filetype , showButton);
+            countClicks++;
+            showHideFile(uuid , elementDisplay , fileurl , filename , filetype , showButton , countClicks );
         };
 
         /*
@@ -506,36 +508,32 @@ function syncButton(buttonId){
 * @param {string} filename - name for file 
 * @param {string} filetype - type of  file 
 */
-function showHideFile(uuid , elementDisplay , fileurl , filename , filetype , showHideButton){
-    console.log(" filehsare - show/hide button ", repeatFlagShowButton);
-    if (repeatFlagShowButton != filename && repeatFlagHideButton == filename){
-        showFile( elementDisplay , fileurl , filename , filetype);
-        rtcConn.send({
+function showHideFile(uuid , elementDisplay , fileurl , filename , filetype , showHideButton ,countClicks ){
+    console.log(" filehsare - show/hide button ",  filename , " || ", countClicks);
+    if (countClicks%2==1 ){
+        showFile( elementDisplay , fileurl , filename , filetype );
+        /*rtcConn.send({
             type:"shareFileShow", 
             _uuid: uuid ,
             _element: elementDisplay,
             _fileurl : fileurl, 
             _filename : filename, 
             _filetype : filetype
-        }); 
-        repeatFlagShowButton = filename;
-        repeatFlagHideButton = "";
+        }); */
         showHideButton.innerHTML = '<i class="fa fa-eye-slash" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
-        console.log(" Executed script to show the file and set repeatFlagShowButton =  ", repeatFlagShowButton, " and set repeatFlagHideButton =", repeatFlagHideButton);
-    } else if (repeatFlagShowButton == filename && repeatFlagHideButton != filename){
-        repeatFlagShowButton = "";
+        console.log(" Executed script to show the file");
+    } else if (countClicks%2==0 ){
         hideFile( elementDisplay, filename );
-        rtcConn.send({
+        /*rtcConn.send({
             type: "shareFileHide",
             _uuid: uuid,
             _element: elementDisplay,
             _fileurl: fileurl,
             _filename: filename,
             _filetype: filetype
-        });
-        repeatFlagHideButton = filename;
+        });*/
         showHideButton.innerHTML = '<i class="fa fa-eye" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
-        console.log(" Executed script to hide the file and set repeatFlagShowButton =  ", repeatFlagShowButton, " and set repeatFlagHideButton =", repeatFlagHideButton);
+        console.log(" Executed script to hide the file ");
     }
 }
 

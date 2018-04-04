@@ -48,7 +48,7 @@ exports.restapi = function(realtimecomm, options , app, properties) {
       *
      */
     function getAllSessions(req, res, callback) {
-        var result =realtimecomm.getAllChannels('json');
+        var result = realtimecomm.getAllChannels('json');
         res.json({ type:true , data : result });
     }
 
@@ -61,18 +61,20 @@ exports.restapi = function(realtimecomm, options , app, properties) {
      * @apiParam {String} channelid This is for getting the unique channel 
      *
      * @apiSampleRequest https://localhost:8087/session/getsession
+     * example : https://localhost:8087/session/getsession
      */
     function getSession(req, res, callback) { 
 
         if(!req.params.channelid){
             res.json({ 
                 type: true, 
+                result : req.params,
                 data: "channelid is required" 
             });
-            return;
+            return ;
         }
 
-        var result =realtimecomm.getChannel(req.params.channelid, 'json');
+        var result = realtimecomm.getChannel(req.params.channelid, 'json');
         res.json({ type:true , data : result });
     }
 
@@ -122,19 +124,19 @@ exports.restapi = function(realtimecomm, options , app, properties) {
 
 
     function getSessionClients(req, res, callback) {
-        var result =realtimecomm.getChannelClients('json');
+        var result = realtimecomm.getChannelClients('json');
         res.json({ type:true , data : result });
     }
 
 
-    server.use(restify.acceptParser(server.acceptable));
+    server.use(restify.plugins.acceptParser(server.acceptable));
     /*server.use(restify.authorizationParser());*/
-    server.use(restify.dateParser());
-    server.use(restify.queryParser());
+    server.use(restify.plugins.dateParser());
+    server.use(restify.plugins.queryParser());
     /*server.use(restify.jsonp());*/
-    server.use(restify.CORS());
+    server.use(restify.plugins.CORS());
     /*server.use(restify.fullResponse());*/
-    server.use(restify.bodyParser({ mapParams: true }));
+    server.use(restify.plugins.bodyParser({ mapParams: true }));
     /*server.use(restify.bodyParser());*/
     /*server.use(restify.bodyParser({ mapParams: false }));*/
 
