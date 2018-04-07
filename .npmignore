@@ -18,3 +18,5 @@ gulpfile.js
 env.json
 client_secret.json
 *.html
+.vs
+.idea

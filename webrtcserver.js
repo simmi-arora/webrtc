@@ -1,8 +1,8 @@
 var fs = require('fs');
 var _static = require('node-static');
 var https = require('https');
-var Log = require('log')
-  , log = new Log('info');
+/*var Log = require('log')
+  , log = new Log('info');*/
 
 var _properties = require('./env.js')(fs).readEnv();
 var properties= JSON.parse(_properties);
