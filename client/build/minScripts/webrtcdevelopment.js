@@ -16403,26 +16403,27 @@ function syncButton(buttonId){
 function showHideFile(uuid , elementDisplay , fileurl , filename , filetype , showHideButton ,countClicks ){
     console.log(" filehsare - show/hide button ",  filename , " || ", countClicks);
     if (countClicks%2==1 ){
-        rtcConn.send({
-            type:"shareFileShow",
+        showFile( elementDisplay , fileurl , filename , filetype );
+        /*rtcConn.send({
+            type:"shareFileShow", 
             _uuid: uuid ,
             _element: elementDisplay,
             _fileurl : fileurl, 
             _filename : filename, 
             _filetype : filetype
-        }); 
+        }); */
         showHideButton.innerHTML = '<i class="fa fa-eye-slash" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
         console.log(" Executed script to show the file");
     } else if (countClicks%2==0 ){
         hideFile( elementDisplay, filename );
-        rtcConn.send({
+        /*rtcConn.send({
             type: "shareFileHide",
             _uuid: uuid,
             _element: elementDisplay,
             _fileurl: fileurl,
             _filename: filename,
             _filetype: filetype
-        });
+        });*/
         showHideButton.innerHTML = '<i class="fa fa-eye" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
         console.log(" Executed script to hide the file ");
     }

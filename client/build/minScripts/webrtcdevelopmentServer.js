@@ -209,7 +209,6 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
             }
 
             callback(!!listOfUsers[userid], userid, extra);
-
         });
 
         socket.on('open-channel', function (data) {  
@@ -304,7 +303,7 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
         });
 
         socket.on('update-channel',function(data){
-             console.log("------------update channel------------- ", data.channel," by " , data.sender," -> ", data );
+            console.log("------------update channel------------- ", data.channel," by " , data.sender," -> ", data );
             switch (data.type){
                 case "change-userid":
                     var index = webrtcdevchannels[data.channel].users.indexOf(data.extra.old);
@@ -509,7 +508,7 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
         }
     }
 
-    /*module.getAll=function(format){
+    module.getAll=function(format){
         var channels=[];
         for (i in webrtcdevchannels) { 
             channels.push(webrtcdevchannels[i]);
@@ -523,14 +522,14 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
     };
 
     module.getAllChannels=function(format){
-        var sessions=[];
+        var sessions = [];
         for (i in Object.keys(webrtcdevchannels)) { 
             sessions.push(Object.keys(webrtcdevchannels)[i]);
         }
         var output={
-            response:'all',
-            channels: sessions,
-            format:format
+            response : 'all',
+            channelinfo : sessions,
+            format : format
         };
         return output;
     };
@@ -538,9 +537,9 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
     module.getChannel=function(channelid , format){
 
         var output={
-                response:'users',
-                users:webrtcdevchannels[channelid],
-                format:format
+                response : 'channel',
+                channelinfo : webrtcdevchannels[channelid]?webrtcdevchannels[channelid]:null,
+                format : format
             };
         return output;
     };
@@ -580,7 +579,8 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
                 format:data.format
             };
         return output;
-    };*/
+    };
+
     console.log("----------------realtimecomm----------------------");
     console.log(" Socket.io env => "+ properties.enviornment+ " running at\n "+properties.httpsPort);
 
@@ -705,7 +705,7 @@ exports.restapi = function(realtimecomm, options , app, properties) {
       *
      */
     function getAllSessions(req, res, callback) {
-        var result =realtimecomm.getAllChannels('json');
+        var result = realtimecomm.getAllChannels('json');
         res.json({ type:true , data : result });
     }
 
@@ -718,6 +718,7 @@ exports.restapi = function(realtimecomm, options , app, properties) {
      * @apiParam {String} channelid This is for getting the unique channel 
      *
      * @apiSampleRequest https://localhost:8087/session/getsession
+     * example : https://localhost:8087/session/getsession
      */
     function getSession(req, res, callback) { 
 
@@ -726,11 +727,14 @@ exports.restapi = function(realtimecomm, options , app, properties) {
                 type: true, 
                 data: "channelid is required" 
             });
-            return;
+            return ;
         }
 
-        var result =realtimecomm.getChannel(req.params.channelid, 'json');
-        res.json({ type:true , data : result });
+        var result = realtimecomm.getChannel(req.params.channelid, 'json');
+        res.json({ 
+            type:true , 
+            data : result 
+        });
     }
 
     /**
@@ -779,30 +783,30 @@ exports.restapi = function(realtimecomm, options , app, properties) {
 
 
     function getSessionClients(req, res, callback) {
-        var result =realtimecomm.getChannelClients('json');
+        var result = realtimecomm.getChannelClients('json');
         res.json({ type:true , data : result });
     }
 
 
-    server.use(restify.acceptParser(server.acceptable));
+    server.use(restify.plugins.acceptParser(server.acceptable));
     /*server.use(restify.authorizationParser());*/
-    server.use(restify.dateParser());
-    server.use(restify.queryParser());
+    server.use(restify.plugins.dateParser());
+    server.use(restify.plugins.queryParser());
     /*server.use(restify.jsonp());*/
-    server.use(restify.CORS());
+  /*  server.use(restify.plugins.CORS());*/
     /*server.use(restify.fullResponse());*/
-    server.use(restify.bodyParser({ mapParams: true }));
+    server.use(restify.plugins.bodyParser({ mapParams: true }));
     /*server.use(restify.bodyParser());*/
     /*server.use(restify.bodyParser({ mapParams: false }));*/
 
     server.get('/webrtc/details',getWebRTCdetails);
 
     server.get('/session/all-sessions',getAllSessions);
-    server.get('/session/getsession',getSession);
+    server.get('/session/getsession/:channelid',getSession);
     server.get('/session/clients',getSessionClients);
 
     server.get('/user/all-users',getAllUsers);
-    server.get('/user/getuser',getUser);
+    server.get('/user/getuser/:userid',getUser);
 
     function unknownMethodHandler(req, res) {
       if (req.method.toLowerCase() === 'options') {
