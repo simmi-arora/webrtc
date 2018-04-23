@@ -12,20 +12,32 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
 
     try {
         io = io(app);
+        io.set({
+          transports: [
+            'websocket', 
+            'polling'
+          ]
+        });
+        io.origins('*:*') ;
         io.on('connection', onConnection);
+
     } catch (e) {
+        console.error(" Realtime connection threw Exception ", e);
+        console.log(" Retrying Socket.io coonection with log true");
         io = io.listen(app, {
-            log: false,
+            log: true,
             origins: '*:*'
         });
 
-        io.set('transports', [
-            'websocket', // 'disconnect' EVENT will work only with 'websocket'
-            'xhr-polling',
-            'jsonp-polling'
-        ]);
+        /* transport options 
+            'websocket', 
+            'flashsocket', 
+            'htmlfile', 
+            'xhr-polling', 
+            'jsonp-polling', 
+            'polling'
+        */
 
-        io.sockets.on('connection', onConnection);
     }
 
     function appendUser(socket) {

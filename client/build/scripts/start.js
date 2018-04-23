@@ -802,7 +802,12 @@ try{
                 if (socketAddr != "/") {
                     addr = socketAddr;
                 }
-                socket = io.connect(addr);
+                socket = io.connect(addr,{
+                                            transports: [
+                                                'websocket', 
+                                                'polling'
+                                            ]
+                });
             } catch (e) {
                 console.log(" problem in socket connnection", e);
                 alert(" problem in socket connnection");
