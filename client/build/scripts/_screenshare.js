@@ -170,8 +170,8 @@ function webrtcdevPrepareScreenShare(callback){
         scrConn.removeStream(screenStreamId);
         //scrConn.videosContainer.hidden=true;
         if(screenShareButton){
-            screenShareButton.className=screenshareobj.button.shareButton.class_off;
-            screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
+            screenShareButton.className = screenshareobj.button.shareButton.class_off;
+            screenShareButton.innerHTML = screenshareobj.button.shareButton.html_off;
         }
         //removeScreenViewButton();
     };
@@ -552,8 +552,8 @@ function createOrAssignScreenshareButton(screenshareobj){
 
 function createScreenshareButton(){
     screenShareButton= document.createElement("span");
-    screenShareButton.className=screenshareobj.button.shareButton.class_off;
-    screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
+    screenShareButton.className = screenshareobj.button.shareButton.class_off;
+    screenShareButton.innerHTML = screenshareobj.button.shareButton.html_off;
     screenShareButton.id="screenShareButton";
     screenShareButton.onclick = function(event) {    
         if(screenShareButton.className==screenshareobj.button.shareButton.class_off){
@@ -577,11 +577,11 @@ function assignScreenShareButton(){
     button.onclick = function(event) {    
         if(button.className == screenshareobj.button.shareButton.class_off){
             webrtcdevSharescreen();
-            button.className=screenshareobj.button.shareButton.class_on;
-            button.innerHTML=screenshareobj.button.shareButton.html_on;
+            button.className = screenshareobj.button.shareButton.class_on;
+            button.innerHTML = screenshareobj.button.shareButton.html_on;
         }else{
-            button.className=screenshareobj.button.shareButton.class_off;
-            button.innerHTML=screenshareobj.button.shareButton.html_off;
+            button.className = screenshareobj.button.shareButton.class_off;
+            button.innerHTML = screenshareobj.button.shareButton.html_off;
             webrtcdevStopShareScreen();
         }
     }

@@ -1,17 +1,17 @@
 {
   "name": "webrtcdevelopment",
-  "version": "1.6.444",
+  "version": "1.6.451",
   "description": "webrtc based communication and collaboration client . contains lot of experiments modules ",
   "main": "webrtcserver.js",
   "engines": {
     "node": "5.*"
   },
   "dependencies": {
-    "node-static":"*",
-    "restify" :"@7.1.0" ,
-    "socket.io" :"^0.9.19"
+    "restify" :"*" ,
+    "socket.io" :"*"
   },
   "devDependencies": {
+    "node-static":"*",
     "grunt": "^0.4.1",
     "grunt-apidoc": "^0.11.0",
     "grunt-contrib-jshint": "^1.1.0",
