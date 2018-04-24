@@ -722,7 +722,7 @@
             }]
         };
 
-        connection.rtcpMuxPolicy = 'negotiate'; // or "required"
+       /* connection.rtcpMuxPolicy = 'negotiate'; // or "required"*/
         connection.iceTransportPolicy = null; // "relay" or "all"
         connection.optionalArgument = {
             optional: [{

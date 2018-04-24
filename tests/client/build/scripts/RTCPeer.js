@@ -102,7 +102,7 @@ function PeerInitiator(config) {
         peer = new RTCPeerConnection(navigator.onLine ? {
             iceServers: connection.iceServers,
             iceTransportPolicy: connection.iceTransportPolicy || iceTransports,
-            rtcpMuxPolicy: connection.rtcpMuxPolicy || 'negotiate'
+           /* rtcpMuxPolicy: connection.rtcpMuxPolicy || 'negotiate'*/
         } : null, window.PluginRTC ? null : connection.optionalArgument);
 
         if (!connection.iceServers.length) {
