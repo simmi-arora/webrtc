@@ -288,8 +288,8 @@ function showdesktopnotification() {
   else if (Notification.permission === "granted") {
      // If it's okay let's create a notification
       var options = {
-          body: "The remote has joined the session",
-          icon: "images/villagexpertslogo2.png"
+          body: "The remote has joined the session"
+          /*icon: "images/villagexpertslogo2.png"*/
       };
 
      var notification = new Notification("Vilageexperts" , options);
@@ -2210,7 +2210,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
             peer = new RTCPeerConnection(navigator.onLine ? {
                 iceServers: connection.iceServers,
                 iceTransportPolicy: connection.iceTransportPolicy || iceTransports,
-                rtcpMuxPolicy: connection.rtcpMuxPolicy || 'negotiate'
+               /* rtcpMuxPolicy: connection.rtcpMuxPolicy || 'negotiate'*/
             } : null, window.PluginRTC ? null : connection.optionalArgument);
 
             if (!connection.iceServers.length) {
