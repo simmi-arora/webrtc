@@ -5,6 +5,9 @@ client/build/scripts
 client/build/css
 client/build/drawboard
 client/build/images
+client/build/twoparty_elearning/
+client/build/demo
+client/build/home_images
 client/prod
 client/testCDN
 client/testnpm
@@ -20,3 +23,4 @@ client_secret.json
 *.html
 .vs
 .idea
+test/

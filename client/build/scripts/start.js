@@ -222,7 +222,7 @@ try{
                         else
                             shownotificationWarning("connnection type is neither open nor join");
 
-                        if (timerobj.active) {
+                        if (timerobj && timerobj.active) {
                             startsessionTimer(timerobj);
                             shareTimePeer();
                         }
@@ -292,7 +292,6 @@ try{
                                     //createScreenViewButton();
                                     var button = document.getElementById(screenshareobj.button.shareButton.id);
                                     button.innerHTML = "Screen share";
-                                    button.parentNode.setAttribute("style", "background:#2e6da4");
                                     button.disabled = false;
 
                                     scrConn.onstreamended();

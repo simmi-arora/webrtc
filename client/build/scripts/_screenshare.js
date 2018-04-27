@@ -109,7 +109,6 @@ function webrtcdevPrepareScreenShare(callback){
     scrConn.onstream = function(event) {
         console.log(" on stream in _screenshare :" , event);
         //if(event.stream.isScreen){
-            //alert(" scrConn onStream streamid : "+ event.stream.streamid + " " + event.streamid);
             if(event.type=="remote" && event.type!="local"){
                 alert("started streaming remote's screen");
 
@@ -248,22 +247,18 @@ function connectScrWebRTC(type, channel , userid , remoteUsers){
 
 function webrtcdevScreenConstraints(chromeMediaSourceId) {
     console.log(" webrtcdevScreenConstraints  - chromeMediaSourceId: ", chromeMediaSourceId);
-
-    /*    
     screen_constraints = {
-        audio: false,
-        video: {
-            mandatory: {
-                chromeMediaSource: 'desktop',
-                chromeMediaSourceId: chromeMediaSourceId,
-                maxWidth: window.screen.width > 1920 ? window.screen.width : 1920,
-                maxHeight: window.screen.height > 1080 ? window.screen.height : 1080
-            },
-            optional: []
-        }
-    };*/
-    
-    /*screen_constraints = scrConn.modifyScreenConstraints(screen_constraints); */
+                audio: false,
+                video: {
+                    mandatory: {
+                        chromeMediaSource: 'desktop',
+                        chromeMediaSourceId: chromeMediaSourceId,
+                        maxWidth: window.screen.width > 1920 ? window.screen.width : 1920,
+                        maxHeight: window.screen.height > 1080 ? window.screen.height : 1080
+                    },
+                    optional: []
+                }
+            };
     
     /*    
     scrConn.getScreenConstraints = function(callback) {
@@ -275,19 +270,7 @@ function webrtcdevScreenConstraints(chromeMediaSourceId) {
     };*/
     try {
         console.log(" screen getusermedia ");
-        navigator.getUserMedia(
-            {
-                audio: false,
-                video: {
-                    mandatory: {
-                        chromeMediaSource: 'desktop',
-                        chromeMediaSourceId: chromeMediaSourceId,
-                        maxWidth: window.screen.width > 1920 ? window.screen.width : 1920,
-                        maxHeight: window.screen.height > 1080 ? window.screen.height : 1080
-                    },
-                    optional: []
-                }
-            },
+        navigator.getUserMedia(screen_constraints ,
             function stream(event) {
                 console.log("screen stream "  , event , screenshareobj.screenshareContainer);
                 //scrConn.onstream(event);
@@ -317,12 +300,10 @@ function webrtcdevScreenConstraints(chromeMediaSourceId) {
                             userid: scrConn.userid,
                             extra: scrConn.extra,
                             streamid: stream.streamid,
-                            blobURL: mediaElement.src || URL.createObjectURL(stream),
+                            /*blobURL: mediaElement.src || URL.createObjectURL(stream),*/
+                            blobURL: mediaElement.src || mediaElement.srcObject ,
                             isAudioMuted: !0
                         };
-                        console.log(scrConn.streamEvents[stream.streamid]);
-                        /*setHarkEvents(scrConn, scrConn.streamEvents[stream.streamid]),*/
-                        /*setMuteHandlers(scrConn, scrConn.streamEvents[stream.streamid]),*/
                         scrConn.onstream(scrConn.streamEvents[stream.streamid])
                     }else if(stream.id){
                         console.log("using id");
@@ -338,7 +319,8 @@ function webrtcdevScreenConstraints(chromeMediaSourceId) {
                             userid: scrConn.userid,
                             extra: scrConn.extra,
                             streamid: stream.id,
-                            blobURL: mediaElement.src || URL.createObjectURL(stream),
+                            /*blobURL: mediaElement.src || URL.createObjectURL(stream),*/
+                            blobURL: mediaElement.src || mediaElement.srcObject ,
                             isAudioMuted: !0
                         };
                         console.log(scrConn.streamEvents[stream.id]);
@@ -373,25 +355,26 @@ function getRMCMediaElement(stream, callback, connection) {
     var isAudioOnly = !1;
     stream.getVideoTracks && !stream.getVideoTracks().length && (isAudioOnly = !0);
     var mediaElement = document.createElement(isAudioOnly ? "audio" : "video");
-    return  ( mediaElement[isFirefox ? "mozSrcObject" : "src"] = isFirefox ? stream : window.URL.createObjectURL(stream),
-    mediaElement.controls = !0,
-    isFirefox && mediaElement.addEventListener("ended", function() {
-        if (currentUserMediaRequest.remove(stream.idInstance), "local" === stream.type) {
-            StreamsHandler.onSyncNeeded(stream.streamid, "ended"),
-            connection.attachStreams.forEach(function(aStream, idx) {
-                stream.streamid === aStream.streamid && delete connection.attachStreams[idx]
-            });
-            var newStreamsArray = [];
-            connection.attachStreams.forEach(function(aStream) {
-                aStream && newStreamsArray.push(aStream)
-            }),
-            connection.attachStreams = newStreamsArray;
-            var streamEvent = connection.streamEvents[stream.streamid];
-            if (streamEvent)
-                return void connection.onstreamended(streamEvent);
-            this.parentNode && this.parentNode.removeChild(this)
-        }
-    }, !1),
+    return  ( 
+        mediaElement[isFirefox ? "mozSrcObject" : "src"] = isFirefox ? stream : window.URL.createObjectURL(stream),
+        mediaElement.controls = !0,
+        isFirefox && mediaElement.addEventListener("ended", function() {
+            if (currentUserMediaRequest.remove(stream.idInstance), "local" === stream.type) {
+                StreamsHandler.onSyncNeeded(stream.streamid, "ended"),
+                connection.attachStreams.forEach(function(aStream, idx) {
+                    stream.streamid === aStream.streamid && delete connection.attachStreams[idx]
+                });
+                var newStreamsArray = [];
+                connection.attachStreams.forEach(function(aStream) {
+                    aStream && newStreamsArray.push(aStream)
+                }),
+                connection.attachStreams = newStreamsArray;
+                var streamEvent = connection.streamEvents[stream.streamid];
+                if (streamEvent)
+                    return void connection.onstreamended(streamEvent);
+                this.parentNode && this.parentNode.removeChild(this)
+            }
+        }, !1),
     mediaElement.play(),
     void callback(mediaElement))
 }
