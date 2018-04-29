@@ -291,14 +291,15 @@ try{
                                     shownotification("Screenshare has stopped : " + e.data.screenStreamid);
                                     //createScreenViewButton();
                                     var button = document.getElementById(screenshareobj.button.shareButton.id);
-                                    button.innerHTML = "Screen share";
+                                    button.className = screenshareobj.button.shareButton.class_off;
+                                    button.innerHTML = screenshareobj.button.shareButton.html_off;
                                     button.disabled = false;
 
                                     scrConn.onstreamended();
                                     scrConn.removeStream(e.data.screenStreamid);
                                     scrConn.close();
                                 } else if (e.data.message == "screenshareStartedViewing") {
-                                    screenshareNotification("", "screenshareStartedViewing");
+                                    //screenshareNotification("", "screenshareStartedViewing");
                                 } else {
                                     shownotification("screen is getting shared " + e.data.screenid);
                                     //createScreenViewButton();
