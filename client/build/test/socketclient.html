@@ -1,0 +1,17 @@
+<html>
+<title> Socket io test client </title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
+<head>
+</head>
+<body>
+
+<script>
+  var socket = io('http://localhost:8070');
+  socket.on('news', function (data) {
+    console.log(data);
+    socket.emit('my other event', { my: 'data' });
+  });
+</script>
+
+</body>
+</html>

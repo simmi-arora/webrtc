@@ -165,7 +165,7 @@ try{
                                 createExtensionInstallWindow();
                             }
                             setWidgets();
-                            startSession(rtcConn, sessionid);
+                            startSession(rtcConn, socketAddr,  sessionid);
                         })
                 )
                 .catch(function (err) {
@@ -237,7 +237,16 @@ try{
 
                 rtcConn.onMediaError = function (error, constraints) {
                     console.error(error, constraints);
-                    shownotificationWarning(error.name);
+                    shownotificationWarning(error.name + " Joining without camera Stream ");
+
+                    for(x in webcallpeers){
+                        if(!webcallpeers[x].stream &&  !webcallpeers[x].streamid)
+                            webcallpeers[x].type = null;
+                            webcallpeers[x].stream = null;
+                            webcallpeers[x].streamid = null;
+                            updateWebCallView(peerinfo);
+                        }
+                    }
                 },
 
                 rtcConn.onstream = function (event) {
@@ -252,7 +261,7 @@ try{
                     });
                     connection.videosContainer.appendChild(mediaElement);
                     setTimeout(function() {
-                        mediaElement.media.play();
+                        mediaElement.media.play(); 
                     }, 5000);
                     mediaElement.id = event.streamid;*/
                     var peerinfo = findPeerInfo(event.userid);
@@ -299,7 +308,7 @@ try{
                                     scrConn.removeStream(e.data.screenStreamid);
                                     scrConn.close();
                                 } else if (e.data.message == "screenshareStartedViewing") {
-                                    //screenshareNotification("", "screenshareStartedViewing");
+                                    screenshareNotification("", "screenshareStartedViewing");
                                 } else {
                                     shownotification("screen is getting shared " + e.data.screenid);
                                     //createScreenViewButton();
@@ -793,7 +802,7 @@ try{
      * @name startSession
      * @param {object} connection
      */
-    function startSession(rtcConn , sessionid){
+    function startSession(rtcConn , socketAddr , sessionid){
 
             console.log("========== startSession" + sessionid);
 
@@ -802,30 +811,30 @@ try{
                 if (socketAddr != "/") {
                     addr = socketAddr;
                 }
-                socket = io.connect(addr,{
-                                            transports: [
-                                                'websocket', 
-                                                'polling'
-                                            ]
-                });
+                socket = io.connect(addr ,{
+                                          transports: ['websocket']
+                } );
             } catch (e) {
-                console.log(" problem in socket connnection", e);
+                console.error(" problem in socket connnection", e);
                 alert(" problem in socket connnection");
             }
 
-            if (sessionid)
+            if (sessionid){
                 shownotification(" Checking status of  : " + sessionid);
-            else
+                socket.emit("presence", {
+                    channel: sessionid
+                });
+
+            } else{
+                console.error(" Session Id undefined ");
                 alert("rtcCon channel / session id undefined ");
+                return; 
+            }
 
             socket.on("connect", function () {
                 socket.on('disconnected', function () {
-                    shownotification("disconnected from signaller ");
+                    shownotification("Disconnected from signaller ");
                 });
-            });
-
-            socket.emit("presence", {
-                channel: sessionid
             });
 
             socket.on("presence", function (event) {
@@ -1263,7 +1272,7 @@ try{
      * @name findPeerInfo
      * @param {string} userid
      */
-    function findPeerInfo(userid){
+    findPeerInfo = function (userid){
         var peerInfo;
         /*    
         if(rtcConn.userid==userid){

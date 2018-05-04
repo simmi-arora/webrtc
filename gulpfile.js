@@ -8,11 +8,11 @@ var base64 = require('gulp-base64');
 var gulpSequence = require('gulp-sequence');
 var exec  =require('child_process').exec;
 var remoteSrc = require('gulp-remote-src');
+var rev = require('gulp-rev-timestamp');
 
 var fs = require('fs');
 var _properties = require('./env.js')(fs).readEnv();
 var properties= JSON.parse(_properties);
-
 console.log(properties);
 
 var folderPath="", file="";
@@ -25,29 +25,38 @@ if(properties.enviornment=="production"){
   folderPath='client/build/';
 }
 
+var header = require('gulp-header'),
+    d = new Date(),
+    headerComment = '/*Generated on:' + d + '*/';
+
+
 gulp.task('vendorjs',function() {
     vendorJsList=[ 
       "https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js",
       "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js",
-      "https://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.6/socket.io.min.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js",
       "https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"
     ]; 
-    remoteSrc(vendorJsList, {base: '' })
+    remoteSrc(vendorJsList, {base: null })
+        .pipe( rev({strict: true}) )
+        .pipe(header(headerComment))
+        .pipe(uglify())
         .pipe(concat('webrtcdevelopment_header.js'))  
         .pipe(gulp.dest(folderPath+'minScripts/')); 
 });
 
-gulp.task('screensharejs',function() {
+/*gulp.task('screensharejs',function() {
     console.log(" gulping screensharing  ");
     list=[ 
         "client/build/scripts/screensharing.js",
     ]; 
     console.log(list);
     gulp.src(list)
+        .pipe( rev({strict: true}) )
         .pipe(uglify())
         .pipe(concat('webrtcdevelopment_screenshare.js'))  
         .pipe(gulp.dest(folderPath+'minScripts/')); 
-});
+});*/
 
 /*gulp.task('adminjs',function() {
     console.log(" gulping admin script  ");
@@ -69,7 +78,9 @@ gulp.task('serverjs',function() {
     ]; 
     console.log(list);
     gulp.src(list)
-        /*.pipe(uglify())*/
+        .pipe( rev({strict: true}) )
+        .pipe(header(headerComment))
+        .pipe(uglify())
         .pipe(concat('webrtcdevelopmentServer.js'))  
         .pipe(gulp.dest(folderPath+'minScripts/')); 
 });
@@ -166,13 +177,14 @@ var scriptList=[
     "client/build/scripts/_stats.js"
 ];
 
-gulp.task('betawebrtcdevelopmentjs',function() {
+/*gulp.task('betawebrtcdevelopmentjs',function() {
     console.log(" gulping main webrtc development scripts ");
     console.log(scriptList);
     gulp.src(scriptList)
+        .pipe( rev({strict: true}) )
         .pipe(concat('webrtcdevelopment.js'))  
         .pipe(gulp.dest(folderPath+'minScripts/')); 
-});
+});*/
 /*.pipe(uglify())*/
 gulp.task('webrtcdevelopmentjs',function() {
     console.log(" gulping main webrtc development scripts ");
@@ -180,6 +192,8 @@ gulp.task('webrtcdevelopmentjs',function() {
     scriptList.push("client/build/scripts/admin.js");    
     console.log(scriptList);
     gulp.src(scriptList)
+        .pipe( rev({strict: true}) )
+        .pipe(header(headerComment))
         .pipe(concat('webrtcdevelopment.js'))  
         .pipe(gulp.dest(folderPath+'minScripts/')); 
 });
@@ -195,7 +209,9 @@ gulp.task('mainstyle',function() {
       "https://www.gstatic.com/firebasejs/4.2.0/firebase.js"
     ]; 
     console.log(cssList);
-    remoteSrc(cssList, {base: '' })
+    remoteSrc(cssList, {base: null })
+        .pipe( rev({strict: true}) )
+        .pipe(header(headerComment))
         .pipe(concat('webrtcdevelopment_header.css'))  
         .pipe(gulp.dest(folderPath+'minScripts/')); 
 });
@@ -214,6 +230,8 @@ gulp.task('webrtcdevelopmentcss',function() {
     ];
     console.log(cssList);
     gulp.src(cssList)
+      .pipe( rev({strict: true}) )
+      .pipe(header(headerComment))
       .pipe(concat('webrtcdevelopment.css'))
       .pipe(gulp.dest(folderPath+'minScripts/'));
 });
@@ -221,7 +239,9 @@ gulp.task('webrtcdevelopmentcss',function() {
 /*.pipe(minifyCss())*/
 
 function execute(command, callback){
-    exec(command, function(error, stdout, stderr){ callback(stdout,stderr); });
+    exec(command, function(error, stdout, stderr){ 
+        callback(stdout,stderr); 
+    });
 };
 
 gulp.task('git_pull',function(cb){
@@ -251,13 +271,13 @@ gulp.task('develop', gulpSequence(
 )); 
 
 gulp.task('production', gulpSequence(
-    /*'vendorjs',*/
+    'vendorjs',
     'drawjs' , 
     'drawcss',
     'codejs',
     'codecss',
     'webrtcdevelopmentjs',
-    'screensharejs',
+    /*'screensharejs',*/
     'mainstyle',
     'webrtcdevelopmentcss',
     'serverjs'

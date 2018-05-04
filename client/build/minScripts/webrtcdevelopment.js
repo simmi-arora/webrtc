@@ -1,4 +1,4 @@
-/*
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//*
 //var username= prompt("Please enter your id ", "");
 var username= " "
 document.getElementById("username").innerHTML=username;
@@ -237,7 +237,7 @@ function bytesToSize(e) {
     var n = parseInt(Math.floor(Math.log(e) / Math.log(1024)));
     return Math.round(e / Math.pow(1024, n), 2) + " " + t[n]
 }
-
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/
 function shownotification(message){
 
   if(document.getElementById("alertBox")){
@@ -325,7 +325,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
 
 
 
-// Last time updated: 2016-08-12 5:21:05 AM UTC
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/// Last time updated: 2016-08-12 5:21:05 AM UTC
 // _____________________
 // RTCMultiConnection-v3
 // Open-Sourced: https://github.com/muaz-khan/RTCMultiConnection
@@ -3808,7 +3808,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
     window.RTCMultiConnection = RTCMultiConnection
 }();
 
-/**************************************************************
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//**************************************************************
 Screenshare 
 ****************************************************************/
 'use strict';
@@ -3838,6 +3838,10 @@ function getSourceId(callback, audioPlusTab) {
 function getChromeExtensionStatus(extensionid, callback) {
     if (2 != arguments.length && (callback = extensionid, extensionid = window.RMCExtensionID || "ajhifddimkapgcifgcodmmfdlknahffk"), isFirefox)
         return callback("not-chrome");
+    
+    if(!extensionid)
+        return callback("Null extensionID");
+
     try{
         var image = document.createElement("img");
         image.src = "chrome-extension://" + extensionid + "/icon.png",
@@ -3905,21 +3909,10 @@ function webrtcdevPrepareScreenShare(callback){
         console.error(error, constraints);
         shownotificationWarning(error.name);
     },
-    /*    
-    scrConn.onconnected = function(event) {
-        // event.peer.addStream || event.peer.getConnectionStats
-        console.log('scrConn.onconnected ......', event);
-        alert("srcConn on Connected ");
-    },
-
-    scrConn.onopen = function(event) {                                 
-        alert("srcConn onopen");
-    },*/
 
     scrConn.onstream = function(event) {
         console.log(" on stream in _screenshare :" , event);
         //if(event.stream.isScreen){
-            //alert(" scrConn onStream streamid : "+ event.stream.streamid + " " + event.streamid);
             if(event.type=="remote" && event.type!="local"){
                 alert("started streaming remote's screen");
 
@@ -3935,7 +3928,7 @@ function webrtcdevPrepareScreenShare(callback){
                 }
 
                 var video = document.createElement('video');
-                video.autoplay="autoplay";
+                //video.autoplay="autoplay";
                 attachMediaStream(video, stream);
                 //video.id = peerInfo.videoContainer;
                 document.getElementById(screenshareobj.screenshareContainer).appendChild(video);
@@ -3949,7 +3942,7 @@ function webrtcdevPrepareScreenShare(callback){
             }else{
                 console.log("started streaming local screen");
 
-                screenshareNotification("","screenshareBegin"); 
+                //screenshareNotification("","screenshareBegin"); 
                 rtcConn.send({
                     type:"screenshare", 
                     screenid: screenRoomid,
@@ -3978,7 +3971,6 @@ function webrtcdevPrepareScreenShare(callback){
         }
 
         scrConn.removeStream(screenStreamId);
-        //scrConn.videosContainer.hidden=true;
         if(screenShareButton){
             screenShareButton.className = screenshareobj.button.shareButton.class_off;
             screenShareButton.innerHTML = screenshareobj.button.shareButton.html_off;
@@ -3987,8 +3979,7 @@ function webrtcdevPrepareScreenShare(callback){
     };
 
     console.log(" webrtcdevscreenshare calling callback for socket.io operations");
-
-    //alert(" Preparing Screenshare "+ screenRoomid);
+    alert(" Preparing Screenshare "+ screenRoomid);
     setTimeout(callback(screenRoomid), 3000);
 }
 
@@ -4016,15 +4007,6 @@ function webrtcdevSharescreen() {
             console.log("Event Handler : open-channel-screenshare" , event);
             if(event) connectScrWebRTC("open" , screenRoomid, selfuserid, []); 
         });
-
-        /*        
-        rtcConn.send({
-            type:"screenshare", 
-            screenid: screenRoomid,
-            screenStreamid:screenStreamId,
-            message:"startscreenshare"
-        });*/
-
     });
     /*    
     if(Object.keys(scrConn.streamEvents).length>2){   
@@ -4111,8 +4093,8 @@ function webrtcdevScreenConstraints(chromeMediaSourceId) {
                             userid: scrConn.userid,
                             extra: scrConn.extra,
                             streamid: stream.streamid,
-                            /*blobURL: mediaElement.src || URL.createObjectURL(stream),*/
-                            blobURL: mediaElement.src || mediaElement.srcObject ,
+                            blobURL: mediaElement.src || URL.createObjectURL(stream),
+                            /*blobURL: mediaElement.src || mediaElement.srcObject ,*/
                             isAudioMuted: !0
                         };
                         scrConn.onstream(scrConn.streamEvents[stream.streamid])
@@ -4130,8 +4112,8 @@ function webrtcdevScreenConstraints(chromeMediaSourceId) {
                             userid: scrConn.userid,
                             extra: scrConn.extra,
                             streamid: stream.id,
-                            /*blobURL: mediaElement.src || URL.createObjectURL(stream),*/
-                            blobURL: mediaElement.src || mediaElement.srcObject ,
+                            blobURL: mediaElement.src || URL.createObjectURL(stream),
+                            /*blobURL: mediaElement.src || mediaElement.srcObject ,*/
                             isAudioMuted: !0
                         };
                         console.log(scrConn.streamEvents[stream.id]);
@@ -4166,8 +4148,14 @@ function getRMCMediaElement(stream, callback, connection) {
     var isAudioOnly = !1;
     stream.getVideoTracks && !stream.getVideoTracks().length && (isAudioOnly = !0);
     var mediaElement = document.createElement(isAudioOnly ? "audio" : "video");
+    /*        
+    mediaElement[isFirefox ? "mozSrcObject" : "src"] = isFirefox ? stream : window.URL.createObjectURL(stream),
+        [Deprecation] URL.createObjectURL with media streams is deprecated and will be removed in M68, around July 2018. 
+        Please use HTMLMediaElement.srcObject instead. 
+        See https://www.chromestatus.com/features/5618491470118912 for more details.*/
+
     return  ( 
-        mediaElement[isFirefox ? "mozSrcObject" : "src"] = isFirefox ? stream : window.URL.createObjectURL(stream),
+        mediaElement["src"] = stream,
         mediaElement.controls = !0,
         isFirefox && mediaElement.addEventListener("ended", function() {
             if (currentUserMediaRequest.remove(stream.idInstance), "local" === stream.type) {
@@ -4195,34 +4183,39 @@ function webrtcdevViewscreen(roomid){
 }
 
 function webrtcdevStopShareScreen(){
-    /*
-    scrConn.removeStream({
-        screen: true,  // it will remove all screen streams
-        stop: true     // ask to stop old stream
-    });*/
+    try{
+        /*
+        scrConn.removeStream({
+            screen: true,  // it will remove all screen streams
+            stop: true     // ask to stop old stream
+        });*/
+        if(screenshareobj.screenshareContainer)
+            document.getElementById(screenshareobj.screenshareContainer).innerHTML="";
 
-    document.getElementById(screenshareobj.screenshareContainer).innerHTML="";
+        rtcConn.send({
+            type:"screenshare", 
+            screenid: screenRoomid,
+            screenStreamid:screenStreamId,
+            message:"stoppedscreenshare"
+        });
 
-    rtcConn.send({
-        type:"screenshare", 
-        screenid: screenRoomid,
-        screenStreamid:screenStreamId,
-        message:"stoppedscreenshare"
-    });
+        window.postMessage("webrtcdev-extension-stopsource", "*");
+        scrConn.onstreamended();
+        scrConn.close();
+        scrConn.closeEntireSession();
+        console.log("Sender stopped: screenRoomid "+ screenRoomid +" || Screen stoppped "  , scrConn , document.getElementById(screenshareobj.screenshareContainer));
+        
+        if(screenShareStreamLocal){
+            screenShareStreamLocal.stop();
+            screenShareStreamLocal=null;        
+        }
+        //scrConn.videosContainer.hidden=true;
+        /*scrConn.leave();*/
+        //removeScreenViewButton();
 
-    window.postMessage("webrtcdev-extension-stopsource", "*");
-    scrConn.onstreamended();
-    scrConn.close();
-    scrConn.closeEntireSession();
-    console.log("Sender stopped: screenRoomid "+ screenRoomid +" || Screen stoppped "  , scrConn , document.getElementById(screenshareobj.screenshareContainer));
-    
-    if(screenShareStreamLocal){
-        screenShareStreamLocal.stop();
-        screenShareStreamLocal=null;        
+    }catch(e){
+        console.error(e);
     }
-    //scrConn.videosContainer.hidden=true;
-    /*scrConn.leave();*/
-    //removeScreenViewButton();
 }
 
 function createOrAssignScreenviewButton(){
@@ -4368,7 +4361,7 @@ function createScreenshareButton(){
 
 function assignScreenShareButton(){
     var button = document.getElementById(screenshareobj.button.shareButton.id);
-    button.onclick = function(event) {    
+    button.onclick = function(event) {
         if(button.className == screenshareobj.button.shareButton.class_off){
             webrtcdevSharescreen();
             button.className = screenshareobj.button.shareButton.class_on;
@@ -4559,7 +4552,7 @@ function createExtensionInstallWindow (){
     }
                                 
 }
-var WebRTCdetect=function() {
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/var WebRTCdetect=function() {
 
     'use strict';
 
@@ -5569,7 +5562,7 @@ var WebRTCdetect=function() {
         });
     }
 };
-/**
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//**
  * function to check devices like speakers , webcam ,  microphone etc
  * @method
  * @name checkDevices
@@ -5625,7 +5618,7 @@ function checkWebRTCSupport(obj){
         // seems WebRTC (old-fashioned) RTP data channels feature are supported on this client
     }
 }
-/* ***********************************************
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//* ***********************************************
 settings
 *********************************************/
 
@@ -5720,7 +5713,7 @@ $("#SettingsButton").click(function() {
         /*$('#'+localobj.userdisplay.operatingsystem).val(operatingsystem);*/
     }
 });
-// Last time updated: 2016-11-04 7:11:11 AM UTC
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/// Last time updated: 2016-11-04 7:11:11 AM UTC
 
 // ________________
 // FileBufferReader
@@ -6864,7 +6857,7 @@ $("#SettingsButton").click(function() {
     window.FileBufferReader = FileBufferReader;
 })();
 
-// Muaz Khan     - www.MuazKhan.com
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/// Muaz Khan     - www.MuazKhan.com
 // MIT License   - www.webrtc-experiment.com/licence
 // Documentation - github.com/streamproc/MediaStreamRecorder
 // ______________________
@@ -8268,7 +8261,7 @@ function SaveToDisk(blobOrFile, fileName) {
 
     (window.URL || window.webkitURL).revokeObjectURL(hyperlink.href);
 }
-'use strict';
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/'use strict';
 
 // Last time updated: 2016-10-21 11:04:26 AM UTC
 
@@ -12263,7 +12256,7 @@ if (typeof RecordRTC !== 'undefined') {
     RecordRTC.GifRecorder = GifRecorder;
 }
 
-// Note: All libraries listed in this file are "external libraries" 
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/// Note: All libraries listed in this file are "external libraries" 
 // ----  and has their own copyrights. Taken from "html2canvas" project.
 "use strict";
 
@@ -14547,7 +14540,7 @@ if (!IE) document.captureEvents(Event.MOUSEMOVE);
 document.addEventListener("mousemove", getMouseXY, false);
 var coordX = 0;
 var coordY = 0
-function createSnapshotButton(controlBarName , peerinfo){
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/function createSnapshotButton(controlBarName , peerinfo){
     var snapshotButton=document.createElement("div");
     snapshotButton.id=controlBarName+"snapshotButton";
     snapshotButton.setAttribute("title", "Snapshot");
@@ -14650,7 +14643,7 @@ function syncSnapshot(datasnapshot , datatype , dataname ){
     console.log("snaspshot ",datasnapshot);
 }*/
 
-/* ***********************************************
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//* ***********************************************
 geolocation
 *********************************************/
 
@@ -14698,7 +14691,7 @@ function showError(error) {
             break;
     }
 }
-/********************************************************************************8
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//********************************************************************************8
         Chat
 **************************************************************************************/
 function createChatButton(obj){
@@ -14919,7 +14912,7 @@ function addMessageBlockFormat(messageheaderDivclass , messageheader ,messageDiv
 $('#chatbox').css('max-height', $( "#leftVideo" ).height()+ 80);
 $('#chatBoard').css('max-height', $( "#leftVideo" ).height());
 $("#chatBoard").css("overflow-y" , "scroll");
-/***************************************************
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//***************************************************
 video handling 
 *********************************************************/
 
@@ -15200,7 +15193,7 @@ function attachMediaStream(element, stream) {
 function reattachMediaStream(to, from) {
     to.src = from.src;
 }
-/* ***********************************************
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//* ***********************************************
 Record
 *********************************************/
 
@@ -15331,7 +15324,7 @@ function stopRecord(){
     }, {audio:true, video:true} );
 }*/
 
-
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/
 /************************************************************************
 Canvas Record 
 *************************************************************************/
@@ -15874,7 +15867,7 @@ function PostBlob(blob) {
     video.focus();
     video.play();
 }
-/***************************************************************88
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//***************************************************************88
 File sharing 
 ******************************************************************/
 
@@ -16907,7 +16900,7 @@ function createModalPopup(filetype ){
 
     mainDiv.appendChild(modalBox);
 }
-/**************************************************************************8
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//**************************************************************************8
 draw 
 ******************************************************************************/
 var CanvasDesigner;
@@ -17059,7 +17052,7 @@ saveButtonCanvas.onclick=function(){
    createModalPopup( "blobcanvas" );
 };
 document.body.appendChild(saveButtonCanvas);
-/**********************************
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//**********************************
 Reconnect 
 ****************************************/
 /*
@@ -17112,7 +17105,7 @@ function assignButtonRedial(id){
         }
     };
 }
-/* **********************************************
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//* **********************************************
 Listen -In
 *************************************************/
 
@@ -17191,7 +17184,7 @@ if(document.getElementById('listenInLink')){
 
 }
 
-/***************************************************************************
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//***************************************************************************
 cursor sharing 
 ***************************************************************************/
 
@@ -17286,7 +17279,7 @@ function createCursorButton(controlBarName, peerinfo, streamid, stream ){
 /*
     <div id="cursor1" class="fa fa-hand-o-up" style="width:0"></div>
     <div id="cursor2" class="fa fa-hand-o-up" style="width:0"></div>*/
-function createCodeEditorButton(){
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/function createCodeEditorButton(){
     var codeeditorButton= document.createElement("span");
     codeeditorButton.className=codeeditorobj.button.class_off ;
     codeeditorButton.innerHTML=codeeditorobj.button.html_off;
@@ -17388,7 +17381,7 @@ function stopWebrtcdevcodeeditorSync(){
     document.getElementById(codeeditorobj.codeeditorContainer).removeEventListener("keyup", sendWebrtcdevCodeeditorSync, false);
 }
 
-function createTextEditorButton(){
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/function createTextEditorButton(){
     var texteditorButton= document.createElement("span");
     texteditorButton.className=texteditorobj.button.class_off ;
     texteditorButton.innerHTML=texteditorobj.button.html_off;
@@ -17447,7 +17440,7 @@ function stopWebrtcdevTexteditorSync(){
     document.getElementById(texteditorobj.texteditorContainer).removeEventListener("keyup", sendWebrtcdevTexteditorSync, false);
 }
 
-/*********************************************
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//*********************************************
 ICE
 **************************************************/
 /**
@@ -17499,7 +17492,7 @@ function getICEServer(username , secretkey , domain , appname , roomname , secur
         '&domain='+domain +'&application='+appname+
         '&room='+ roomname+'&secure='+secure);
 }
-/**************************************************8
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//**************************************************8
 Timer 
 ***************************************************/
 var hours,mins,secs;
@@ -17700,7 +17693,7 @@ function checkTime(i) {
     if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
     return i;
 }
-// ___________
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/// ___________
 // getStats.js
 // an abstraction layer runs top over RTCPeerConnection.getStats API
 // cross-browser compatible solution
@@ -17997,7 +17990,7 @@ function activateBandwidthButtons(timerobj){
         console.log(" rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
     }
 
-/**************************************************************************************
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//**************************************************************************************
         peerconnection 
 ****************************************************************************/
 
@@ -18164,7 +18157,7 @@ try{
                                 createExtensionInstallWindow();
                             }
                             setWidgets();
-                            startSession(rtcConn, sessionid);
+                            startSession(rtcConn, socketAddr,  sessionid);
                         })
                 )
                 .catch(function (err) {
@@ -18221,7 +18214,7 @@ try{
                         else
                             shownotificationWarning("connnection type is neither open nor join");
 
-                        if (timerobj.active) {
+                        if (timerobj && timerobj.active) {
                             startsessionTimer(timerobj);
                             shareTimePeer();
                         }
@@ -18251,7 +18244,7 @@ try{
                     });
                     connection.videosContainer.appendChild(mediaElement);
                     setTimeout(function() {
-                        mediaElement.media.play();
+                        mediaElement.media.play(); 
                     }, 5000);
                     mediaElement.id = event.streamid;*/
                     var peerinfo = findPeerInfo(event.userid);
@@ -18290,7 +18283,8 @@ try{
                                     shownotification("Screenshare has stopped : " + e.data.screenStreamid);
                                     //createScreenViewButton();
                                     var button = document.getElementById(screenshareobj.button.shareButton.id);
-                                    button.innerHTML = "Screen share";
+                                    button.className = screenshareobj.button.shareButton.class_off;
+                                    button.innerHTML = screenshareobj.button.shareButton.html_off;
                                     button.disabled = false;
 
                                     scrConn.onstreamended();
@@ -18791,7 +18785,7 @@ try{
      * @name startSession
      * @param {object} connection
      */
-    function startSession(rtcConn , sessionid){
+    function startSession(rtcConn , socketAddr , sessionid){
 
             console.log("========== startSession" + sessionid);
 
@@ -18800,30 +18794,30 @@ try{
                 if (socketAddr != "/") {
                     addr = socketAddr;
                 }
-                socket = io.connect(addr,{
-                                            transports: [
-                                                'websocket', 
-                                                'polling'
-                                            ]
-                });
+                socket = io.connect(addr ,{
+                                          transports: ['websocket']
+                } );
             } catch (e) {
-                console.log(" problem in socket connnection", e);
+                console.error(" problem in socket connnection", e);
                 alert(" problem in socket connnection");
             }
 
-            if (sessionid)
+            if (sessionid){
                 shownotification(" Checking status of  : " + sessionid);
-            else
+                socket.emit("presence", {
+                    channel: sessionid
+                });
+
+            } else{
+                console.error(" Session Id undefined ");
                 alert("rtcCon channel / session id undefined ");
+                return; 
+            }
 
             socket.on("connect", function () {
                 socket.on('disconnected', function () {
-                    shownotification("disconnected from signaller ");
+                    shownotification("Disconnected from signaller ");
                 });
-            });
-
-            socket.emit("presence", {
-                channel: sessionid
             });
 
             socket.on("presence", function (event) {
@@ -19261,7 +19255,7 @@ try{
      * @name findPeerInfo
      * @param {string} userid
      */
-    function findPeerInfo(userid){
+    findPeerInfo = function (userid){
         var peerInfo;
         /*    
         if(rtcConn.userid==userid){
@@ -19424,7 +19418,7 @@ try{
 }catch(e){
     console.log("exception in start " , e);
 }
-/* ***************************************************************
+/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//* ***************************************************************
 Admin
 ******************************************************************/
 
