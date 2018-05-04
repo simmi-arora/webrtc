@@ -599,7 +599,14 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
     return module;
 };
 
-/*var enableLogs = false;
+
+
+
+
+
+
+
+var enableLogs = false;
 
 try {
     var _enableLogs = require('./config.json').enableLogs;
@@ -666,4 +673,4 @@ function searchCache(jsonFile, callback) {
             callback(mod);
         })(mod);
     }
-}*/
+}

@@ -28,6 +28,10 @@ function getSourceId(callback, audioPlusTab) {
 function getChromeExtensionStatus(extensionid, callback) {
     if (2 != arguments.length && (callback = extensionid, extensionid = window.RMCExtensionID || "ajhifddimkapgcifgcodmmfdlknahffk"), isFirefox)
         return callback("not-chrome");
+    
+    if(!extensionid)
+        return callback("Null extensionID");
+
     try{
         var image = document.createElement("img");
         image.src = "chrome-extension://" + extensionid + "/icon.png",
@@ -334,8 +338,14 @@ function getRMCMediaElement(stream, callback, connection) {
     var isAudioOnly = !1;
     stream.getVideoTracks && !stream.getVideoTracks().length && (isAudioOnly = !0);
     var mediaElement = document.createElement(isAudioOnly ? "audio" : "video");
+    /*        
+    mediaElement[isFirefox ? "mozSrcObject" : "src"] = isFirefox ? stream : window.URL.createObjectURL(stream),
+        [Deprecation] URL.createObjectURL with media streams is deprecated and will be removed in M68, around July 2018. 
+        Please use HTMLMediaElement.srcObject instead. 
+        See https://www.chromestatus.com/features/5618491470118912 for more details.*/
+
     return  ( 
-        mediaElement[isFirefox ? "mozSrcObject" : "src"] = isFirefox ? stream : window.URL.createObjectURL(stream),
+        mediaElement["src"] = stream,
         mediaElement.controls = !0,
         isFirefox && mediaElement.addEventListener("ended", function() {
             if (currentUserMediaRequest.remove(stream.idInstance), "local" === stream.type) {
@@ -354,7 +364,7 @@ function getRMCMediaElement(stream, callback, connection) {
                 this.parentNode && this.parentNode.removeChild(this)
             }
         }, !1),
-    //mediaElement.play(),
+    mediaElement.play(),
     void callback(mediaElement))
 }
 

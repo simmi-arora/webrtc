@@ -267,7 +267,6 @@ function attachMediaStream(element, stream) {
         if(element.hidden){
             element.hidden=false;
         }
-
         console.log(" Media Stream attached ");
     }catch(e){
         console.error(" error" , e);
