@@ -1,4 +1,4 @@
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//*
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//*
 //var username= prompt("Please enter your id ", "");
 var username= " "
 document.getElementById("username").innerHTML=username;
@@ -237,7 +237,7 @@ function bytesToSize(e) {
     var n = parseInt(Math.floor(Math.log(e) / Math.log(1024)));
     return Math.round(e / Math.pow(1024, n), 2) + " " + t[n]
 }
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/
 function shownotification(message){
 
   if(document.getElementById("alertBox")){
@@ -325,7 +325,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
 
 
 
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/// Last time updated: 2016-08-12 5:21:05 AM UTC
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/// Last time updated: 2016-08-12 5:21:05 AM UTC
 // _____________________
 // RTCMultiConnection-v3
 // Open-Sourced: https://github.com/muaz-khan/RTCMultiConnection
@@ -3808,7 +3808,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
     window.RTCMultiConnection = RTCMultiConnection
 }();
 
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//**************************************************************
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//**************************************************************
 Screenshare 
 ****************************************************************/
 'use strict';
@@ -4552,7 +4552,7 @@ function createExtensionInstallWindow (){
     }
                                 
 }
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/var WebRTCdetect=function() {
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/var WebRTCdetect=function() {
 
     'use strict';
 
@@ -5562,7 +5562,7 @@ function createExtensionInstallWindow (){
         });
     }
 };
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//**
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//**
  * function to check devices like speakers , webcam ,  microphone etc
  * @method
  * @name checkDevices
@@ -5618,7 +5618,7 @@ function checkWebRTCSupport(obj){
         // seems WebRTC (old-fashioned) RTP data channels feature are supported on this client
     }
 }
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//* ***********************************************
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//* ***********************************************
 settings
 *********************************************/
 
@@ -5713,7 +5713,7 @@ $("#SettingsButton").click(function() {
         /*$('#'+localobj.userdisplay.operatingsystem).val(operatingsystem);*/
     }
 });
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/// Last time updated: 2016-11-04 7:11:11 AM UTC
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/// Last time updated: 2016-11-04 7:11:11 AM UTC
 
 // ________________
 // FileBufferReader
@@ -6857,7 +6857,7 @@ $("#SettingsButton").click(function() {
     window.FileBufferReader = FileBufferReader;
 })();
 
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/// Muaz Khan     - www.MuazKhan.com
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/// Muaz Khan     - www.MuazKhan.com
 // MIT License   - www.webrtc-experiment.com/licence
 // Documentation - github.com/streamproc/MediaStreamRecorder
 // ______________________
@@ -8261,7 +8261,7 @@ function SaveToDisk(blobOrFile, fileName) {
 
     (window.URL || window.webkitURL).revokeObjectURL(hyperlink.href);
 }
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/'use strict';
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/'use strict';
 
 // Last time updated: 2016-10-21 11:04:26 AM UTC
 
@@ -12256,7 +12256,7 @@ if (typeof RecordRTC !== 'undefined') {
     RecordRTC.GifRecorder = GifRecorder;
 }
 
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/// Note: All libraries listed in this file are "external libraries" 
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/// Note: All libraries listed in this file are "external libraries" 
 // ----  and has their own copyrights. Taken from "html2canvas" project.
 "use strict";
 
@@ -14540,7 +14540,7 @@ if (!IE) document.captureEvents(Event.MOUSEMOVE);
 document.addEventListener("mousemove", getMouseXY, false);
 var coordX = 0;
 var coordY = 0
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/function createSnapshotButton(controlBarName , peerinfo){
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/function createSnapshotButton(controlBarName , peerinfo){
     var snapshotButton=document.createElement("div");
     snapshotButton.id=controlBarName+"snapshotButton";
     snapshotButton.setAttribute("title", "Snapshot");
@@ -14643,7 +14643,7 @@ function syncSnapshot(datasnapshot , datatype , dataname ){
     console.log("snaspshot ",datasnapshot);
 }*/
 
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//* ***********************************************
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//* ***********************************************
 geolocation
 *********************************************/
 
@@ -14691,7 +14691,7 @@ function showError(error) {
             break;
     }
 }
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//********************************************************************************8
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//********************************************************************************8
         Chat
 **************************************************************************************/
 function createChatButton(obj){
@@ -14912,7 +14912,7 @@ function addMessageBlockFormat(messageheaderDivclass , messageheader ,messageDiv
 $('#chatbox').css('max-height', $( "#leftVideo" ).height()+ 80);
 $('#chatBoard').css('max-height', $( "#leftVideo" ).height());
 $("#chatBoard").css("overflow-y" , "scroll");
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//***************************************************
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//***************************************************
 video handling 
 *********************************************************/
 
@@ -15170,30 +15170,37 @@ function transitionToWaiting() {
 function attachMediaStream(element, stream) {
     try{
         console.log("[ Mediacontrol - attachMediaStream ] element.src", typeof element.src ,typeof element.srcObject , " || stream " + stream );
-        if (typeof element.src == 'string') {
-            element.src = URL.createObjectURL(stream);
-        }else if (typeof element.srcObject == 'object') {
-            element.srcObject = stream;
+        
+        if(stream){
+            if (typeof element.src == 'string') {
+                element.src = URL.createObjectURL(stream);
+            }else if (typeof element.srcObject == 'object') {
+                element.srcObject = stream;
+            }else{
+                console.log('Error attaching stream to element.' , element , stream);
+            }
+
+            if(element.hidden){
+                element.hidden=false;
+            }
+            console.log(" Media Stream attached ");
         }else{
-            console.log('Error attaching stream to element.' , element , stream);
+            element.src = "";
         }
 
-        if(element.hidden){
-            element.hidden=false;
-        }
-
-        console.log(" Media Stream attached ");
     }catch(e){
         console.error(" error" , e);
     }
 
 }
 
+9036911790
+
 
 function reattachMediaStream(to, from) {
     to.src = from.src;
 }
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//* ***********************************************
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//* ***********************************************
 Record
 *********************************************/
 
@@ -15324,7 +15331,7 @@ function stopRecord(){
     }, {audio:true, video:true} );
 }*/
 
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/
 /************************************************************************
 Canvas Record 
 *************************************************************************/
@@ -15867,7 +15874,7 @@ function PostBlob(blob) {
     video.focus();
     video.play();
 }
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//***************************************************************88
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//***************************************************************88
 File sharing 
 ******************************************************************/
 
@@ -16900,7 +16907,7 @@ function createModalPopup(filetype ){
 
     mainDiv.appendChild(modalBox);
 }
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//**************************************************************************8
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//**************************************************************************8
 draw 
 ******************************************************************************/
 var CanvasDesigner;
@@ -17052,7 +17059,7 @@ saveButtonCanvas.onclick=function(){
    createModalPopup( "blobcanvas" );
 };
 document.body.appendChild(saveButtonCanvas);
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//**********************************
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//**********************************
 Reconnect 
 ****************************************/
 /*
@@ -17105,7 +17112,7 @@ function assignButtonRedial(id){
         }
     };
 }
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//* **********************************************
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//* **********************************************
 Listen -In
 *************************************************/
 
@@ -17184,7 +17191,7 @@ if(document.getElementById('listenInLink')){
 
 }
 
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//***************************************************************************
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//***************************************************************************
 cursor sharing 
 ***************************************************************************/
 
@@ -17279,7 +17286,7 @@ function createCursorButton(controlBarName, peerinfo, streamid, stream ){
 /*
     <div id="cursor1" class="fa fa-hand-o-up" style="width:0"></div>
     <div id="cursor2" class="fa fa-hand-o-up" style="width:0"></div>*/
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/function createCodeEditorButton(){
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/function createCodeEditorButton(){
     var codeeditorButton= document.createElement("span");
     codeeditorButton.className=codeeditorobj.button.class_off ;
     codeeditorButton.innerHTML=codeeditorobj.button.html_off;
@@ -17381,7 +17388,7 @@ function stopWebrtcdevcodeeditorSync(){
     document.getElementById(codeeditorobj.codeeditorContainer).removeEventListener("keyup", sendWebrtcdevCodeeditorSync, false);
 }
 
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/function createTextEditorButton(){
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/function createTextEditorButton(){
     var texteditorButton= document.createElement("span");
     texteditorButton.className=texteditorobj.button.class_off ;
     texteditorButton.innerHTML=texteditorobj.button.html_off;
@@ -17440,7 +17447,7 @@ function stopWebrtcdevTexteditorSync(){
     document.getElementById(texteditorobj.texteditorContainer).removeEventListener("keyup", sendWebrtcdevTexteditorSync, false);
 }
 
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//*********************************************
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//*********************************************
 ICE
 **************************************************/
 /**
@@ -17492,7 +17499,7 @@ function getICEServer(username , secretkey , domain , appname , roomname , secur
         '&domain='+domain +'&application='+appname+
         '&room='+ roomname+'&secure='+secure);
 }
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//**************************************************8
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//**************************************************8
 Timer 
 ***************************************************/
 var hours,mins,secs;
@@ -17693,7 +17700,7 @@ function checkTime(i) {
     if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
     return i;
 }
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*/// ___________
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/// ___________
 // getStats.js
 // an abstraction layer runs top over RTCPeerConnection.getStats API
 // cross-browser compatible solution
@@ -17990,7 +17997,7 @@ function activateBandwidthButtons(timerobj){
         console.log(" rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
     }
 
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//**************************************************************************************
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//**************************************************************************************
         peerconnection 
 ****************************************************************************/
 
@@ -18229,7 +18236,18 @@ try{
 
                 rtcConn.onMediaError = function (error, constraints) {
                     console.error(error, constraints);
-                    shownotificationWarning(error.name);
+                    shownotificationWarning(error.name + " Joining without camera Stream ");
+
+                    // For local Peer , if cemars is nott allowed or not connected then put null in video containers 
+                    //for(x in webcallpeers){
+                        //if(!webcallpeers[x].stream &&  !webcallpeers[x].streamid){
+                            var peerinfo = webcallpeers[0];
+                            peerinfo.type = "Local";
+                            peerinfo.stream = null;
+                            peerinfo.streamid = "nothing01";
+                            updateWebCallView(peerinfo);
+                        //}
+                    //}
                 },
 
                 rtcConn.onstream = function (event) {
@@ -18260,7 +18278,7 @@ try{
                 },
 
                 rtcConn.onstreamended = function (event) {
-                    console.log("on streamEnded event ", event);
+                    console.log(" On streamEnded event ", event);
                     var mediaElement = document.getElementById(event.streamid);
                     if (mediaElement) {
                         mediaElement.parentNode.removeChild(mediaElement);
@@ -18797,6 +18815,8 @@ try{
                 socket = io.connect(addr ,{
                                           transports: ['websocket']
                 } );
+               // socket.set('log level', 3);
+
             } catch (e) {
                 console.error(" problem in socket connnection", e);
                 alert(" problem in socket connnection");
@@ -18998,35 +19018,41 @@ try{
             }else{
                 // When role is participant
 
-                // when video is local
                 if(peerInfo.vid.indexOf("videolocal") > -1 ){
-                    /*$("#"+localobj.videoContainer).show();
-                    $("#"+remoteobj.videoContainer).hide();*/
-                    $("[id="+localobj.videoContainer+"]").show();
-                    $("[id="+remoteobj.videoContainer+"]").hide();
+                    // when video is local
+
+                    // hide the remote video conatiner and show the local video container
+                    // as the user is single in room 
+                    document.getElementById(localobj.videoContainer).style.display= null;
+                    document.getElementById(remoteobj.videoContainer).style.display= "none";
 
                     if(localVideo && document.getElementsByName(localVideo)[0]){
                         var vid = document.getElementsByName(localVideo)[0];
                         vid.muted = true;
-                        vid.className=localobj.videoClass;
+                        vid.className = localobj.videoClass;
                         attachMediaStream(vid, peerInfo.stream);
 
-                       if(localobj.userDisplay && peerInfo.name)
-                            attachUserDetails( vid, peerInfo); 
+                        if(localobj.userDisplay && peerInfo.name)
+                            attachUserDetails( vid, peerInfo ); 
                         
                         if(localobj.userMetaDisplay && peerInfo.userid)
                             attachMetaUserDetails( vid , peerInfo ); 
 
+                        console.info(" User is alone in the session  , hiding remote video container" , 
+                        "showing users single video conrainer and attaching attachMediaStream and attachUserDetails ");
+
                     }else{
-                        alert(" no local video conatainer ");
+                        alert(" Please Add a video container in config for single");
+                        console.error(" No local video conatainer in localobj -> " , localobj);
                     }
 
                 } else if(peerInfo.vid.indexOf("videoremote") > -1) {
+                    //when video is remote 
 
-                    //$(""#"+localobj.videoContainer").hide();
-                    //$("#"+remoteobj.videoContainer).show();
-                    $("[id="+localobj.videoContainer+"]").hide();
-                    $("[id="+remoteobj.videoContainer+"]").show();
+                    // hide the local video conagineer and how the remote video congainer
+                    // user is joined with othe peers 
+                    document.getElementById(localobj.videoContainer).style.display= "none";
+                    document.getElementById(remoteobj.videoContainer).style.display= null;
 
 
                     /* handling local video transistion to active */
@@ -19056,20 +19082,24 @@ try{
                                 attachMetaUserDetails( selfvid, webcallpeers[0] ); 
                             }
                         }
+
+                        console.info(" User is joined by a remote peer , hiding local video container" , 
+                        "showing users conf video container and attaching attachMediaStream and attachUserDetails ");
+
                     }else{
-                        console.log(" Local video container not defined ");
+                        alert(" Please Add a video container in config for video call ");
+                        console.error(" Local video container not defined ");
                     }
 
 
                     // handling remote video addition 
                     if(remoteVideos){
 
-                        /*get the next empty index of video and pointer in video array */
+                        /*get the next empty index of video and pointer in remote video array */
                         var vi=0;
                         for(var v=0; v<remoteVideos.length; v++){
                             console.log("Remote Video index array " , v , " || ", remoteVideos[v] , 
-                                document.getElementsByName(remoteVideos[v])  , 
-                                document.getElementsByName(remoteVideos[v]).src);
+                                document.getElementsByName(remoteVideos[v]),  document.getElementsByName(remoteVideos[v]).src);
                             if(document.getElementsByName(remoteVideos[v])[0].src){
                                 vi++;
                             }
@@ -19079,10 +19109,10 @@ try{
                         if(remoteobj.maxAllowed=="unlimited"){
                             console.log("remote videos is unlimited , creating video for remoteVideos array ");
                             var video = document.createElement('video');
-                            video.autoplay= "autoplay";
-                            remoteVideos[vi]= video;
+                            video.autoplay = "autoplay";
+                            remoteVideos[vi] = video;
                             document.getElementById(remoteobj.dynamicVideos.videoContainer).appendChild(video);
-                            remvid=remoteVideos[vi];
+                            remvid = remoteVideos[vi];
                         }else{
                             console.log("remote video is limited to size maxAllowed , current index ", vi);
                             remvid = document.getElementsByName(remoteVideos[vi])[0];
@@ -19094,7 +19124,7 @@ try{
                         console.log(" Remote Video ", remvid);
 
                         attachMediaStream(remvid, peerInfo.stream);
-                        if(remvid.hidden) removid.hidden=false;
+                        if(remvid.hidden) remvid.hidden=false;
                         remvid.id = peerInfo.videoContainer;
                         remvid.className = remoteobj.videoClass;
                         attachControlButtons(remvid, peerInfo); 
@@ -19211,6 +19241,9 @@ try{
         }
         console.log("updated peerInfo: " ,peerInfo);
         webcallpeers.push(peerInfo);
+
+        // Update the web call view 
+        updateWebCallView(peerInfo);
     }
 
     /**
@@ -19418,7 +19451,7 @@ try{
 }catch(e){
     console.log("exception in start " , e);
 }
-/*Generated on:Wed May 02 2018 09:12:43 GMT+0530 (India Standard Time)*//* ***************************************************************
+/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//* ***************************************************************
 Admin
 ******************************************************************/
 

@@ -239,14 +239,16 @@ try{
                     console.error(error, constraints);
                     shownotificationWarning(error.name + " Joining without camera Stream ");
 
-                    for(x in webcallpeers){
-                        if(!webcallpeers[x].stream &&  !webcallpeers[x].streamid)
-                            webcallpeers[x].type = null;
-                            webcallpeers[x].stream = null;
-                            webcallpeers[x].streamid = null;
+                    // For local Peer , if cemars is nott allowed or not connected then put null in video containers 
+                    //for(x in webcallpeers){
+                        //if(!webcallpeers[x].stream &&  !webcallpeers[x].streamid){
+                            var peerinfo = webcallpeers[0];
+                            peerinfo.type = "Local";
+                            peerinfo.stream = null;
+                            peerinfo.streamid = "nothing01";
                             updateWebCallView(peerinfo);
-                        }
-                    }
+                        //}
+                    //}
                 },
 
                 rtcConn.onstream = function (event) {
@@ -277,7 +279,7 @@ try{
                 },
 
                 rtcConn.onstreamended = function (event) {
-                    console.log("on streamEnded event ", event);
+                    console.log(" On streamEnded event ", event);
                     var mediaElement = document.getElementById(event.streamid);
                     if (mediaElement) {
                         mediaElement.parentNode.removeChild(mediaElement);
@@ -814,6 +816,8 @@ try{
                 socket = io.connect(addr ,{
                                           transports: ['websocket']
                 } );
+               // socket.set('log level', 3);
+
             } catch (e) {
                 console.error(" problem in socket connnection", e);
                 alert(" problem in socket connnection");
@@ -1015,35 +1019,41 @@ try{
             }else{
                 // When role is participant
 
-                // when video is local
                 if(peerInfo.vid.indexOf("videolocal") > -1 ){
-                    /*$("#"+localobj.videoContainer).show();
-                    $("#"+remoteobj.videoContainer).hide();*/
-                    $("[id="+localobj.videoContainer+"]").show();
-                    $("[id="+remoteobj.videoContainer+"]").hide();
+                    // when video is local
+
+                    // hide the remote video conatiner and show the local video container
+                    // as the user is single in room 
+                    document.getElementById(localobj.videoContainer).style.display= null;
+                    document.getElementById(remoteobj.videoContainer).style.display= "none";
 
                     if(localVideo && document.getElementsByName(localVideo)[0]){
                         var vid = document.getElementsByName(localVideo)[0];
                         vid.muted = true;
-                        vid.className=localobj.videoClass;
+                        vid.className = localobj.videoClass;
                         attachMediaStream(vid, peerInfo.stream);
 
-                       if(localobj.userDisplay && peerInfo.name)
-                            attachUserDetails( vid, peerInfo); 
+                        if(localobj.userDisplay && peerInfo.name)
+                            attachUserDetails( vid, peerInfo ); 
                         
                         if(localobj.userMetaDisplay && peerInfo.userid)
                             attachMetaUserDetails( vid , peerInfo ); 
 
+                        console.info(" User is alone in the session  , hiding remote video container" , 
+                        "showing users single video conrainer and attaching attachMediaStream and attachUserDetails ");
+
                     }else{
-                        alert(" no local video conatainer ");
+                        alert(" Please Add a video container in config for single");
+                        console.error(" No local video conatainer in localobj -> " , localobj);
                     }
 
                 } else if(peerInfo.vid.indexOf("videoremote") > -1) {
+                    //when video is remote 
 
-                    //$(""#"+localobj.videoContainer").hide();
-                    //$("#"+remoteobj.videoContainer).show();
-                    $("[id="+localobj.videoContainer+"]").hide();
-                    $("[id="+remoteobj.videoContainer+"]").show();
+                    // hide the local video conagineer and how the remote video congainer
+                    // user is joined with othe peers 
+                    document.getElementById(localobj.videoContainer).style.display= "none";
+                    document.getElementById(remoteobj.videoContainer).style.display= null;
 
 
                     /* handling local video transistion to active */
@@ -1073,20 +1083,24 @@ try{
                                 attachMetaUserDetails( selfvid, webcallpeers[0] ); 
                             }
                         }
+
+                        console.info(" User is joined by a remote peer , hiding local video container" , 
+                        "showing users conf video container and attaching attachMediaStream and attachUserDetails ");
+
                     }else{
-                        console.log(" Local video container not defined ");
+                        alert(" Please Add a video container in config for video call ");
+                        console.error(" Local video container not defined ");
                     }
 
 
                     // handling remote video addition 
                     if(remoteVideos){
 
-                        /*get the next empty index of video and pointer in video array */
+                        /*get the next empty index of video and pointer in remote video array */
                         var vi=0;
                         for(var v=0; v<remoteVideos.length; v++){
                             console.log("Remote Video index array " , v , " || ", remoteVideos[v] , 
-                                document.getElementsByName(remoteVideos[v])  , 
-                                document.getElementsByName(remoteVideos[v]).src);
+                                document.getElementsByName(remoteVideos[v]),  document.getElementsByName(remoteVideos[v]).src);
                             if(document.getElementsByName(remoteVideos[v])[0].src){
                                 vi++;
                             }
@@ -1096,10 +1110,10 @@ try{
                         if(remoteobj.maxAllowed=="unlimited"){
                             console.log("remote videos is unlimited , creating video for remoteVideos array ");
                             var video = document.createElement('video');
-                            video.autoplay= "autoplay";
-                            remoteVideos[vi]= video;
+                            video.autoplay = "autoplay";
+                            remoteVideos[vi] = video;
                             document.getElementById(remoteobj.dynamicVideos.videoContainer).appendChild(video);
-                            remvid=remoteVideos[vi];
+                            remvid = remoteVideos[vi];
                         }else{
                             console.log("remote video is limited to size maxAllowed , current index ", vi);
                             remvid = document.getElementsByName(remoteVideos[vi])[0];
@@ -1111,7 +1125,7 @@ try{
                         console.log(" Remote Video ", remvid);
 
                         attachMediaStream(remvid, peerInfo.stream);
-                        if(remvid.hidden) removid.hidden=false;
+                        if(remvid.hidden) remvid.hidden=false;
                         remvid.id = peerInfo.videoContainer;
                         remvid.className = remoteobj.videoClass;
                         attachControlButtons(remvid, peerInfo); 
@@ -1228,6 +1242,9 @@ try{
         }
         console.log("updated peerInfo: " ,peerInfo);
         webcallpeers.push(peerInfo);
+
+        // Update the web call view 
+        updateWebCallView(peerInfo);
     }
 
     /**

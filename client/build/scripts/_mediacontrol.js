@@ -256,23 +256,31 @@ function transitionToWaiting() {
 function attachMediaStream(element, stream) {
     try{
         console.log("[ Mediacontrol - attachMediaStream ] element.src", typeof element.src ,typeof element.srcObject , " || stream " + stream );
-        if (typeof element.src == 'string') {
-            element.src = URL.createObjectURL(stream);
-        }else if (typeof element.srcObject == 'object') {
-            element.srcObject = stream;
+        
+        if(stream){
+            if (typeof element.src == 'string') {
+                element.src = URL.createObjectURL(stream);
+            }else if (typeof element.srcObject == 'object') {
+                element.srcObject = stream;
+            }else{
+                console.log('Error attaching stream to element.' , element , stream);
+            }
+
+            if(element.hidden){
+                element.hidden=false;
+            }
+            console.log(" Media Stream attached ");
         }else{
-            console.log('Error attaching stream to element.' , element , stream);
+            element.src = "";
         }
 
-        if(element.hidden){
-            element.hidden=false;
-        }
-        console.log(" Media Stream attached ");
     }catch(e){
-        console.error(" error" , e);
+        console.error(" [ Mediacontrol - attachMediaStream ]  error" , e);
     }
 
 }
+
+9036911790
 
 
 function reattachMediaStream(to, from) {
