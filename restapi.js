@@ -65,6 +65,8 @@ exports.restapi = function(realtimecomm, options , app, properties) {
      */
     function getSession(req, res, callback) { 
 
+        console.log(" [ Rest api - getSession ]  logs for " , req.params.channelid  );
+
         if(!req.params.channelid){
             res.json({ 
                 type: true, 
@@ -75,7 +77,7 @@ exports.restapi = function(realtimecomm, options , app, properties) {
 
         var result = realtimecomm.getChannel(req.params.channelid, 'json');
         res.json({ 
-            type:true , 
+            type : true , 
             data : result 
         });
     }
@@ -110,6 +112,8 @@ exports.restapi = function(realtimecomm, options , app, properties) {
      *
      */
     function getUser(req, res, callback) { 
+
+        console.log(" [ Rest api - getUser ]  logs for " , req.params.userid  );
 
         if(!req.params.userid){
             res.json({ 
