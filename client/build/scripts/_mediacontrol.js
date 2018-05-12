@@ -29,7 +29,6 @@ function createVideoContainer(e, style, callback) {
 *******************************************/
 function attachUserDetails(vid , peerinfo){
     var nameBox=document.createElement("div");
-    //nameBox.className="well well-sm";
     nameBox.setAttribute("style","background-color:"+ peerinfo.color);
     nameBox.className = "videoHeaderClass";
     nameBox.innerHTML = peerinfo.name+"<br/>";

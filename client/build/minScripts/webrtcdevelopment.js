@@ -1,4 +1,4 @@
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//*
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*//*
 //var username= prompt("Please enter your id ", "");
 var username= " "
 document.getElementById("username").innerHTML=username;
@@ -237,7 +237,7 @@ function bytesToSize(e) {
     var n = parseInt(Math.floor(Math.log(e) / Math.log(1024)));
     return Math.round(e / Math.pow(1024, n), 2) + " " + t[n]
 }
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*/
 function shownotification(message){
 
   if(document.getElementById("alertBox")){
@@ -325,7 +325,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
 
 
 
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/// Last time updated: 2016-08-12 5:21:05 AM UTC
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*/// Last time updated: 2016-08-12 5:21:05 AM UTC
 // _____________________
 // RTCMultiConnection-v3
 // Open-Sourced: https://github.com/muaz-khan/RTCMultiConnection
@@ -3808,7 +3808,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
     window.RTCMultiConnection = RTCMultiConnection
 }();
 
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//**************************************************************
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*//**************************************************************
 Screenshare 
 ****************************************************************/
 'use strict';
@@ -4552,7 +4552,7 @@ function createExtensionInstallWindow (){
     }
                                 
 }
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/var WebRTCdetect=function() {
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*/var WebRTCdetect=function() {
 
     'use strict';
 
@@ -5562,7 +5562,7 @@ function createExtensionInstallWindow (){
         });
     }
 };
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//**
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*//**
  * function to check devices like speakers , webcam ,  microphone etc
  * @method
  * @name checkDevices
@@ -5618,7 +5618,7 @@ function checkWebRTCSupport(obj){
         // seems WebRTC (old-fashioned) RTP data channels feature are supported on this client
     }
 }
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//* ***********************************************
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*//* ***********************************************
 settings
 *********************************************/
 
@@ -5713,7 +5713,7 @@ $("#SettingsButton").click(function() {
         /*$('#'+localobj.userdisplay.operatingsystem).val(operatingsystem);*/
     }
 });
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/// Last time updated: 2016-11-04 7:11:11 AM UTC
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*/// Last time updated: 2016-11-04 7:11:11 AM UTC
 
 // ________________
 // FileBufferReader
@@ -6857,7 +6857,7 @@ $("#SettingsButton").click(function() {
     window.FileBufferReader = FileBufferReader;
 })();
 
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/// Muaz Khan     - www.MuazKhan.com
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*/// Muaz Khan     - www.MuazKhan.com
 // MIT License   - www.webrtc-experiment.com/licence
 // Documentation - github.com/streamproc/MediaStreamRecorder
 // ______________________
@@ -8261,7 +8261,7 @@ function SaveToDisk(blobOrFile, fileName) {
 
     (window.URL || window.webkitURL).revokeObjectURL(hyperlink.href);
 }
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/'use strict';
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*/'use strict';
 
 // Last time updated: 2016-10-21 11:04:26 AM UTC
 
@@ -12256,7 +12256,7 @@ if (typeof RecordRTC !== 'undefined') {
     RecordRTC.GifRecorder = GifRecorder;
 }
 
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/// Note: All libraries listed in this file are "external libraries" 
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*/// Note: All libraries listed in this file are "external libraries" 
 // ----  and has their own copyrights. Taken from "html2canvas" project.
 "use strict";
 
@@ -14540,7 +14540,7 @@ if (!IE) document.captureEvents(Event.MOUSEMOVE);
 document.addEventListener("mousemove", getMouseXY, false);
 var coordX = 0;
 var coordY = 0
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/function createSnapshotButton(controlBarName , peerinfo){
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*/function createSnapshotButton(controlBarName , peerinfo){
     var snapshotButton=document.createElement("div");
     snapshotButton.id=controlBarName+"snapshotButton";
     snapshotButton.setAttribute("title", "Snapshot");
@@ -14643,7 +14643,7 @@ function syncSnapshot(datasnapshot , datatype , dataname ){
     console.log("snaspshot ",datasnapshot);
 }*/
 
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//* ***********************************************
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*//* ***********************************************
 geolocation
 *********************************************/
 
@@ -14691,7 +14691,7 @@ function showError(error) {
             break;
     }
 }
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//********************************************************************************8
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*//********************************************************************************8
         Chat
 **************************************************************************************/
 function createChatButton(obj){
@@ -14912,7 +14912,7 @@ function addMessageBlockFormat(messageheaderDivclass , messageheader ,messageDiv
 $('#chatbox').css('max-height', $( "#leftVideo" ).height()+ 80);
 $('#chatBoard').css('max-height', $( "#leftVideo" ).height());
 $("#chatBoard").css("overflow-y" , "scroll");
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//***************************************************
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*//***************************************************
 video handling 
 *********************************************************/
 
@@ -14943,7 +14943,6 @@ function createVideoContainer(e, style, callback) {
 *******************************************/
 function attachUserDetails(vid , peerinfo){
     var nameBox=document.createElement("div");
-    //nameBox.className="well well-sm";
     nameBox.setAttribute("style","background-color:"+ peerinfo.color);
     nameBox.className = "videoHeaderClass";
     nameBox.innerHTML = peerinfo.name+"<br/>";
@@ -15189,7 +15188,7 @@ function attachMediaStream(element, stream) {
         }
 
     }catch(e){
-        console.error(" error" , e);
+        console.error(" [ Mediacontrol - attachMediaStream ]  error" , e);
     }
 
 }
@@ -15200,7 +15199,7 @@ function attachMediaStream(element, stream) {
 function reattachMediaStream(to, from) {
     to.src = from.src;
 }
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//* ***********************************************
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*//* ***********************************************
 Record
 *********************************************/
 
@@ -15331,7 +15330,7 @@ function stopRecord(){
     }, {audio:true, video:true} );
 }*/
 
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*/
 /************************************************************************
 Canvas Record 
 *************************************************************************/
@@ -15874,7 +15873,7 @@ function PostBlob(blob) {
     video.focus();
     video.play();
 }
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//***************************************************************88
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*//***************************************************************88
 File sharing 
 ******************************************************************/
 
@@ -16907,7 +16906,7 @@ function createModalPopup(filetype ){
 
     mainDiv.appendChild(modalBox);
 }
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//**************************************************************************8
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*//**************************************************************************8
 draw 
 ******************************************************************************/
 var CanvasDesigner;
@@ -17059,7 +17058,7 @@ saveButtonCanvas.onclick=function(){
    createModalPopup( "blobcanvas" );
 };
 document.body.appendChild(saveButtonCanvas);
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//**********************************
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*//**********************************
 Reconnect 
 ****************************************/
 /*
@@ -17112,7 +17111,7 @@ function assignButtonRedial(id){
         }
     };
 }
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//* **********************************************
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*//* **********************************************
 Listen -In
 *************************************************/
 
@@ -17191,7 +17190,7 @@ if(document.getElementById('listenInLink')){
 
 }
 
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//***************************************************************************
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*//***************************************************************************
 cursor sharing 
 ***************************************************************************/
 
@@ -17286,7 +17285,7 @@ function createCursorButton(controlBarName, peerinfo, streamid, stream ){
 /*
     <div id="cursor1" class="fa fa-hand-o-up" style="width:0"></div>
     <div id="cursor2" class="fa fa-hand-o-up" style="width:0"></div>*/
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/function createCodeEditorButton(){
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*/function createCodeEditorButton(){
     var codeeditorButton= document.createElement("span");
     codeeditorButton.className=codeeditorobj.button.class_off ;
     codeeditorButton.innerHTML=codeeditorobj.button.html_off;
@@ -17388,7 +17387,7 @@ function stopWebrtcdevcodeeditorSync(){
     document.getElementById(codeeditorobj.codeeditorContainer).removeEventListener("keyup", sendWebrtcdevCodeeditorSync, false);
 }
 
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/function createTextEditorButton(){
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*/function createTextEditorButton(){
     var texteditorButton= document.createElement("span");
     texteditorButton.className=texteditorobj.button.class_off ;
     texteditorButton.innerHTML=texteditorobj.button.html_off;
@@ -17447,7 +17446,7 @@ function stopWebrtcdevTexteditorSync(){
     document.getElementById(texteditorobj.texteditorContainer).removeEventListener("keyup", sendWebrtcdevTexteditorSync, false);
 }
 
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//*********************************************
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*//*********************************************
 ICE
 **************************************************/
 /**
@@ -17499,7 +17498,7 @@ function getICEServer(username , secretkey , domain , appname , roomname , secur
         '&domain='+domain +'&application='+appname+
         '&room='+ roomname+'&secure='+secure);
 }
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//**************************************************8
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*//**************************************************8
 Timer 
 ***************************************************/
 var hours,mins,secs;
@@ -17700,7 +17699,7 @@ function checkTime(i) {
     if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
     return i;
 }
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*/// ___________
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*/// ___________
 // getStats.js
 // an abstraction layer runs top over RTCPeerConnection.getStats API
 // cross-browser compatible solution
@@ -17997,7 +17996,7 @@ function activateBandwidthButtons(timerobj){
         console.log(" rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
     }
 
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//**************************************************************************************
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*//**************************************************************************************
         peerconnection 
 ****************************************************************************/
 
@@ -18026,6 +18025,32 @@ try{
             incomingAudio = incoming.audio ; 
             incomingVideo = incoming.video ; 
             incomingData  = incoming.data  ;  
+        }
+
+        console.log(" [ startJS webrtcdom ] : DetectRTC " , DetectRTC);
+        
+        // Cases around webcam malfunctiojn or absense 
+        if(!DetectRTC.hasWebcam){
+            alert(" Your browser doesnt have webcam");
+            outgoing.video = false;
+        }
+        if(!DetectRTC.isWebsiteHasWebcamPermissions){
+            alert(" Your browser doesnt have permission for accessing webcam");
+            outgoing.video = false;
+        }
+        
+        //Cases around Miceohone malfunction or absense 
+        if(!DetectRTC.hasMicrophone){
+            alert(" Your browser doesnt have microphone");   
+            outgoing.audio = false ;
+        }
+        if(!DetectRTC.sWebsiteHasMicrophonePermissions){
+            alert(" Your browser doesnt have permission for accessing microphone");
+            outgoing.audio = false;
+        }
+        
+        if(!DetectRTC.hasSpeakers){
+            alert(" Your browser doesnt have speakers");      
         }
 
         if(outgoing){
@@ -18235,7 +18260,7 @@ try{
                 },
 
                 rtcConn.onMediaError = function (error, constraints) {
-                    console.error(error, constraints);
+                    console.error("[startJS onMediaError] ", error, constraints);
                     shownotificationWarning(error.name + " Joining without camera Stream ");
 
                     // For local Peer , if cemars is nott allowed or not connected then put null in video containers 
@@ -18251,7 +18276,7 @@ try{
                 },
 
                 rtcConn.onstream = function (event) {
-                    console.log("on stream Started event ", event);
+                    console.log("[startJs on stream ] on stream Started event ", event);
                     /*                  
                     var width = parseInt(connection.videosContainer.clientWidth / 2) - 20;
                     var mediaElement = getMediaElement(event.mediaElement, {
@@ -18850,24 +18875,24 @@ try{
                 if (event.status && event.channel == sessionid) {
                     try {
 
-                        console.log(" [open-channel-resp ] video:" ,  incomingVideo,
-                            " audio: " , incomingAudio ,
-                            " data: " , incomingData , 
-                            " OfferToReceiveAudio: " , outgoingAudio,
-                            " OfferToReceiveVideo: " ,outgoingVideo
+                        console.log(" [open-channel-resp ] Session video:" ,  outgoingVideo,
+                            " audio: " , outgoingAudio ,
+                            " data: " , outgoingData , 
+                            " OfferToReceiveAudio: " , incomingAudio,
+                            " OfferToReceiveVideo: " , incomingVideo
                         );
 
                         rtcConn.connectionType = "open",
 
                         rtcConn.session = {
-                            video: incomingVideo,
-                            audio: incomingAudio,
-                            data: incomingData
+                            video: outgoingVideo,
+                            audio: outgoingAudio,
+                            data: outgoingData
                         },
 
                         rtcConn.sdpConstraints.mandatory = {
-                            OfferToReceiveAudio: outgoingAudio,
-                            OfferToReceiveVideo: outgoingVideo
+                            OfferToReceiveAudio: incomingAudio,
+                            OfferToReceiveVideo: incomingVideo
                         },
 
                         rtcConn.open(event.channel, function () {
@@ -18888,9 +18913,13 @@ try{
                             }
 
                             updatePeerInfo(selfuserid, selfusername, selfcolor, selfemail, "role" , "local");
-                            console.info(" trying to open a channel on WebRTC SDP ");
-                            rtcConn.dontCaptureUserMedia = false,
-                            rtcConn.getUserMedia();
+                            console.info(" Trying to open a channel on WebRTC SDP ");
+                            if(outgoingVideo){
+                                rtcConn.dontCaptureUserMedia = false,
+                                rtcConn.getUserMedia();
+                            }else{
+                                alert(" [startJS open-channel-resp] dont Capture outgoing video " , outgoingVideo);
+                            }
                         });
                     } catch (e) {
                         console.error(e);
@@ -18905,39 +18934,42 @@ try{
                 console.log("===========================joined-channel", event);
                 if (event.status && event.channel == sessionid) {
                     
-                    console.log(" [ join-channel-resp ] video:" ,  incomingVideo,
-                        " audio: " , incomingAudio ,
-                        " data: " , incomingData , 
-                        " OfferToReceiveAudio: " , outgoingAudio,
-                        " OfferToReceiveVideo: " , outgoingVideo
+                    console.log(" [ join-channel-resp ] Session video:" ,  outgoingVideo,
+                        " audio: " , outgoingAudio ,
+                        " data: " , outgoingData , 
+                        " OfferToReceiveAudio: " , incomingAudio,
+                        " OfferToReceiveVideo: " , incomingVideo
                     ); 
 
                     rtcConn.connectionType = "join",
                     rtcConn.session = {
-                        video: incomingVideo,
-                        audio: incomingAudio,
-                        data: incomingData
+                        video: outgoingVideo,
+                        audio: outgoingAudio,
+                        data: outgoingData
                     },
                     rtcConn.sdpConstraints.mandatory = {
-                        OfferToReceiveAudio: outgoingAudio,
-                        OfferToReceiveVideo: outgoingVideo
+                        OfferToReceiveAudio: incomingAudio,
+                        OfferToReceiveVideo: incomingVideo
                     },
                     rtcConn.remoteUsers = event.users,
-                    updatePeerInfo(rtcConn.userid, selfusername, selfcolor, selfemail, role, rtcConn.type);
+                    updatePeerInfo(rtcConn.userid, selfusername, selfcolor, selfemail, role, "local"); 
 
                     for (x in rtcConn.remoteUsers) {
-                        updatePeerInfo(rtcConn.remoteUsers[x], remoteusername, remotecolor, remoteemail, "remote role" , "remote");
+                        updatePeerInfo(rtcConn.remoteUsers[x], remoteusername, remotecolor, remoteemail, "participant" , "remote");
                         if (role == "inspector") shownotificationWarning("This session is being inspected ");
                     }
 
                     rtcConn.connectionDescription = rtcConn.join(event.channel);
 
-                    if(role != "inspector"){
-                        rtcConn.dontCaptureUserMedia = false,
-                        rtcConn.getUserMedia();                        
-                    }
+                    console.log(" Trying to join a channel on WebRTC SDP ");
 
-                    console.log(" trying to join a channel on WebRTC SDP ");
+                    if(role != "inspector" && outgoingVideo){
+                        rtcConn.dontCaptureUserMedia = false,
+                        rtcConn.getUserMedia();
+                    }else{
+                        alert(" [startJS join-channel-resp] dont Capture outgoing video " , outgoingVideo);
+                    }
+                    
                 } else {
                     alert("signaller doesnt allow you to join the channel");
                     shownotification(event.msgtype + " : " + event.message);
@@ -18972,177 +19004,197 @@ try{
      * @param {json} peerInfo
      */
     function updateWebCallView(peerInfo){
-        console.log("updateWebCallView - start with peerInfo" , peerInfo);
+        console.log("updateWebCallView - start with peerInfo" , peerInfo , " || role is ", role , " ||  indexOf ", peerInfo.vid.indexOf("videoundefined") );
         try{
-
-            if(role=="inspector"){
-
-                var vi=0;
-                for(var v=0; v<remoteVideos.length; v++){
-                    console.log("Remote Video index array " , v , " || ", remoteVideos[v] , 
-                        document.getElementsByName(remoteVideos[v])  , 
-                        document.getElementsByName(remoteVideos[v]).src);
-                    if(remoteVideos[v].src){
-                        vi++;
-                    }
-                }
-
-                var remvid;
-                var video = document.createElement('video');
-                video.autoplay = "autoplay";
-                remoteVideos[vi] = video;
-                document.getElementById(remoteobj.videoContainer).appendChild(video);
-                remvid = remoteVideos[vi];
-
-                console.log(" [start.js - updateWebCallView] inspector role , attaching stream" , remvid, peerInfo.stream );
-                attachMediaStream(remvid, peerInfo.stream);
-                if(remvid.hidden) removid.hidden = false;
-                remvid.id = peerInfo.videoContainer;
-                remvid.className = remoteobj.videoClass;
-                attachControlButtons(remvid, peerInfo); 
-
-                if(remoteobj.userDisplay && peerInfo.name ){
-                    attachUserDetails( remvid, peerInfo); 
-                }
-                
-                if(remoteobj.userMetaDisplay && peerInfo.userid){
-                    attachMetaUserDetails( remvid, peerInfo ); 
-                }
-
-                //Hide the unsed video for Remote
-                var _templ=document.getElementsByName(localVideo)[0];
-                    _templ.setAttribute("style","display:none");
-                var _templ2=document.getElementsByName(selfVideo)[0];
-                _templ2.setAttribute("style","display:none");
-
-            }else{
-                // When role is participant
-
-                if(peerInfo.vid.indexOf("videolocal") > -1 ){
-                    // when video is local
-
-                    // hide the remote video conatiner and show the local video container
-                    // as the user is single in room 
-                    document.getElementById(localobj.videoContainer).style.display= null;
-                    document.getElementById(remoteobj.videoContainer).style.display= "none";
-
-                    if(localVideo && document.getElementsByName(localVideo)[0]){
-                        var vid = document.getElementsByName(localVideo)[0];
-                        vid.muted = true;
-                        vid.className = localobj.videoClass;
-                        attachMediaStream(vid, peerInfo.stream);
-
-                        if(localobj.userDisplay && peerInfo.name)
-                            attachUserDetails( vid, peerInfo ); 
-                        
-                        if(localobj.userMetaDisplay && peerInfo.userid)
-                            attachMetaUserDetails( vid , peerInfo ); 
-
-                        console.info(" User is alone in the session  , hiding remote video container" , 
-                        "showing users single video conrainer and attaching attachMediaStream and attachUserDetails ");
-
-                    }else{
-                        alert(" Please Add a video container in config for single");
-                        console.error(" No local video conatainer in localobj -> " , localobj);
-                    }
-
-                } else if(peerInfo.vid.indexOf("videoremote") > -1) {
-                    //when video is remote 
-
-                    // hide the local video conagineer and how the remote video congainer
-                    // user is joined with othe peers 
-                    document.getElementById(localobj.videoContainer).style.display= "none";
-                    document.getElementById(remoteobj.videoContainer).style.display= null;
-
-
-                    /* handling local video transistion to active */
-                    if( outgoingVideo && localVideo && selfVideo ){
-                        /*chk if local video is added to conf , else adding local video to index 0 */
-                        //localvid : video congtainer before p2p session 
-                        var localvid = document.getElementsByName(localVideo)[0];
-                        // selfvid : local video in a p2p session
-                        var selfvid = document.getElementsByName(selfVideo)[0];
-                        
-                        if(selfvid.played.length==0){
-                            if(localvid.played.lebth>0){
-                                reattachMediaStream(selfvid, localvid);
-                            }else{
-                                attachMediaStream(selfvid, webcallpeers[0].stream);
-                            }
-                            selfvid.id = webcallpeers[0].videoContainer;
-                            selfvid.className=remoteobj.videoClass;
-                            selfvid.muted = true;
-                            attachControlButtons( selfvid, webcallpeers[0]); 
-
-                            if(localobj.userDisplay && webcallpeers[0].name){
-                                attachUserDetails( selfvid, webcallpeers[0] );
-                            } 
-
-                            if(localobj.userMetaDisplay && webcallpeers[0].userid){
-                                attachMetaUserDetails( selfvid, webcallpeers[0] ); 
-                            }
+            switch(role){
+                case "inspector":
+                    var vi=0;
+                    for(var v=0; v<remoteVideos.length; v++){
+                        console.log("Remote Video index array " , v , " || ", remoteVideos[v] , 
+                            document.getElementsByName(remoteVideos[v])  , 
+                            document.getElementsByName(remoteVideos[v]).src);
+                        if(remoteVideos[v].src){
+                            vi++;
                         }
-
-                        console.info(" User is joined by a remote peer , hiding local video container" , 
-                        "showing users conf video container and attaching attachMediaStream and attachUserDetails ");
-
-                    }else{
-                        alert(" Please Add a video container in config for video call ");
-                        console.error(" Local video container not defined ");
                     }
 
+                    var remvid;
+                    var video = document.createElement('video');
+                    video.autoplay = "autoplay";
+                    remoteVideos[vi] = video;
+                    document.getElementById(remoteobj.videoContainer).appendChild(video);
+                    remvid = remoteVideos[vi];
 
-                    // handling remote video addition 
-                    if(remoteVideos){
+                    console.log(" [start.js - updateWebCallView] inspector role , attaching stream" , remvid, peerInfo.stream );
+                    attachMediaStream(remvid, peerInfo.stream);
+                    if(remvid.hidden) removid.hidden = false;
+                    remvid.id = peerInfo.videoContainer;
+                    remvid.className = remoteobj.videoClass;
+                    attachControlButtons(remvid, peerInfo); 
 
-                        /*get the next empty index of video and pointer in remote video array */
-                        var vi=0;
-                        for(var v=0; v<remoteVideos.length; v++){
-                            console.log("Remote Video index array " , v , " || ", remoteVideos[v] , 
-                                document.getElementsByName(remoteVideos[v]),  document.getElementsByName(remoteVideos[v]).src);
-                            if(document.getElementsByName(remoteVideos[v])[0].src){
-                                vi++;
-                            }
-                        }
+                    if(remoteobj.userDisplay && peerInfo.name ){
+                        attachUserDetails( remvid, peerInfo); 
+                    }
+                    
+                    if(remoteobj.userMetaDisplay && peerInfo.userid){
+                        attachMetaUserDetails( remvid, peerInfo ); 
+                    }
 
-                        var remvid;
-                        if(remoteobj.maxAllowed=="unlimited"){
-                            console.log("remote videos is unlimited , creating video for remoteVideos array ");
-                            var video = document.createElement('video');
-                            video.autoplay = "autoplay";
-                            remoteVideos[vi] = video;
-                            document.getElementById(remoteobj.dynamicVideos.videoContainer).appendChild(video);
-                            remvid = remoteVideos[vi];
+                    //Hide the unsed video for Remote
+                    var _templ=document.getElementsByName(localVideo)[0];
+                        _templ.setAttribute("style","display:none");
+                    var _templ2=document.getElementsByName(selfVideo)[0];
+                    _templ2.setAttribute("style","display:none");
+                break;
+
+                case "user":
+                case "participant":
+
+                    if(peerInfo.vid.indexOf("videolocal") > -1 ){
+                        console.info(" PeerInfo Vid is Local");
+
+                        // when video is local
+
+                        // hide the remote video conatiner and show the local video container
+                        // as the user is single in room 
+                        document.getElementById(localobj.videoContainer).style.display= null;
+                        document.getElementById(remoteobj.videoContainer).style.display= "none";
+
+                        if(localVideo && document.getElementsByName(localVideo)[0]){
+                            var vid = document.getElementsByName(localVideo)[0];
+                            vid.muted = true;
+                            vid.className = localobj.videoClass;
+                            attachMediaStream(vid, peerInfo.stream);
+
+                            if(localobj.userDisplay && peerInfo.name)
+                                attachUserDetails( vid, peerInfo ); 
+                            
+                            if(localobj.userMetaDisplay && peerInfo.userid)
+                                attachMetaUserDetails( vid , peerInfo ); 
+
+                            console.info(" User is alone in the session  , hiding remote video container" , 
+                            "showing users single video conrainer and attaching attachMediaStream and attachUserDetails ");
+
                         }else{
-                            console.log("remote video is limited to size maxAllowed , current index ", vi);
-                            remvid = document.getElementsByName(remoteVideos[vi])[0];
-                        }
-                        if(!remvid){
-                            alert(" Could not create video conatiner for remote peer ");
-                            return;
-                        }
-                        console.log(" Remote Video ", remvid);
-
-                        attachMediaStream(remvid, peerInfo.stream);
-                        if(remvid.hidden) remvid.hidden=false;
-                        remvid.id = peerInfo.videoContainer;
-                        remvid.className = remoteobj.videoClass;
-                        attachControlButtons(remvid, peerInfo); 
-
-                        if(remoteobj.userDisplay && peerInfo.name ) {
-                            attachUserDetails( remvid, peerInfo); 
-                        }
-                        
-                        if(remoteobj.userMetaDisplay && peerInfo.userid) {
-                            attachMetaUserDetails( remvid, peerInfo ); 
+                            alert(" Please Add a video container in config for single");
+                            console.error(" No local video conatainer in localobj -> " , localobj);
                         }
 
-                    }else{
-                        alert(" remote Video containers not defined");
+                    } else if(peerInfo.vid.indexOf("videoremote") > -1) {
+                        //when video is remote 
+                        // hide the local video conagineer and how the remote video container
+                        // user is joined with othe peers 
+                        document.getElementById(localobj.videoContainer).style.display= "none";
+                        document.getElementById(remoteobj.videoContainer).style.display= null;
+
+
+                        /* handling local video transistion to active */
+                        if( outgoingVideo && localVideo && selfVideo ){
+                            /*chk if local video is added to conf , else adding local video to index 0 */
+                            //localvid : video container before p2p session 
+                            var localvid = document.getElementsByName(localVideo)[0];
+                            // selfvid : local video in a p2p session
+                            var selfvid = document.getElementsByName(selfVideo)[0];
+                            
+                            if(selfvid.played.length==0){
+                                if(localvid.played.lebth>0){
+                                    reattachMediaStream(selfvid, localvid);
+                                }else{
+                                    attachMediaStream(selfvid, webcallpeers[0].stream);
+                                }
+                                selfvid.id = webcallpeers[0].videoContainer;
+                                selfvid.className = remoteobj.videoClass;
+                                selfvid.muted = true;
+                                attachControlButtons( selfvid, webcallpeers[0]); 
+
+                                if(localobj.userDisplay && webcallpeers[0].name){
+                                    attachUserDetails( selfvid, webcallpeers[0] );
+                                } 
+
+                                if(localobj.userMetaDisplay && webcallpeers[0].userid){
+                                    attachMetaUserDetails( selfvid, webcallpeers[0] ); 
+                                }
+                            }else{
+                                console.log(" not uppdating self video as it is already playing ");
+                            }
+
+                            console.info(" User is joined by a remote peer , hiding local video container" , 
+                            "showing users conf video container and attaching attachMediaStream and attachUserDetails ");
+
+                        }else if(!outgoingVideo){
+                            console.error(" Outgoing Local video is " , outgoingVideo);
+                        }else{
+                            alert(" Please Add a video container in config for video call ");
+                            console.error(" Local video container not defined ");
+                        }
+
+
+                        // handling remote video addition 
+                        if(remoteVideos){
+
+                            /*get the next empty index of video and pointer in remote video array */
+                            var vi=0;
+                            for(var v=0; v<remoteVideos.length; v++){
+                                console.log("Remote Video index array " , v , " || ", remoteVideos[v] , 
+                                    document.getElementsByName(remoteVideos[v]),  document.getElementsByName(remoteVideos[v]).src);
+                                if(document.getElementsByName(remoteVideos[v])[0].src){
+                                    vi++;
+                                }
+                            }
+
+                            try{
+
+                                if(remoteobj.maxAllowed=="unlimited"){
+                                    console.log("remote video is unlimited , creating video for remoteVideos array ");
+                                    var video = document.createElement('video');
+                                    video.autoplay = "autoplay";
+                                    remoteVideos[vi] = {
+                                        "userid": peerInfo.userid, 
+                                        "video" : video
+                                    };
+                                    document.getElementById(remoteobj.dynamicVideos.videoContainer).appendChild(video);
+                                }else{
+                                    console.log("remote video is limited to size maxAllowed , current index ", vi);
+                                    console.log("searching for video with index ", vi , " in remote video : " , document.getElementsByName(remoteVideos[vi])[0] );
+                                    if(document.getElementsByName(remoteVideos[vi])[0]){
+                                        remoteVideos[vi] = { 
+                                            "userid": peerInfo.userid, 
+                                            "video" :  document.getElementsByName(remoteVideos[vi])[0] 
+                                        };
+                                    }else{
+                                        console.error(" document.getElementsByName(remoteVideos[vi])[0] doest exist for vi " , vi);
+                                    }
+                                }
+
+                                attachMediaStream(remoteVideos[vi].video, peerInfo.stream);
+                                if(remoteVideos[vi].video.hidden) remoteVideos[vi].video.hidden = false;
+                                remoteVideos[vi].video.id = peerInfo.videoContainer;
+                                remoteVideos[vi].video.className = remoteobj.videoClass;
+                                attachControlButtons(remoteVideos[vi].video, peerInfo); 
+
+                                if(remoteobj.userDisplay && peerInfo.name ) {
+                                    attachUserDetails( remoteVideos[vi].video, peerInfo); 
+                                }
+                                
+                                if(remoteobj.userMetaDisplay && peerInfo.userid) {
+                                    attachMetaUserDetails( remoteVideos[vi].video, peerInfo ); 
+                                }
+                            
+                            }catch(e){
+                                console.error(e);
+                            }
+
+                        }else{
+                            alert("remote Video containers not defined");
+                        }
+                    
+                    } else {
+                        console.error(" PeerInfo vid didnt match either case ");
                     }
-                
-                }
+                break;
 
+                default:
+                    console.log(" Switch default case");
             }
 
 
@@ -19243,7 +19295,7 @@ try{
         webcallpeers.push(peerInfo);
 
         // Update the web call view 
-        updateWebCallView(peerInfo);
+        // updateWebCallView(peerInfo);
     }
 
     /**
@@ -19251,15 +19303,15 @@ try{
      * @method
      * @name removePeerInfo
      * @param {string} userid
-     * @param {string} username
+     * @param {string} usernamess
      * @param {string} usercolor
      * @param {string} type
      */
     function removePeerInfo(userid){
-        console.log(" Before  " , webcallpeers);
-        console.log("removing peerInfo: " , userid);
+        console.log(" [removePeerInfo] Before  " , webcallpeers);
+        console.log(" [removePeerInfo] Removing peerInfo: " , userid);
         webcallpeers.splice(userid, 1);
-        console.log(" After " , webcallpeers);
+        console.log(" [removePeerInfo] After removing peerInfo" , webcallpeers);
     }
 
     function destroyWebCallView(peerInfo , callback){
@@ -19333,11 +19385,12 @@ try{
      * @param {string} remoteUsers
      */
     connectWebRTC=function(type, channel, userid ,remoteUsers){
-        console.info(" ConnectWebRTC : " , type, channel , userid , remoteUsers);
+        console.info(" [start ConnectWebRTC ] type : " , type , " , Channel :" , channel , 
+                                        " , Userid : " ,  userid , " , remote users : " , remoteUsers);
         /*void(document.title = channel);*/
         if(fileshareobj.active){
             
-            //Do not create file share and fle viewer fr inspector's own session 
+            //Do not create file share and file viewer for inspector's own session 
             var selfpeerinfo = findPeerInfo(userid);
 
             if(fileshareobj.props.fileShare=="single"){
@@ -19345,20 +19398,21 @@ try{
                 document.getElementById(peerInfo.fileShare.outerbox).style.width="100%";
             } else if(fileshareobj.props.fileShare=="divided"){
                 
+                // create local File sharing window 
                 if(role!="inspector") {
-                    console.log(" [start] creating local file sharing");
+                    console.log(" [start connectWebRTC] creating local file sharing");
                     createFileSharingDiv(selfpeerinfo);
                 }else{
                     console.log(" [start] Since it is an inspectors own session , not creating local File viewer and list");
                 }
                 
+                // create remotes File sharing window 
                 for(x in webcallpeers){
                     if(webcallpeers[x].userid != userid && webcallpeers[x].role != "inspector"){
-                        console.log(" [start] creating remote file sharing ");
+                        console.log(" [start connectWebRTC] creating remote file sharing ");
                         createFileSharingDiv(webcallpeers[x]);
                     }
                 }
-
                 requestOldFiles();
 
             }else{
@@ -19408,7 +19462,6 @@ try{
         });
     }
 
-
     /**
      * function to leave a webrtc socket channel
      * @method
@@ -19451,7 +19504,7 @@ try{
 }catch(e){
     console.log("exception in start " , e);
 }
-/*Generated on:Mon May 07 2018 07:23:54 GMT+0530 (India Standard Time)*//* ***************************************************************
+/*Generated on:Sat May 12 2018 15:57:09 GMT+0530 (India Standard Time)*//* ***************************************************************
 Admin
 ******************************************************************/
 
