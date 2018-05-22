@@ -6,7 +6,7 @@
     <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel=stylesheet href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<!--     <link rel=stylesheet href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel=stylesheet href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
     <link rel=stylesheet href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
     <link rel=stylesheet href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
@@ -14,7 +14,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"> </script>      
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"> </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.6/socket.io.min.js"> </script>
-    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"> </script>    
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"> </script>     -->
+    <link rel=stylesheet href="minScripts/webrtcdevelopment_header.css">
+    <script src="minScripts/webrtcdevelopment_header.js"> </script>
+    <link rel=stylesheet href="minScripts/webrtcdevelopment.css">
 
     <script src="property.js"></script>
 </head>
@@ -219,7 +222,7 @@
 
 </body>
 
-    <link rel=stylesheet href="css/Style.css">
+<!--     <link rel=stylesheet href="css/Style.css">
     <link rel=stylesheet href="css/styles.css">
     <link rel=stylesheet href="css/chat.css">
     <link rel=stylesheet href="css/cursor.css">
@@ -253,8 +256,10 @@
     <script src="scripts/_turn.js"></script>
     <script src="scripts/_timer.js"></script>
     <script src="scripts/_stats.js"></script>
-    <script src="scripts/start.js"></script>
+    <script src="scripts/start.js"></script> -->
 
+
+<script src="minScripts/webrtcdevelopment.js"></script> 
 
 <script>
 $('document').ready(function(){
@@ -291,8 +296,22 @@ $('document').ready(function(){
             } 
         };
 
+        var incoming={
+            audio:  true,
+            video:  true,
+            data:   true,
+            screen: true
+        };
+
+        var outgoing={
+            audio:  true,
+            video:  true,
+            data:   true,
+            screen: true
+        };
+        
         webrtcdomobj = new WebRTCdom(
-            local,remote, incoming, outgoing
+            local, remote, incoming, outgoing
         );
 
         var session ={
@@ -308,19 +327,6 @@ $('document').ready(function(){
                 }
         };
         
-        var incoming={
-            audio:  true,
-            video:  true,
-            data:   true,
-            screen: true
-        };
-
-        var outgoing={
-            audio:  true,
-            video:  true,
-            data:   true,
-            screen: true
-        };
 
         var widgets={
             debug      : true,
@@ -488,12 +494,17 @@ $('document').ready(function(){
 
     onSessionConnect=function(){
         console.log(" some one connected ");
-
     };
+
+    onSessionDisconnect=function(){
+        // Peer has left      
+        console.log(" Peer left");
+    };
+
 });
 </script>
 
-<script src="drawboard/common.js"></script>
+<!-- <script src="drawboard/common.js"></script>
 <script src="drawboard/decorator.js"></script>
 <script src="drawboard/draw-helper.js"></script>
 <script src="drawboard/drag-helper.js"></script>
@@ -501,7 +512,16 @@ $('document').ready(function(){
 <script src="drawboard/eraser-handler.js"></script>
 <script src="drawboard/line-handler.js"></script>
 <script src="drawboard/rect-handler.js"></script>
-<script src="drawboard/events-handler.js"></script>
+<script src="drawboard/events-handler.js"></script> -->
+
+
+<script>
+
+function showRemoteVideos(){
+
+}
+
+</script>
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
