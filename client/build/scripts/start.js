@@ -1,3 +1,8 @@
+'use strict';
+
+var inherits = require('util').inherits;
+var EventEmitter = require('events').EventEmitter;
+
 /**************************************************************************************
         peerconnection 
 ****************************************************************************/
@@ -12,6 +17,9 @@ try{
     var usersContainer  = document.getElementById("usersContainer");*/
     var tempuserid ;
     var sessions = {};
+
+    //instantiates event emitter
+    EventEmitter.call(this);
 
     /**
      * Represents a webrtc dom startup.
@@ -254,7 +262,7 @@ try{
                         }
                         shownotification(event.extra.name + " joined session ");
                         showdesktopnotification();
-                        onSessionConnect();
+                        onSessionConnect();         // Call Function just in case the client is implementing this
                     } catch (e) {
                         shownotificationWarning("problem in on session open ");
                         console.error("problem in on session open", e);
@@ -478,6 +486,8 @@ try{
                                 removePeerInfo(e.userid);
                         });
                     }*/
+
+                    onSessionDisconnect();
                 },
 
                 rtcConn.onclose = function (e) {
@@ -973,7 +983,6 @@ try{
                     }
                     
                 } else {
-                    alert("signaller doesnt allow you to join the channel");
                     shownotification(event.msgtype + " : " + event.message);
                 }
             });
@@ -1044,7 +1053,7 @@ try{
 
                     //Hide the unsed video for Remote
                     var _templ=document.getElementsByName(localVideo)[0];
-                        _templ.setAttribute("style","display:none");
+                    _templ.setAttribute("style","display:none");
                     var _templ2=document.getElementsByName(selfVideo)[0];
                     _templ2.setAttribute("style","display:none");
                 break;
