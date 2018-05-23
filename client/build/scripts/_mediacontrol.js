@@ -279,9 +279,6 @@ function attachMediaStream(element, stream) {
 
 }
 
-9036911790
-
-
 function reattachMediaStream(to, from) {
     to.src = from.src;
 }
