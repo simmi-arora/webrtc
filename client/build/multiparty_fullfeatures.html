@@ -267,52 +267,55 @@ $('document').ready(function(){
     var searchParams = new URLSearchParams(window.location);
     console.log("searchParams" , searchParams);
 
+    // Set parameters for local peer
+    var local={
+        video: "myAloneVideo",
+        videoClass:"",
+        videoContainer : "singleVideoContainer",
+        userDisplay:false,
+        userMetaDisplay:false,
+        userdetails:{
+            username:"Expert",
+            usercolor: "#DDECEF",
+            useremail: "abc@gmail.com"
+        }
+    };
+
+    // Set parameters for outgoing peer
+    var remote={
+        videoarr: ["myConferenceVideo"],
+        videoClass:"",
+        maxAllowed: "unlimited",
+        videoContainer : "confVideoContainer",
+        userDisplay:false,
+        userMetaDisplay:false,
+        dynamicVideos: {
+            videoContainer: "othersVideo"
+        } 
+    };
+
+    // Set constraints and parameters for incoming stream
+    var incoming={
+        audio:  true,
+        video:  true,
+        data:   true,
+        screen: true
+    };
+
+    // Set constraints and parameters for outgoing stream
+    var outgoing={
+        audio:  true,
+        video:  true,
+        data:   true,
+        screen: true
+    };
+
+    var webrtcdomobj = new WebRTCdom(
+        local, remote, incoming, outgoing
+    );
+
+
     init(true , function (sessionid){
-
-        var webrtcdomobj;
-
-        var local={
-            video: "myAloneVideo",
-            videoClass:"",
-            videoContainer : "singleVideoContainer",
-            userDisplay:false,
-            userMetaDisplay:false,
-            userdetails:{
-                username:"Expert",
-                usercolor: "#DDECEF",
-                useremail: "abc@gmail.com"
-            }
-        };
-
-        var remote={
-            videoarr: ["myConferenceVideo"],
-            videoClass:"",
-            maxAllowed: "unlimited",
-            videoContainer : "confVideoContainer",
-            userDisplay:false,
-            userMetaDisplay:false,
-            dynamicVideos: {
-                videoContainer: "othersVideo"
-            } 
-        };
-
-        var incoming={
-            audio:  true,
-            video:  true,
-            data:   true,
-            screen: true
-        };
-
-        var outgoing={
-            audio:  true,
-            video:  true,
-            data:   true,
-            screen: true
-        };
-        
-        webrtcdomobj = new WebRTCdom(
-            local, remote, incoming, outgoing
-        );
 
         var session ={
             sessionid : sessionid,
@@ -327,9 +330,8 @@ $('document').ready(function(){
                 }
         };
         
-
         var widgets={
-            debug      : true,
+            debug   : true,
             timer   :{
                         active:false,
                         type: "backward",
@@ -384,7 +386,7 @@ $('document').ready(function(){
                             }
                         },
             location    :{
-                             active : false
+                             active : true
                         },
             screenrecord:{
                             active: true,
@@ -484,22 +486,26 @@ $('document').ready(function(){
                         }
         };
 
-        var webrtcdevobj = new WebRTCdev ( 
+        var webrtcdevobj = new window.WebRTCdev ( 
             session, widgets
         );
 
         startCall(webrtcdevobj);
 
+        // webrtcdevobj.on('sessionconnected', function() {
+        //     console.log('A sessionconnected is conneted !');
+        // });
+
+        // webrtcdevobj.on('sessiondisconnected', function() {
+        //     console.log('A sessionconnected is disconneted !');
+        // });
+
     });
 
-    onSessionConnect=function(){
-        console.log(" some one connected ");
-    };
+    // onSessionConnect=function(){
+    //     console.log(" some one connected ");
+    // };
 
-    onSessionDisconnect=function(){
-        // Peer has left      
-        console.log(" Peer left");
-    };
 
 });
 </script>

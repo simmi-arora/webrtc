@@ -1,13 +1,24 @@
-
-function shownotification(message){
+/**
+ * function to show bootstrap based notification to client
+ * @constructor
+ * @param {string} message - message passed inside the notification 
+ * @param {string} type - type of message passed inside the notification 
+ */
+function shownotification(message , type){
 
   if(document.getElementById("alertBox")){
     var alertDiv =document.createElement("div");
-    alertDiv.className="alert alert-success fade in";
+    if(type=="warning")
+      alertDiv.className="alert alert-warning fade in";
+    else if (type=="crtical")
+      alertDiv.className="alert alert-crtical";
+    else
+      alertDiv.className="alert alert-success fade in";
+    
     alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ message;
 
     document.getElementById("alertBox").hidden=false;
-    document.getElementById("alertBox").innerHTML="";
+    // document.getElementById("alertBox").innerHTML="";
     document.getElementById("alertBox").appendChild(alertDiv);
 
     setTimeout(function() {
@@ -19,25 +30,7 @@ function shownotification(message){
 
 }
 
-function shownotificationWarning(message){
 
-  if(document.getElementById("alertBox")){
-    var alertDiv =document.createElement("div");
-    alertDiv.className="alert alert-warning fade in";
-    alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ message;
-
-    document.getElementById("alertBox").hidden=false;
-    document.getElementById("alertBox").innerHTML="";
-    document.getElementById("alertBox").appendChild(alertDiv);
-
-    setTimeout(function() {
-      document.getElementById("alertBox").hidden=true;
-    }, 3000);
-  }else{
-    alert(message);
-  }
-
-}
 
 function showdesktopnotification() {
   // Let's check if the browser supports notifications

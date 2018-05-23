@@ -7,6 +7,8 @@
     "node": "5.*"
   },
   "dependencies": {
+    "gulp-header": "^2.0.5",
+    "gulp-rev-timestamp": "0.0.1",
     "log": "^1.4.0",
     "node-static": "^0.7.10",
     "restify": "^7.2.0",
