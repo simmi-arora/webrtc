@@ -93,43 +93,43 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
         });
 
         /*
-                socket.on('become-a-public-moderator', function() {
-                    try {
-                        if (!listOfUsers[socket.userid]) return;
-                        listOfUsers[socket.userid].isPublic = true;
-                    } catch (e) {
-                        pushLogs('become-a-public-moderator', e);
-                    }
-                });
+        socket.on('become-a-public-moderator', function() {
+            try {
+                if (!listOfUsers[socket.userid]) return;
+                listOfUsers[socket.userid].isPublic = true;
+            } catch (e) {
+                pushLogs('become-a-public-moderator', e);
+            }
+        });
 
-                socket.on('dont-make-me-moderator', function() {
-                    try {
-                        if (!listOfUsers[socket.userid]) return;
-                        listOfUsers[socket.userid].isPublic = false;
-                    } catch (e) {
-                        pushLogs('dont-make-me-moderator', e);
-                    }
-                });
+        socket.on('dont-make-me-moderator', function() {
+            try {
+                if (!listOfUsers[socket.userid]) return;
+                listOfUsers[socket.userid].isPublic = false;
+            } catch (e) {
+                pushLogs('dont-make-me-moderator', e);
+            }
+        });
 
-                socket.on('get-public-moderators', function(userIdStartsWith, callback) {
-                    try {
-                        userIdStartsWith = userIdStartsWith || '';
-                        var allPublicModerators = [];
-                        for (var moderatorId in listOfUsers) {
-                            if (listOfUsers[moderatorId].isPublic && moderatorId.indexOf(userIdStartsWith) === 0 && moderatorId !== socket.userid) {
-                                var moderator = listOfUsers[moderatorId];
-                                allPublicModerators.push({
-                                    userid: moderatorId,
-                                    extra: moderator.extra
-                                });
-                            }
-                        }
-
-                        callback(allPublicModerators);
-                    } catch (e) {
-                        pushLogs('get-public-moderators', e);
+        socket.on('get-public-moderators', function(userIdStartsWith, callback) {
+            try {
+                userIdStartsWith = userIdStartsWith || '';
+                var allPublicModerators = [];
+                for (var moderatorId in listOfUsers) {
+                    if (listOfUsers[moderatorId].isPublic && moderatorId.indexOf(userIdStartsWith) === 0 && moderatorId !== socket.userid) {
+                        var moderator = listOfUsers[moderatorId];
+                        allPublicModerators.push({
+                            userid: moderatorId,
+                            extra: moderator.extra
+                        });
                     }
-                });
+                }
+
+                callback(allPublicModerators);
+            } catch (e) {
+                pushLogs('get-public-moderators', e);
+            }
+        });
         */
 
         socket.on('changed-uuid', function(newUserId, callback) {
