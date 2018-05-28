@@ -260,7 +260,7 @@ try{
                             startsessionTimer(timerobj);
                             shareTimePeer();
                         }
-                        shownotification(event.extra.name + " joined session ");
+                        shownotification(event.extra.name + " joined session ", "info");
                         showdesktopnotification();
                         eventEmitter.emit('sessionconnected');        // Call Function just in case the client is implementing this
                     } catch (e) {
@@ -303,7 +303,7 @@ try{
                     var peerinfo = findPeerInfo(event.userid);
                     if (!peerinfo) {
                         console.error(" PeerInfo not present in webcallpeers ", event.userid, rtcConn);
-                        alert(" Cannot create session for Peer");
+                        shownotification(" Cannot create session for Peer", "critical");
                     } else {
                         peerinfo.type = event.type;
                         peerinfo.stream = event.stream;
@@ -566,8 +566,10 @@ try{
             if (chatobj.active) {
 
                 if (chatobj.inputBox && chatobj.inputBox.text_id && document.getElementById(chatobj.inputBox.text_id)) {
+                    console.log("Assign chat Box ");
                     assignChatBox(chatobj);
                 } else {
+                    console.log("Create chat Box ");
                     createChatBox(chatobj);
                 }
                 console.log("chat widget loaded ");
@@ -579,24 +581,28 @@ try{
 
                 if (extensioninstalled == 'installed-enabled') {
                     if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
+                        console.log("Assign Record Button ");
                         assignScreenRecordButton(screenrecordobj);
                     } else {
+                        console.log("Create Record Button ");
                         createScreenRecordButton(screenrecordobj);
                     }
                 }
 
                 if (extensioninstalled == 'installed-disabled') {
-                    shownotification("chrome extension is installed but disabled.");
+                    shownotification("chrome extension is installed but disabled." , "warning");
                     if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
                         assignScreenRecordButton(screenrecordobj);
+                        console.log("Assign Record Button ");
                     } else {
+                        console.log("Create Record Button ");
                         createScreenRecordButton(screenrecordobj);
                     }
                 }
 
                 if (extensioninstalled == 'not-installed') {
                     //nor installed show installation button 
-                    alert(" Sessions recoridng cannot start as there is not extension installed ");
+                    shownotification(" Sessions recoridng cannot start as there is not extension installed ", "warning");
                 }
 
                 if (extensioninstalled == 'not-chrome') {
@@ -649,8 +655,10 @@ try{
 
             if (reconnectobj && reconnectobj.active) {
                 if (reconnectobj.button.id && document.getElementById(reconnectobj.button.id)) {
+                    console.log("Rconnect Button Assigned");
                     assignButtonRedial(reconnectobj.button.id);
                 } else {
+                    console.log("Rconnect Button created");
                     createButtonRedial(reconnectobj);
                 }
                 console.log(" reconnect widget loacded ");
@@ -658,7 +666,7 @@ try{
                 if (reconnectobj.button.id && document.getElementById(reconnectobj.button.id)) {
                     document.getElementById(reconnectobj.button.id).className = "inactiveButton";
                 }
-                console.log(" recoonect widget not loaded ");
+                console.log(" reconnect widget not loaded ");
             }
 
             if (cursorobj.active) {
@@ -1142,7 +1150,9 @@ try{
                             for(var v=0; v<remoteVideos.length; v++){
                                 console.log("Remote Video index array " , v , " || ", remoteVideos[v] , 
                                     document.getElementsByName(remoteVideos[v]),  document.getElementsByName(remoteVideos[v]).src);
-                                if(document.getElementsByName(remoteVideos[v])[0].src){
+                                if(document.getElementsByName(remoteVideos[v])[0] && document.getElementsByName(remoteVideos[v])[0].src){
+                                    vi++;
+                                }else if(remoteVideos[v].video && remoteVideos[v].video){
                                     vi++;
                                 }
                             }
