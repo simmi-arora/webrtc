@@ -236,7 +236,10 @@ Start the session
     startcall();
 ```
 
-##### 8. VOIP calls and conf
+##### 8. Add the Key and certs
+openssl req -x509 -newkey rsa:4096 -sha256 -nodes -keyout ssl_certs/server.key -out ssl_certs/server.crt -subj "/CN=webrtc.altanai.com" -days 3650
+
+##### 9. VOIP calls and conf
 open tab on chrome or mozilla browser and add a link to the https server using nodejs script
 https://127.0.0.1:8086/multiparty_fullfeatures.html
 

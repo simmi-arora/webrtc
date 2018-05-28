@@ -1,4 +1,4 @@
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//*
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*//*
 //var username= prompt("Please enter your id ", "");
 var username= " "
 document.getElementById("username").innerHTML=username;
@@ -237,7 +237,7 @@ function bytesToSize(e) {
     var n = parseInt(Math.floor(Math.log(e) / Math.log(1024)));
     return Math.round(e / Math.pow(1024, n), 2) + " " + t[n]
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//**
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*//**
  * function to show bootstrap based notification to client
  * @constructor
  * @param {string} message - message passed inside the notification 
@@ -318,7 +318,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
 
 
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/// Last time updated: 2016-08-12 5:21:05 AM UTC
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*/// Last time updated: 2016-08-12 5:21:05 AM UTC
 // _____________________
 // RTCMultiConnection-v3
 // Open-Sourced: https://github.com/muaz-khan/RTCMultiConnection
@@ -3801,7 +3801,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
     window.RTCMultiConnection = RTCMultiConnection
 }();
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//**************************************************************
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*//**************************************************************
 Screenshare 
 ****************************************************************/
 'use strict';
@@ -4545,7 +4545,7 @@ function createExtensionInstallWindow (){
     }
                                 
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/var WebRTCdetect=function() {
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*/var WebRTCdetect=function() {
 
     'use strict';
 
@@ -5555,7 +5555,7 @@ function createExtensionInstallWindow (){
         });
     }
 };
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//**
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*//**
  * function to check devices like speakers , webcam ,  microphone etc
  * @method
  * @name checkDevices
@@ -5611,7 +5611,7 @@ function checkWebRTCSupport(obj){
         // seems WebRTC (old-fashioned) RTP data channels feature are supported on this client
     }
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//* ***********************************************
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*//* ***********************************************
 settings
 *********************************************/
 
@@ -5706,7 +5706,7 @@ $("#SettingsButton").click(function() {
         /*$('#'+localobj.userdisplay.operatingsystem).val(operatingsystem);*/
     }
 });
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/// Last time updated: 2016-11-04 7:11:11 AM UTC
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*/// Last time updated: 2016-11-04 7:11:11 AM UTC
 
 // ________________
 // FileBufferReader
@@ -6850,7 +6850,7 @@ $("#SettingsButton").click(function() {
     window.FileBufferReader = FileBufferReader;
 })();
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/// Muaz Khan     - www.MuazKhan.com
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*/// Muaz Khan     - www.MuazKhan.com
 // MIT License   - www.webrtc-experiment.com/licence
 // Documentation - github.com/streamproc/MediaStreamRecorder
 // ______________________
@@ -8254,7 +8254,7 @@ function SaveToDisk(blobOrFile, fileName) {
 
     (window.URL || window.webkitURL).revokeObjectURL(hyperlink.href);
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/'use strict';
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*/'use strict';
 
 // Last time updated: 2016-10-21 11:04:26 AM UTC
 
@@ -12249,7 +12249,7 @@ if (typeof RecordRTC !== 'undefined') {
     RecordRTC.GifRecorder = GifRecorder;
 }
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/// Note: All libraries listed in this file are "external libraries" 
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*/// Note: All libraries listed in this file are "external libraries" 
 // ----  and has their own copyrights. Taken from "html2canvas" project.
 "use strict";
 
@@ -14533,7 +14533,7 @@ if (!IE) document.captureEvents(Event.MOUSEMOVE);
 document.addEventListener("mousemove", getMouseXY, false);
 var coordX = 0;
 var coordY = 0
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/function createSnapshotButton(controlBarName , peerinfo){
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*/function createSnapshotButton(controlBarName , peerinfo){
     var snapshotButton=document.createElement("div");
     snapshotButton.id=controlBarName+"snapshotButton";
     snapshotButton.setAttribute("title", "Snapshot");
@@ -14636,7 +14636,7 @@ function syncSnapshot(datasnapshot , datatype , dataname ){
     console.log("snaspshot ",datasnapshot);
 }*/
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//* ***********************************************
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*//* ***********************************************
 geolocation
 *********************************************/
 
@@ -14684,7 +14684,7 @@ function showError(error) {
             break;
     }
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//********************************************************************************8
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*//********************************************************************************8
         Chat
 **************************************************************************************/
 function createChatButton(obj){
@@ -14905,7 +14905,7 @@ function addMessageBlockFormat(messageheaderDivclass , messageheader ,messageDiv
 $('#chatbox').css('max-height', $( "#leftVideo" ).height()+ 80);
 $('#chatBoard').css('max-height', $( "#leftVideo" ).height());
 $("#chatBoard").css("overflow-y" , "scroll");
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//***************************************************
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*//***************************************************
 video handling 
 *********************************************************/
 
@@ -15186,13 +15186,10 @@ function attachMediaStream(element, stream) {
 
 }
 
-9036911790
-
-
 function reattachMediaStream(to, from) {
     to.src = from.src;
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//* ***********************************************
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*//* ***********************************************
 Record
 *********************************************/
 
@@ -15323,7 +15320,7 @@ function stopRecord(){
     }, {audio:true, video:true} );
 }*/
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*/
 /************************************************************************
 Canvas Record 
 *************************************************************************/
@@ -15866,7 +15863,7 @@ function PostBlob(blob) {
     video.focus();
     video.play();
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//***************************************************************88
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*//***************************************************************88
 File sharing 
 ******************************************************************/
 
@@ -16899,7 +16896,7 @@ function createModalPopup(filetype ){
 
     mainDiv.appendChild(modalBox);
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//**************************************************************************8
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*//**************************************************************************8
 draw 
 ******************************************************************************/
 var CanvasDesigner;
@@ -17051,7 +17048,7 @@ saveButtonCanvas.onclick=function(){
    createModalPopup( "blobcanvas" );
 };
 document.body.appendChild(saveButtonCanvas);
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//**********************************
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*//**********************************
 Reconnect 
 ****************************************/
 /*
@@ -17104,7 +17101,7 @@ function assignButtonRedial(id){
         }
     };
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//* **********************************************
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*//* **********************************************
 Listen -In
 *************************************************/
 
@@ -17183,7 +17180,7 @@ if(document.getElementById('listenInLink')){
 
 }
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//***************************************************************************
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*//***************************************************************************
 cursor sharing 
 ***************************************************************************/
 
@@ -17278,7 +17275,7 @@ function createCursorButton(controlBarName, peerinfo, streamid, stream ){
 /*
     <div id="cursor1" class="fa fa-hand-o-up" style="width:0"></div>
     <div id="cursor2" class="fa fa-hand-o-up" style="width:0"></div>*/
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/function createCodeEditorButton(){
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*/function createCodeEditorButton(){
     var codeeditorButton= document.createElement("span");
     codeeditorButton.className=codeeditorobj.button.class_off ;
     codeeditorButton.innerHTML=codeeditorobj.button.html_off;
@@ -17380,7 +17377,7 @@ function stopWebrtcdevcodeeditorSync(){
     document.getElementById(codeeditorobj.codeeditorContainer).removeEventListener("keyup", sendWebrtcdevCodeeditorSync, false);
 }
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/function createTextEditorButton(){
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*/function createTextEditorButton(){
     var texteditorButton= document.createElement("span");
     texteditorButton.className=texteditorobj.button.class_off ;
     texteditorButton.innerHTML=texteditorobj.button.html_off;
@@ -17439,7 +17436,7 @@ function stopWebrtcdevTexteditorSync(){
     document.getElementById(texteditorobj.texteditorContainer).removeEventListener("keyup", sendWebrtcdevTexteditorSync, false);
 }
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//*********************************************
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*//*********************************************
 ICE
 **************************************************/
 /**
@@ -17491,7 +17488,7 @@ function getICEServer(username , secretkey , domain , appname , roomname , secur
         '&domain='+domain +'&application='+appname+
         '&room='+ roomname+'&secure='+secure);
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//**************************************************8
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*//**************************************************8
 Timer 
 ***************************************************/
 var hours,mins,secs;
@@ -17692,7 +17689,7 @@ function checkTime(i) {
     if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
     return i;
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/// ___________
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*/// ___________
 // getStats.js
 // an abstraction layer runs top over RTCPeerConnection.getStats API
 // cross-browser compatible solution
@@ -17989,7 +17986,7 @@ function activateBandwidthButtons(timerobj){
         console.log(" rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
     }
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/'use strict';
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*/'use strict';
 
 // var inherits = require('util').inherits;
 // var EventEmitter = require('events').EventEmitter;
@@ -18251,7 +18248,7 @@ try{
                             startsessionTimer(timerobj);
                             shareTimePeer();
                         }
-                        shownotification(event.extra.name + " joined session ");
+                        shownotification(event.extra.name + " joined session ", "info");
                         showdesktopnotification();
                         eventEmitter.emit('sessionconnected');        // Call Function just in case the client is implementing this
                     } catch (e) {
@@ -18294,7 +18291,7 @@ try{
                     var peerinfo = findPeerInfo(event.userid);
                     if (!peerinfo) {
                         console.error(" PeerInfo not present in webcallpeers ", event.userid, rtcConn);
-                        alert(" Cannot create session for Peer");
+                        shownotification(" Cannot create session for Peer", "critical");
                     } else {
                         peerinfo.type = event.type;
                         peerinfo.stream = event.stream;
@@ -18557,8 +18554,10 @@ try{
             if (chatobj.active) {
 
                 if (chatobj.inputBox && chatobj.inputBox.text_id && document.getElementById(chatobj.inputBox.text_id)) {
+                    console.log("Assign chat Box ");
                     assignChatBox(chatobj);
                 } else {
+                    console.log("Create chat Box ");
                     createChatBox(chatobj);
                 }
                 console.log("chat widget loaded ");
@@ -18570,24 +18569,28 @@ try{
 
                 if (extensioninstalled == 'installed-enabled') {
                     if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
+                        console.log("Assign Record Button ");
                         assignScreenRecordButton(screenrecordobj);
                     } else {
+                        console.log("Create Record Button ");
                         createScreenRecordButton(screenrecordobj);
                     }
                 }
 
                 if (extensioninstalled == 'installed-disabled') {
-                    shownotification("chrome extension is installed but disabled.");
+                    shownotification("chrome extension is installed but disabled." , "warning");
                     if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
                         assignScreenRecordButton(screenrecordobj);
+                        console.log("Assign Record Button ");
                     } else {
+                        console.log("Create Record Button ");
                         createScreenRecordButton(screenrecordobj);
                     }
                 }
 
                 if (extensioninstalled == 'not-installed') {
                     //nor installed show installation button 
-                    alert(" Sessions recoridng cannot start as there is not extension installed ");
+                    shownotification(" Sessions recoridng cannot start as there is not extension installed ", "warning");
                 }
 
                 if (extensioninstalled == 'not-chrome') {
@@ -18640,8 +18643,10 @@ try{
 
             if (reconnectobj && reconnectobj.active) {
                 if (reconnectobj.button.id && document.getElementById(reconnectobj.button.id)) {
+                    console.log("Rconnect Button Assigned");
                     assignButtonRedial(reconnectobj.button.id);
                 } else {
+                    console.log("Rconnect Button created");
                     createButtonRedial(reconnectobj);
                 }
                 console.log(" reconnect widget loacded ");
@@ -18649,7 +18654,7 @@ try{
                 if (reconnectobj.button.id && document.getElementById(reconnectobj.button.id)) {
                     document.getElementById(reconnectobj.button.id).className = "inactiveButton";
                 }
-                console.log(" recoonect widget not loaded ");
+                console.log(" reconnect widget not loaded ");
             }
 
             if (cursorobj.active) {
@@ -19133,7 +19138,9 @@ try{
                             for(var v=0; v<remoteVideos.length; v++){
                                 console.log("Remote Video index array " , v , " || ", remoteVideos[v] , 
                                     document.getElementsByName(remoteVideos[v]),  document.getElementsByName(remoteVideos[v]).src);
-                                if(document.getElementsByName(remoteVideos[v])[0].src){
+                                if(document.getElementsByName(remoteVideos[v])[0] && document.getElementsByName(remoteVideos[v])[0].src){
+                                    vi++;
+                                }else if(remoteVideos[v].video && remoteVideos[v].video){
                                     vi++;
                                 }
                             }
@@ -19500,7 +19507,7 @@ try{
 }catch(e){
     console.log("exception in start " , e);
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//* ***************************************************************
+/*Generated on:Mon May 28 2018 22:49:45 GMT+0530 (IST)*//* ***************************************************************
 Admin
 ******************************************************************/
 

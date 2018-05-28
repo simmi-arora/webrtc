@@ -1,8 +1,20 @@
 <html lang=en>
 <head>
     <title>WebRTC Call</title>
+
+    <script src="property.js"></script>
+
+    <script type='text/javascript' data-cfasync='false'>
+        var link=document.createElement('link');
+        link.rel="chrome-webstore-item";
+        link.href="https://chrome.google.com/webstore/detail/"+props.extensionID;
+        document.getElementsByTagName('head')[0].appendChild(link);
+
+        alert( props.extensionID);
+    </script>
+
     <meta name="google-site-verification" content="8NqEkVsX8mkRCn13Qov4K0njgF0T6t97_a-NZNIXkpE" />
-    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/elfbfompfpakbefoaicaeoabnnoihoac">
+    <!-- <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/elfbfompfpakbefoaicaeoabnnoihoac"> -->
     <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -19,7 +31,7 @@
     <script src="minScripts/webrtcdevelopment_header.js"> </script>
     <link rel=stylesheet href="minScripts/webrtcdevelopment.css">
 
-    <script src="property.js"></script>
+
 </head>
 
 <body id="pagebody">
@@ -400,7 +412,7 @@ $('document').ready(function(){
                             }
                         }, 
             screenshare : {
-                            active:true,
+                            active:false,
                             screenshareContainer: "widget-screenshareContainer",
                             extensionID: props.extensionID,
                             button:{
