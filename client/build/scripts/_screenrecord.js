@@ -13,6 +13,7 @@ function autorecordScreenVideo(){
 
 }
 
+
 function assignScreenRecordButton(){
 
     var recordButton = document.getElementById(screenrecordobj.button.id);

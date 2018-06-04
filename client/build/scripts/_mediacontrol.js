@@ -216,6 +216,13 @@ function createVideoMuteButton(controlBarName , peerinfo){
 
 function waitForRemoteVideo(_remoteStream , _remoteVideo , _localVideo  , _miniVideo ) {
     var videoTracks = _remoteStream.getVideoTracks();
+
+    if(statistics.active){
+        getStats(videoTracks , function(result) {
+            document.getElementById("network-stats-body").innerHTML= result;        
+        } , 2000);
+    }
+    
     if (videoTracks.length === 0 || _remoteVideo.currentTime > 0) {
         transitionToActive(_remoteVideo ,_localVideo ,  _miniVideo);
     } else {

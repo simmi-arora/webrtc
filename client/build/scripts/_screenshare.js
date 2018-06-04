@@ -17,6 +17,13 @@ var screenShareButton ;
 
 var screenShareStreamLocal = null;
 
+/**
+ * function to get the sourceID from chorme extension 
+ * @method
+ * @name getSourceId
+ * @param {function} callback
+ * @param {string} audioPlusTab
+ */
 /* getsourceID in RTCmtulconn has been commented to make the below one active */
 function getSourceId(callback, audioPlusTab) {
     if (!callback)
@@ -25,6 +32,13 @@ function getSourceId(callback, audioPlusTab) {
     window.postMessage("webrtcdev-extension-getsourceId", "*");
 }
 
+/**
+ * function to get the sourceID from chorme extension 
+ * @method
+ * @name getSourceId
+ * @param {function} callback
+ * @param {string} audioPlusTab
+ */
 function getChromeExtensionStatus(extensionid, callback) {
     if (2 != arguments.length && (callback = extensionid, extensionid = window.RMCExtensionID || "ajhifddimkapgcifgcodmmfdlknahffk"), isFirefox)
         return callback("not-chrome");

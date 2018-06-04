@@ -750,7 +750,13 @@ function createFileListingBox(peerinfo, parent){
             return;
 
         var fileListingBox = document.createElement("div");
-        fileListingBox.className = "col-sm-6  filesharing-box";
+
+        if(fileshareobj.props.fileList =="single"){
+            fileListingBox.className = "col-sm-12 filesharing-box";
+        }else {
+            fileListingBox.className = "col-sm-6 filesharing-box";            
+        }
+
         fileListingBox.id = peerinfo.fileList.outerbox;
         //fileListingBox.setAttribute("style", "background-color:" + peerinfo.color);
 
