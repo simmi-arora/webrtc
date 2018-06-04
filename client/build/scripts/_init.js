@@ -1,25 +1,11 @@
-/*
-//var username= prompt("Please enter your id ", "");
-var username= " "
-document.getElementById("username").innerHTML=username;
-var useremail= "serviceexchange@serviceexchange.com";
-
-var currentTimeTicker = '';
-
-if(window.location.href.indexOf("s=1")>=0){
-
-}else{
-  currentTimeTicker = new Date().getTime();
-}
-*/
 
 /********************************************************************
   global variables
 **********************************************************************/
 
-var t = " ";
+var t = "";
 var e = null;
-var n ="tara181989@gmail.com";
+var n = "";
 var rtcConn ;
 var selfuserid=null , remoteUserId=null;
 var containerDiv;
@@ -182,21 +168,42 @@ function getLength(obj) {
     if (o) length++;
   return length;
 }
-function log() {
-  console.log(arguments);
-}
 
-function error() {
-  console.error(arguments);
-}
+var console = {};
 
-function warn() {
-  console.warn(arguments);
-}
+console.log = function(arg){
+  document.getElementById("help-view-body").innerHTML += '[-]' + arg + "\n";
+  console.log(arg);
+};
 
-function error(arg1 , arg2){
-    console.log(arg1, arg2);
-}
+console.info= function(arg){
+  document.getElementById("help-view-body").innerHTML = '[INFO]' + arg + "\n";
+  console.info(arg);
+};
+
+ console.warn= function(arg){
+  document.getElementById("help-view-body").innerHTML = '[WARN]' + arg + "\n";
+  console.warn(arg);
+};
+
+console.error= function(arg){
+  document.getElementById("help-view-body").innerHTML = '[ERROR]'+ arg + "\n";
+  console.error(arg);
+};
+
+
+
+// function log(arg , type) {
+//   document.getElementById("network-stats-body").innerHTML = arg;
+//   if(type=="info"){
+//       console.log(arg);
+//   }else if ( type=="error"){
+//       console.error(arg);
+//   }else if ( type=="warn"){
+//       console.warn(arg);
+//   }
+// }
+
 
 function getElement(e) {
     return document.querySelector(e)

@@ -54,14 +54,14 @@ try{
             shownotification(" Your browser doesnt have microphone", "warning");   
             outgoing.audio = false ;
         }
-        if(!DetectRTC.sWebsiteHasMicrophonePermissions){
-            shownotification(" Your browser doesnt have permission for accessing microphone", "warning");
-            outgoing.audio = false;
-        }
+        // if(!DetectRTC.isWebsiteHasMicrophonePermissions){
+        //     shownotification(" Your browser doesnt have permission for accessing microphone", "warning");
+        //     outgoing.audio = false;
+        // }
         
-        if(!DetectRTC.hasSpeakers){
-            shownotification(" Your browser doesnt have speakers", "warning");      
-        }
+        // if(!DetectRTC.hasSpeakers){
+        //     shownotification(" Your browser doesnt have speakers", "warning");      
+        // }
 
         if(outgoing){
             outgoingAudio = outgoing.audio ; 
@@ -161,11 +161,15 @@ try{
 
             if(widgets.timer)           timerobj        = widgets.timer;
 
-            if(widgets.listenin)        listeninobj    = widgets.listenin;
+            if(widgets.listenin)        listeninobj     = widgets.listenin;
 
             if(widgets.cursor)          cursorobj       = widgets.cursor;
 
             if(widgets.minmax)          minmaxobj       = widgets.minmax;
+
+            if(widgets.help)            help            = widgets.help;
+
+            if(widgets.statistics)      statistics       = widgets.statistics;
         }
 
         return {
@@ -262,7 +266,7 @@ try{
                         }
                         shownotification(event.extra.name + " joined session ", "info");
                         showdesktopnotification();
-                        eventEmitter.emit('sessionconnected');        // Call Function just in case the client is implementing this
+                        //eventEmitter.emit('sessionconnected');        // Call Function just in case the client is implementing this
                     } catch (e) {
                         shownotification("problem in on session open "+ e.message, "warning");
                         console.error("problem in on session open", e);
@@ -486,7 +490,7 @@ try{
                                 removePeerInfo(e.userid);
                         });
                     }*/
-                    eventEmitter.emit('sessiondisconnected', peerinfo);
+                    //eventEmitter.emit('sessiondisconnected', peerinfo);
                 },
 
                 rtcConn.onclose = function (e) {
@@ -499,7 +503,7 @@ try{
                         stream.stop();
                     });
                     alert(" Entire Session Disconneted ");
-                    eventEmitter.emit('sessiondisconnected', '');
+                    //eventEmitter.emit('sessiondisconnected', '');
                 },
 
                 rtcConn.onFileStart = function (file) {
@@ -828,6 +832,15 @@ try{
                 console.log(" File sharing widget loaded ");
             } else {
                 console.log(" File sharing widget not loaded ");
+            }
+
+
+            if(statistics.active){
+                document.getElementById("network-stats-body").innerHTML="";
+            }
+            
+            if(help.active){
+                document.getElementById("help-view-body").innerHTML="";
             }
 
             widgetsinstalled = true;

@@ -26,9 +26,18 @@ if(properties.enviornment=="production"){
 }
 
 var header = require('gulp-header'),
-    d = new Date(),
-    headerComment = '/*Generated on:' + d + '*/';
+    date = new Date(),
+    pckg = require("./package.json"),
+    version = pckg.version,
+    headerComment = '/* Generated on:' + date + 
+                    ' || version: '+ version+' - Altanai , License : MIT  */';
 
+gulp.task('clean', function() {
+  return Promise.all([
+    del(dist),
+    del(srcBundleJs)
+  ]);
+});
 
 gulp.task('vendorjs',function() {
     vendorJsList=[ 
