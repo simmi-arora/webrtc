@@ -233,7 +233,6 @@ gulp.task('webrtcdevelopmentcss',function() {
       "client/build/css/chat.css",
       "client/build/css/cursor.css",
       "client/build/css/draw.css",
-      "client/build/css/timer.css",
       "client/build/css/filesharing.css",
       "client/build/css/screenshare.css"
     ];

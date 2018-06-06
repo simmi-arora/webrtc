@@ -173,22 +173,22 @@ var console = {};
 
 console.log = function(arg){
   document.getElementById("help-view-body").innerHTML += '[-]' + arg + "\n";
-  console.log(arg);
+  // console.log(arg);
 };
 
 console.info= function(arg){
-  document.getElementById("help-view-body").innerHTML = '[INFO]' + arg + "\n";
-  console.info(arg);
+  document.getElementById("help-view-body").innerHTML += '[INFO]' + arg + "\n";
+  // console.info(arg);
 };
 
  console.warn= function(arg){
-  document.getElementById("help-view-body").innerHTML = '[WARN]' + arg + "\n";
-  console.warn(arg);
+  document.getElementById("help-view-body").innerHTML += '[WARN]' + arg + "\n";
+  // console.warn(arg);
 };
 
 console.error= function(arg){
-  document.getElementById("help-view-body").innerHTML = '[ERROR]'+ arg + "\n";
-  console.error(arg);
+  document.getElementById("help-view-body").innerHTML += '[ERROR]'+ arg + "\n";
+  // console.error(arg);
 };
 
 
