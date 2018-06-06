@@ -945,7 +945,7 @@ try{
                                 rtcConn.dontCaptureUserMedia = false,
                                 rtcConn.getUserMedia();
                             }else{
-                                alert(" [startJS open-channel-resp] dont Capture outgoing video " , outgoingVideo);
+                                console.error(" [startJS open-channel-resp] dont Capture outgoing video " , outgoingVideo);
                             }
                         });
                     } catch (e) {
@@ -994,7 +994,7 @@ try{
                         rtcConn.dontCaptureUserMedia = false,
                         rtcConn.getUserMedia();
                     }else{
-                        alert(" [startJS join-channel-resp] dont Capture outgoing video " , outgoingVideo);
+                        console.error(" [startJS join-channel-resp] dont Capture outgoing video " , outgoingVideo);
                     }
                     
                 } else {
