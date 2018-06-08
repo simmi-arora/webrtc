@@ -16,7 +16,7 @@ if(properties.enviornment=="production"){
 }else if(properties.enviornment=="test"){
   folderPath='./client/tests';
 }else{
-  folderPath='./client/build';
+  folderPath='./client';
 }
 
 console.log("Folder Path for this enviornment " , folderPath);
@@ -71,7 +71,7 @@ var realtimecomm= _realtimecomm(app, properties , log, function(socket) {
     }
 });
 
-var _restapi= require('./client/build/minScripts/webrtcdevelopmentServer.js').restapi;
+var _restapi= require('./client/build/webrtcdevelopmentServer.js').restapi;
 //var _restapi= require('./restapi.js').restapi;
 var restapi=_restapi(realtimecomm, options ,app, properties);
 

@@ -51,13 +51,13 @@ gulp.task('vendorjs',function() {
         .pipe(header(headerComment))
         .pipe(uglify())
         .pipe(concat('webrtcdevelopment_header.js'))  
-        .pipe(gulp.dest(folderPath+'minScripts/')); 
+        .pipe(gulp.dest(folderPath)); 
 });
 
 /*gulp.task('screensharejs',function() {
     console.log(" gulping screensharing  ");
     list=[ 
-        "client/build/scripts/screensharing.js",
+        "client/src/scripts/screensharing.js",
     ]; 
     console.log(list);
     gulp.src(list)
@@ -70,7 +70,7 @@ gulp.task('vendorjs',function() {
 /*gulp.task('adminjs',function() {
     console.log(" gulping admin script  ");
     list=[ 
-        "client/build/scripts/admin.js",
+        "client/src/scripts/admin.js",
     ]; 
     console.log(list);
     gulp.src(list)
@@ -91,99 +91,99 @@ gulp.task('serverjs',function() {
         .pipe(header(headerComment))
         .pipe(uglify())
         .pipe(concat('webrtcdevelopmentServer.js'))  
-        .pipe(gulp.dest(folderPath+'minScripts/')); 
+        .pipe(gulp.dest(folderPath)); 
 });
 
 gulp.task('drawjs',function() {
     console.log(" gulping drawjs  ");
     list=[ 
-        "client/build/drawboard/common.js",
-        "client/build/drawboard/decorator.js",
-        "client/build/drawboard/draw-helper.js",
-        "client/build/drawboard/drag-helper.js",
-        "client/build/drawboard/pencil-handler.js",
-        "client/build/drawboard/eraser-handler.js",
-        "client/build/drawboard/line-handler.js",
-        "client/build/drawboard/rect-handler.js",
-        "client/build/drawboard/events-handler.js"
+        "client/src/drawboard/common.js",
+        "client/src/drawboard/decorator.js",
+        "client/src/drawboard/draw-helper.js",
+        "client/src/drawboard/drag-helper.js",
+        "client/src/drawboard/pencil-handler.js",
+        "client/src/drawboard/eraser-handler.js",
+        "client/src/drawboard/line-handler.js",
+        "client/src/drawboard/rect-handler.js",
+        "client/src/drawboard/events-handler.js"
     ]; 
     console.log(list);
     gulp.src(list)
         /*.pipe(uglify())*/
         .pipe(concat('drawBoardScript.js'))  
-        .pipe(gulp.dest(folderPath+'minScripts/')); 
+        .pipe(gulp.dest(folderPath)); 
 });
 
 gulp.task('drawcss',function() {
     console.log(" gulping main drawcss  ");
-    list=[ "client/build/css/Style.css",
-        "client/build/drawboard/drawing.css"
+    list=[ "client/src/css/Style.css",
+        "client/src/drawboard/drawing.css"
     ]; 
     console.log(list);
     gulp.src(list)
         .pipe(concat('drawBoardCss.css'))  
-        .pipe(gulp.dest(folderPath+'minScripts/')); 
+        .pipe(gulp.dest(folderPath)); 
 });
 
 gulp.task('codejs',function() {
     console.log(" gulping codejs  ");
     list=[ 
-        "client/build/codemirror/lib/codemirror.js",
-        "client/build/codemirror/addon/selection/active-line.js",
-        "client/build/codemirror/addon/mode/loadmode.js",
-        "client/build/codemirror/mode/meta.js",
-        "client/build/codemirror/mode/javascript/javascript.js",
-        "client/build/codemirror/codeStyles.js"
+        "client/src/codemirror/lib/codemirror.js",
+        "client/src/codemirror/addon/selection/active-line.js",
+        "client/src/codemirror/addon/mode/loadmode.js",
+        "client/src/codemirror/mode/meta.js",
+        "client/src/codemirror/mode/javascript/javascript.js",
+        "client/src/codemirror/codeStyles.js"
     ]; 
     console.log(list);
     gulp.src(list)
         .pipe(uglify())
         .pipe(concat('codeEditorScript.js'))  
-        .pipe(gulp.dest(folderPath+'minScripts/')); 
+        .pipe(gulp.dest(folderPath)); 
 });
 
 gulp.task('codecss',function() {
     console.log(" gulping main codecss  ");
     list=[ 
-        "client/build/codemirror/theme/mdn-like.css",
-        "client/build/codemirror/lib/codemirror.css",
-        "client/build/codemirror/style.css"
+        "client/src/codemirror/theme/mdn-like.css",
+        "client/src/codemirror/lib/codemirror.css",
+        "client/src/codemirror/style.css"
     ]; 
     console.log(list);
     gulp.src(list)
         .pipe(concat('codeEditorCss.css'))  
-        .pipe(gulp.dest(folderPath+'minScripts/')); 
+        .pipe(gulp.dest(folderPath)); 
 });
 
 var scriptList=[
-    "client/build/scripts/_init.js",
-    "client/build/scripts/_notify.js",
-    "client/build/scripts/RTCMultiConnection.js",
-    "client/build/scripts/_screenshare.js",
-    "client/build/scripts/_detectRTC.js",
-    "client/build/scripts/_webrtcchecks.js",
-    "client/build/scripts/_settings.js",
-    "client/build/scripts/firebase.js",
-    "client/build/scripts/FileBufferReader.js",
-    "client/build/scripts/MediaStreamRecorder.js",
-    "client/build/scripts/RecordRTC.js",
-    "client/build/scripts/screenshot.js",
-    "client/build/scripts/_snapshot.js",
-    "client/build/scripts/_geolocation.js",
-    "client/build/scripts/_chat.js",
-    "client/build/scripts/_mediacontrol.js",
-    "client/build/scripts/_record.js",
-    "client/build/scripts/_screenrecord.js",
-    "client/build/scripts/_filesharing.js",
-    "client/build/scripts/_draw.js",
-    "client/build/scripts/_redial.js",
-    "client/build/scripts/_listenin.js",
-    "client/build/scripts/_cursor.js",
-    "client/build/scripts/_codeeditor.js",
-    "client/build/scripts/_texteditor.js",
-    "client/build/scripts/_turn.js",
-    "client/build/scripts/_timer.js",
-    "client/build/scripts/_stats.js"
+    "client/src/scripts/_init.js",
+    "client/src/scripts/_notify.js",
+    "client/src/scripts/RTCMultiConnection.js",
+    "client/src/scripts/_screenshare.js",
+    "client/src/scripts/_detectRTC.js",
+    "client/src/scripts/_webrtcchecks.js",
+    "client/src/scripts/_settings.js",
+    "client/src/scripts/firebase.js",
+    "client/src/scripts/FileBufferReader.js",
+    "client/src/scripts/MediaStreamRecorder.js",
+    "client/src/scripts/RecordRTC.js",
+    "client/src/scripts/screenshot.js",
+    "client/src/scripts/_snapshot.js",
+    "client/src/scripts/_geolocation.js",
+    "client/src/scripts/_chat.js",
+    "client/src/scripts/_mediacontrol.js",
+    "client/src/scripts/_record.js",
+    "client/src/scripts/_screenrecord.js",
+    "client/src/scripts/_filesharing.js",
+    "client/src/scripts/_draw.js",
+    "client/src/scripts/_redial.js",
+    "client/src/scripts/_listenin.js",
+    "client/src/scripts/_cursor.js",
+    "client/src/scripts/_codeeditor.js",
+    "client/src/scripts/_texteditor.js",
+    "client/src/scripts/_turn.js",
+    "client/src/scripts/_timer.js",
+    "client/src/scripts/_stats.js"
 ];
 
 /*gulp.task('betawebrtcdevelopmentjs',function() {
@@ -197,14 +197,14 @@ var scriptList=[
 /*.pipe(uglify())*/
 gulp.task('webrtcdevelopmentjs',function() {
     console.log(" gulping main webrtc development scripts ");
-    scriptList.push("client/build/scripts/start.js");
-    scriptList.push("client/build/scripts/admin.js");    
+    scriptList.push("client/src/scripts/start.js");
+    scriptList.push("client/src/scripts/admin.js");    
     console.log(scriptList);
     gulp.src(scriptList)
         .pipe( rev({strict: true}) )
         .pipe(header(headerComment))
         .pipe(concat('webrtcdevelopment.js'))  
-        .pipe(gulp.dest(folderPath+'minScripts/')); 
+        .pipe(gulp.dest(folderPath)); 
 });
 
 
@@ -222,26 +222,26 @@ gulp.task('mainstyle',function() {
         .pipe( rev({strict: true}) )
         .pipe(header(headerComment))
         .pipe(concat('webrtcdevelopment_header.css'))  
-        .pipe(gulp.dest(folderPath+'minScripts/')); 
+        .pipe(gulp.dest(folderPath)); 
 });
 
 gulp.task('webrtcdevelopmentcss',function() {
     console.log(" gulping custom stylesheets css  ");
     cssList=[
-      "client/build/css/Style.css",
-      "client/build/css/styles.css",
-      "client/build/css/chat.css",
-      "client/build/css/cursor.css",
-      "client/build/css/draw.css",
-      "client/build/css/filesharing.css",
-      "client/build/css/screenshare.css"
+      "client/src/css/Style.css",
+      "client/src/css/styles.css",
+      "client/src/css/chat.css",
+      "client/src/css/cursor.css",
+      "client/src/css/draw.css",
+      "client/src/css/filesharing.css",
+      "client/src/css/screenshare.css"
     ];
     console.log(cssList);
     gulp.src(cssList)
       .pipe( rev({strict: true}) )
       .pipe(header(headerComment))
       .pipe(concat('webrtcdevelopment.css'))
-      .pipe(gulp.dest(folderPath+'minScripts/'));
+      .pipe(gulp.dest(folderPath));
 });
 
 /*.pipe(minifyCss())*/
