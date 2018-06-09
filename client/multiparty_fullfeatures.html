@@ -471,13 +471,13 @@ $('document').ready(function(){
                             active: false
                         },                   
             reconnect   :{
-                            active: true,
-                            button:{
-                                class:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
-                                html:"Reconnect",
-                                resyncfiles:false
-                            }
-                        }, 
+                        active: true,
+                        button:{
+                            class:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
+                            html:"Reconnect",
+                            resyncfiles:false
+                        }
+                    }, 
             mute    :{
                         active: true,
                         audio   :{
@@ -500,11 +500,13 @@ $('document').ready(function(){
                             }
                 },
             help : {
-                  active:true
-                },
+              active : true ,
+              helpContainer : "network-stats-body"
+            },
             statistics:{
-                  active:false
-                }
+              active : false , 
+              statsConainer : "help-view-body"
+            }
         };
 
         var webrtcdevobj = new window.WebRTCdev ( 
