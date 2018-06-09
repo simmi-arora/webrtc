@@ -266,16 +266,16 @@ gulp.task('default', gulpSequence(
 ));
 
 gulp.task('develop', gulpSequence(
-    'vendorjs',
-    'drawjs' , 
-    'drawcss',
-    'codejs',
-    'codecss',
-    'betawebrtcdevelopmentjs',
-    'screensharejs',
-    'mainstyle',
-    'webrtcdevelopmentcss',
-    'serverjs'
+    // 'vendorjs',
+    // 'drawjs' , 
+    // 'drawcss',
+    // 'codejs',
+    // 'codecss',
+    'webrtcdevelopmentjs',
+    // 'screensharejs',
+    // 'mainstyle',
+    // 'webrtcdevelopmentcss',
+    // 'serverjs'
 )); 
 
 gulp.task('production', gulpSequence(
