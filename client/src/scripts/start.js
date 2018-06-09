@@ -37,23 +37,39 @@ try{
             incomingData  = incoming.data  ;  
         }
 
-        webrtcdev.log(" [ startJS webrtcdom ] : DetectRTC " , DetectRTC);
+        var detectRTC = DetectRTC;
+        webrtcdev.log(" [ startJS webrtcdom ] : DetectRTC " , detectRTC);
         
+        webrtcdev.log(" Browser " , detectRTC.browser.name + detectRTC.browser.fullVersion );
+
+        webrtcdev.log(" Audio Input Device " );
+        // for( x in detectRTC.audioInputDevices) 
+        console.log(detectRTC.audioInputDevices);
+
+        webrtcdev.log(" Audio Output Device " );
+        for( x in detectRTC.audioOutputDevices) webrtcdev.log(x);        
+
+        webrtcdev.log(" Video Input Device " );
+        for( x in detectRTC.videoInputDevices) webrtcdev.log(x);  
+
+        webrtcdev.log(" Screen Device " + detectRTC.displayResolution); 
+
         // Cases around webcam malfunctiojn or absense 
-        if(!DetectRTC.hasWebcam){
-            shownotification(" Your browser doesnt have webcam" , "warning");
-            outgoing.video = false;
-        }
-        if(!DetectRTC.isWebsiteHasWebcamPermissions){
-            shownotification(" Your browser doesnt have permission for accessing webcam", "warning");
-            outgoing.video = false;
-        }
+        // if(!detectRTC.hasWebcam){
+        //     shownotification(" Your browser doesnt have webcam" , "warning");
+        //     outgoing.video = false;
+        // }
+        // if(!detectRTC.isWebsiteHasWebcamPermissions){
+        //     shownotification(" Your browser doesnt have permission for accessing webcam", "warning");
+        //     outgoing.video = false;
+        // }
         
-        //Cases around Miceohone malfunction or absense 
-        if(!DetectRTC.hasMicrophone){
-            shownotification(" Your browser doesnt have microphone", "warning");   
-            outgoing.audio = false ;
-        }
+        // //Cases around Miceohone malfunction or absense 
+        // if(!detectRTC.hasMicrophone){
+        //     shownotification(" Your browser doesnt have microphone", "warning");   
+        //     outgoing.audio = false ;
+        // }
+        
         // if(!DetectRTC.isWebsiteHasMicrophonePermissions){
         //     shownotification(" Your browser doesnt have permission for accessing microphone", "warning");
         //     outgoing.audio = false;
@@ -69,6 +85,7 @@ try{
             outgoingData  = outgoing.data ;
         }
 
+        console.log("++++++++++++++++++" , outgoingVideo , outgoingAudio);
         /* When user is single */
         localobj=_localObj;
         localVideo = localobj.video;
@@ -316,9 +333,10 @@ try{
                         webrtcdev.log(" On streamEnded event ", event.stream.getVideoTracks()  , event.stream.getAudioTracks());
                         // alert( "Media stream tracks " , webcallpeers[0].stream.getVideoTracks());
                         if(statistics.active){
-                            getStats(event.stream.getVideoTracks() , function(result) {
-                                document.getElementById("network-stats-body").innerHTML = result;        
-                            } , 20000);
+                            // getStats(event.stream.getVideoTracks() , function(result) {
+                            //     document.getElementById("network-stats-body").innerHTML = result;        
+                            // } , 20000);
+                            document.getElementById("network-stats-body").innerHTML = JSON.stringify(DetectRTC);  
                         }
                     }
                 },

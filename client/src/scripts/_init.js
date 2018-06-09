@@ -174,8 +174,8 @@ function getLength(obj) {
 }
 
 function getArgsJson(arguments){
-  let str;
-  for (i = 1; i <= arguments.length; i++) {
+  let str="";
+  for (i = 0; i < arguments.length; i++) {
     if (arguments[i]) {
       str += toStr(arguments[i]);
     }

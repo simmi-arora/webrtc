@@ -268,28 +268,28 @@ function activateBandwidthButtons(timerobj){
     }
 }
 
-    /**
-     * shows status of ongoing webrtc call
-     * @method
-     * @name showStatus
-     * @param {obj} conn
-     */
-    function showStatus(conn){
-        webrtcdev.log("======================status of " , rtcConn);
+/**
+ * shows status of ongoing webrtc call
+ * @method
+ * @name showStatus
+ * @param {obj} conn
+ */
+function showStatus(conn){
+    webrtcdev.log("======================status of " , rtcConn);
 
-        getStats(rtcConn, function(result) {
-            alert("getstats Result");
-            webrtcdev.log(result.connectionType.remote.ipAddress);
-            webrtcdev.log(result.connectionType.remote.candidateType);
-            webrtcdev.log(result.connectionType.transport);
-        });
+    getStats(rtcConn, function(result) {
+        alert("getstats Result");
+        webrtcdev.log(result.connectionType.remote.ipAddress);
+        webrtcdev.log(result.connectionType.remote.candidateType);
+        webrtcdev.log(result.connectionType.transport);
+    });
 
-        alert( "got stats " , result.connectionType.transport);
-        webrtcdev.log("WebcallPeers " , webcallpeers);
-    }
+    alert( "got stats " , result.connectionType.transport);
+    webrtcdev.log("WebcallPeers " , webcallpeers);
+}
 
-    
-    function showRtcConn(){
-        webrtcdev.log(" rtcConn : "  , rtcConn);
-        webrtcdev.log(" rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
-    }
+
+function showRtcConn(){
+    webrtcdev.log(" rtcConn : "  , rtcConn);
+    webrtcdev.log(" rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
+}
