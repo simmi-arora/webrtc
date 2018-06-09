@@ -608,7 +608,12 @@ function createFileSharingBox(peerinfo, parent){
             return;
 
         var fileSharingBox = document.createElement("div");
-        fileSharingBox.className = "fileviewing-box";
+
+        if(fileshareobj.props.fileList =="single"){
+            fileSharingBox.className = "col-md-12 fileviewing-box";
+        }else {
+            fileSharingBox.className = "col-md-6 fileviewing-box";            
+        }
         fileSharingBox.setAttribute("style", "background-color:" + peerinfo.color);
         fileSharingBox.id = peerinfo.fileShare.outerbox;
 
