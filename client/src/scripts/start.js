@@ -184,9 +184,9 @@ try{
 
             if(widgets.minmax)          minmaxobj       = widgets.minmax || null;
 
-            if(widgets.help)            help            = widgets.help || null;
+            if(widgets.help)            helpobj          = widgets.help || null;
 
-            if(widgets.statistics)      statistics       = widgets.statistics || null;
+            if(widgets.statistics)      statisticsobj     = widgets.statistics || null;
         }
 
         return {
@@ -332,12 +332,6 @@ try{
                         updateWebCallView(peerinfo);
                         webrtcdev.log(" On streamEnded event ", event.stream.getVideoTracks()  , event.stream.getAudioTracks());
                         // alert( "Media stream tracks " , webcallpeers[0].stream.getVideoTracks());
-                        if(statistics.active){
-                            // getStats(event.stream.getVideoTracks() , function(result) {
-                            //     document.getElementById("network-stats-body").innerHTML = result;        
-                            // } , 20000);
-                            document.getElementById("network-stats-body").innerHTML = JSON.stringify(DetectRTC);  
-                        }
                     }
                 },
 
@@ -378,8 +372,8 @@ try{
                                     shownotification("screen is getting shared " + e.data.screenid);
                                     //createScreenViewButton();
                                     var button = document.getElementById(screenshareobj.button.shareButton.id);
-                                    button.innerHTML = "Peer sharing";
-                                    button.parentNode.setAttribute("style", "background:rgba(46, 109, 164, 0.35)");
+                                    button.className = screenshareobj.button.shareButton.class_busy;
+                                    button.innerHTML = screenshareobj.button.shareButton.html_busy;
                                     button.disabled = true;
 
                                     screenRoomid = e.data.screenid;
@@ -1253,6 +1247,19 @@ try{
 
         }catch(e){
             webrtcdev.error("[ start.js - update call view ]" , e);
+        }
+
+        // Update Stats if active
+        if(statistics.active){
+            // getStats(event.stream.getVideoTracks() , function(result) {
+            //     document.getElementById("network-stats-body").innerHTML = result;        
+            // } , 20000);
+            console.log(" =============detect RTC" , detectRTC);
+            document.getElementById("network-stats-body").innerHTML += JSON.stringify(detectRTC); 
+            document.getElementById("network-stats-body").innerHTML += JSON.stringify(rtcconn.bandwidth);
+            document.getElementById("network-stats-body").innerHTML += JSON.stringify(rtcconn.codecs); 
+
+            alert("detect RTC appended ");
         }
 
         webrtcdev.log(" updateWebCallView - finish");
