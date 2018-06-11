@@ -853,13 +853,20 @@ try{
                 webrtcdev.log(" File sharing widget not loaded ");
             }
 
-
-            if(statistics && statistics.active){
-                document.getElementById("network-stats-body").innerHTML="";
+            if(statisticsobj && statisticsobj.active){
+                try{
+                    document.getElementById(statisticsobj.statsConainer).innerHTML="";
+                }catch(e){
+                    webrtcdev.error(" statisticsobj statsConainer not found" , e );
+                }
             }
             
-            if(help && help.active){
-                document.getElementById("help-view-body").innerHTML="";
+            if(helpobj && helpobj.active){
+                try{
+                    document.getElementById(helpobj.helpContainer).innerHTML="";
+                }catch(e){
+                    webrtcdev.error(" helpobj helpContainer not found" , e );
+                }
             }
 
             widgetsinstalled = true;
@@ -1065,7 +1072,7 @@ try{
 
                     var remvid;
                     var video = document.createElement('video');
-                    video.autoplay = "autoplay";
+                    //video.autoplay = "autoplay";
                     remoteVideos[vi] = video;
                     document.getElementById(remoteobj.videoContainer).appendChild(video);
                     remvid = remoteVideos[vi];
@@ -1194,7 +1201,7 @@ try{
                                 if(remoteobj.maxAllowed=="unlimited"){
                                     webrtcdev.log("remote video is unlimited , creating video for remoteVideos array ");
                                     var video = document.createElement('video');
-                                    video.autoplay = "autoplay";
+                                    //video.autoplay = "autoplay";
                                     remoteVideos[vi] = {
                                         "userid": peerInfo.userid, 
                                         "video" : video
@@ -1206,7 +1213,7 @@ try{
                                     if(document.getElementsByName(remoteVideos[vi])[0]){
                                         remoteVideos[vi] = { 
                                             "userid": peerInfo.userid, 
-                                            "video" :  document.getElementsByName(remoteVideos[vi])[0] 
+                                            "video" : document.getElementsByName(remoteVideos[vi])[0] 
                                         };
                                     }else{
                                         webrtcdev.error(" document.getElementsByName(remoteVideos[vi])[0] doest exist for vi " , vi);
@@ -1250,14 +1257,14 @@ try{
         }
 
         // Update Stats if active
-        if(statistics.active){
+        if(statisticsobj && statisticsobj.active){
             // getStats(event.stream.getVideoTracks() , function(result) {
             //     document.getElementById("network-stats-body").innerHTML = result;        
             // } , 20000);
-            console.log(" =============detect RTC" , detectRTC);
-            document.getElementById("network-stats-body").innerHTML += JSON.stringify(detectRTC); 
-            document.getElementById("network-stats-body").innerHTML += JSON.stringify(rtcconn.bandwidth);
-            document.getElementById("network-stats-body").innerHTML += JSON.stringify(rtcconn.codecs); 
+            console.log(" ============= detect RTC" , detectRTC);
+            document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(detectRTC); 
+            document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(rtcconn.bandwidth);
+            document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(rtcconn.codecs); 
 
             alert("detect RTC appended ");
         }
