@@ -79,14 +79,14 @@
                         <!-- when no remote -->
                         <div id="singleVideoContainer" class="row" hidden>
                             <div class="col-sm-2 merge text-success" > Waiting  ! </div>
-                            <div class="col-sm-8 merge "> <video name="myAloneVideo" autoplay="autoplay" muted="true" /></div>
+                            <div class="col-sm-8 merge "> <video name="myAloneVideo" muted="true" /></div>
                             <div class="col-sm-2 merge text-info" > You are the only one in the session ...</div>
                         </div>
 
                         <!-- when remote is connected -->
                         <div id ="confVideoContainer"  class="row" hidden >
                             <div class="col-sm-4 merge" class="leftVideoClass" id="userVideo">
-                                <video name="myConferenceVideo" autoplay="autoplay" muted="true" />
+                                <video name="myConferenceVideo" muted="true" />
                             </div>
 
                             <div class="col-sm-4 merge" class="rightVideoClass" id="othersVideo">
@@ -391,7 +391,20 @@ $('document').ready(function(){
             fileShare   :{
                             active : true,
                             fileShareContainer : "fileSharingRow",
+                            fileshare:{
+                                 rotateicon:"assets/images/refresh-icon.png",
+                                 minicon:"assets/images/arrow-icon-down.png",
+                                 maxicon:"assets/images/arrow-icon.png",
+                                 closeicon:"assets/images/cross-icon.png"
+                            },
                             fileListContainer : "fileListingRow",
+                            filelist:{
+                                 downloadicon:"",
+                                 trashicon:"",
+                                 saveicon:"",
+                                 showicon:"",
+                                 hideicon:"",
+                            },
                             button :{
                                 id:"fileShareButton"
                             },
