@@ -273,9 +273,12 @@ function attachMediaStream(element, stream) {
             }
 
             if(element.hidden){
+                webrtcdev.log('Video Element was hidden making it appear');
                 element.hidden=false;
             }
-            webrtcdev.log(" Media Stream attached ");
+            element.play();
+
+            webrtcdev.log(" Media Stream attached to " , element , " succesfuly");
         }else{
             element.src = "";
         }

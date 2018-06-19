@@ -5,22 +5,22 @@
  * @param {object} connection
  */
 function checkDevices(obj){
-    webrtcdev.log(" obj.DetectRTC  " , obj.DetectRTC);
-    if(obj.DetectRTC.hasMicrophone) {
+
+    if(obj.hasMicrophone) {
         // seems current system has at least one audio input device
         webrtcdev.log("has Microphone");
     }else{
         webrtcdev.log("doesnt have  hasMicrophone");
     }
 
-    if(obj.DetectRTC.hasSpeakers) {
+    if(obj.hasSpeakers) {
         webrtcdev.log("has Speakers");
         // seems current system has at least one audio output device
     }else{
         webrtcdev.log("doesnt have  Speakers");
     }
 
-    if(obj.DetectRTC.hasWebcam) {
+    if(obj.hasWebcam) {
         webrtcdev.log("has Webcam");
         // seems current system has at least one video input device
     }else{
@@ -34,23 +34,39 @@ function checkDevices(obj){
  * @param {object} connection
  */
 function checkWebRTCSupport(obj){
-    if(obj.DetectRTC.isWebRTCSupported) {
+
+    webrtcdev.log(" Browser " , obj.browser.name + obj.browser.fullVersion );
+
+    if(obj.isWebRTCSupported) {
     // seems WebRTC compatible client
     }
 
-    if(obj.DetectRTC.isAudioContextSupported) {
+    if(obj.isAudioContextSupported) {
         // seems Web-Audio compatible client
     }
 
-    if(obj.DetectRTC.isScreenCapturingSupported) {
+    if(obj.isScreenCapturingSupported) {
         // seems WebRTC screen capturing feature is supported on this client
     }
 
-    if(obj.DetectRTC.isSctpDataChannelsSupported) {
+    if(obj.isSctpDataChannelsSupported) {
         // seems WebRTC SCTP data channels feature are supported on this client
     }
 
-    if(obj.DetectRTC.isRtpDataChannelsSupported) {
+    if(obj.isRtpDataChannelsSupported) {
         // seems WebRTC (old-fashioned) RTP data channels feature are supported on this client
     }
+
+
+        webrtcdev.log(" Audio Input Device " );
+        // for( x in detectRTC.audioInputDevices) 
+        console.log(obj.audioInputDevices);
+
+        webrtcdev.log(" Audio Output Device " );
+        for( x in obj.audioOutputDevices) webrtcdev.log(x);        
+
+        webrtcdev.log(" Video Input Device " );
+        for( x in obj.videoInputDevices) webrtcdev.log(x);  
+
+        webrtcdev.log(" Screen Device " + obj.displayResolution); 
 }
