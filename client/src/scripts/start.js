@@ -40,44 +40,33 @@ try{
         var detectRTC = DetectRTC;
         webrtcdev.log(" [ startJS webrtcdom ] : DetectRTC " , detectRTC);
         
-        webrtcdev.log(" Browser " , detectRTC.browser.name + detectRTC.browser.fullVersion );
-
-        webrtcdev.log(" Audio Input Device " );
-        // for( x in detectRTC.audioInputDevices) 
-        console.log(detectRTC.audioInputDevices);
-
-        webrtcdev.log(" Audio Output Device " );
-        for( x in detectRTC.audioOutputDevices) webrtcdev.log(x);        
-
-        webrtcdev.log(" Video Input Device " );
-        for( x in detectRTC.videoInputDevices) webrtcdev.log(x);  
-
-        webrtcdev.log(" Screen Device " + detectRTC.displayResolution); 
+        checkDevices(detectRTC);
+        checkWebRTCSupport(detectRTC);
 
         // Cases around webcam malfunctiojn or absense 
-        // if(!detectRTC.hasWebcam){
-        //     shownotification(" Your browser doesnt have webcam" , "warning");
-        //     outgoing.video = false;
-        // }
-        // if(!detectRTC.isWebsiteHasWebcamPermissions){
-        //     shownotification(" Your browser doesnt have permission for accessing webcam", "warning");
-        //     outgoing.video = false;
-        // }
+        if(!detectRTC.hasWebcam){
+            shownotification(" Your browser doesnt have webcam" , "warning");
+            outgoing.video = false;
+        }
+        if(!detectRTC.isWebsiteHasWebcamPermissions){
+            shownotification(" Your browser doesnt have permission for accessing webcam", "warning");
+            outgoing.video = false;
+        }
         
-        // //Cases around Miceohone malfunction or absense 
-        // if(!detectRTC.hasMicrophone){
-        //     shownotification(" Your browser doesnt have microphone", "warning");   
-        //     outgoing.audio = false ;
-        // }
+        //Cases around Miceohone malfunction or absense 
+        if(!detectRTC.hasMicrophone){
+            shownotification(" Your browser doesnt have microphone", "warning");   
+            outgoing.audio = false ;
+        }
         
-        // if(!DetectRTC.isWebsiteHasMicrophonePermissions){
-        //     shownotification(" Your browser doesnt have permission for accessing microphone", "warning");
-        //     outgoing.audio = false;
-        // }
+        if(!DetectRTC.isWebsiteHasMicrophonePermissions){
+            shownotification(" Your browser doesnt have permission for accessing microphone", "warning");
+            outgoing.audio = false;
+        }
         
-        // if(!DetectRTC.hasSpeakers){
-        //     shownotification(" Your browser doesnt have speakers", "warning");      
-        // }
+        if(!DetectRTC.hasSpeakers){
+            shownotification(" Your browser doesnt have speakers", "warning");      
+        }
 
         if(outgoing){
             outgoingAudio = outgoing.audio ; 
@@ -85,7 +74,6 @@ try{
             outgoingData  = outgoing.data ;
         }
 
-        console.log("++++++++++++++++++" , outgoingVideo , outgoingAudio);
         /* When user is single */
         localobj=_localObj;
         localVideo = localobj.video;
@@ -283,6 +271,8 @@ try{
                         }
                         shownotification(event.extra.name + " joined session ", "info");
                         showdesktopnotification();
+                        
+                        onSessionConnect();
                         //eventEmitter.emit('sessionconnected');        // Call Function just in case the client is implementing this
                     } catch (e) {
                         shownotification("problem in on session open "+ e.message, "warning");
@@ -333,6 +323,8 @@ try{
                         webrtcdev.log(" On streamEnded event ", event.stream.getVideoTracks()  , event.stream.getAudioTracks());
                         // alert( "Media stream tracks " , webcallpeers[0].stream.getVideoTracks());
                     }
+
+                    rtpstats();
                 },
 
                 rtcConn.onstreamended = function (event) {

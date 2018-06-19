@@ -275,7 +275,6 @@ function activateBandwidthButtons(timerobj){
  * @param {obj} conn
  */
 function showStatus(conn){
-    webrtcdev.log("======================status of " , rtcConn);
 
     getStats(rtcConn, function(result) {
         alert("getstats Result");
@@ -288,6 +287,14 @@ function showStatus(conn){
     webrtcdev.log("WebcallPeers " , webcallpeers);
 }
 
+
+function rtpstats(){
+    for( x in rtcConn.peers.getAllParticipants){
+        let arg = JSON.stringify(rtcConn.peer[x], undefined, 2);
+        document.getElementById("network-stats-body").innerHTML += "<pre >"+ arg + "</pre>";        
+    }
+
+}
 
 function showRtcConn(){
     webrtcdev.log(" rtcConn : "  , rtcConn);

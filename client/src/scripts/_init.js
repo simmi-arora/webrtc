@@ -188,35 +188,60 @@ function getArgsJson(arguments){
   return str;
 }
 
+function isJSON(text){
+    if (typeof text!=="string"){
+        return false;
+    }
+    try{
+        JSON.parse(text);
+        return true;
+    }
+    catch (error){
+        return false;
+    }
+}
+
 var webrtcdev = {};
 
 webrtcdev.log = function(){
-  let arg = getArgsJson(arguments);
-  document.getElementById("help-view-body").innerHTML += '[-]' + arg + "<br/>";
+  // let arg = getArgsJson(arguments);
+  // document.getElementById("help-view-body").innerHTML += '[-]' + arg + "<br/>";
+  if(isJSON(arguments)){
+    let arg = JSON.stringify(arguments, undefined, 2);
+    document.getElementById("help-view-body").innerHTML += "<pre style='color:grey'>[-]" + arg + "</pre>";
+  }else{
+    let arg = getArgsJson(arguments);
+    document.getElementById("help-view-body").innerHTML += "<p style='color:grey'>[-]" + arg + "</p>";
+  }
   console.log(arguments);
 };
 
 webrtcdev.info= function(){
   let arg = getArgsJson(arguments);
-  document.getElementById("help-view-body").innerHTML += '[INFO]' + arg + "<br/>";
+  document.getElementById("help-view-body").innerHTML += "<p style='color:blue'>[INFO]" + arg + "</p>";
   console.info(arguments);
 };
 
  webrtcdev.debug= function(){
-  let arg = getArgsJson(arguments);
-  document.getElementById("help-view-body").innerHTML += '[DDEBUG]' + arg + "<br/>";
+  if(isJSON(arguments)){
+    let arg = JSON.stringify(arguments, undefined, 2);
+    document.getElementById("help-view-body").innerHTML += "<pre style='color:green'>[DDEBUG]" + arg + "</pre>";
+  }else{
+    let arg = getArgsJson(arguments);
+    document.getElementById("help-view-body").innerHTML += "<p style='color:green'>[DDEBUG]" + arg + "</p>";
+  }
   console.debug(arguments);
 };
 
 webrtcdev.warn= function(){
   let arg = getArgsJson(arguments);
-  document.getElementById("help-view-body").innerHTML += '[WARN]' + arg + "<br/>";
+  document.getElementById("help-view-body").innerHTML += "<p style='color:yellow'>[WARN]" + arg + "</p>";
   console.warn(arguments);
 };
 
 webrtcdev.error= function(){
   let arg = getArgsJson(arguments);
-  document.getElementById("help-view-body").innerHTML += '[ERROR]'+ arg + "<br/>";
+  document.getElementById("help-view-body").innerHTML +=  "<p style='color:red'>[ERROR]"+ arg + "</p>";
   console.error(arguments);
 };
 

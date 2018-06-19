@@ -67,6 +67,12 @@ function getChromeExtensionStatus(extensionid, callback) {
     }
 }
 
+/**
+ * function to find if chromeMedia source is desktop or screen
+ * @method
+ * @name isChromeExtensionAvailable
+ * @param {function} callback
+ */
 function isChromeExtensionAvailable(callback) {
     if (callback) {
         if (isFirefox)
@@ -80,6 +86,12 @@ function isChromeExtensionAvailable(callback) {
     }
 }
 
+/**
+ * function to find if chromeMedia source is desktop or screen
+ * @method
+ * @name isChromeExtensionAvailable
+ * @param {function} callback
+ */
 function webrtcdevPrepareScreenShare(callback){
     var time            = new Date().getUTCMilliseconds(); 
     if(screenRoomid == null)
@@ -98,7 +110,6 @@ function webrtcdevPrepareScreenShare(callback){
     
     scrConn.channel     = screenRoomid,
     scrConn.socketURL   = socketAddr,
-    //scrConn.socketMessageEvent = 'screen-sharing-demo',
     scrConn.session = {
         screen: true,
         oneway: true
@@ -118,7 +129,7 @@ function webrtcdevPrepareScreenShare(callback){
         webrtcdev.log(" on stream in _screenshare :" , event);
         //if(event.stream.isScreen){
             if(event.type=="remote" && event.type!="local"){
-                alert("started streaming remote's screen");
+                //alert("started streaming remote's screen");
 
                 var userid=event.userid;
                 var type=event.type;
@@ -622,7 +633,6 @@ function detectExtension(extensionID , callback){
             window.postMessage("reset-webrtcdev-extension", "*");
         callback(status);
     });
-
 }
 
 
@@ -676,7 +686,7 @@ function screenshareNotification(message , type){
             document.getElementById("alertBox").appendChild(alertDiv);
 
         }else{
-
+            // Handle these msgs too : TBD
         }
 
     }else{

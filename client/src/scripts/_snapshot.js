@@ -40,7 +40,7 @@ function createSnapshotButton(controlBarName , peerinfo){
     return snapshotButton;
 }
 
-/* *************************************8
+/* *************************************
 Snapshot
 ************************************************/
 function takeSnapshot(peerinfo , callback) {
