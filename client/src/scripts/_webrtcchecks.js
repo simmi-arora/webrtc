@@ -8,24 +8,35 @@ function checkDevices(obj){
 
     if(obj.hasMicrophone) {
         // seems current system has at least one audio input device
-        webrtcdev.log("has Microphone");
+        webrtcdev.info("has Microphone");
     }else{
-        webrtcdev.log("doesnt have  hasMicrophone");
+        webrtcdev.error("doesnt have  hasMicrophone");
     }
 
     if(obj.hasSpeakers) {
-        webrtcdev.log("has Speakers");
+        webrtcdev.info("has Speakers");
         // seems current system has at least one audio output device
     }else{
-        webrtcdev.log("doesnt have  Speakers");
+        webrtcdev.error("doesnt have  Speakers");
     }
 
     if(obj.hasWebcam) {
-        webrtcdev.log("has Webcam");
+        webrtcdev.info("has Webcam");
         // seems current system has at least one video input device
     }else{
-        webrtcdev.log("doesnt have Webcam");
+        webrtcdev.error("doesnt have Webcam");
     }
+
+    webrtcdev.log(" Audio Input Device " );
+    for( x in obj.audioInputDevices) webrtcdev.info(obj.audioInputDevices[x]);
+
+    webrtcdev.log(" Audio Output Device " );
+    for( x in obj.audioOutputDevices) webrtcdev.info(obj.audioOutputDevices[x]);        
+
+    webrtcdev.log(" Video Input Device " );
+    for( x in obj.videoInputDevices) webrtcdev.info(obj.videoInputDevices[x]);  
+
+    webrtcdev.info(" Screen Device " + obj.displayResolution); 
 }
 
 /**
@@ -35,10 +46,12 @@ function checkDevices(obj){
  */
 function checkWebRTCSupport(obj){
 
-    webrtcdev.log(" Browser " , obj.browser.name + obj.browser.fullVersion );
+    webrtcdev.info(" Browser " , obj.browser.name + obj.browser.fullVersion );
 
     if(obj.isWebRTCSupported) {
     // seems WebRTC compatible client
+    }else{
+
     }
 
     if(obj.isAudioContextSupported) {
@@ -57,16 +70,4 @@ function checkWebRTCSupport(obj){
         // seems WebRTC (old-fashioned) RTP data channels feature are supported on this client
     }
 
-
-        webrtcdev.log(" Audio Input Device " );
-        // for( x in detectRTC.audioInputDevices) 
-        console.log(obj.audioInputDevices);
-
-        webrtcdev.log(" Audio Output Device " );
-        for( x in obj.audioOutputDevices) webrtcdev.log(x);        
-
-        webrtcdev.log(" Video Input Device " );
-        for( x in obj.videoInputDevices) webrtcdev.log(x);  
-
-        webrtcdev.log(" Screen Device " + obj.displayResolution); 
 }

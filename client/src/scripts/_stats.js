@@ -275,21 +275,19 @@ function activateBandwidthButtons(timerobj){
  * @param {obj} conn
  */
 function showStatus(conn){
-
     getStats(rtcConn, function(result) {
         alert("getstats Result");
         webrtcdev.log(result.connectionType.remote.ipAddress);
         webrtcdev.log(result.connectionType.remote.candidateType);
         webrtcdev.log(result.connectionType.transport);
     });
-
     alert( "got stats " , result.connectionType.transport);
     webrtcdev.log("WebcallPeers " , webcallpeers);
 }
 
 
 function rtpstats(){
-    for( x in rtcConn.peers.getAllParticipants){
+    for( x in rtcConn.peers.getAllParticipants()){
         let arg = JSON.stringify(rtcConn.peer[x], undefined, 2);
         document.getElementById("network-stats-body").innerHTML += "<pre >"+ arg + "</pre>";        
     }
