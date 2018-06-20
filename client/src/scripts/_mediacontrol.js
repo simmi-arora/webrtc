@@ -63,7 +63,7 @@ function attachControlButtons( vid ,  peerinfo){
         }
     }
 
-    // Conyrol bar holds media control elements like , mute unmute , fillscreen ,. recird , snapshot
+    // Control bar holds media control elements like , mute unmute , fillscreen ,. recird , snapshot
     var controlBar= document.createElement("div");
     controlBar.id = controlBarName;
 
@@ -216,13 +216,6 @@ function createVideoMuteButton(controlBarName , peerinfo){
 
 function waitForRemoteVideo(_remoteStream , _remoteVideo , _localVideo  , _miniVideo ) {
     var videoTracks = _remoteStream.getVideoTracks();
-
-    if(statistics.active){
-        getStats(videoTracks , function(result) {
-            document.getElementById("network-stats-body").innerHTML= result;        
-        } , 2000);
-    }
-    
     if (videoTracks.length === 0 || _remoteVideo.currentTime > 0) {
         transitionToActive(_remoteVideo ,_localVideo ,  _miniVideo);
     } else {
@@ -272,15 +265,11 @@ function attachMediaStream(element, stream) {
                 webrtcdev.log('Error attaching stream to element.' , element , stream);
             }
 
-            if(element.hidden){
-                webrtcdev.log('Video Element was hidden making it appear');
-                element.hidden=false;
-            }
-            element.play();
-
-            webrtcdev.log(" Media Stream attached to " , element , " succesfuly");
+            //element.play();
+            webrtcdev.log(" Media Stream attached to " , element , " succesfully");
         }else{
-            element.src = "";
+            //element.src = "";
+            webrtcdev.debug(" Media Stream not attached to " , element  , " as stream is not valid " , stream);
         }
 
     }catch(e){
