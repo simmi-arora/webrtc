@@ -1,4 +1,4 @@
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  */
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  */
 /********************************************************************
   global variables
 **********************************************************************/
@@ -245,20 +245,6 @@ webrtcdev.error= function(){
   console.error(arguments);
 };
 
-
-
-// function log(arg , type) {
-//   document.getElementById("network-stats-body").innerHTML = arg;
-//   if(type=="info"){
-//       webrtcdev.log(arg);
-//   }else if ( type=="error"){
-//       webrtcdev.error(arg);
-//   }else if ( type=="warn"){
-//       webrtcdev.warn(arg);
-//   }
-// }
-
-
 function getElement(e) {
     return document.querySelector(e)
 }
@@ -298,7 +284,7 @@ function bytesToSize(e) {
     var n = parseInt(Math.floor(Math.log(e) / Math.log(1024)));
     return Math.round(e / Math.pow(1024, n), 2) + " " + t[n]
 }
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  *//**
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  *//**
  * function to show bootstrap based notification to client
  * @constructor
  * @param {string} message - message passed inside the notification 
@@ -397,7 +383,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
 
 
 
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  */// Last time updated: 2016-08-12 5:21:05 AM UTC
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  */// Last time updated: 2016-08-12 5:21:05 AM UTC
 // _____________________
 // RTCMultiConnection-v3
 // Open-Sourced: https://github.com/muaz-khan/RTCMultiConnection
@@ -3880,7 +3866,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
     window.RTCMultiConnection = RTCMultiConnection
 }();
 
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  *//**************************************************************
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  *//**************************************************************
 Screenshare 
 ****************************************************************/
 'use strict';
@@ -4648,7 +4634,7 @@ function createExtensionInstallWindow (){
     }
                                 
 }
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  */var WebRTCdetect=function() {
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  */var WebRTCdetect=function() {
 
     'use strict';
 
@@ -5658,7 +5644,7 @@ function createExtensionInstallWindow (){
         });
     }
 };
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  *//**
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  *//**
  * function to check devices like speakers , webcam ,  microphone etc
  * @method
  * @name checkDevices
@@ -5668,24 +5654,48 @@ function checkDevices(obj){
 
     if(obj.hasMicrophone) {
         // seems current system has at least one audio input device
-        webrtcdev.log("has Microphone");
+        webrtcdev.info("has Microphone");
     }else{
-        webrtcdev.log("doesnt have  hasMicrophone");
+        webrtcdev.error("doesnt have  hasMicrophone");
     }
 
     if(obj.hasSpeakers) {
-        webrtcdev.log("has Speakers");
+        webrtcdev.info("has Speakers");
         // seems current system has at least one audio output device
     }else{
-        webrtcdev.log("doesnt have  Speakers");
+        webrtcdev.error("doesnt have  Speakers");
     }
 
     if(obj.hasWebcam) {
-        webrtcdev.log("has Webcam");
+        webrtcdev.info("has Webcam");
         // seems current system has at least one video input device
     }else{
-        webrtcdev.log("doesnt have Webcam");
+        webrtcdev.error("doesnt have Webcam");
     }
+
+    webrtcdev.log(" Audio Input Device " );
+    for( x in obj.audioInputDevices) webrtcdev.info(obj.audioInputDevices[x]);
+
+    webrtcdev.log(" Audio Output Device " );
+    for( x in obj.audioOutputDevices) webrtcdev.info(obj.audioOutputDevices[x]);        
+
+    webrtcdev.log(" Video Input Device " );
+    for( x in obj.videoInputDevices) webrtcdev.info(obj.videoInputDevices[x]);  
+
+    webrtcdev.info(" Screen Device " + obj.displayResolution); 
+
+     // Update Stats if active
+    if(statisticsobj && statisticsobj.active){
+        // getStats(event.stream.getVideoTracks() , function(result) {
+        //     document.getElementById("network-stats-body").innerHTML = result;        
+        // } , 20000);
+        document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(obj); 
+        document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(obj.bandwidth);
+        document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(obj.codecs); 
+
+        alert("detect RTC appended ");
+    }
+
 }
 
 /**
@@ -5695,10 +5705,12 @@ function checkDevices(obj){
  */
 function checkWebRTCSupport(obj){
 
-    webrtcdev.log(" Browser " , obj.browser.name + obj.browser.fullVersion );
+    webrtcdev.info(" Browser " , obj.browser.name + obj.browser.fullVersion );
 
     if(obj.isWebRTCSupported) {
     // seems WebRTC compatible client
+    }else{
+
     }
 
     if(obj.isAudioContextSupported) {
@@ -5717,20 +5729,8 @@ function checkWebRTCSupport(obj){
         // seems WebRTC (old-fashioned) RTP data channels feature are supported on this client
     }
 
-
-        webrtcdev.log(" Audio Input Device " );
-        // for( x in detectRTC.audioInputDevices) 
-        console.log(obj.audioInputDevices);
-
-        webrtcdev.log(" Audio Output Device " );
-        for( x in obj.audioOutputDevices) webrtcdev.log(x);        
-
-        webrtcdev.log(" Video Input Device " );
-        for( x in obj.videoInputDevices) webrtcdev.log(x);  
-
-        webrtcdev.log(" Screen Device " + obj.displayResolution); 
 }
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  *//* ***********************************************
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  *//* ***********************************************
 settings
 *********************************************/
 
@@ -5825,7 +5825,7 @@ $("#SettingsButton").click(function() {
         /*$('#'+localobj.userdisplay.operatingsystem).val(operatingsystem);*/
     }
 });
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  */// Last time updated: 2016-11-04 7:11:11 AM UTC
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  */// Last time updated: 2016-11-04 7:11:11 AM UTC
 
 // ________________
 // FileBufferReader
@@ -6969,7 +6969,7 @@ $("#SettingsButton").click(function() {
     window.FileBufferReader = FileBufferReader;
 })();
 
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  */// Muaz Khan     - www.MuazKhan.com
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  */// Muaz Khan     - www.MuazKhan.com
 // MIT License   - www.webrtc-experiment.com/licence
 // Documentation - github.com/streamproc/MediaStreamRecorder
 // ______________________
@@ -8373,7 +8373,7 @@ function SaveToDisk(blobOrFile, fileName) {
 
     (window.URL || window.webkitURL).revokeObjectURL(hyperlink.href);
 }
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  */'use strict';
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  */'use strict';
 
 // Last time updated: 2016-10-21 11:04:26 AM UTC
 
@@ -12368,7 +12368,7 @@ if (typeof RecordRTC !== 'undefined') {
     RecordRTC.GifRecorder = GifRecorder;
 }
 
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  */// Note: All libraries listed in this file are "external libraries" 
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  */// Note: All libraries listed in this file are "external libraries" 
 // ----  and has their own copyrights. Taken from "html2canvas" project.
 "use strict";
 
@@ -14652,7 +14652,7 @@ if (!IE) document.captureEvents(Event.MOUSEMOVE);
 document.addEventListener("mousemove", getMouseXY, false);
 var coordX = 0;
 var coordY = 0
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  */function createSnapshotButton(controlBarName , peerinfo){
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  */function createSnapshotButton(controlBarName , peerinfo){
     var snapshotButton=document.createElement("div");
     snapshotButton.id=controlBarName+"snapshotButton";
     snapshotButton.setAttribute("title", "Snapshot");
@@ -14755,7 +14755,7 @@ function syncSnapshot(datasnapshot , datatype , dataname ){
     webrtcdev.log("snaspshot ",datasnapshot);
 }*/
 
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  *//* ***********************************************
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  *//* ***********************************************
 geolocation
 *********************************************/
 
@@ -14803,7 +14803,7 @@ function showError(error) {
             break;
     }
 }
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  *//********************************************************************************8
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  *//********************************************************************************8
         Chat
 **************************************************************************************/
 function createChatButton(obj){
@@ -15024,7 +15024,7 @@ function addMessageBlockFormat(messageheaderDivclass , messageheader ,messageDiv
 $('#chatbox').css('max-height', $( "#leftVideo" ).height()+ 80);
 $('#chatBoard').css('max-height', $( "#leftVideo" ).height());
 $("#chatBoard").css("overflow-y" , "scroll");
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  *//***************************************************
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  *//***************************************************
 video handling 
 *********************************************************/
 
@@ -15089,7 +15089,7 @@ function attachControlButtons( vid ,  peerinfo){
         }
     }
 
-    // Conyrol bar holds media control elements like , mute unmute , fillscreen ,. recird , snapshot
+    // Control bar holds media control elements like , mute unmute , fillscreen ,. recird , snapshot
     var controlBar= document.createElement("div");
     controlBar.id = controlBarName;
 
@@ -15242,13 +15242,6 @@ function createVideoMuteButton(controlBarName , peerinfo){
 
 function waitForRemoteVideo(_remoteStream , _remoteVideo , _localVideo  , _miniVideo ) {
     var videoTracks = _remoteStream.getVideoTracks();
-
-    if(statistics.active){
-        getStats(videoTracks , function(result) {
-            document.getElementById("network-stats-body").innerHTML= result;        
-        } , 2000);
-    }
-    
     if (videoTracks.length === 0 || _remoteVideo.currentTime > 0) {
         transitionToActive(_remoteVideo ,_localVideo ,  _miniVideo);
     } else {
@@ -15298,16 +15291,11 @@ function attachMediaStream(element, stream) {
                 webrtcdev.log('Error attaching stream to element.' , element , stream);
             }
 
-            if(element.hidden){
-                webrtcdev.log('Video Element was hidden making it appear');
-                element.hidden=false;
-            }
             //element.play();
-
             webrtcdev.log(" Media Stream attached to " , element , " succesfully");
         }else{
             //element.src = "";
-            webrtcdev.debug(" Media Stream not attached to " , element );
+            webrtcdev.debug(" Media Stream not attached to " , element  , " as stream is not valid " , stream);
         }
 
     }catch(e){
@@ -15319,7 +15307,7 @@ function attachMediaStream(element, stream) {
 function reattachMediaStream(to, from) {
     to.src = from.src;
 }
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  *//* ***********************************************
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  *//* ***********************************************
 Record
 *********************************************/
 
@@ -15450,7 +15438,7 @@ function stopRecord(){
     }, {audio:true, video:true} );
 }*/
 
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  */
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  */
 /************************************************************************
 Canvas Record 
 *************************************************************************/
@@ -15994,7 +15982,7 @@ function PostBlob(blob) {
     video.focus();
     video.play();
 }
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  *//***************************************************************88
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  *//***************************************************************88
 File sharing 
 ******************************************************************/
 
@@ -16608,7 +16596,7 @@ function createFileSharingBox(peerinfo, parent){
         if(fileshareobj.props.fileList =="single"){
             fileSharingBox.className = "col-md-12 fileviewing-box";
         }else {
-            fileSharingBox.className = "col-md-6 fileviewing-box";            
+            fileSharingBox.className = "fileviewing-box";            
         }
         fileSharingBox.setAttribute("style", "background-color:" + peerinfo.color);
         fileSharingBox.id = peerinfo.fileShare.outerbox;
@@ -17038,7 +17026,7 @@ function createModalPopup(filetype ){
 
     mainDiv.appendChild(modalBox);
 }
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  *//**************************************************************************8
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  *//**************************************************************************8
 draw 
 ******************************************************************************/
 var CanvasDesigner;
@@ -17190,7 +17178,7 @@ saveButtonCanvas.onclick=function(){
    createModalPopup( "blobcanvas" );
 };
 document.body.appendChild(saveButtonCanvas);
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  *//**********************************
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  *//**********************************
 Reconnect 
 ****************************************/
 /*
@@ -17243,7 +17231,7 @@ function assignButtonRedial(id){
         }
     };
 }
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  *//* **********************************************
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  *//* **********************************************
 Listen -In
 *************************************************/
 
@@ -17322,7 +17310,7 @@ if(document.getElementById('listenInLink')){
 
 }
 
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  *//***************************************************************************
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  *//***************************************************************************
 cursor sharing 
 ***************************************************************************/
 
@@ -17417,7 +17405,7 @@ function createCursorButton(controlBarName, peerinfo, streamid, stream ){
 /*
     <div id="cursor1" class="fa fa-hand-o-up" style="width:0"></div>
     <div id="cursor2" class="fa fa-hand-o-up" style="width:0"></div>*/
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  */function createCodeEditorButton(){
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  */function createCodeEditorButton(){
     var codeeditorButton= document.createElement("span");
     codeeditorButton.className=codeeditorobj.button.class_off ;
     codeeditorButton.innerHTML=codeeditorobj.button.html_off;
@@ -17519,7 +17507,7 @@ function stopWebrtcdevcodeeditorSync(){
     document.getElementById(codeeditorobj.codeeditorContainer).removeEventListener("keyup", sendWebrtcdevCodeeditorSync, false);
 }
 
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  */function createTextEditorButton(){
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  */function createTextEditorButton(){
     var texteditorButton= document.createElement("span");
     texteditorButton.className=texteditorobj.button.class_off ;
     texteditorButton.innerHTML=texteditorobj.button.html_off;
@@ -17578,7 +17566,7 @@ function stopWebrtcdevTexteditorSync(){
     document.getElementById(texteditorobj.texteditorContainer).removeEventListener("keyup", sendWebrtcdevTexteditorSync, false);
 }
 
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  *//*********************************************
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  *//*********************************************
 ICE
 **************************************************/
 /**
@@ -17630,7 +17618,7 @@ function getICEServer(username , secretkey , domain , appname , roomname , secur
         '&domain='+domain +'&application='+appname+
         '&room='+ roomname+'&secure='+secure);
 }
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  *//**************************************************8
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  *//**************************************************8
 Timer 
 ***************************************************/
 var hours,mins,secs;
@@ -17831,7 +17819,7 @@ function checkTime(i) {
     if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
     return i;
 }
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  */// ___________
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  */// ___________
 // getStats.js
 // an abstraction layer runs top over RTCPeerConnection.getStats API
 // cross-browser compatible solution
@@ -18108,23 +18096,26 @@ function activateBandwidthButtons(timerobj){
  * @param {obj} conn
  */
 function showStatus(conn){
-
     getStats(rtcConn, function(result) {
         alert("getstats Result");
         webrtcdev.log(result.connectionType.remote.ipAddress);
         webrtcdev.log(result.connectionType.remote.candidateType);
         webrtcdev.log(result.connectionType.transport);
     });
-
     alert( "got stats " , result.connectionType.transport);
     webrtcdev.log("WebcallPeers " , webcallpeers);
 }
 
 
 function rtpstats(){
-    for( x in rtcConn.peers.getAllParticipants()){
-        let arg = JSON.stringify(rtcConn.peer[x], undefined, 2);
-        document.getElementById("network-stats-body").innerHTML += "<pre >"+ arg + "</pre>";        
+    try{
+        for( x=0; x<rtcConn.peers.getLength(); x++){
+            var pid =  rtcConn.peers.getAllParticipants()[x];
+            var arg = JSON.stringify( rtcConn.peers[pid] , undefined, 2);
+            document.getElementById(statisticsobj.statsConainer).innerHTML += "<pre >"+ arg + "</pre>";        
+        }
+    }catch(e){
+        webrtcdev.error("rtpstats" , e);
     }
 
 }
@@ -18134,7 +18125,7 @@ function showRtcConn(){
     webrtcdev.log(" rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
 }
 
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  */'use strict';
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  */'use strict';
 
 // var inherits = require('util').inherits;
 // var EventEmitter = require('events').EventEmitter;
@@ -18410,6 +18401,12 @@ try{
                         
                         onSessionConnect();
                         //eventEmitter.emit('sessionconnected');        // Call Function just in case the client is implementing this
+
+                        if (statisticsobj && statisticsobj.active) {
+                            //populate RTP stats 
+                            rtpstats();
+                        }
+
                     } catch (e) {
                         shownotification("problem in on session open "+ e.message, "warning");
                         webrtcdev.error("problem in on session open", e);
@@ -18459,8 +18456,6 @@ try{
                         webrtcdev.log(" On streamEnded event ", event.stream.getVideoTracks()  , event.stream.getAudioTracks());
                         // alert( "Media stream tracks " , webcallpeers[0].stream.getVideoTracks());
                     }
-
-                    rtpstats();
                 },
 
                 rtcConn.onstreamended = function (event) {
@@ -19384,19 +19379,6 @@ try{
             webrtcdev.error("[ start.js - update call view ]" , e);
         }
 
-        // Update Stats if active
-        if(statisticsobj && statisticsobj.active){
-            // getStats(event.stream.getVideoTracks() , function(result) {
-            //     document.getElementById("network-stats-body").innerHTML = result;        
-            // } , 20000);
-            console.log(" ============= detect RTC" , detectRTC);
-            document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(detectRTC); 
-            document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(rtcconn.bandwidth);
-            document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(rtcconn.codecs); 
-
-            alert("detect RTC appended ");
-        }
-
         webrtcdev.log(" updateWebCallView - finish");
     }
   
@@ -19699,7 +19681,7 @@ try{
 }catch(e){
     webrtcdev.log("exception in start " , e);
 }
-/* Generated on:Tue Jun 19 2018 23:10:26 GMT+0530 (IST) || version: 1.6.516 - Altanai , License : MIT  *//* ***************************************************************
+/* Generated on:Thu Jun 21 2018 22:09:42 GMT+0530 (IST) || version: 1.6.522 - Altanai , License : MIT  *//* ***************************************************************
 Admin
 ******************************************************************/
 

@@ -287,9 +287,14 @@ function showStatus(conn){
 
 
 function rtpstats(){
-    for( x in rtcConn.peers.getAllParticipants()){
-        let arg = JSON.stringify(rtcConn.peer[x], undefined, 2);
-        document.getElementById("network-stats-body").innerHTML += "<pre >"+ arg + "</pre>";        
+    try{
+        for( x=0; x<rtcConn.peers.getLength(); x++){
+            var pid =  rtcConn.peers.getAllParticipants()[x];
+            var arg = JSON.stringify( rtcConn.peers[pid] , undefined, 2);
+            document.getElementById(statisticsobj.statsConainer).innerHTML += "<pre >"+ arg + "</pre>";        
+        }
+    }catch(e){
+        webrtcdev.error("rtpstats" , e);
     }
 
 }

@@ -612,7 +612,7 @@ function createFileSharingBox(peerinfo, parent){
         if(fileshareobj.props.fileList =="single"){
             fileSharingBox.className = "col-md-12 fileviewing-box";
         }else {
-            fileSharingBox.className = "col-md-6 fileviewing-box";            
+            fileSharingBox.className = "fileviewing-box";            
         }
         fileSharingBox.setAttribute("style", "background-color:" + peerinfo.color);
         fileSharingBox.id = peerinfo.fileShare.outerbox;

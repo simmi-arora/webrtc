@@ -37,6 +37,19 @@ function checkDevices(obj){
     for( x in obj.videoInputDevices) webrtcdev.info(obj.videoInputDevices[x]);  
 
     webrtcdev.info(" Screen Device " + obj.displayResolution); 
+
+     // Update Stats if active
+    if(statisticsobj && statisticsobj.active){
+        // getStats(event.stream.getVideoTracks() , function(result) {
+        //     document.getElementById("network-stats-body").innerHTML = result;        
+        // } , 20000);
+        document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(obj); 
+        document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(obj.bandwidth);
+        document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(obj.codecs); 
+
+        alert("detect RTC appended ");
+    }
+
 }
 
 /**

@@ -245,20 +245,6 @@ webrtcdev.error= function(){
   console.error(arguments);
 };
 
-
-
-// function log(arg , type) {
-//   document.getElementById("network-stats-body").innerHTML = arg;
-//   if(type=="info"){
-//       webrtcdev.log(arg);
-//   }else if ( type=="error"){
-//       webrtcdev.error(arg);
-//   }else if ( type=="warn"){
-//       webrtcdev.warn(arg);
-//   }
-// }
-
-
 function getElement(e) {
     return document.querySelector(e)
 }
