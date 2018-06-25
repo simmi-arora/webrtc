@@ -879,7 +879,7 @@ try{
      */
     function startSession(rtcConn , socketAddr , sessionid){
 
-            webrtcdev.log("========== startSession" + sessionid);
+            webrtcdev.log("StartSession" + sessionid);
 
             try {
                 var addr = "/";
@@ -903,7 +903,7 @@ try{
                 });
 
             } else{
-                webrtcdev.error(" Session Id undefined ");
+                webrtcdev.error(" Session id undefined ");
                 alert("rtcCon channel / session id undefined ");
                 return; 
             }
@@ -915,12 +915,12 @@ try{
             });
 
             socket.on("presence", function (event) {
-                webrtcdev.log("PRESENCE -----------> ", event);
+                webrtcdev.log("presence for sessionid ", event);
                 event ? joinWebRTC(sessionid, selfuserid) : openWebRTC(sessionid, selfuserid);
             });
 
             socket.on("open-channel-resp", function (event) {
-                webrtcdev.log("========================== opened-channel", event, event.status, event.channel == sessionid);
+                webrtcdev.log(" opened-channel", event, event.status, event.channel == sessionid);
                 if (event.status && event.channel == sessionid) {
                     try {
 
@@ -977,10 +977,12 @@ try{
                 } else {
                     alert(" signaller doesnt allow channel open");
                 }
+
+                onLocalConnect(); // event emitter for app client 
             });
 
             socket.on("join-channel-resp", function (event) {
-                webrtcdev.log("=========================== joined-channel", event);
+                webrtcdev.log("joined-channel", event);
                 if (event.status && event.channel == sessionid) {
                     
                     webrtcdev.log(" [ join-channel-resp ] Session video:" ,  outgoingVideo,
@@ -1022,6 +1024,8 @@ try{
                 } else {
                     shownotification(event.msgtype + " : " + event.message);
                 }
+
+                onLocalConnect(); // event emitter for app client 
             });
 
             socket.on("channel-event", function (event) {

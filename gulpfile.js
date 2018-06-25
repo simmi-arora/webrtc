@@ -121,7 +121,7 @@ gulp.task('drawcss',function() {
     ]; 
     console.log(list);
     gulp.src(list)
-        .pipe(uglify())
+        // .pipe(uglify())
         .pipe(concat('drawBoardCss.css'))  
         .pipe(gulp.dest(folderPath)); 
 });
@@ -202,11 +202,11 @@ gulp.task('webrtcdevelopmentjs',function() {
     scriptList.push("client/src/scripts/admin.js");    
     console.log(scriptList);
     gulp.src(scriptList)
-        .pipe(uglify())
         .pipe( rev({strict: true}) )
         .pipe(header(headerComment))
         .pipe(concat('webrtcdevelopment.js'))  
-        .pipe(gulp.dest(folderPath)); 
+        .pipe(gulp.dest(folderPath));
+        //.pipe(uglify()); 
 });
 
 
@@ -240,7 +240,7 @@ gulp.task('webrtcdevelopmentcss',function() {
     ];
     console.log(cssList);
     gulp.src(cssList)
-      .pipe(uglify())
+      //.pipe(uglify())
       .pipe( rev({strict: true}) )
       .pipe(header(headerComment))
       .pipe(concat('webrtcdevelopment.css'))
