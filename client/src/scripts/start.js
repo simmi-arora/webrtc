@@ -274,6 +274,12 @@ try{
                         
                         onSessionConnect();
                         //eventEmitter.emit('sessionconnected');        // Call Function just in case the client is implementing this
+
+                        if (statisticsobj && statisticsobj.active) {
+                            //populate RTP stats 
+                            rtpstats();
+                        }
+
                     } catch (e) {
                         shownotification("problem in on session open "+ e.message, "warning");
                         webrtcdev.error("problem in on session open", e);
@@ -323,8 +329,6 @@ try{
                         webrtcdev.log(" On streamEnded event ", event.stream.getVideoTracks()  , event.stream.getAudioTracks());
                         // alert( "Media stream tracks " , webcallpeers[0].stream.getVideoTracks());
                     }
-
-                    rtpstats();
                 },
 
                 rtcConn.onstreamended = function (event) {
@@ -1246,19 +1250,6 @@ try{
 
         }catch(e){
             webrtcdev.error("[ start.js - update call view ]" , e);
-        }
-
-        // Update Stats if active
-        if(statisticsobj && statisticsobj.active){
-            // getStats(event.stream.getVideoTracks() , function(result) {
-            //     document.getElementById("network-stats-body").innerHTML = result;        
-            // } , 20000);
-            console.log(" ============= detect RTC" , detectRTC);
-            document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(detectRTC); 
-            document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(rtcconn.bandwidth);
-            document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(rtcconn.codecs); 
-
-            alert("detect RTC appended ");
         }
 
         webrtcdev.log(" updateWebCallView - finish");
