@@ -1,4 +1,14 @@
+'use strict';
+
 module.exports = function(grunt) {
+
+    require('load-grunt-tasks')(grunt, {
+        pattern: 'grunt-*',
+        config: 'package.json',
+        scope: 'devDependencies'
+    });
+
+    var versionNumber = grunt.file.readJSON('package.json').version;
 
     // Project configuration.
     grunt.initConfig({
@@ -37,7 +47,43 @@ module.exports = function(grunt) {
                 {expand: true, src: ['client/build/api/**'], dest: 'client/prod/api/'},
             ],
           },
+        },
+
+
+        dist: {
+            src: [
+                'dev/head.js',
+
+                'dev/SocketConnection.js', // You can replace it with: FirebaseConnection.js || PubNubConnection.js
+                'dev/MultiPeersHandler.js',
+
+                // 'dev/adapter.js', ---- optional
+                'dev/DetectRTC.js',
+                'dev/globals.js',
+
+                'dev/ios-hacks.js', // to support ios
+                'dev/RTCPeerConnection.js',
+                'dev/CodecsHandler.js', // to force H264 or codecs other than opus
+
+                'dev/OnIceCandidateHandler.js',
+                'dev/IceServersHandler.js',
+
+                'dev/getUserMedia.js',
+                'dev/StreamsHandler.js',
+
+                'dev/Screen-Capturing.js',
+
+                'dev/TextSenderReceiver.js',
+                'dev/FileProgressBarHandler.js',
+
+                'dev/TranslationHandler.js',
+
+                'dev/RTCMultiConnection.js',
+                'dev/tail.js'
+            ],
+            dest: 'client/src/scripts/RTCMultiConnection_new.js',
         }
+
     });
 
     grunt.loadNpmTasks('grunt-contrib-copy');

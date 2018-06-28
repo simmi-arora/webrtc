@@ -203,6 +203,7 @@ gulp.task('webrtcdevelopmentjs',function() {
     console.log(scriptList);
     gulp.src(scriptList)
         .pipe( rev({strict: true}) )
+        .pipe(uglify())
         .pipe(header(headerComment))
         .pipe(concat('webrtcdevelopment.js'))  
         .pipe(gulp.dest(folderPath));
