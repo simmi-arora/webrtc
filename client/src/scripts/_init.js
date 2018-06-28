@@ -179,7 +179,7 @@ function getLength(obj) {
 }
 
 function getArgsJson(arguments){
-  let str="";
+  var str="";
   for (i = 0; i < arguments.length; i++) {
     if (arguments[i]) {
       str += toStr(arguments[i]);
@@ -204,43 +204,43 @@ function isJSON(text){
 var webrtcdev = {};
 
 webrtcdev.log = function(){
-  // let arg = getArgsJson(arguments);
+  // var arg = getArgsJson(arguments);
   // document.getElementById("help-view-body").innerHTML += '[-]' + arg + "<br/>";
   if(isJSON(arguments)){
-    let arg = JSON.stringify(arguments, undefined, 2);
+    var arg = JSON.stringify(arguments, undefined, 2);
     document.getElementById("help-view-body").innerHTML += "<pre style='color:grey'>[-]" + arg + "</pre>";
   }else{
-    let arg = getArgsJson(arguments);
+    var arg = getArgsJson(arguments);
     document.getElementById("help-view-body").innerHTML += "<p style='color:grey'>[-]" + arg + "</p>";
   }
   console.log(arguments);
 };
 
 webrtcdev.info= function(){
-  let arg = getArgsJson(arguments);
+  var arg = getArgsJson(arguments);
   document.getElementById("help-view-body").innerHTML += "<p style='color:blue'>[INFO]" + arg + "</p>";
   console.info(arguments);
 };
 
  webrtcdev.debug= function(){
   if(isJSON(arguments)){
-    let arg = JSON.stringify(arguments, undefined, 2);
+    var arg = JSON.stringify(arguments, undefined, 2);
     document.getElementById("help-view-body").innerHTML += "<pre style='color:green'>[DDEBUG]" + arg + "</pre>";
   }else{
-    let arg = getArgsJson(arguments);
+    var arg = getArgsJson(arguments);
     document.getElementById("help-view-body").innerHTML += "<p style='color:green'>[DDEBUG]" + arg + "</p>";
   }
   console.debug(arguments);
 };
 
 webrtcdev.warn= function(){
-  let arg = getArgsJson(arguments);
+  var arg = getArgsJson(arguments);
   document.getElementById("help-view-body").innerHTML += "<p style='color:yellow'>[WARN]" + arg + "</p>";
   console.warn(arguments);
 };
 
 webrtcdev.error= function(){
-  let arg = getArgsJson(arguments);
+  var arg = getArgsJson(arguments);
   document.getElementById("help-view-body").innerHTML +=  "<p style='color:red'>[ERROR]"+ arg + "</p>";
   console.error(arguments);
 };

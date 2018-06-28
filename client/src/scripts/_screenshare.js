@@ -169,6 +169,9 @@ function webrtcdevPrepareScreenShare(callback){
 
             //createScreenViewButton();
 
+            // Event Listner for Screen share stream started 
+            onScreenShareStarted();
+
             /*scrConn.videosContainer.appendChild(event.mediaElement);
             event.mediaElement.play();
             setTimeout(function() {
@@ -196,6 +199,8 @@ function webrtcdevPrepareScreenShare(callback){
     webrtcdev.log(" webrtcdevscreenshare calling callback for socket.io operations");
     alert(" Preparing Screenshare "+ screenRoomid);
     setTimeout(callback(screenRoomid), 3000);
+    // event listener for Screen share stream ended 
+    onScreenShareSEnded();
 }
 
 function webrtcdevSharescreen() {
