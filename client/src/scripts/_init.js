@@ -178,11 +178,11 @@ function getLength(obj) {
   return length;
 }
 
-function getArgsJson(arguments){
+function getArgsJson(arg){
   var str="";
-  for (i = 0; i < arguments.length; i++) {
-    if (arguments[i]) {
-      str += toStr(arguments[i]);
+  for (i = 0; i < arg.length; i++) {
+    if (arg[i]) {
+      str += toStr(arg[i]);
     }
   }
   return str;
@@ -200,50 +200,6 @@ function isJSON(text){
         return false;
     }
 }
-
-var webrtcdev = {};
-
-webrtcdev.log = function(){
-  // var arg = getArgsJson(arguments);
-  // document.getElementById("help-view-body").innerHTML += '[-]' + arg + "<br/>";
-  if(isJSON(arguments)){
-    var arg = JSON.stringify(arguments, undefined, 2);
-    document.getElementById("help-view-body").innerHTML += "<pre style='color:grey'>[-]" + arg + "</pre>";
-  }else{
-    var arg = getArgsJson(arguments);
-    document.getElementById("help-view-body").innerHTML += "<p style='color:grey'>[-]" + arg + "</p>";
-  }
-  console.log(arguments);
-};
-
-webrtcdev.info= function(){
-  var arg = getArgsJson(arguments);
-  document.getElementById("help-view-body").innerHTML += "<p style='color:blue'>[INFO]" + arg + "</p>";
-  console.info(arguments);
-};
-
- webrtcdev.debug= function(){
-  if(isJSON(arguments)){
-    var arg = JSON.stringify(arguments, undefined, 2);
-    document.getElementById("help-view-body").innerHTML += "<pre style='color:green'>[DDEBUG]" + arg + "</pre>";
-  }else{
-    var arg = getArgsJson(arguments);
-    document.getElementById("help-view-body").innerHTML += "<p style='color:green'>[DDEBUG]" + arg + "</p>";
-  }
-  console.debug(arguments);
-};
-
-webrtcdev.warn= function(){
-  var arg = getArgsJson(arguments);
-  document.getElementById("help-view-body").innerHTML += "<p style='color:yellow'>[WARN]" + arg + "</p>";
-  console.warn(arguments);
-};
-
-webrtcdev.error= function(){
-  var arg = getArgsJson(arguments);
-  document.getElementById("help-view-body").innerHTML +=  "<p style='color:red'>[ERROR]"+ arg + "</p>";
-  console.error(arguments);
-};
 
 function getElement(e) {
     return document.querySelector(e)
@@ -284,3 +240,50 @@ function bytesToSize(e) {
     var n = parseInt(Math.floor(Math.log(e) / Math.log(1024)));
     return Math.round(e / Math.pow(1024, n), 2) + " " + t[n]
 }
+
+/* ********************************************************
+web dev Logger 
+****************************************************** */
+var webrtcdev = {};
+
+webrtcdev.log = function(){
+  // var arg = getArgsJson(arguments);
+  // document.getElementById("help-view-body").innerHTML += '[-]' + arg + "<br/>";
+  if(isJSON(arguments)){
+    let arg = JSON.stringify(arguments, undefined, 2);
+    document.getElementById("help-view-body").innerHTML += "<pre style='color:grey'>[-]" + arg + "</pre>";
+  }else{
+    let arg = getArgsJson(arguments);
+    document.getElementById("help-view-body").innerHTML += "<p style='color:grey'>[-]" + arg + "</p>";
+  }
+  console.log(arguments);
+};
+
+webrtcdev.info= function(){
+  let arg = getArgsJson(arguments);
+  document.getElementById("help-view-body").innerHTML += "<p style='color:blue'>[INFO]" + arg + "</p>";
+  console.info(arguments);
+};
+
+ webrtcdev.debug= function(){
+  if(isJSON(arguments)){
+    let arg = JSON.stringify(arguments, undefined, 2);
+    document.getElementById("help-view-body").innerHTML += "<pre style='color:green'>[DDEBUG]" + arg + "</pre>";
+  }else{
+    let arg = getArgsJson(arguments);
+    document.getElementById("help-view-body").innerHTML += "<p style='color:green'>[DDEBUG]" + arg + "</p>";
+  }
+  console.debug(arguments);
+};
+
+webrtcdev.warn= function(){
+  let arg = getArgsJson(arguments);
+  document.getElementById("help-view-body").innerHTML += "<p style='color:yellow'>[WARN]" + arg + "</p>";
+  console.warn(arguments);
+};
+
+webrtcdev.error= function(){
+  let arg = getArgsJson(arguments);
+  document.getElementById("help-view-body").innerHTML +=  "<p style='color:red'>[ERROR]"+ arg + "</p>";
+  console.error(arguments);
+};

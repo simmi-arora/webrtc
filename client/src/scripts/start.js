@@ -7,8 +7,6 @@
         peerconnection 
 ****************************************************************************/
 
-try{
-
     var RTCPeerConnection = null;
     var webrtcDetectedBrowser = null;
     var webrtcDetectedVersion = null;
@@ -922,70 +920,78 @@ try{
             socket.on("open-channel-resp", function (event) {
                 webrtcdev.log(" opened-channel", event, event.status, event.channel == sessionid);
                 if (event.status && event.channel == sessionid) {
-                    try {
 
-                        webrtcdev.log(" [open-channel-resp ] Session video:" ,  outgoingVideo,
-                            " audio: " , outgoingAudio ,
-                            " data: " , outgoingData , 
-                            " OfferToReceiveAudio: " , incomingAudio,
-                            " OfferToReceiveVideo: " , incomingVideo
-                        );
+                        let promise = new Promise(function(resolve, reject) {
+                            webrtcdev.log(" [open-channel-resp ] ",
+                                " Session video:" ,  outgoingVideo,
+                                " audio: " , outgoingAudio ,
+                                " data: " , outgoingData , 
+                                " OfferToReceiveAudio: " , incomingAudio,
+                                " OfferToReceiveVideo: " , incomingVideo
+                            );
 
-                        rtcConn.connectionType = "open",
+                            rtcConn.connectionType = "open",
 
-                        rtcConn.session = {
-                            video: outgoingVideo,
-                            audio: outgoingAudio,
-                            data: outgoingData
-                        },
+                            rtcConn.session = {
+                                video: outgoingVideo,
+                                audio: outgoingAudio,
+                                data: outgoingData
+                            },
 
-                        rtcConn.sdpConstraints.mandatory = {
-                            OfferToReceiveAudio: incomingAudio,
-                            OfferToReceiveVideo: incomingVideo
-                        },
-
-                        rtcConn.open(event.channel, function () {
-
-                            if (selfuserid == null) {
-                                selfuserid = rtcConn.userid;
-
-                                if (tempuserid != selfuserid)
-                                    socket.emit("update-channel", {
-                                        type: "change-userid",
-                                        channel: rtcConn.channel,
-                                        sender: selfuserid,
-                                        extra: {
-                                            old: tempuserid,
-                                            new: selfuserid
-                                        }
-                                    });
-                            }
-
-                            updatePeerInfo(selfuserid, selfusername, selfcolor, selfemail, "role" , "local");
-                            webrtcdev.info(" Trying to open a channel on WebRTC SDP ");
-                            if(outgoingVideo){
-                                rtcConn.dontCaptureUserMedia = false,
-                                rtcConn.getUserMedia();
-                            }else{
-                                webrtcdev.error(" [startJS open-channel-resp] dont Capture outgoing video " , outgoingVideo);
-                            }
+                            rtcConn.sdpConstraints.mandatory = {
+                                OfferToReceiveAudio: incomingAudio,
+                                OfferToReceiveVideo: incomingVideo
+                            };
+                            resolve(); // immediately give the result: 123
                         });
-                    } catch (e) {
-                        webrtcdev.error(e);
-                    }
+
+                        promise.then(
+                            rtcConn.open(event.channel, function () {
+
+                                if (selfuserid == null) {
+                                    selfuserid = rtcConn.userid;
+
+                                    if (tempuserid != selfuserid)
+                                        socket.emit("update-channel", {
+                                            type: "change-userid",
+                                            channel: rtcConn.channel,
+                                            sender: selfuserid,
+                                            extra: {
+                                                old: tempuserid,
+                                                new: selfuserid
+                                            }
+                                        });
+                                }
+
+                                updatePeerInfo(selfuserid, selfusername, selfcolor, selfemail, "role" , "local");
+                                webrtcdev.info(" Trying to open a channel on WebRTC SDP ");
+                                if(outgoingVideo){
+                                    rtcConn.dontCaptureUserMedia = false,
+                                    rtcConn.getUserMedia();
+                                }else{
+                                    webrtcdev.error(" [startJS open-channel-resp] dont Capture outgoing video " , outgoingVideo);
+                                }
+                            })
+                        ).then(
+                            onLocalConnect() // event emitter for app client 
+                        ).catch(
+                           (reason) => {
+                                webrtcdev.error('Handle rejected promise ('+reason+')');
+                            }
+                        );
 
                 } else {
                     alert(" signaller doesnt allow channel open");
                 }
 
-                onLocalConnect(); // event emitter for app client 
             });
 
             socket.on("join-channel-resp", function (event) {
                 webrtcdev.log("joined-channel", event);
                 if (event.status && event.channel == sessionid) {
                     
-                    webrtcdev.log(" [ join-channel-resp ] Session video:" ,  outgoingVideo,
+                    webrtcdev.log(" [ join-channel-resp ] ",
+                        " Session video:" ,  outgoingVideo,
                         " audio: " , outgoingAudio ,
                         " data: " , outgoingData , 
                         " OfferToReceiveAudio: " , incomingAudio,
@@ -1467,6 +1473,8 @@ try{
                         createFileSharingDiv(webcallpeers[x]);
                     }
                 }
+
+                // on connect webrtc request old file from peerconnection session
                 requestOldFiles();
 
             }else{
@@ -1554,7 +1562,3 @@ try{
         }
 
     }); 
-
-}catch(e){
-    webrtcdev.log("exception in start " , e);
-}
