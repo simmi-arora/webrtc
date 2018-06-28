@@ -1,4 +1,4 @@
-/* Generated on:Tue Jun 26 2018 21:06:22 GMT+0530 (IST) || version: 1.6.524 - Altanai , License : MIT  */
+/* Generated on:Thu Jun 28 2018 09:44:11 GMT+0530 (IST) || version: 1.6.524 - Altanai , License : MIT  */
 /*-------------------------------------------------------------*/
 textarea::::-webkit-scrollbar {
     width: 0;
@@ -311,7 +311,7 @@ input:focus {
     /*-webkit-transform: rotate(270deg) translateX(-100%);*/
     -ms-transform: rotate(270deg) translateX(-100%);
 }
-/* Generated on:Tue Jun 26 2018 21:06:22 GMT+0530 (IST) || version: 1.6.524 - Altanai , License : MIT  */.glyphicon {
+/* Generated on:Thu Jun 28 2018 09:44:11 GMT+0530 (IST) || version: 1.6.524 - Altanai , License : MIT  */.glyphicon {
     cursor: pointer
 }
 .bodyWhole{
@@ -695,7 +695,7 @@ video::-webkit-media-controls-current-time-display {}*/
 .video-block::-webkit-media-controls-timeline {}
 
 .video-block::-webkit-media-controls-current-time-display {}
-/* Generated on:Tue Jun 26 2018 21:06:22 GMT+0530 (IST) || version: 1.6.524 - Altanai , License : MIT  */
+/* Generated on:Thu Jun 28 2018 09:44:11 GMT+0530 (IST) || version: 1.6.524 - Altanai , License : MIT  */
 .chatContainerClass{
 	background: #f5f5f5;
     border: 2px solid #ccc;
@@ -773,7 +773,7 @@ video::-webkit-media-controls-current-time-display {}*/
     font-stretch: expanded;
     font-style: italic
 }
-/* Generated on:Tue Jun 26 2018 21:06:22 GMT+0530 (IST) || version: 1.6.524 - Altanai , License : MIT  */.cursor1Class{
+/* Generated on:Thu Jun 28 2018 09:44:11 GMT+0530 (IST) || version: 1.6.524 - Altanai , License : MIT  */.cursor1Class{
     box-sizing: border-box; 
     -moz-box-sizing: border-box
     width: 0px !important;
@@ -790,7 +790,7 @@ video::-webkit-media-controls-current-time-display {}*/
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
 }
-/* Generated on:Tue Jun 26 2018 21:06:22 GMT+0530 (IST) || version: 1.6.524 - Altanai , License : MIT  */.drawContainerClass{
+/* Generated on:Thu Jun 28 2018 09:44:11 GMT+0530 (IST) || version: 1.6.524 - Altanai , License : MIT  */.drawContainerClass{
     border: 5px solid #777;
 }
 
@@ -809,7 +809,7 @@ video::-webkit-media-controls-current-time-display {}*/
 .drawBoard{
     margin-top: 0px;
 }
-/* Generated on:Tue Jun 26 2018 21:06:22 GMT+0530 (IST) || version: 1.6.524 - Altanai , License : MIT  */
+/* Generated on:Thu Jun 28 2018 09:44:11 GMT+0530 (IST) || version: 1.6.524 - Altanai , License : MIT  */
 .filesharing1Box{
     background-color: #9999FF;
     color: #968787;
@@ -872,7 +872,7 @@ video::-webkit-media-controls-current-time-display {}*/
     background-color: #666699;
     color: #968787;
 }
-/* Generated on:Tue Jun 26 2018 21:06:22 GMT+0530 (IST) || version: 1.6.524 - Altanai , License : MIT  */.screenshareVideoClass{
+/* Generated on:Thu Jun 28 2018 09:44:11 GMT+0530 (IST) || version: 1.6.524 - Altanai , License : MIT  */.screenshareVideoClass{
     transform: rotateY(180deg);
     -webkit-transform:rotateY(180deg); /* Safari and Chrome */
     -moz-transform:rotateY(180deg); /* Firefox */

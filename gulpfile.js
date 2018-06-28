@@ -1,8 +1,10 @@
- var gulp = require('gulp');
+var gulp = require('gulp');
 var concat = require('gulp-concat'); 
 var cat = require('gulp-cat');  
 var addsrc = require('gulp-add-src');
 var uglify = require('gulp-uglify');
+let babel = require('gulp-babel');
+// var uglify = require("uglify-js");
 var minifyCss = require('gulp-minify-css'); 
 var base64 = require('gulp-base64');
 var gulpSequence = require('gulp-sequence');
@@ -203,6 +205,9 @@ gulp.task('webrtcdevelopmentjs',function() {
     console.log(scriptList);
     gulp.src(scriptList)
         .pipe( rev({strict: true}) )
+        .pipe(babel({
+            presets: ['es2015']
+        }))
         .pipe(uglify())
         .pipe(header(headerComment))
         .pipe(concat('webrtcdevelopment.js'))  
