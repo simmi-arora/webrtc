@@ -947,7 +947,6 @@
 
                         promise.then(
                             rtcConn.open(event.channel, function () {
-
                                 if (selfuserid == null) {
                                     selfuserid = rtcConn.userid;
 
@@ -962,19 +961,20 @@
                                             }
                                         });
                                 }
-
-                                updatePeerInfo(selfuserid, selfusername, selfcolor, selfemail, "role" , "local");
-                                webrtcdev.info(" Trying to open a channel on WebRTC SDP ");
-                                if(outgoingVideo){
-                                    rtcConn.dontCaptureUserMedia = false,
-                                    rtcConn.getUserMedia();
-                                }else{
-                                    webrtcdev.error(" [startJS open-channel-resp] dont Capture outgoing video " , outgoingVideo);
-                                }
                             })
-                        ).then(
+                        ).then(function(res){
+                            updatePeerInfo(selfuserid, selfusername, selfcolor, selfemail, "role" , "local");
+                            webrtcdev.info(" Trying to open a channel on WebRTC SDP ");
+                        }).then( function(res){
+                            if(outgoingVideo){
+                                rtcConn.dontCaptureUserMedia = false,
+                                rtcConn.getUserMedia();
+                            }else{
+                                webrtcdev.error(" [startJS open-channel-resp] dont Capture outgoing video " , outgoingVideo)
+                            }
+                        }).then(function(res){
                             onLocalConnect() // event emitter for app client 
-                        ).catch(
+                        }).catch(
                            (reason) => {
                                 webrtcdev.error('Handle rejected promise ('+reason+')');
                             }
@@ -988,50 +988,62 @@
 
             socket.on("join-channel-resp", function (event) {
                 webrtcdev.log("joined-channel", event);
+                
                 if (event.status && event.channel == sessionid) {
-                    
-                    webrtcdev.log(" [ join-channel-resp ] ",
-                        " Session video:" ,  outgoingVideo,
-                        " audio: " , outgoingAudio ,
-                        " data: " , outgoingData , 
-                        " OfferToReceiveAudio: " , incomingAudio,
-                        " OfferToReceiveVideo: " , incomingVideo
-                    ); 
+                
+                    let promise = new Promise(function(resolve, reject) {
 
-                    rtcConn.connectionType = "join",
-                    rtcConn.session = {
-                        video: outgoingVideo,
-                        audio: outgoingAudio,
-                        data: outgoingData
-                    },
-                    rtcConn.sdpConstraints.mandatory = {
-                        OfferToReceiveAudio: incomingAudio,
-                        OfferToReceiveVideo: incomingVideo
-                    },
-                    rtcConn.remoteUsers = event.users,
-                    updatePeerInfo(rtcConn.userid, selfusername, selfcolor, selfemail, role, "local"); 
+                        webrtcdev.log(" [ join-channel-resp ] ",
+                            " Session video:" ,  outgoingVideo,
+                            " audio: " , outgoingAudio ,
+                            " data: " , outgoingData , 
+                            " OfferToReceiveAudio: " , incomingAudio,
+                            " OfferToReceiveVideo: " , incomingVideo
+                        ); 
 
-                    for (x in rtcConn.remoteUsers) {
-                        updatePeerInfo(rtcConn.remoteUsers[x], remoteusername, remotecolor, remoteemail, "participant" , "remote");
-                        if (role == "inspector") shownotificationWarning("This session is being inspected ");
-                    }
+                        rtcConn.connectionType = "join",
+                        rtcConn.session = {
+                            video: outgoingVideo,
+                            audio: outgoingAudio,
+                            data: outgoingData
+                        },
+                        rtcConn.sdpConstraints.mandatory = {
+                            OfferToReceiveAudio: incomingAudio,
+                            OfferToReceiveVideo: incomingVideo
+                        },
+                        rtcConn.remoteUsers = event.users;                        
 
-                    rtcConn.connectionDescription = rtcConn.join(event.channel);
+                        resolve(); // immediately give the result: 123
+                    });
 
-                    webrtcdev.log(" Trying to join a channel on WebRTC SDP ");
-
-                    if(role != "inspector" && outgoingVideo){
-                        rtcConn.dontCaptureUserMedia = false,
-                        rtcConn.getUserMedia();
-                    }else{
-                        webrtcdev.error(" [startJS join-channel-resp] dont Capture outgoing video " , outgoingVideo);
-                    }
-                    
+                    promise.then(
+                        updatePeerInfo(rtcConn.userid, selfusername, selfcolor, selfemail, role, "local")
+                    ).then(function(res){
+                        for (x in rtcConn.remoteUsers) {
+                            updatePeerInfo(rtcConn.remoteUsers[x], remoteusername, remotecolor, remoteemail, "participant" , "remote");
+                            if (role == "inspector") shownotificationWarning("This session is being inspected ");
+                        }
+                    }).then(function(res){
+                        rtcConn.connectionDescription = rtcConn.join(event.channel);
+                        webrtcdev.log(" Trying to join a channel on WebRTC SDP ");
+                    }).then(function(res){
+                        if(role != "inspector" && outgoingVideo){
+                            rtcConn.dontCaptureUserMedia = false,
+                            rtcConn.getUserMedia();
+                        }else{
+                            webrtcdev.error(" [startJS join-channel-resp] dont Capture outgoing video " , outgoingVideo);
+                        }
+                    }).then(function(res){
+                        onLocalConnect() // event emitter for app client 
+                    }).catch(
+                       (reason) => {
+                            webrtcdev.error('Handle rejected promise ('+reason+')');
+                        }
+                    );                    
                 } else {
                     shownotification(event.msgtype + " : " + event.message);
                 }
 
-                onLocalConnect(); // event emitter for app client 
             });
 
             socket.on("channel-event", function (event) {
