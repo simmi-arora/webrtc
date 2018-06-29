@@ -49,7 +49,7 @@ gulp.task('vendorjs',function() {
       "https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"
     ]; 
     remoteSrc(vendorJsList, {base: null })
-        .pipe( rev({strict: true}) )
+        // .pipe( rev({strict: true}) )
         .pipe(header(headerComment))
         .pipe(uglify())
         .pipe(concat('webrtcdevelopment_header.js'))  
@@ -204,12 +204,12 @@ gulp.task('webrtcdevelopmentjs',function() {
     scriptList.push("client/src/scripts/admin.js");    
     console.log(scriptList);
     gulp.src(scriptList)
-        .pipe( rev({strict: true}) )
+        // .pipe( rev({strict: true}) )
+        .pipe(header(headerComment))
         .pipe(babel({
             presets: ['es2015']
         }))
         .pipe(uglify())
-        .pipe(header(headerComment))
         .pipe(concat('webrtcdevelopment.js'))  
         .pipe(gulp.dest(folderPath));
         //.pipe(uglify()); 
