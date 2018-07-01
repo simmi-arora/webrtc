@@ -29,83 +29,101 @@
      */
     var WebRTCdom= function(  _localObj , _remoteObj , incoming, outgoing){
 
-        if(incoming){
-            incomingAudio = incoming.audio ; 
-            incomingVideo = incoming.video ; 
-            incomingData  = incoming.data  ;  
-        }
-
         var detectRTC = DetectRTC;
         webrtcdev.log(" [ startJS webrtcdom ] : DetectRTC " , detectRTC);
-        
-        checkDevices(detectRTC);
-        checkWebRTCSupport(detectRTC);
 
-        // Cases around webcam malfunctiojn or absense 
-        if(!detectRTC.hasWebcam){
-            shownotification(" Your browser doesnt have webcam" , "warning");
-            outgoing.video = false;
-        }
-        if(!detectRTC.isWebsiteHasWebcamPermissions){
-            shownotification(" Your browser doesnt have permission for accessing webcam", "warning");
-            outgoing.video = false;
-        }
-        
-        //Cases around Miceohone malfunction or absense 
-        if(!detectRTC.hasMicrophone){
-            shownotification(" Your browser doesnt have microphone", "warning");   
-            outgoing.audio = false ;
-        }
-        
-        if(!DetectRTC.isWebsiteHasMicrophonePermissions){
-            shownotification(" Your browser doesnt have permission for accessing microphone", "warning");
-            outgoing.audio = false;
-        }
-        
-        if(!DetectRTC.hasSpeakers){
-            shownotification(" Your browser doesnt have speakers", "warning");      
-        }
+        let promise = new Promise(function(resolve, reject) {
 
-        if(outgoing){
-            outgoingAudio = outgoing.audio ; 
-            outgoingVideo = outgoing.video ; 
-            outgoingData  = outgoing.data ;
-        }
-
-        /* When user is single */
-        localobj=_localObj;
-        localVideo = localobj.video;
-
-        /* when user is in conference */
-        remoteobj=_remoteObj;
-        var _remotearr=_remoteObj.videoarr;
-
-        /* first video container in remotearr belonsg to user */
-        if(outgoingVideo){
-            selfVideo = _remotearr[0];
-        }
-
-        /* create arr for remote peers videos */
-        if(!remoteobj.dynamicVideos){
-            for(var x=1;x<_remotearr.length;x++){
-                remoteVideos.push(_remotearr[x]);    
+            if(incoming){
+                incomingAudio = incoming.audio ; 
+                incomingVideo = incoming.video ; 
+                incomingData  = incoming.data  ;  
             }
-        }
+            resolve();
+        });
 
-        if(localobj.hasOwnProperty('userdetails')){
-            webrtcdev.info("localobj userdetails " , localobj.userdetails);
-            selfusername = (localobj.userdetails.username  == undefined ? "LOCAL": localobj.userdetails.username);
-            selfcolor    = (localobj.userdetails.usercolor == undefined ? "orange": localobj.userdetails.usercolor);
-            selfemail    = (localobj.userdetails.useremail == undefined ? "unknown": localobj.userdetails.useremail);
-            role         = (localobj.userdetails.role  == undefined ? "participant": localobj.userdetails.role);
-        }
+        promise.then( 
+            checkDevices(detectRTC)
+        ).then(
+            checkWebRTCSupport(detectRTC)
+        ).then(function(res){
+            // Cases around webcam malfunctiojn or absense 
+            if(!detectRTC.hasWebcam){
+                shownotification(" Your browser doesnt have webcam" , "warning");
+                outgoing.video = false;
+            }
+            if(!detectRTC.isWebsiteHasWebcamPermissions){
+                shownotification(" Your browser doesnt have permission for accessing webcam", "warning");
+                outgoing.video = false;
+            }
+            
+            //Cases around Miceohone malfunction or absense 
+            if(!detectRTC.hasMicrophone){
+                shownotification(" Your browser doesnt have microphone", "warning");   
+                outgoing.audio = false ;
+            }
+            
+            if(!detectRTC.isWebsiteHasMicrophonePermissions){
+                shownotification(" Your browser doesnt have permission for accessing microphone", "warning");
+                outgoing.audio = false;
+            }
+            
+            if(!detectRTC.hasSpeakers){
+                shownotification(" Your browser doesnt have speakers", "warning");      
+            }
+        }).then(function(res){
 
-        if(remoteobj.hasOwnProperty('userdetails')){
-            webrtcdev.info("remoteobj userdetails " , remoteobj.userdetails);
-            remoteusername = (remoteobj.userdetails.username  == undefined ? "REMOTE": remoteobj.userdetails.username);
-            remotecolor    = (remoteobj.userdetails.usercolor == undefined ? "orange": remoteobj.userdetails.usercolor);
-            remoteemail    = (remoteobj.userdetails.useremail == undefined ? "unknown": remoteobj.userdetails.useremail);
-        }
+            if(outgoing){
+                outgoingAudio = outgoing.audio ; 
+                outgoingVideo = outgoing.video ; 
+                outgoingData  = outgoing.data ;
+            }
+
+        }).then(function(res){
+        
+            /* When user is single */
+            localobj=_localObj;
+            localVideo = localobj.video;
+
+            /* when user is in conference */
+            remoteobj=_remoteObj;
+            var _remotearr=_remoteObj.videoarr;
+
+            /* first video container in remotearr belongs to user */
+            if(outgoingVideo){
+                selfVideo = _remotearr[0];
+            }
+
+            /* create arr for remote peers videos */
+            if(!remoteobj.dynamicVideos){
+                for(var x=1;x<_remotearr.length;x++){
+                    remoteVideos.push(_remotearr[x]);    
+                }
+            }
+
+        }).then(function(res){
+
+            if(localobj.hasOwnProperty('userdetails')){
+                webrtcdev.info("localobj userdetails " , localobj.userdetails);
+                selfusername = (localobj.userdetails.username  == undefined ? "LOCAL": localobj.userdetails.username);
+                selfcolor    = (localobj.userdetails.usercolor == undefined ? "orange": localobj.userdetails.usercolor);
+                selfemail    = (localobj.userdetails.useremail == undefined ? "unknown": localobj.userdetails.useremail);
+                role         = (localobj.userdetails.role  == undefined ? "participant": localobj.userdetails.role);
+            }
+
+            if(remoteobj.hasOwnProperty('userdetails')){
+                webrtcdev.info("remoteobj userdetails " , remoteobj.userdetails);
+                remoteusername = (remoteobj.userdetails.username  == undefined ? "REMOTE": remoteobj.userdetails.username);
+                remotecolor    = (remoteobj.userdetails.usercolor == undefined ? "orange": remoteobj.userdetails.usercolor);
+                remoteemail    = (remoteobj.userdetails.useremail == undefined ? "unknown": remoteobj.userdetails.useremail);
+            }
+
+        }).catch(
+           (reason) => {
+                webrtcdev.error('Handle rejected promise ('+reason+')');
+            }
+        );
+
 
     };
 
