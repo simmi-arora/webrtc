@@ -15,8 +15,18 @@ var repeatFlagShowButton =null, repeatFlagHideButton =null, repeatFlagRemoveButt
 
 /* DOM objects for single user video , user in conf and all other users*/
 var localVideo=null, selfVideo=null, remoteVideos=[];
-var localobj , remoteobj;
 
+    var RTCPeerConnection = null;
+    var webrtcDetectedBrowser = null;
+    var webrtcDetectedVersion = null;
+    /*var usersList     = document.getElementById("userslist");
+    var numbersOfUsers  = document.getElementById("numbersofusers");
+    var usersContainer  = document.getElementById("usersContainer");*/
+    var tempuserid ;
+    var sessions = {};
+    var detectRTC ;
+
+    
 var selfusername="" , selfemail="" , selfcolor="" ;
 var remoteusername="" , remoteemail="" , remotecolor="" ;
 
@@ -24,7 +34,7 @@ var latitude="" , longitude="" , operatingsystem="";
 
 /* webrtc session intilization */
 var autoload = true;
-var sessionid = null, socketAddr = "/", turn = null , webrtcdevIceServers;
+var sessionid = null, socketAddr = "/", webrtcdevIceServers;
 var localStream , localStreamId, remoteStream , remoteStreamId;
 
 /* incoming and outgoing call params */

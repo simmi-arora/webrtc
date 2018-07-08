@@ -1767,7 +1767,7 @@
                 this.parentNode && this.parentNode.removeChild(this)
             }
         }, !1),
-        mediaElement.play(),
+        //mediaElement.play(),
         void callback(mediaElement))
     }
     function listenEventHandler(eventName, eventHandler) {
