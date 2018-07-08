@@ -189,22 +189,26 @@ var scriptList=[
     "client/src/scripts/_stats.js"
 ];
 
-/*gulp.task('betawebrtcdevelopmentjs',function() {
-    console.log(" gulping main webrtc development scripts ");
+
+
+gulp.task('betawebrtcdevelopmentjs',function() {
+    console.log(" gulping main webrtc development scripts into beta ");
+    scriptList.push("client/src/scripts/start.js");
+    scriptList.push("client/src/scripts/admin.js");  
     console.log(scriptList);
     gulp.src(scriptList)
-        .pipe( rev({strict: true}) )
+        // .pipe( rev({strict: true}) )
         .pipe(concat('webrtcdevelopment.js'))  
-        .pipe(gulp.dest(folderPath+'minScripts/')); 
-});*/
+        .pipe(gulp.dest(folderPath)); 
+});
 /*.pipe(uglify())*/
+// .pipe( rev({strict: true}) )
 gulp.task('webrtcdevelopmentjs',function() {
     console.log(" gulping main webrtc development scripts ");
     scriptList.push("client/src/scripts/start.js");
     scriptList.push("client/src/scripts/admin.js");    
     console.log(scriptList);
     gulp.src(scriptList)
-        // .pipe( rev({strict: true}) )
         .pipe(header(headerComment))
         .pipe(babel({
             presets: ['es2015']
@@ -280,7 +284,7 @@ gulp.task('develop', gulpSequence(
     // 'drawcss',
     // 'codejs',
     // 'codecss',
-    'webrtcdevelopmentjs',
+    'betawebrtcdevelopmentjs',
     // 'screensharejs',
     // 'mainstyle',
     // 'webrtcdevelopmentcss',
