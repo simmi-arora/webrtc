@@ -255,45 +255,46 @@ function bytesToSize(e) {
 web dev Logger 
 ****************************************************** */
 var webrtcdev = {};
+var webrtcdevlogs=[];
 
 webrtcdev.log = function(){
   // var arg = getArgsJson(arguments);
   // document.getElementById("help-view-body").innerHTML += '[-]' + arg + "<br/>";
   if(isJSON(arguments)){
     let arg = JSON.stringify(arguments, undefined, 2);
-    document.getElementById("help-view-body").innerHTML += "<pre style='color:grey'>[-]" + arg + "</pre>";
+    webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
   }else{
     let arg = getArgsJson(arguments);
-    document.getElementById("help-view-body").innerHTML += "<p style='color:grey'>[-]" + arg + "</p>";
+    webrtcdevlogs.push("<p style='color:grey'>[-]" + arg + "</p>");
   }
   console.log(arguments);
 };
 
 webrtcdev.info= function(){
   let arg = getArgsJson(arguments);
-  document.getElementById("help-view-body").innerHTML += "<p style='color:blue'>[INFO]" + arg + "</p>";
+  webrtcdevlogs.push("<p style='color:blue'>[INFO]" + arg + "</p>");
   console.info(arguments);
 };
 
  webrtcdev.debug= function(){
   if(isJSON(arguments)){
     let arg = JSON.stringify(arguments, undefined, 2);
-    document.getElementById("help-view-body").innerHTML += "<pre style='color:green'>[DDEBUG]" + arg + "</pre>";
+    webrtcdevlogs.push( "<pre style='color:green'>[DEBUG]" + arg + "</pre>");
   }else{
     let arg = getArgsJson(arguments);
-    document.getElementById("help-view-body").innerHTML += "<p style='color:green'>[DDEBUG]" + arg + "</p>";
+    webrtcdevlogs.push("<p style='color:green'>[DEBUG]" + arg + "</p>");
   }
   console.debug(arguments);
 };
 
 webrtcdev.warn= function(){
   let arg = getArgsJson(arguments);
-  document.getElementById("help-view-body").innerHTML += "<p style='color:yellow'>[WARN]" + arg + "</p>";
+  webrtcdevlogs.push("<p style='color:yellow'>[WARN]" + arg + "</p>");
   console.warn(arguments);
 };
 
 webrtcdev.error= function(){
   let arg = getArgsJson(arguments);
-  document.getElementById("help-view-body").innerHTML +=  "<p style='color:red'>[ERROR]"+ arg + "</p>";
+  webrtcdevlogs.push("<p style='color:red'>[ERROR]"+ arg + "</p>");
   console.error(arguments);
 };
