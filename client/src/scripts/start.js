@@ -790,7 +790,7 @@ var turn="none";
 
         return new Promise(function (resolve, reject) {
             if(role != "inspector" && outgoingVideo){
-                 webrtcdev.log(" getCamMedia - Capture Media  " );
+                webrtcdev.log("getCamMedia - Capture Media ");
                 rtcConn.dontCaptureUserMedia = false,
                 rtcConn.getUserMedia();  // not wait for the rtc conn on media stream or on error 
             }else{
