@@ -77,7 +77,7 @@ var helpobj=false;
 
 var statisticsobj=false;
 
-var screen, isScreenOn = 0,  chromeMediaSourceId = null;
+var screen, isScreenOn = 0,  chromeMediaSourceId = null , extensioninstalled ;
 var screen_roomid , screen_userid;
 
 var role="participant";
