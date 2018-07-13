@@ -547,6 +547,7 @@ function hideScreenInstallButton(){
 }
 
 function createOrAssignScreenshareButton(screenshareobj){
+    webrtcdev.log( "createOrAssignScreenshareButton " , screenshareobj);
     if(screenshareobj.button.shareButton.id && document.getElementById(screenshareobj.button.shareButton.id)) {
         assignScreenShareButton();
         hideScreenInstallButton();
@@ -580,6 +581,7 @@ function createScreenshareButton(){
 }
 
 function assignScreenShareButton(){
+    webrtcdev.log("assignScreenShareButton");
     var button = document.getElementById(screenshareobj.button.shareButton.id);
     button.onclick = function(event) {
         if(button.className == screenshareobj.button.shareButton.class_off){
