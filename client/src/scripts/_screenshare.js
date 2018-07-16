@@ -631,7 +631,7 @@ function onScreenshareExtensionCallback(event){
 
 function detectExtension(extensionID , callback){
     webrtcdev.log("detectExtension  ", extensionID);
-    getChromeExtensionStatus(extensionID, function (status) {  
+    return getChromeExtensionStatus(extensionID, function (status) {  
         //log sttaus 
         webrtcdev.log("status extension ", status);
         //reset extension's local storage objects 
