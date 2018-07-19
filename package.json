@@ -1,6 +1,6 @@
 {
   "name": "webrtcdevelopment",
-  "version": "1.6.525",
+  "version": "1.6.526",
   "description": "webrtc based communication and collaboration client. Contains lot of experiments modules ",
   "main": "webrtcserver.js",
   "engines": {
@@ -9,6 +9,7 @@
   "dependencies": {
     "babel-core": "^6.26.3",
     "gulp-babel": "^7.0.1",
+    "gulp-replace": "^1.0.0",
     "log": "^1.4.0",
     "node-static": "^0.7.10",
     "restify": "^7.2.0",

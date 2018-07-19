@@ -11,7 +11,7 @@ var gulpSequence = require('gulp-sequence');
 var exec  =require('child_process').exec;
 var remoteSrc = require('gulp-remote-src');
 var rev = require('gulp-rev-timestamp');
-
+var replace = require('gulp-replace');
 var fs = require('fs');
 var _properties = require('./env.js')(fs).readEnv();
 var properties= JSON.parse(_properties);
@@ -161,7 +161,8 @@ gulp.task('codecss',function() {
 var scriptList=[
     "client/src/scripts/_init.js",
     "client/src/scripts/_notify.js",
-    "client/src/scripts/RTCMultiConnection.js",
+    "client/src/scripts/RTCMultiConnection_new.js",
+//    "client/src/scripts/RTCMultiConnection.js",
     "client/src/scripts/_screenshare.js",
     "client/src/scripts/_detectRTC.js",
     "client/src/scripts/_webrtcchecks.js",
@@ -186,7 +187,9 @@ var scriptList=[
     "client/src/scripts/_texteditor.js",
     "client/src/scripts/_turn.js",
     "client/src/scripts/_timer.js",
-    "client/src/scripts/_stats.js"
+    "client/src/scripts/_stats.js",
+    "client/src/scripts/_tracing.js",
+    "client/src/scripts/jszip.js"
 ];
 
 
@@ -199,6 +202,7 @@ gulp.task('betawebrtcdevelopmentjs',function() {
     gulp.src(scriptList)
         // .pipe( rev({strict: true}) )
         .pipe(concat('webrtcdevelopment.js'))  
+        .pipe(replace(/"use strict"/g, ''))
         .pipe(gulp.dest(folderPath)); 
 });
 /*.pipe(uglify())*/
@@ -215,6 +219,7 @@ gulp.task('webrtcdevelopmentjs',function() {
         }))
         .pipe(uglify())
         .pipe(concat('webrtcdevelopment.js'))  
+        .pipe(replace(/use strict/g, ''))
         .pipe(gulp.dest(folderPath));
         //.pipe(uglify()); 
 });
