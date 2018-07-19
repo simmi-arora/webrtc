@@ -33,7 +33,7 @@ The Solution primarily contains nodejs frameworks for hosting the project and we
 Web based real time communication framework.
 read more on [webrtc](https://altanaitelecom.wordpress.com/2013/08/02/what-is-webrtc/ )
 
-2. Node (v5.0.0)
+2. Node ( v10.0.0)
 Asynchronous event driven JavaScript runtime
 
 3. socket.io ( v0.9)
@@ -46,6 +46,38 @@ It is a task Runner and its used to automate running of command in gruntfile
 ```
 grunt -verbose
 ```
+
+
+Build SDK
+----
+
+Project is divided into 4 parts 
+
+1. Core RTC Conn Lib 
+2. Wrappers for the Core Lib containing feature sets and widgets like screensharing , recording , pointer share , machine learning , face detection etc
+3. Demo Applicatins like two party full-features , multi-party full features etc which implement and use the SDK by invoking the constructirs , emitters and listeners .
+
+
+##### Building the SDK
+
+Download the dev dependencies by setting the NODE_ENV to dev . 
+This will install all grunt and gulp dependencies used for building the SDK
+```
+NODE_ENV=development npm install
+```
+
+To build the RtcConn , outputs RTCMultiConn
+```
+grunt rtcconn
+```
+
+To build the webrtcdev lib . 
+It encapsulates the rtcconn core along with external libs for building various custom features .
+Outputs webrtcdevelopment.js , webrtcdevelopment_header.js , webrtcdevelopment.css , webrtcdevelopment_header.css and webrtcdevelopmentserver.js
+```
+gulp production
+```
+
 
 Get Started
 ----
@@ -112,12 +144,12 @@ To start the Server using npm start ( using package.json) , behaves same as earl
 Make a webpage and give holders for video and button elements that SDK will use .
 
 Inside the head tag of html
-    minScripts/webrtcdevelopment_header.css
-    minScripts/webrtcdevelopment_header.js
+    build/webrtcdevelopment_header.css
+    build/webrtcdevelopment_header.js
 
 After the body tag of html
-    minScripts/webrtcdevelopment.css
-    minScripts/webrtcdevelopment.js
+    build/webrtcdevelopment.css
+    build/webrtcdevelopment.js
 
 
 ##### 7. Configure
@@ -128,15 +160,16 @@ Create the webrtc dom object with local and remote objects
 local object  :
 ```
     var local={
-        video: "myAloneVideo",              // name of the local video element
-        videoClass:"",                      // class of the localvideo
-        videoContainer : "singleVideoContainer", // outer container of the video element
-        userDisplay:false,                  // do you want to display user details
-        userMetaDisplay:false,
-        userdetails:{                       //users details include name , emeial , color
-            username: username,
-            usercolor: "#DDECEF",
-            useremail: useremail
+        video           :   "myAloneVideo",            // name of the local video element
+        videoClass      :   "",                        // class of the localvideo
+        videoContainer  :   "singleVideoContainer",    // outer container of the video element
+        userDisplay :       false,                     // do you want to display user details
+        userMetaDisplay :   false,
+        userdetails:{                                   // users details include name , email , color
+            username    : username,
+            usercolor   : "#DDECEF",
+            useremail   : useremail,
+            role        : "participant"                 // role of user in the session , can be participant , admin , inspector
         }
     };
 ```
@@ -144,14 +177,14 @@ local object  :
 remote object  :
 ```
     var remote={
-        videoarr: ["myConferenceVideo", "otherConferenceVideo"], // conatiners for the video after session is made 
+        videoarr        : ["myConferenceVideo", "otherConferenceVideo"], // conatiners for the video after session is made 
                                                                 // first one is usually the local video holder followed by remote video holders
-        videoClass:"",
-        maxAllowed: "6",
-        videoContainer : "confVideoContainer",
-        userDisplay:false,
-        userMetaDisplay:false,
-        dynamicVideos: false 
+        videoClass      : "",
+        maxAllowed      : "6",
+        videoContainer  : "confVideoContainer",
+        userDisplay     : false,
+        userMetaDisplay : false,
+        dynamicVideos   : false 
     };
 
 ```
@@ -159,17 +192,17 @@ remote object  :
 Incoming and outgoing media configiration  ( self exlanatory ) :
 ```
     var incoming={
-        audio:  true,
-        video:  true,
-        data:   true,
-        screen: true
+        audio :  true,
+        video :  true,
+        data  :  true,
+        screen:  true
     };
 
     var outgoing={
-        audio:  true,
-        video:  true,
-        data:   true,
-        screen: true
+        audio :  true,
+        video :  true,
+        data  :  true,
+        screen:  true
     };
 
     webrtcdomobj= new WebRTCdom(
@@ -192,24 +225,9 @@ ___
 
 Create a session json object with turn credentials nd the session created from above step
 
-set preference for the incoming and outgoing media connectection. Bydefault all are set to true . 
-```
-    var incoming={
-        audio:  true,
-        video:  true,
-        data:   true,
-        screen: true
-    };
 
-    var outgoing={
-        audio:  true,
-        video:  true,
-        data:   true,
-        screen: true
-    };
-```
 Set widgets and their properties . Currently available widgets are 
-	* Chat
+	* Chat 
 	* Fileshare
 	* Screen Record
 	* Screen Share
@@ -220,8 +238,85 @@ Set widgets and their properties . Currently available widgets are
 	* Mute (audio amd video)
 	* Reconnect
 
+Description of Widgets with SDK invocation
+
+### 1. Chat 
+
+User RTCDataConnection api from webRTC to send peer to peer nessages within a session. If camera is present the SDK captures a screenshot with user's cemars feed at the isnatnt of typing the message and send along with the message. 
+
+When the chat widget is active  , if the dom specified by the container id is present then webSDK uses as it is,  else it creates one default box 
+
+```             
+{
+    active: true,
+    container: {
+        id: "chatContainer"                 // dom id of the chat conatiner 
+    },
+    inputBox:{
+        text_id:"chatInputText",            // dom id of the chta's input box
+        sendbutton_id:"chatSendButton",     // dom id for the chat's send button
+        minbutton_id:"minimizeChatButton"   // dom id for minimizing the Chat conaginer 
+    },
+    chatBox:{
+        id: "chatBoard"                     // dom id for the chat board where all messages are dispalyed 
+    },
+    button:{                                // on and off button states for the chat widget button
+        class_on:"btn btn-warning glyphicon glyphicon-font topPanelButton",  
+        html_on:"Chat",
+        class_off:"btn btn-success glyphicon glyphicon-font topPanelButton",
+        html_off:"Chat"
+    }
+}
+```
+Upcoming : Adding emoticons to Chat
+
+### 2. Fileshare 
+
+Uses the RTCDataConnection API from WebRTC to excahnge files peer to peer. Progress bar is displayed for the chunks of file transferrred out of total number of chunks. Many different kindes of file transfer have been tested such as media files ( mp3 , mp4 ) , text or pdf files , microsoft pr libra office dicuments , images ( jpg , png etc ) etc .
+
+File share widgets creates uses 2 conatiners - File Share and File List . If the dom ids of the container are not present on the page , the SDK crestes default conainers and appends them to page 
+
+The list of files with buttons to view , hide or remove them from file viewers are in file Viewer container .
+Displaying or playing the text or media files happens in file share conainer , which also has button to maximize , minimize the viewer window or in case of images to rotate them. 
+
+```
+fileShare :{
+    active : true,
+    fileShareContainer : "fileSharingRow",                  // File sharing container
+    fileshare:{                                             // components of file sharing container
+         rotateicon:"assets/images/refresh-icon.png",       // rotate icon
+         minicon:"assets/images/arrow-icon-down.png",       // min icon 
+         maxicon:"assets/images/arrow-icon.png",            // max icon
+         closeicon:"assets/images/cross-icon.png"           // close icon
+    },
+    fileListContainer : "fileListingRow",                   // File List container container 
+    filelist:{                                              // components of file list conainer 
+         downloadicon:"",                                   // icon donwload 
+         trashicon:"",                                      // icon trash
+         saveicon:"",                                       // icon save
+         showicon:"",                                       // icon show
+         hideicon:"",                                       // icon hide
+    },
+    button:{
+        id: "fileshareBtn",
+        class_on: "col-xs-8 text-center fileshareclass",
+        html:"File"
+    },
+    props:{
+        fileShare:"divided",                                // Can be divided for two particiapnts , chatpreview  , single for many participants  , hidden 
+        fileList:"divided"                                  // same as aboev Can be divided , single   , hidden
+    }
+}
+```
+
+
+### 3. Assign individual widgets to a json object called widgets 
+
+
 ```
 	var widgets={
+        chat : < add chat widget json >,
+
 	}
 ```
 Initiate the webrtcdev contructor 
