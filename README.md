@@ -105,7 +105,7 @@ It will read the package.json and update the dependencies in node_modules folder
 	npm install 
 ```
 
-###### 4. Change ENV variables and Test
+##### 4. Change ENV variables and Test
 
 To change the ports for running the https server and rest server, goto env.json
 ```
@@ -229,13 +229,15 @@ Create a session json object with turn credentials nd the session created from a
 Set widgets and their properties . Currently available widgets are 
 	* Chat 
 	* Fileshare
-	* Screen Record
+	* Timer
+    * Screen Record
 	* Screen Share
 	* Video Record
 	* Snapshot
+    * Minimising/ maximising Video
+    * Mute (audio and/or video)
 	* Draw on Canvas and Sync
 	* Text Editor and Sync
-	* Mute (audio amd video)
 	* Reconnect
 
 Description of Widgets with SDK invocation
@@ -280,7 +282,7 @@ The list of files with buttons to view , hide or remove them from file viewers a
 Displaying or playing the text or media files happens in file share conainer , which also has button to maximize , minimize the viewer window or in case of images to rotate them. 
 
 ```
-fileShare :{
+{
     active : true,
     fileShareContainer : "fileSharingRow",                  // File sharing container
     fileshare:{                                             // components of file sharing container
@@ -298,7 +300,7 @@ fileShare :{
          hideicon:"",                                       // icon hide
     },
     button:{
-        id: "fileshareBtn",
+        id: "fileshareBtn",                                 // dom for widget button to call file share
         class_on: "col-xs-8 text-center fileshareclass",
         html:"File"
     },
@@ -309,27 +311,368 @@ fileShare :{
 }
 ```
 
+### 3. Timer 
 
-### 3. Assign individual widgets to a json object called widgets 
+Creates or assigns a timer for teh ongoing sesssion . Also displays the geolocation and timezone of the peers if perssion if provided . Timer can start upwards or downwards. 
+Can be used for billing and policy control .
+
+```
+{
+    active: true,
+    type: "forward",                                        // Forwards timer starts from 0:0:00 goes thereafter, backward timer ticks backword from prespecified time limit
+    counter:{                   
+        hours: "countdownHours",                            // dom id for hours 
+        minutes:"countdownMinutes",                         // dom id for mins
+        seconds :"countdownSeconds"                         // dom if for seconds
+    },
+    upperlimit: {                                           // upperlimit of time for the session 
+        hour:0 ,                                            
+        min: 3 , 
+        sec: 60 
+    },
+    span:{                                                  // dom ids for local and remote time labels
+        currentTime_id:"currentTimeArea",
+        currentTimeZone_id:"currentTimeZoneArea",
+        remoteTime_id :"remoteTimeArea",
+        remoteTimeZone_id:"remoteTimeZoneArea",
+        class_on:""
+    },
+    container:{
+        id:'collapseThree',
+        minbutton_id:'timerBtn'
+    },
+    button :{
+        id: 'timerBtn'                                      // dom for widget timer button to call
+    }
+}
+```
+
+### 4. Screen Record
+
+Records everything pesent on the tab selected along with audio and displays recording as mp4 file. Use an extension and pre-declared safe-site  to facilitate captuing the tab.
+
+```
+{
+    active : true,
+    videoRecordContainer: true,                                 // container for storing or displaying recorded video
+    button:{                                                    // button to control screen control wisget and its on / off states
+        id: "scrRecordBtn",
+        class_on:"btn btn-lg screenRecordBtnClass On",
+        html_on:'<img title="Session Record" src="assets/images/icon_5.png"/>',
+        class_off:"btn btn-lg screenRecordBtnClass Off",
+        html_off: '<img title="Session Record" src="assets/images/icon_5.png"/>'
+    }
+},   
+```
+### 5. Screen-share 
+
+One of the most powerful features of the SDK is to capture the current screen and share it with peer over RTC Peer connection channel. Simmilar to csreen record , uses an extension and pre-declared site ownership to capture the screen and share as peer to peer stream .
+Button for screen share has 3 states - 
+- install button for inline isnatllation of extension from page , 
+- share screen button and 
+- view button for incoming screen by peer .
+
+```                 
+{
+    active : true,
+    screenshareContainer: "screenShareRow",                 // container to display screen being shared
+    extensionID: props.extensionID,                         // extension id 
+    button:{
+        installButton:{                                     // widget button to start inline installation of extension
+            id:"scrInstallButton",
+            class_on:"screeninstall-btn on",
+            html_on:"Stop Install",
+            class_off:"screeninstall-btn off",
+            html_off:"ScreenShare"
+        },
+        shareButton:{                                       // widget button to start sharing screen , deactivated once already active or when peer is sharig 
+            id:"scrShareButton",
+            class_on:"btn btn-lg on",
+            html_on:'<img title="Stop Screen Share"  src=assets/images/icon_2.png />',
+            class_off:"btn btn-lg off",
+            html_off:'<img title="Start Screen Share" src=assets/images/icon_2.png />',
+            class_busy:"btn btn-lg busy",
+            html_busy:'<img title="Peer is Sharing Screen" src=assets/images/icon_2.png />'
+        },
+        viewButton:{                                        // button to view the icnoming screen share 
+            id:"scrViewButton",
+            class_on:"screeninstall-btn on",
+            html_on:"Stop Viewing",
+            class_off:"screeninstall-btn off",
+            html_off:"View Screen"
+        }
+    }
+}
+```
+
+### 6. Video Record 
+
+Records video stream . Created for each peer video .
+
+```
+{
+    active : true,
+    videoRecordContainer : true,
+    button:{
+        class_on:"pull-right btn btn-modify-video2_on videoButtonClass on",
+        html_on:"<i class='fa fa-circle' title='Stop recording this Video'></i>",
+        class_off:"pull-right btn btn-modify-video2 videoButtonClass off",
+        html_off:"<i class='fa fa-circle' title='Record this Video'></i>"
+    }
+}
+```
+
+### 7. Snapshot
+
+Takes a snapshot from video stream . Will be created for each inidvidual peer video .
+
+```
+{
+    active : true,
+    snapshotContainer: true,
+    button:{
+        class_on:"pull-right btn btn-modify-video2 videoButtonClass",
+        html_on:"<i class='fa fa-th-large' title='Take a snapshot'></i>"
+    }
+} 
+
+```
+
+### 8. Minimising/ maximising Video
+
+To enable the user to watch video in full screen mode or to inimize the video to hide it from screen. Will be seprately created for each individual peer video .
+    
+```
+{
+    active : true,
+    max:{
+        button:{                                                                // button to maximise the video to full screen mode 
+            id: 'maxVideoButton',
+            class_on:"pull-right btn btn-modify-video2 videoButtonClass On",
+            html_on:"<i class='fa fa-laptop' title='full Screen'></i>",
+            class_off:"pull-right btn btn-modify-video2 videoButtonClass Off",
+            html_off:"<i class=' fa fa-laptop' title='full Screen'></i>"
+        }  
+    } ,
+    min :{
+        button:{                                                                // button to minimize or hide the video 
+            id: 'minVideoButton',
+            class_on:"pull-right btn btn-modify-video2 videoButtonClass On",
+            html_on:"<i class='fa fa-minus' title='minimize Video'></i>",
+            class_off:"pull-right btn btn-modify-video2 videoButtonClass Off",
+            html_off:"<i class='fa fa-minus' title='minimize Video'></i>"
+        }  
+    }                    
+}
+
+```
+
+### 9. Mute (audio and/or video)
+
+Mutes the audio or video of the peer video . Created for each peer video.
+
+```
+
+ {
+    active: true,
+    drawCanvasContainer: "drawBoardRow",
+    container:{
+            id:'drawContainer',
+            minbutton_id:'minimizeDrawButton'
+        },
+    button:{
+        id: "draw-webrtc" , 
+        class_on:"btn btn-lg draw-webrtc On",
+        html_on:'<img title="Draw" src=assets/images/icon_3.png />',
+        class_off:"btn btn-lg draw-webrtc Off",
+        html_off:'<img title="Draw" src=assets/images/icon_3.png />'
+    }
+}
+
+```
+
+### 10 . Reconnect 
+
+Allows a user to recoonect a session without refreshing a page . Will enable him to drop the session and create a new one.
+
+```
+{
+    active: false,
+    button:{
+        id: "reconnectBtn",
+        class:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
+        html:"Reconnect",
+        resyncfiles:false
+    }
+}
+```
+
+### 11. Cursor
+
+```
+{
+    active : true,
+    pointer:{
+        class_on: "fa fa-hand-o-up fa-3x"
+    },
+    button:{
+        id: 'shareCursorButton',
+        class_on:"pull-right btn btn-modify-video2 videoButtonClass On",
+        html_on:"<i class='fa fa-hand-o-up' title='Cursor'></i>",
+        class_off:"pull-right btn btn-modify-video2 videoButtonClass Off",
+        html_off:"<i class='fa fa-hand-o-up' title='Cursor'></i>"
+    }                   
+},
+```
+
+### 12. Inspector 
+
+{
+    active: true,
+    button:{
+        id:"ListenInButton",
+        textbox : "listenInLink"
+    }
+}
+
+### 13. Debug 
+```
+ debug   : false,
+```
+
+### 14. Help
+
+```
+{
+  active : true , 
+  helpContainer : "help-view-body",
+  screenshotContainer: "help-screenshot-body",
+  descriptionContainer: "help-description-body"
+}
+```
+
+### 15. Stats 
+
+```
+{
+  active : true , 
+  statsConainer : "network-stats-body"
+}
+```
+
+
+### Assign individual widgets to a json object called widgets 
 
 
 ```
 	var widgets={
+        
         chat : < add chat widget json >,
+
+        fileshare : < fieshare widget>,
+
+        debug   : false,
+            
+        reconnect   :{
+                            active: false,
+                            button:{
+                                id: "reconnectBtn",
+                                class:"btn btn-success glyphicon glyphicon-refresh topPanelButton",
+                                html:"Reconnect",
+                                resyncfiles:false
+                            }
+                        },
+            timer   :{
+                        active: true,
+                        type: "forward",
+                        counter:{
+                            hours: "countdownHours",
+                            minutes:"countdownMinutes",
+                            seconds :"countdownSeconds"
+                        },
+                        upperlimit: {
+                            hour:0 , 
+                            min: 3 , 
+                            sec: 60 
+                        },
+                        span:{
+                            currentTime_id:"currentTimeArea",
+                            currentTimeZone_id:"currentTimeZoneArea",
+                            remoteTime_id :"remoteTimeArea",
+                            remoteTimeZone_id:"remoteTimeZoneArea",
+                            class_on:""
+                        },
+                        container:{
+                            id:'collapseThree',
+                            minbutton_id:'timerBtn'
+                        },
+                        button :{
+                            id: 'timerBtn'
+                        }
+                    },
+            
+            chat    : < chat widget >
+
+            fileShare :< file share widget >
+
+            mute    : < mute unmute widget >
+
+            videoRecord : < video record widget >
+
+            snapshot : < snapshot widget >
+
+            cursor : < widget for cursor sharing >
+
+            minmax  : < widget to maximize or minimize the video >
+            
+            drawCanvas  : < draw widget >
+
+            screenrecord : < screen record widget >       
+            
+            screenshare : < screen share >
+
+            listenin : < listen in widget >
+            
+            help : {
+              active : true , 
+              helpContainer : "help-view-body",
+              screenshotContainer: "help-screenshot-body",
+              descriptionContainer: "help-description-body"
+            },
+            
+            statistics:{
+              active : true , 
+              statsConainer : "network-stats-body"
+            }
+
 
 	}
 ```
+
 Initiate the webrtcdev contructor 
 ```
-    var webrtcdevobj = new WebRTCdev ( 
-        session,  incoming,  outgoing ,  widgets
-    );
+webrtcdevobj = new WebRTCdev( local, remote, incoming, outgoing ,session , widgets)
+
 ```
 
 Start the session 
 ```
     startcall();
 ```
+
+Implement evenet listners 
+
+1. onLocalConnect
+
+2. onSessionConnect
+
+3. onScreenShareStarted
+
+4. onScreenShareSEnded
+
+5. onNoCameraCard
+
+
 
 ##### 8. Add the Key and certs
 openssl req -x509 -newkey rsa:4096 -sha256 -nodes -keyout ssl_certs/server.key -out ssl_certs/server.crt -subj "/CN=webrtc.altanai.com" -days 3650
