@@ -1,4 +1,4 @@
-testwindow.RTCMultiConnection = function(roomid, forceOptions) {
+function(roomid, forceOptions) {
 
 function SocketConnection(connection, connectCallback) {
     var parameters = '';
