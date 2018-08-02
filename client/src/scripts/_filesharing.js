@@ -85,6 +85,31 @@ function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelpe
                 label: progressDiv.querySelector("label")
             }, 
             progressHelper[uuid].progress.max = fileSize;
+
+
+            var removeButton = document.createElement("div");
+            removeButton.id= "removeButton"+filename;
+            removeButton.style.float="right";
+            removeButton.innerHTML ='<i class="fa fa-trash-o" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
+            removeButton.onclick=function(event){
+                alert(" remomve button from progress bar ");
+                if(repeatFlagRemoveButton != filename){
+                    hideFile( progressDiv , filename );
+                    //var tobeHiddenElement = event.target.parentNode.id;
+                    var tobeHiddenElement = filename;
+                    rtcConn.send({
+                        type:"shareFileRemove", 
+                        _element: tobeHiddenElement,
+                        _filename : filename
+                    });  
+                    removeFile(tobeHiddenElement);
+                    repeatFlagRemoveButton = filename;
+                }else if(repeatFlagRemoveButton == filename){
+                    repeatFlagRemoveButton= "";
+                }  
+            },
+            document.getElementById(peerinfo.fileList.container).appendChild(removeButton);     
+
         }else{
             webrtcdev.log(" Not creating progress bar div as it already exists ");
         }
