@@ -92,14 +92,14 @@ function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelpe
             removeButton.style.float="right";
             removeButton.innerHTML ='<i class="fa fa-trash-o" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
             removeButton.onclick=function(event){
-                alert(" remomve button from progress bar ");
+                //alert(" remomve button from progress bar ");
                 if(repeatFlagRemoveButton != filename){
-                    hideFile( progressDiv , filename );
+                    hideFile( progressDiv.id , filename );
                     //var tobeHiddenElement = event.target.parentNode.id;
                     var tobeHiddenElement = filename;
                     rtcConn.send({
                         type:"shareFileRemove", 
-                        _element: tobeHiddenElement,
+                        _element: progressDiv.id,
                         _filename : filename
                     });  
                     removeFile(tobeHiddenElement);
