@@ -336,7 +336,7 @@ function funcStartWebrtcdev(){
             } else {
                 alert(" signaller doesnt allow channel open");
             }
-                            shownotification(event.msgtype + " : " + event.message);
+            shownotification(event.msgtype + " : " + event.message);
         });
 
         socket.on("join-channel-resp", function (event) {
@@ -639,7 +639,11 @@ function funcStartWebrtcdev(){
                             sendOldFiles();
                             break;
                         case "shareFileRemove":
-                            removeFile(e.data._element);
+                            var progressdiv = e.data._element;
+                            var filename = e.data._filename;
+                            removeFile(progressdiv);
+                            removeButton= "removeButton"+filename;
+                            document.getElementById(removeButton).hidden = true;
                             break;
                         default:
                             webrtcdev.warn(" unrecognizable message from peer  ", e);
@@ -793,9 +797,11 @@ function funcStartWebrtcdev(){
     }
 
     function getCamMedia(){
-
+        webrtcdev.log(" [startJS] getCamMedia  role :" , role , " and outgoingVideo : " , outgoingVideo);
         return new Promise(function (resolve, reject) {
-            if(role != "inspector" && outgoingVideo){
+            if( role == "inspector"){
+                webrtcdev.log("Joining as inspector without camera Video");
+            }else if(outgoingVideo || !outgoingVideo){
                 webrtcdev.log("getCamMedia - Capture Media ");
                 rtcConn.dontCaptureUserMedia = false,
                 rtcConn.getUserMedia();  // not wait for the rtc conn on media stream or on error 
