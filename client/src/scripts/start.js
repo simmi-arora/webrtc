@@ -147,7 +147,7 @@ function funcStartWebrtcdev(){
             shownotification(" Your browser doesnt have speakers", "warning");      
         }
 
-        resolve("done")
+        resolve("done");
     }).then( navigator.mediaDevices.getUserMedia({audio: true,video: true })
     ).then(function(res){
 
@@ -307,8 +307,10 @@ function funcStartWebrtcdev(){
 
                     promise.then(
                         rtcConn.open(event.channel, function () {
-                            if (selfuserid == null) {
+                            if (!selfuserid) {
                                 selfuserid = rtcConn.userid;
+
+                                webrtcdev.info(" [startjs] self user id " , selfuserid);
 
                                 if (tempuserid != selfuserid)
                                     socket.emit("update-channel", {

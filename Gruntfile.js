@@ -8,9 +8,6 @@ module.exports = function(grunt) {
         scope: 'devDependencies'
     });
 
-    var versionNumber = grunt.file.readJSON('package.json').version;
-    var banner = "/* Author : Altanai */ ";
-
     // Project configuration.
     grunt.initConfig({
 
@@ -20,7 +17,7 @@ module.exports = function(grunt) {
             options: {
                 stripBanners: true,
                 separator: '\n',
-                banner: banner
+                banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
 
             dist1: {
@@ -63,6 +60,7 @@ module.exports = function(grunt) {
                     "client/src/scripts/_init.js",
                     "client/src/scripts/_notify.js",
                     "client/src/scripts/RTCMultiConnection_custom.js",
+                    "client/src/scripts/DetectRTC.js",
                 //    "client/src/scripts/RTCMultiConnection.js",
                     "client/src/scripts/_screenshare.js",
                     "client/src/scripts/_detectRTC.js",
@@ -152,17 +150,19 @@ module.exports = function(grunt) {
 
         // clean: ['./temp', 'RTCMultiConnection.js'],
         
-        // uglify: {
-        //     options: {
-        //         mangle: false,
-        //         banner: banner
-        //     },
-        //     my_target: {
-        //         files: {
-        //             'dist/RTCMultiConnection.min.js': ['RTCMultiConnection.js']
-        //         }
-        //     }
-        // },
+        uglify: {
+            // options: {
+            //     mangle: false,
+            //     banner: banner
+            // },
+            // options: {
+            //     banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+            // },
+            build: {
+                src: 'client/dist/webrtcdevelopment.js',
+                dest: 'client/dist/webrtcdevelopment.min.js'
+            }
+        },
         
         // copy: {
         //     main: {
@@ -175,17 +175,96 @@ module.exports = function(grunt) {
         //     },
         // }
 
+        // publish: {
+        //     options: {
+        //         ignore: [
+        //             'client/google1988a1c5458dd294.html',
+        //             'client/getScreenId.html',
+        //             'client/widget.html',
+        //             'client/scripts',
+        //             'client/css',
+        //             'client/drawboard',
+        //             'client/images',
+        //             'client/twoparty_elearning/',
+        //             'client/home_images',
+        //             'client/elearn',
+        //             'client/src',
+        //             'client/conference',
+        //             'client/ssl_certs',
+        //             'tests/',
+        //             'node_modules',
+        //             'webrtcserver.js',
+        //             'sheetscript.js',
+        //             'webcallservice.conf',
+        //             'realtimecomm.js',
+        //             'propertyWriter.js',
+        //             'gulpfile.js',
+        //             'env.json',
+        //             'client_secret.json',
+        //             '*.html',
+        //             '.vs'
+        //        ]
+        //     },
+        //     main: {
+        //         src: [
+        //             'webrtcdevelopment',
+        //         ]
+        //     },
+        //     // regex: {
+        //     //     src: ['test/fixtures/**/*']
+        //     // }
+        // },
+
+        release: {
+            options: {
+              bump: true, //default: true
+              changelog: true, //default: false
+              changelogText: '<%= version %>\n', //default: '### <%= version %> - <%= grunt.template.today("yyyy-mm-dd") %>\n'
+              file: 'package.json', //default: package.json
+              add: true, //default: true
+              commit: true, //default: true
+              tag: false, //default: true
+              push: true, //default: true
+              pushTags: false, //default: true
+              npm: true, //default: true
+              npmtag: false, //default: no tag
+              indentation: '\t', //default: '  ' (two spaces)
+              //folder: 'folder/to/publish/to/npm', //default project root
+              tagName: 'some-tag-<%= version %>', //default: '<%= version %>'
+              commitMessage: 'check out my release <%= version %>', //default: 'release <%= version %>'
+              tagMessage: 'tagging version <%= version %>', //default: 'Version <%= version %>',
+              beforeBump: [], // optional grunt tasks to run before file versions are bumped
+              afterBump: [], // optional grunt tasks to run after file versions are bumped
+              beforeRelease: [], // optional grunt tasks to run after release version is bumped up but before release is packaged
+              afterRelease: [], // optional grunt tasks to run after release is packaged
+              updateVars: [], // optional grunt config objects to update (this will update/set the version property on the object specified)
+              github: {
+                apiRoot: 'https://github.com', // Default: https://github.com
+                repo: 'altanai/webrtc', //put your user/repo here
+                accessTokenVar: 'GITHUB_ACCESS_TOKE', //ENVIRONMENT VARIABLE that contains GitHub Access Token
+         
+                // Or you can use username and password env variables, we discourage you to do so
+                usernameVar: 'GITHUB_USER', //ENVIRONMENT VARIABLE that contains GitHub username
+                passwordVar: 'GITHUB_PASSWORD' //ENVIRONMENT VARIABLE that contains GitHub password
+              }
+            }
+          }
+
     });
 
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    // grunt.loadNpmTasks('grunt-publish');
+    grunt.loadNpmTasks('grunt-release');
+
 
     // Default task(s).
-    grunt.registerTask('default', ['jshint','uglify']);
+    grunt.registerTask('dev', ['concat','jshint','uglify']);
     grunt.registerTask('production', ['jshint','uglify','copy']);
-    grunt.registerTask('rtcconn', ['concat']);
+    grunt.registerTask('default', ['concat']);
+    // grunt.registerTask('release', ['publish']);
 
     // grunt.registerTask('rtcconn', ['concat', 'replace', 'jsbeautifier', 'uglify', 'copy', 'clean']);
 };
