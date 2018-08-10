@@ -1633,7 +1633,7 @@
                                     for( y in webcallpeers[x].filearray){
                                         if(webcallpeers[x].filearray[y].name == file.name && webcallpeers[x].filearray[y].status =="progress") 
                                          {
-                                            console.log(" filename " , webcallpeers[x].filearray[y].name , " | status " , webcallpeers[x].filearray[y].status)
+                                            console.log(" filename " , webcallpeers[x].filearray[y].name , " | status " , webcallpeers[x].filearray[y].status);
                                             channel.send(nextChunk)
                                          }   
                                     }

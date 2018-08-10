@@ -722,20 +722,25 @@ function funcStartWebrtcdev(){
                 webrtcdev.log("[start] On file End " + filename);
 
                 //find duplicate file
-                for(x in webcallpeers){
-                    for (y in webcallpeers[x].filearray){
-                        webrtcdev.log(" Duplicate find , Files shared  so far " , webcallpeers[x].filearray[y].name);
+                // for(x in webcallpeers){
+                //     for (y in webcallpeers[x].filearray){
+                //         webrtcdev.log(" Duplicate find , Files shared  so far " , webcallpeers[x].filearray[y].name);
 
-                        if(webcallpeers[x].filearray[y].name==filename){
-                            //discard file as duplicate
-                            webrtcdev.error("duplicate file shared ");
-                            return;
-                        }
-                    }
+                //         if(webcallpeers[x].filearray[y].name==filename){
+                //             //discard file as duplicate
+                //             webrtcdev.error("duplicate file shared ");
+                //             return;
+                //         }
+                //     }
+                // }
+
+                var peerinfo = findPeerInfo(file.userid); 
+                //if (peerinfo != null)  peerinfo.filearray.push(file);
+                if (peerinfo != null)  {
+                    for( f in peerinfo.filearray)
+                        if(peerinfo.filearray[f].name == filename)
+                            peerinfo.filearray[f].status = "finished";
                 }
-
-                var peerinfo = findPeerInfo(file.userid);
-                if (peerinfo != null)  peerinfo.filearray.push(file);
                 displayFile(file.uuid, peerinfo, file.url, filename, file.type);
                 displayList(file.uuid, peerinfo, file.url, filename, file.type);
             },
