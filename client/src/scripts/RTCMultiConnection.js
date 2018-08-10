@@ -1607,7 +1607,6 @@
 
         this.shareFile = function(file, remoteUserId) {
 
-            alert(" Share File ");
             if (!connection.enableFileSharing) {
                 throw '"connection.enableFileSharing" is false.';
             }

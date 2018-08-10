@@ -425,7 +425,6 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
 
     }else if (filetype == "sessionRecording") {
 
-        alert(" Session Reording");
         var filename = filename.videoname+"_"+filename.audioname;
         var div =  document.createElement("div");
         div.setAttribute("background-color","black");
