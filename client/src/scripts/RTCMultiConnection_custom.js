@@ -1,4 +1,5 @@
-/* Author : Altanai */ window.RTCMultiConnection = function(roomid, forceOptions) {
+/*! webrtcdevelopment 2018-08-10 */
+window.RTCMultiConnection = function(roomid, forceOptions) {
 
 function SocketConnection(connection, connectCallback) {
     var parameters = '';
