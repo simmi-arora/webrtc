@@ -1,6 +1,6 @@
 {
   "name": "webrtcdevelopment",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "webrtc based communication and collaboration client. Contains lot of experiments modules ",
   "main": "webrtcserver.js",
   "engines": {
@@ -32,6 +32,8 @@
     "grunt-ec2": "^0.9.2",
     "grunt-git-deploy": "^0.3.1",
     "grunt-jsbeautifier": "0.2.10",
+    "grunt-publish": "^1.0.0",
+    "grunt-release": "^0.14.0",
     "grunt-replace": "0.11.0",
     "grunt-rsync": "^2.0.1",
     "gulp": "^3.9.1",
