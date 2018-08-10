@@ -5,6 +5,7 @@ var addsrc = require('gulp-add-src');
 var uglify = require('gulp-uglify');
 let babel = require('gulp-babel');
 // var uglify = require("uglify-js");
+var replace = require('gulp-replace');
 var minifyCss = require('gulp-minify-css'); 
 var base64 = require('gulp-base64');
 var gulpSequence = require('gulp-sequence');

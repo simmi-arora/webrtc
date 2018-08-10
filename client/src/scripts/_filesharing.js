@@ -20,6 +20,11 @@ function createFileShareButton(fileshareobj){
     button.onclick = function() {
         var fileSelector = new FileSelector();
         fileSelector.selectSingleFile(function(file) {
+            var peerinfo = findPeerInfo(selfuserid); 
+            peerinfo.filearray.push({
+                "name": file.name,
+                "status" : "progress"
+            });
             sendFile(file);
         });
     };
@@ -39,10 +44,18 @@ function assignFileShareButton(fileshareobj){
     button.onclick = function() {
         var fileSelector = new FileSelector();
         fileSelector.selectSingleFile(function(file) {
+
+            var peerinfo = findPeerInfo(selfuserid); 
+            peerinfo.filearray.push({
+                "name": file.name,
+                "status" : "progress"
+            });
             sendFile(file);
         });
     };
 }
+
+
 
 /**
  * Send File 
@@ -54,6 +67,26 @@ function sendFile(file){
     webrtcdev.log(" [filehsraing js] Send file - " , file );
     rtcConn.send(file);
 }
+
+
+/**
+ * Stop Sending File 
+ * @method
+ * @name sendFile
+ * @param {json} file
+ */
+function stopSendFile(file){
+    webrtcdev.log(" [filehsraing js] Stop Sending file - " , file );
+    var peerinfo = findPeerInfo(file.userid); 
+            
+    for( y in peerinfo.filearray){
+        if(peerinfo.filearray[y].name == file.name && peerinfo.filearray[y].status =="progress") {
+            peerinfo.filearray[y].status = "stop";
+            console.log(" filename " , peerinfo.filearray[y].name , " | status " , peerinfo.filearray[y].status);
+        }
+    }
+}
+
 
 /**
  * Send Old Files
@@ -85,6 +118,31 @@ function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelpe
                 label: progressDiv.querySelector("label")
             }, 
             progressHelper[uuid].progress.max = fileSize;
+
+
+            var stopuploadButton = document.createElement("div");
+            stopuploadButton.id= "stopuploadButton"+filename;
+            stopuploadButton.style.float="right";
+            stopuploadButton.innerHTML ='<i class="fa fa-trash-o" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
+            stopuploadButton.onclick=function(event){
+                //alert(" remomve button from progress bar ");
+                if(repeatFlagRemoveButton != filename){
+                    hideFile( progressDiv.id , filename );
+                    //var tobeHiddenElement = event.target.parentNode.id;
+                    rtcConn.send({
+                        type:"shareFileRemove", 
+                        _element: progressDiv.id,
+                        _filename : filename
+                    });  
+                    removeFile(filename);
+                    stopuploadButton.hidden = true;
+                    repeatFlagRemoveButton = filename;
+                }else if(repeatFlagRemoveButton == filename){
+                    repeatFlagRemoveButton= "";
+                }  
+            },
+            document.getElementById(peerinfo.fileList.container).appendChild(stopuploadButton);     
+
         }else{
             webrtcdev.log(" Not creating progress bar div as it already exists ");
         }

@@ -1,4 +1,4 @@
-function(roomid, forceOptions) {
+/* Author : Altanai */ window.RTCMultiConnection = function(roomid, forceOptions) {
 
 function SocketConnection(connection, connectCallback) {
     var parameters = '';

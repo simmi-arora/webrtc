@@ -9,7 +9,7 @@ module.exports = function(grunt) {
     });
 
     var versionNumber = grunt.file.readJSON('package.json').version;
-    var banner = "test";
+    var banner = "/* Author : Altanai */ ";
 
     // Project configuration.
     grunt.initConfig({
@@ -23,7 +23,7 @@ module.exports = function(grunt) {
                 banner: banner
             },
 
-            dist: {
+            dist1: {
                 src: [
                     'client/src/scripts/rtcconn/head.js',
 
@@ -54,7 +54,46 @@ module.exports = function(grunt) {
                     'client/src/scripts/rtcconn/RTCMultiConnection.js',
                     'client/src/scripts/rtcconn/tail.js'
                 ],
-                dest: 'client/src/scripts/RTCMultiConnection_new.js',
+                dest: 'client/src/scripts/RTCMultiConnection_custom.js',
+            },
+
+
+            dist2: {
+                src: [
+                    "client/src/scripts/_init.js",
+                    "client/src/scripts/_notify.js",
+                    "client/src/scripts/RTCMultiConnection_custom.js",
+                //    "client/src/scripts/RTCMultiConnection.js",
+                    "client/src/scripts/_screenshare.js",
+                    "client/src/scripts/_detectRTC.js",
+                    "client/src/scripts/_webrtcchecks.js",
+                    "client/src/scripts/_settings.js",
+                    "client/src/scripts/firebase.js",
+                    "client/src/scripts/FileBufferReader.js",
+                    "client/src/scripts/MediaStreamRecorder.js",
+                    "client/src/scripts/RecordRTC.js",
+                    "client/src/scripts/screenshot.js",
+                    "client/src/scripts/_snapshot.js",
+                    "client/src/scripts/_geolocation.js",
+                    "client/src/scripts/_chat.js",
+                    "client/src/scripts/_mediacontrol.js",
+                    "client/src/scripts/_record.js",
+                    "client/src/scripts/_screenrecord.js",
+                    "client/src/scripts/_filesharing.js",
+                    "client/src/scripts/_draw.js",
+                    "client/src/scripts/_redial.js",
+                    "client/src/scripts/_listenin.js",
+                    "client/src/scripts/_cursor.js",
+                    "client/src/scripts/_codeeditor.js",
+                    "client/src/scripts/_texteditor.js",
+                    "client/src/scripts/_turn.js",
+                    "client/src/scripts/_timer.js",
+                    "client/src/scripts/_stats.js",
+                    "client/src/scripts/_tracing.js",
+                    "client/src/scripts/jszip.js",
+                    "client/src/scripts/start.js",
+                ],
+                dest: 'client/build/webrtcdevelopment.js',
             }
         },
 
@@ -69,7 +108,7 @@ module.exports = function(grunt) {
         // },
       
         jshint: {
-            files: ['Gruntfile.js', 'client/build/minSscripts/start.js', 'test/**/*.js'],
+            files: ['Gruntfile.js', 'client/src/scripts/start.js', 'test/**/*.js'],
             options: {
                 globals: {
                     jQuery: true
@@ -92,49 +131,49 @@ module.exports = function(grunt) {
         //   },
         // },
 
-        replace: {
-            dist: {
-                options: {
-                    patterns: [{
-                        json: {} //grunt.file.readJSON('config.json')
-                    }, {
-                        match: 'version',
-                        replacement: versionNumber
-                    }]
-                },
-                files: [{
-                    expand: true,
-                    flatten: true,
-                    src: ['./temp/RTCMultiConnection.js'],
-                    dest: './'
-                }]
-            }
-        },
+        // replace: {
+        //     dist: {
+        //         options: {
+        //             patterns: [{
+        //                 json: {} //grunt.file.readJSON('config.json')
+        //             }, {
+        //                 match: 'version',
+        //                 replacement: versionNumber
+        //             }]
+        //         },
+        //         files: [{
+        //             expand: true,
+        //             flatten: true,
+        //             src: ['./temp/RTCMultiConnection.js'],
+        //             dest: './'
+        //         }]
+        //     }
+        // },
 
-        clean: ['./temp', 'RTCMultiConnection.js'],
+        // clean: ['./temp', 'RTCMultiConnection.js'],
         
-        uglify: {
-            options: {
-                mangle: false,
-                banner: banner
-            },
-            my_target: {
-                files: {
-                    'dist/RTCMultiConnection.min.js': ['RTCMultiConnection.js']
-                }
-            }
-        },
+        // uglify: {
+        //     options: {
+        //         mangle: false,
+        //         banner: banner
+        //     },
+        //     my_target: {
+        //         files: {
+        //             'dist/RTCMultiConnection.min.js': ['RTCMultiConnection.js']
+        //         }
+        //     }
+        // },
         
-        copy: {
-            main: {
-                options: {
-                    flatten: true
-                },
-                files: {
-                    'dist/RTCMultiConnection.js': ['RTCMultiConnection.js']
-                },
-            },
-        }
+        // copy: {
+        //     main: {
+        //         options: {
+        //             flatten: true
+        //         },
+        //         files: {
+        //             'dist/RTCMultiConnection.js': ['RTCMultiConnection_custom.js']
+        //         },
+        //     },
+        // }
 
     });
 
@@ -146,5 +185,7 @@ module.exports = function(grunt) {
     // Default task(s).
     grunt.registerTask('default', ['jshint','uglify']);
     grunt.registerTask('production', ['jshint','uglify','copy']);
-    grunt.registerTask('rtcconn', ['concat', 'replace', 'jsbeautifier', 'uglify', 'copy', 'clean']);
+    grunt.registerTask('rtcconn', ['concat']);
+
+    // grunt.registerTask('rtcconn', ['concat', 'replace', 'jsbeautifier', 'uglify', 'copy', 'clean']);
 };
