@@ -14,21 +14,19 @@ var localobj={}, remoteobj={};
     //instantiates event emitter
     // EventEmitter.call(this);
 
+    // function handleError(error) {
+    //   if (error.name === 'ConstraintNotSatisfiedError') {
+    //     let v = constraints.video;
+    //     webrtcdev.error(`The resolution ${v.width.exact}x${v.height.exact} px is not supported by your device.`);
+    //   } else if (error.name === 'PermissionDeniedError') {
+    //     webrtcdev.error('Permissions have not been granted to use your camera and ' +
+    //       'microphone, you need to allow the page access to your devices in ' +
+    //       'order for the demo to work.');
+    //   }
+    //   webrtcdev.error(`getUserMedia error: ${error.name}`, error);
 
-
-                        // function handleError(error) {
-                        //   if (error.name === 'ConstraintNotSatisfiedError') {
-                        //     let v = constraints.video;
-                        //     webrtcdev.error(`The resolution ${v.width.exact}x${v.height.exact} px is not supported by your device.`);
-                        //   } else if (error.name === 'PermissionDeniedError') {
-                        //     webrtcdev.error('Permissions have not been granted to use your camera and ' +
-                        //       'microphone, you need to allow the page access to your devices in ' +
-                        //       'order for the demo to work.');
-                        //   }
-                        //   webrtcdev.error(`getUserMedia error: ${error.name}`, error);
-
-                        //   outgoingVideo = false;
-                        // }
+    //   outgoingVideo = false;
+    // }
 
     /**
      * Assigns ICE gateways and  widgets 
@@ -338,7 +336,7 @@ function funcStartWebrtcdev(){
             } else {
                 alert(" signaller doesnt allow channel open");
             }
-                            shownotification(event.msgtype + " : " + event.message);
+            shownotification(event.msgtype + " : " + event.message);
         });
 
         socket.on("join-channel-resp", function (event) {
@@ -640,6 +638,13 @@ function funcStartWebrtcdev(){
                         case "syncOldFiles":
                             sendOldFiles();
                             break;
+                        case "shareFileRemove":
+                            var progressdiv = e.data._element;
+                            var filename = e.data._filename;
+                            removeFile(progressdiv);
+                            removeButton= "removeButton"+filename;
+                            document.getElementById(removeButton).hidden = true;
+                            break;
                         default:
                             webrtcdev.warn(" unrecognizable message from peer  ", e);
                             break;
@@ -717,20 +722,25 @@ function funcStartWebrtcdev(){
                 webrtcdev.log("[start] On file End " + filename);
 
                 //find duplicate file
-                for(x in webcallpeers){
-                    for (y in webcallpeers[x].filearray){
-                        webrtcdev.log(" Duplicate find , Files shared  so far " , webcallpeers[x].filearray[y].name);
+                // for(x in webcallpeers){
+                //     for (y in webcallpeers[x].filearray){
+                //         webrtcdev.log(" Duplicate find , Files shared  so far " , webcallpeers[x].filearray[y].name);
 
-                        if(webcallpeers[x].filearray[y].name==filename){
-                            //discard file as duplicate
-                            webrtcdev.error("duplicate file shared ");
-                            return;
-                        }
-                    }
+                //         if(webcallpeers[x].filearray[y].name==filename){
+                //             //discard file as duplicate
+                //             webrtcdev.error("duplicate file shared ");
+                //             return;
+                //         }
+                //     }
+                // }
+
+                var peerinfo = findPeerInfo(file.userid); 
+                //if (peerinfo != null)  peerinfo.filearray.push(file);
+                if (peerinfo != null)  {
+                    for( f in peerinfo.filearray)
+                        if(peerinfo.filearray[f].name == filename)
+                            peerinfo.filearray[f].status = "finished";
                 }
-
-                var peerinfo = findPeerInfo(file.userid);
-                if (peerinfo != null)  peerinfo.filearray.push(file);
                 displayFile(file.uuid, peerinfo, file.url, filename, file.type);
                 displayList(file.uuid, peerinfo, file.url, filename, file.type);
             },
@@ -763,7 +773,7 @@ function funcStartWebrtcdev(){
 
             rtcConn.dontCaptureUserMedia = true,
 
-            tempuserid = rtcConn.userid;
+            tempuserid = supportSessionRefresh(),
             webrtcdev.log(" RTCConn : ", rtcConn);
 
             // if(this.turn!=null && this.turn !="none"){
@@ -782,10 +792,21 @@ function funcStartWebrtcdev(){
         });
     }
 
-    function getCamMedia(){
+    function supportSessionRefresh(){
+        if(localStorage.getItem("channel") == rtcConn.channel && localStorage.getItem("userid")){
+            selfuserid = localStorage.getItem("userid");
+            webrtcdev.log(" [startJS ] check for supportSessionRefresh - user refreshed , old userid is  " , selfuserid);
+            return selfuserid;
+        }
+        return rtcConn.userid;;
+    }
 
+    function getCamMedia(){
+        webrtcdev.log(" [startJS] getCamMedia  role :" , role , " and outgoingVideo : " , outgoingVideo);
         return new Promise(function (resolve, reject) {
-            if(role != "inspector" && outgoingVideo){
+            if( role == "inspector"){
+                webrtcdev.log("Joining as inspector without camera Video");
+            }else if(outgoingVideo || !outgoingVideo){
                 webrtcdev.log("getCamMedia - Capture Media ");
                 rtcConn.dontCaptureUserMedia = false,
                 rtcConn.getUserMedia();  // not wait for the rtc conn on media stream or on error 
@@ -1304,10 +1325,10 @@ function funcStartWebrtcdev(){
     var repeatInitilization = null;
 
     /**
-     * find information about a peer form array of peers basedon userid
+     * start a call 
      * @method
-     * @name findPeerInfo
-     * @param {string} userid
+     * @name startCall
+     * @param {json} obj
      */
     function startCall(obj){
         webrtcdev.log(" startCall obj" , obj);
@@ -1317,6 +1338,29 @@ function funcStartWebrtcdev(){
         // }else if(turn!=null){
         //     repeatInitilization = window.setInterval(obj.startwebrtcdev, 2000);     
         // }
+        return;
+    }
+
+    /**
+     * stop a call
+     * @method
+     * @name stopCall
+     */
+    function stopCall(){
+        webrtcdev.log(" stopCall ");
+        rtcConn.closeEntireSession();
+
+
+
+        if(!localStorage.getItem("channel"))
+            localStorage.removeItem("channel");
+
+        if(!localStorage.getItem("userid"))
+            localStorage.removeItem("userid");
+        
+        if(!localStorage.getItem("remoteUsers"))
+            localStorage.removeItem("remoteUsers");
+
         return;
     }
 
@@ -1528,10 +1572,14 @@ function funcStartWebrtcdev(){
 
         }
 
+        if(!localStorage.getItem("channel"))
+            localStorage.setItem("channel", channel);
 
-        /*localStorage.setItem("channel", channel);
-        localStorage.setItem("userid", userid);
-        localStorage.setItem("remoteUsers", remoteUsers);*/
+        if(!localStorage.getItem("userid"))
+            localStorage.setItem("userid", userid);
+        
+        if(!localStorage.getItem("remoteUsers"))
+            localStorage.setItem("remoteUsers", remoteUsers);
     }
 
 
@@ -1542,22 +1590,22 @@ function funcStartWebrtcdev(){
      * @param {string} channel
      * @param {string} userid
      */
-    joinWebRTC=function(channel , userid){
-        shownotification("Joining an existing session "+channel);
+    joinWebRTC = function(channel , userid){
+        shownotification("Joining an existing session " + channel);
         webrtcdev.info(" [joinWebRTC] channel: " , channel);
         
-        if (selfuserid==null)
-            selfuserid=tempuserid;
+        if (selfuserid == null)
+            selfuserid = tempuserid;
 
         socket.emit("join-channel", {
             channel: channel,
             sender: selfuserid,
             extra: {
-                userid:selfuserid,
-                name:selfusername,
-                color:selfcolor,
-                email:selfemail,
-                role: role
+                userid  : selfuserid,
+                name    : selfusername,
+                color   : selfcolor,
+                email   : selfemail,
+                role    : role
             }
         });
     }
@@ -1598,5 +1646,8 @@ function funcStartWebrtcdev(){
         }else{
             onScreenshareExtensionCallback(event);
         }
-
     }); 
+
+    function clearCaches(){
+        localStorage.clear();
+    }

@@ -1606,6 +1606,8 @@
         }
 
         this.shareFile = function(file, remoteUserId) {
+
+            alert(" Share File ");
             if (!connection.enableFileSharing) {
                 throw '"connection.enableFileSharing" is false.';
             }
@@ -1621,7 +1623,25 @@
                 arrayOfUsers.forEach(function(participant) {
                     fbr.getNextChunk(uuid, function(nextChunk) {
                         connection.peers[participant].channels.forEach(function(channel) {
-                            channel.send(nextChunk);
+                            //channel.send(nextChunk);
+
+                            /*Altanai patch for trash on file upload 
+                            */
+                            for(x in webcallpeers){
+                                if(webcallpeers[x].userid == selfuserid ){
+                                    
+                                    for( y in webcallpeers[x].filearray){
+                                        if(webcallpeers[x].filearray[y].name == file.name && webcallpeers[x].filearray[y].status =="progress") 
+                                         {
+                                            console.log(" filename " , webcallpeers[x].filearray[y].name , " | status " , webcallpeers[x].filearray[y].status);
+                                            channel.send(nextChunk)
+                                         }   
+                                    }
+                                }
+                            }
+                            /*Altanai patch for trash file share ends 
+                            */
+
                         });
                     }, participant);
                 });
