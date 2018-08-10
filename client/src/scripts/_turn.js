@@ -31,23 +31,22 @@ function createCORSRequest(method, url) {
 
 function getICEServer(username , secretkey , domain , appname , roomname , secure){
 
-// New Xirsys Implkementation 
+    // New Xirsys Implementation 
+     $.ajax ({
+         url: "https://global.xirsys.net/_turn/Amplechat/",
+         type: "PUT",
+         async: false,
+         headers: {
+           "Authorization": "Basic " + btoa("farookafsari:e35af4d2-dbd5-11e7-b927-0c3f27cba33f")
+         },
+         success: function (res){
+            //console.log("ICE List: "+res.v.iceServers);
+            webrtcdevIceServers = res.v.iceServers;
+            webrtcdev.log(" [ Turn.js ] obtained iceServers" , webrtcdevIceServers);
+         }
+    });
 
-         $.ajax ({
-             url: "https://global.xirsys.net/_turn/Amplechat/",
-             type: "PUT",
-             async: false,
-             headers: {
-               "Authorization": "Basic " + btoa("farookafsari:e35af4d2-dbd5-11e7-b927-0c3f27cba33f")
-             },
-             success: function (res){
-                //console.log("ICE List: "+res.v.iceServers);
-                webrtcdevIceServers = res.v.iceServers;
-                webrtcdev.log(" [ Turn.js ] obtained iceServers" , webrtcdevIceServers);
-             }
-         });
-
-// Old Xirsys 
+    // Old Xirsys 
     // var url = 'https://service.xirsys.com/ice';
     // var xhr = createCORSRequest('POST', url);
     // xhr.onload = function () {

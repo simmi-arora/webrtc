@@ -89,8 +89,6 @@ function prepareTime(){
 
 }
 
-
-
 function startTime() {
     try{
         var h = today.getHours();
@@ -110,8 +108,6 @@ function startTime() {
         webrtcdev.error(e);
     }
     //webrtcdev.log(" localdate :" , today);
-
-
 }
 
 function timeZone(){

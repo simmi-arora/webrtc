@@ -20,16 +20,11 @@ function createFileShareButton(fileshareobj){
     button.onclick = function() {
         var fileSelector = new FileSelector();
         fileSelector.selectSingleFile(function(file) {
-
-        for(x in webcallpeers){
-            if(webcallpeers[x].userid == selfuserid){
-                webcallpeers[x].filearray.push({
-                    "name": file.name,
-                    "status" : "progress"
-                });
-            }
-        }
-
+            var peerinfo = findPeerInfo(selfuserid); 
+            peerinfo.filearray.push({
+                "name": file.name,
+                "status" : "progress"
+            });
             sendFile(file);
         });
     };
@@ -50,34 +45,17 @@ function assignFileShareButton(fileshareobj){
         var fileSelector = new FileSelector();
         fileSelector.selectSingleFile(function(file) {
 
-            for(x in webcallpeers){
-                if(webcallpeers[x].userid == selfuserid){
-                    webcallpeers[x].filearray.push({
-                        "name": file.name,
-                        "status" : "progress"
-                    });
-                }
-            }
-
+            var peerinfo = findPeerInfo(selfuserid); 
+            peerinfo.filearray.push({
+                "name": file.name,
+                "status" : "progress"
+            });
             sendFile(file);
         });
     };
 }
 
-        function initFileBufferReader() {
-            rtcConn.fbr = new FileBufferReader,
-            rtcConn.fbr.onProgress = function(chunk) {
-                connection.onFileProgress(chunk)
-            }
-            ,
-            rtcConn.fbr.onBegin = function(file) {
-                connection.onFileStart(file)
-            }
-            ,
-            rtcConn.fbr.onEnd = function(file) {
-                connection.onFileEnd(file)
-            }
-        }
+
 
 /**
  * Send File 
@@ -87,7 +65,6 @@ function assignFileShareButton(fileshareobj){
  */
 function sendFile(file){
     webrtcdev.log(" [filehsraing js] Send file - " , file );
-
     rtcConn.send(file);
 }
 
@@ -100,15 +77,12 @@ function sendFile(file){
  */
 function stopSendFile(file){
     webrtcdev.log(" [filehsraing js] Stop Sending file - " , file );
-    for(x in webcallpeers){
-        if(webcallpeers[x].userid == selfuserid ){
+    var peerinfo = findPeerInfo(file.userid); 
             
-            for( y in webcallpeers[x].filearray){
-                if(webcallpeers[x].filearray[y].name == file.name && webcallpeers[x].filearray[y].status =="progress") {
-                    webcallpeers[x].filearray[y].status =="stop";
-                    console.log(" filename " , webcallpeers[x].filearray[y].name , " | status " , webcallpeers[x].filearray[y].status);
-                }
-            }
+    for( y in peerinfo.filearray){
+        if(peerinfo.filearray[y].name == file.name && peerinfo.filearray[y].status =="progress") {
+            peerinfo.filearray[y].status = "stop";
+            console.log(" filename " , peerinfo.filearray[y].name , " | status " , peerinfo.filearray[y].status);
         }
     }
 }
@@ -146,28 +120,28 @@ function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelpe
             progressHelper[uuid].progress.max = fileSize;
 
 
-            // var stopuploadButton = document.createElement("div");
-            // stopuploadButton.id= "stopuploadButton"+filename;
-            // stopuploadButton.style.float="right";
-            // stopuploadButton.innerHTML ='<i class="fa fa-trash-o" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
-            // stopuploadButton.onclick=function(event){
-            //     //alert(" remomve button from progress bar ");
-            //     if(repeatFlagRemoveButton != filename){
-            //         hideFile( progressDiv.id , filename );
-            //         //var tobeHiddenElement = event.target.parentNode.id;
-            //         rtcConn.send({
-            //             type:"shareFileRemove", 
-            //             _element: progressDiv.id,
-            //             _filename : filename
-            //         });  
-            //         removeFile(filename);
-            //         stopuploadButton.hidden = true;
-            //         repeatFlagRemoveButton = filename;
-            //     }else if(repeatFlagRemoveButton == filename){
-            //         repeatFlagRemoveButton= "";
-            //     }  
-            // },
-            // document.getElementById(peerinfo.fileList.container).appendChild(stopuploadButton);     
+            var stopuploadButton = document.createElement("div");
+            stopuploadButton.id= "stopuploadButton"+filename;
+            stopuploadButton.style.float="right";
+            stopuploadButton.innerHTML ='<i class="fa fa-trash-o" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
+            stopuploadButton.onclick=function(event){
+                //alert(" remomve button from progress bar ");
+                if(repeatFlagRemoveButton != filename){
+                    hideFile( progressDiv.id , filename );
+                    //var tobeHiddenElement = event.target.parentNode.id;
+                    rtcConn.send({
+                        type:"shareFileRemove", 
+                        _element: progressDiv.id,
+                        _filename : filename
+                    });  
+                    removeFile(filename);
+                    stopuploadButton.hidden = true;
+                    repeatFlagRemoveButton = filename;
+                }else if(repeatFlagRemoveButton == filename){
+                    repeatFlagRemoveButton= "";
+                }  
+            },
+            document.getElementById(peerinfo.fileList.container).appendChild(stopuploadButton);     
 
         }else{
             webrtcdev.log(" Not creating progress bar div as it already exists ");
