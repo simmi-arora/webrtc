@@ -97,13 +97,14 @@ function webrtcdevPrepareScreenShare(callback){
     if(screenRoomid == null)
         screenRoomid    = "screenshare"+"_"+sessionid+"_"+time;
 
+    localStorage.setItem("screenRoomid " , screenRoomid);
     webrtcdev.log(" webrtcdevPrepareScreenShare" + screenRoomid);
     webrtcdev.log(" Screenshare ||  filling up iceServers " , turn , webrtcdevIceServers);
 
     scrConn  = new RTCMultiConnection();
     if(turn && turn!='none'){
         if(!webrtcdevIceServers) {
-            alert("ICE server not found yet in screenshare session ");
+            alert(" [screenshare JS] ICE server not found yet in screenshare session ");
         }
         scrConn.iceServers  = webrtcdevIceServers;      
     }  
@@ -129,8 +130,8 @@ function webrtcdevPrepareScreenShare(callback){
         webrtcdev.log(" on stream in _screenshare :" , event);
         //if(event.stream.isScreen){
             if(event.type=="remote" && event.type!="local"){
-                //alert("started streaming remote's screen");
-
+                shownotificationWarning("started streaming remote's screen");
+                webrtcdev.log("[screensharejs] on stream remote ");
                 var userid=event.userid;
                 var type=event.type;
                 var stream=event.stream;
@@ -155,8 +156,8 @@ function webrtcdevPrepareScreenShare(callback){
                 });
 
             }else{
-                webrtcdev.log("started streaming local screen");
-
+                shownotificationWarning("started streaming local screen");
+                webrtcdev.log("[screensharejs] on stream local ")
                 //screenshareNotification("","screenshareBegin"); 
                 rtcConn.send({
                     type:"screenshare", 
@@ -197,7 +198,7 @@ function webrtcdevPrepareScreenShare(callback){
     };
 
     webrtcdev.log(" webrtcdevscreenshare calling callback for socket.io operations");
-    alert(" Preparing Screenshare "+ screenRoomid);
+    //alert(" Preparing Screenshare "+ screenRoomid);
     setTimeout(callback(screenRoomid), 3000);
     // event listener for Screen share stream ended 
     onScreenShareSEnded();
