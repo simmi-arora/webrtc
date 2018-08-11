@@ -280,66 +280,6 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
     });
 
 
-    socket.on("open-channel-resp", function (event) {
-        webrtcdev.log(" opened-channel", event, event.status, event.channel == sessionid);
-        if (event.status && event.channel == sessionid) {
-
-            let promise = new Promise(function(resolve, reject) {
-                webrtcdev.log(" [open-channel-resp ] ",
-                    " Session video:" ,  outgoingVideo,
-                    " audio: " , outgoingAudio ,
-                    " data: " , outgoingData , 
-                    " OfferToReceiveAudio: " , incomingAudio,
-                    " OfferToReceiveVideo: " , incomingVideo
-                );
-
-                rtcConn.connectionType = "open",
-
-                rtcConn.session = {
-                    video: outgoingVideo,
-                    audio: outgoingAudio,
-                    data: outgoingData
-                },
-
-                rtcConn.sdpConstraints.mandatory = {
-                    OfferToReceiveAudio: incomingAudio,
-                    OfferToReceiveVideo: incomingVideo
-                };
-                resolve(); // immediately give the result: 123
-            });
-
-            promise.then(
-                rtcConn.open(event.channel, function () {
-                    if (!selfuserid) {
-                        selfuserid = rtcConn.userid;
-
-                        webrtcdev.info(" [startjs] self user id " , selfuserid);
-
-                        if (tempuserid != selfuserid)
-                            socket.emit("update-channel", {
-                                type: "change-userid",
-                                channel: rtcConn.channel,
-                                sender: selfuserid,
-                                extra: {
-                                    old: tempuserid,
-                                    new: selfuserid
-                                }
-                            });
-                    }
-                })
-            ).then(function(res){
-                updatePeerInfo(selfuserid, selfusername, selfcolor, selfemail, "role" , "local");
-                webrtcdev.info(" Trying to open a channel on WebRTC SDP ");
-            }).then(
-                getCamMedia()
-            ).catch(
-               (reason) => {
-                    webrtcdev.error('Handle rejected promise ('+reason+')');
-                }
-            );
-        }
-    });
-
     socket.on("presence", function (event) {
         webrtcdev.log("presence for sessionid ", event);
         channelpresence = event;
@@ -393,7 +333,7 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
                     }
                 })
             ).then(function(res){
-                updatePeerInfo(selfuserid, selfusername, selfcolor, selfemail, "role" , "local");
+                updatePeerInfo(selfuserid || rtcConn.userid , selfusername, selfcolor, selfemail, "role" , "local");
                 webrtcdev.info(" Trying to open a channel on WebRTC SDP ");
             }).then(
                 getCamMedia()

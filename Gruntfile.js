@@ -59,9 +59,9 @@ module.exports = function(grunt) {
                 src: [
                     "client/src/scripts/_init.js",
                     "client/src/scripts/_notify.js",
-                    "client/src/scripts/RTCMultiConnection_custom.js",
+                    //"client/src/scripts/RTCMultiConnection_custom.js",
                     "client/src/scripts/DetectRTC.js",
-                //    "client/src/scripts/RTCMultiConnection.js",
+                    "client/src/scripts/RTCMultiConnection.js",
                     "client/src/scripts/_screenshare.js",
                     "client/src/scripts/_detectRTC.js",
                     "client/src/scripts/_webrtcchecks.js",
