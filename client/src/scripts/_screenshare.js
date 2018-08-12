@@ -87,19 +87,21 @@ function isChromeExtensionAvailable(callback) {
 }
 
 /**
- * function to find if chromeMedia source is desktop or screen
+ * function set up Srcreens share session RTC peer connection 
  * @method
- * @name isChromeExtensionAvailable
+ * @name webrtcdevPrepareScreenShare
  * @param {function} callback
  */
 function webrtcdevPrepareScreenShare(callback){
+    webrtcdev.log("[screenshareJS] webrtcdevPrepareScreenShare ");
+
     var time            = new Date().getUTCMilliseconds(); 
     if(screenRoomid == null)
         screenRoomid    = "screenshare"+"_"+sessionid+"_"+time;
 
     localStorage.setItem("screenRoomid " , screenRoomid);
-    webrtcdev.log(" webrtcdevPrepareScreenShare" + screenRoomid);
-    webrtcdev.log(" Screenshare ||  filling up iceServers " , turn , webrtcdevIceServers);
+    webrtcdev.log("[screenshare JS] webrtcdevPrepareScreenShare" + screenRoomid);
+    webrtcdev.log("[screenshare JS] filling up iceServers " , turn , webrtcdevIceServers);
 
     scrConn  = new RTCMultiConnection();
     if(turn && turn!='none'){
@@ -127,14 +129,21 @@ function webrtcdevPrepareScreenShare(callback){
     },
 
     scrConn.onstream = function(event) {
-        webrtcdev.log(" on stream in _screenshare :" , event);
+        webrtcdev.log("[screenshareJS] on stream in _screenshare :" , event);
+
+        if (debug) {
+            var nameBox = document.createElement("span");
+            nameBox.innerHTML = "<br/>" + screenRoomid + "<br/>";
+            document.getElementById(screenshareobj.screenshareContainer).appendChild(nameBox);
+        }
+
         //if(event.stream.isScreen){
             if(event.type=="remote" && event.type!="local"){
                 shownotificationWarning("started streaming remote's screen");
                 webrtcdev.log("[screensharejs] on stream remote ");
-                var userid=event.userid;
-                var type=event.type;
-                var stream=event.stream;
+                var userid = event.userid;
+                var type = event.type;
+                var stream = event.stream;
                 if(event.stream.streamid){
                     webrtcdev.log("remote screen event.stream.streamId " + event.stream.streamId);
                     screenStreamId=event.stream.streamid;                    
@@ -157,7 +166,7 @@ function webrtcdevPrepareScreenShare(callback){
 
             }else{
                 shownotificationWarning("started streaming local screen");
-                webrtcdev.log("[screensharejs] on stream local ")
+                webrtcdev.log("[screenshareJS] on stream local ")
                 //screenshareNotification("","screenshareBegin"); 
                 rtcConn.send({
                     type:"screenshare", 
@@ -183,7 +192,7 @@ function webrtcdevPrepareScreenShare(callback){
 
     scrConn.onstreamended = function(event) {
         if(event)
-            webrtcdev.log(" onstreamended in _screenshare :" , event);
+            webrtcdev.log("[screenshare JS] onstreamended in _screenshare :" , event);
     
         if(document.getElementById(screenshareobj.screenshareContainer)){
             document.getElementById(screenshareobj.screenshareContainer).innerHTML="";
@@ -197,7 +206,7 @@ function webrtcdevPrepareScreenShare(callback){
         //removeScreenViewButton();
     };
 
-    webrtcdev.log(" webrtcdevscreenshare calling callback for socket.io operations");
+    webrtcdev.log("[screenshare JS] webrtcdevscreenshare calling callback for socket.io operations");
     //alert(" Preparing Screenshare "+ screenRoomid);
     setTimeout(callback(screenRoomid), 3000);
     // event listener for Screen share stream ended 
@@ -205,27 +214,27 @@ function webrtcdevPrepareScreenShare(callback){
 }
 
 function webrtcdevSharescreen() {
-    webrtcdev.log("webrtcdevSharescreen . screenRoomid = " , screenRoomid );
+    webrtcdev.log("[screenshare JS] webrtcdevSharescreen  , screenRoomid = " , screenRoomid );
 
     webrtcdevPrepareScreenShare(function(screenRoomid){
 
-        var selfuserid="temp_"+(new Date().getUTCMilliseconds());
+        //var selfuserid = "temp_"+(new Date().getUTCMilliseconds());
         scrConn.dontCaptureUserMedia = false,
         //scrConn.captureUserMedia();
         //scrConn.getUserMedia();
         scrConn.open(screenRoomid, function() {
-            webrtcdev.log("Event : open-channel-screenshare" );
+            webrtcdev.log("[screenshare JS] Event : open-channel-screenshare" );
             socket.emit("open-channel-screenshare", {
                 channel    : screenRoomid,
                 sender     : selfuserid,
                 maxAllowed : 6
             });
 
-            shownotification(" Making a new session for screenshare"+screenRoomid);
+            shownotification("Making a new session for screenshare" + screenRoomid);
         });
 
         socket.on("open-channel-screenshare-resp",function(event) {
-            webrtcdev.log("Event Handler : open-channel-screenshare" , event);
+            webrtcdev.log("[screenshare JS] Event Handler : open-channel-screenshare-response " , event);
             if(event) connectScrWebRTC("open" , screenRoomid, selfuserid, []); 
         });
     });
@@ -243,7 +252,7 @@ function webrtcdevSharescreen() {
         return ;
     }*/
 
-    webrtcdev.log("webrtcdevscreenshare . srcConn = " , scrConn , " | rtcConn = " ,  rtcConn);
+    //webrtcdev.log("webrtcdevscreenshare . srcConn = " , scrConn , " | rtcConn = " ,  rtcConn);
 }
 
 function connectScrWebRTC(type, channel , userid , remoteUsers){
@@ -260,19 +269,19 @@ function connectScrWebRTC(type, channel , userid , remoteUsers){
 }
 
 function webrtcdevScreenConstraints(chromeMediaSourceId) {
-    webrtcdev.log(" webrtcdevScreenConstraints  - chromeMediaSourceId: ", chromeMediaSourceId);
+    webrtcdev.log("[screenshare JS] webrtcdevScreenConstraints  - chromeMediaSourceId: ", chromeMediaSourceId);
     screen_constraints = {
-                audio: false,
-                video: {
-                    mandatory: {
-                        chromeMediaSource: 'desktop',
-                        chromeMediaSourceId: chromeMediaSourceId,
-                        maxWidth: window.screen.width > 1920 ? window.screen.width : 1920,
-                        maxHeight: window.screen.height > 1080 ? window.screen.height : 1080
-                    },
-                    optional: []
-                }
-            };
+        audio: false,
+        video: {
+            mandatory: {
+                chromeMediaSource: 'desktop',
+                chromeMediaSourceId: chromeMediaSourceId,
+                maxWidth: window.screen.width > 1920 ? window.screen.width : 1920,
+                maxHeight: window.screen.height > 1080 ? window.screen.height : 1080
+            },
+            optional: []
+        }
+    };
     
     /*    
     scrConn.getScreenConstraints = function(callback) {
@@ -286,7 +295,7 @@ function webrtcdevScreenConstraints(chromeMediaSourceId) {
         webrtcdev.log(" screen getusermedia ");
         navigator.getUserMedia(screen_constraints ,
             function stream(event) {
-                webrtcdev.log("screen stream "  , event , screenshareobj.screenshareContainer);
+                webrtcdev.log("[screenshare JS] screen stream event and container "  , event , screenshareobj.screenshareContainer);
                 //scrConn.onstream(event);
                 //screenStreamId = event.streamid;
                 //var videosContainer = document.createElement("video");
@@ -295,7 +304,7 @@ function webrtcdevScreenConstraints(chromeMediaSourceId) {
                 //videosContainer.appendChild(event.mediaElement);
                 var stream = event;
                 screenShareStreamLocal = event;
-                webrtcdev.log("Stream from getUserMedia" , stream);
+                webrtcdev.log("[screenshare JS] Stream from getUserMedia" , stream);
                 stream.type = "local",
                 //scrConn.setStreamEndHandler(stream),
                 getRMCMediaElement(stream, function(mediaElement) {
@@ -348,7 +357,7 @@ function webrtcdevScreenConstraints(chromeMediaSourceId) {
 
             },
             function error(err) {
-                webrtcdev.error(" Error in webrtcdevScreenConstraints " , err);
+                webrtcdev.error("[screenshare JS] Error in webrtcdevScreenConstraints " , err);
                 if (isChrome && location.protocol === 'http:') {
                     alert('Please test this WebRTC experiment on HTTPS.');
                 } else if(isChrome) {
@@ -359,13 +368,13 @@ function webrtcdevScreenConstraints(chromeMediaSourceId) {
             }
         );
    }catch(e){
-        webrtcdev.log(" Error in webrtcdevScreenConstraints " , err);
+        webrtcdev.log("[screenshare JS] Error in webrtcdevScreenConstraints " , err);
    }
 
 }
 
 function getRMCMediaElement(stream, callback, connection) {
-    webrtcdev.log(" getRMCMediaElement "  , stream , connection);
+    webrtcdev.log("[screenshare JS] getRMCMediaElement "  , stream , connection);
     var isAudioOnly = !1;
     stream.getVideoTracks && !stream.getVideoTracks().length && (isAudioOnly = !0);
     var mediaElement = document.createElement(isAudioOnly ? "audio" : "video");
@@ -403,6 +412,11 @@ function webrtcdevViewscreen(roomid){
     scrConn.join(roomid);
 }
 
+/**
+ * function stop screen share session RTC peer connection 
+ * @method
+ * @name webrtcdevStopShareScreen
+ */
 function webrtcdevStopShareScreen(){
     try{
         /*
@@ -416,7 +430,7 @@ function webrtcdevStopShareScreen(){
         rtcConn.send({
             type:"screenshare", 
             screenid: screenRoomid,
-            screenStreamid:screenStreamId,
+            screenStreamid: screenStreamId,
             message:"stoppedscreenshare"
         });
 
@@ -424,7 +438,7 @@ function webrtcdevStopShareScreen(){
         scrConn.onstreamended();
         scrConn.close();
         scrConn.closeEntireSession();
-        webrtcdev.log("Sender stopped: screenRoomid "+ screenRoomid +" || Screen stoppped "  , scrConn , document.getElementById(screenshareobj.screenshareContainer));
+        webrtcdev.log("[screenshare JS] Sender stopped: screenRoomid "+ screenRoomid +" || Screen stoppped "  , scrConn , document.getElementById(screenshareobj.screenshareContainer));
         
         if(screenShareStreamLocal){
             screenShareStreamLocal.stop();

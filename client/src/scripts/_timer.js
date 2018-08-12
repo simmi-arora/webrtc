@@ -156,7 +156,6 @@ function startPeersTime(date,zone){
             webrtcdev.error("timerobj.span.remoteTimeZone_id DOM doesnt exist ");
         }
         
-
         if(timerobj.span.remoteTime_id && document.getElementById(timerobj.span.remoteTime_id)){
             var remotedate = new Date(date);
             //var remotedate = new Date().toLocaleString('en-US', { timeZone: zone });

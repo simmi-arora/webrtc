@@ -28,7 +28,7 @@ module.exports = function(grunt) {
                     'client/src/scripts/rtcconn/MultiPeersHandler.js',
 
                     // 'client/src/scripts/rtcconn/adapter.js', ---- optional
-                    'client/src/scripts/rtcconn/DetectRTC.js',
+                    // 'client/src/scripts/rtcconn/DetectRTC.js',
                     'client/src/scripts/rtcconn/globals.js',
 
                     'client/src/scripts/rtcconn/ios-hacks.js', // to support ios

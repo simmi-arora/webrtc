@@ -29,14 +29,14 @@ function sendwebrtcdevLogs(url , key){
 		zip.generateAsync({type:"base64"})
 		.then(function(content) {
 		    // see FileSaver.js
-		    saveAs(content, "webrtcDevSessionLogs.zip");
-		    // var params = {
-      //           Key: "webrtcDevSessionLogs.zip",
-      //           ContentType: "application/zip",
-      //           ContentEncoding: 'base64',
-      //           Body: content
-      //       };
-
+		    //saveAs(content, "webrtcDevSessionLogs.zip");
+		    
+			// var params = {
+			//           Key: "webrtcDevSessionLogs.zip",
+			//           ContentType: "application/zip",
+			//           ContentEncoding: 'base64',
+			//           Body: content
+			//       };
 
 		    // $.ajax({
 		    //     url: url ,
