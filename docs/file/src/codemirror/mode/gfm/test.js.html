@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/gfm/test.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/gfm/test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function() {
+  var mode = CodeMirror.getMode({tabSize: 4}, &quot;gfm&quot;);
+  function MT(name) { test.mode(name, mode, Array.prototype.slice.call(arguments, 1)); }
+  var modeHighlightFormatting = CodeMirror.getMode({tabSize: 4}, {name: &quot;gfm&quot;, highlightFormatting: true});
+  function FT(name) { test.mode(name, modeHighlightFormatting, Array.prototype.slice.call(arguments, 1)); }
+
+  FT(&quot;codeBackticks&quot;,
+     &quot;[comment&amp;formatting&amp;formatting-code `][comment foo][comment&amp;formatting&amp;formatting-code `]&quot;);
+
+  FT(&quot;doubleBackticks&quot;,
+     &quot;[comment&amp;formatting&amp;formatting-code ``][comment foo ` bar][comment&amp;formatting&amp;formatting-code ``]&quot;);
+
+  FT(&quot;codeBlock&quot;,
+     &quot;[comment&amp;formatting&amp;formatting-code-block ```css]&quot;,
+     &quot;[tag foo]&quot;,
+     &quot;[comment&amp;formatting&amp;formatting-code-block ```]&quot;);
+
+  FT(&quot;taskList&quot;,
+     &quot;[variable-2&amp;formatting&amp;formatting-list&amp;formatting-list-ul - ][meta&amp;formatting&amp;formatting-task [ ]]][variable-2  foo]&quot;,
+     &quot;[variable-2&amp;formatting&amp;formatting-list&amp;formatting-list-ul - ][property&amp;formatting&amp;formatting-task [x]]][variable-2  foo]&quot;);
+
+  MT(&quot;emInWordAsterisk&quot;,
+     &quot;foo[em *bar*]hello&quot;);
+
+  MT(&quot;emInWordUnderscore&quot;,
+     &quot;foo_bar_hello&quot;);
+
+  MT(&quot;emStrongUnderscore&quot;,
+     &quot;[strong __][em&amp;strong _foo__][em _] bar&quot;);
+
+  MT(&quot;fencedCodeBlocks&quot;,
+     &quot;[comment ```]&quot;,
+     &quot;[comment foo]&quot;,
+     &quot;&quot;,
+     &quot;[comment ```]&quot;,
+     &quot;bar&quot;);
+
+  MT(&quot;fencedCodeBlockModeSwitching&quot;,
+     &quot;[comment ```javascript]&quot;,
+     &quot;[variable foo]&quot;,
+     &quot;&quot;,
+     &quot;[comment ```]&quot;,
+     &quot;bar&quot;);
+
+  MT(&quot;taskListAsterisk&quot;,
+     &quot;[variable-2 * []] foo]&quot;, // Invalid; must have space or x between []
+     &quot;[variable-2 * [ ]]bar]&quot;, // Invalid; must have space after ]
+     &quot;[variable-2 * [x]]hello]&quot;, // Invalid; must have space after ]
+     &quot;[variable-2 * ][meta [ ]]][variable-2  [world]]]&quot;, // Valid; tests reference style links
+     &quot;    [variable-3 * ][property [x]]][variable-3  foo]&quot;); // Valid; can be nested
+
+  MT(&quot;taskListPlus&quot;,
+     &quot;[variable-2 + []] foo]&quot;, // Invalid; must have space or x between []
+     &quot;[variable-2 + [ ]]bar]&quot;, // Invalid; must have space after ]
+     &quot;[variable-2 + [x]]hello]&quot;, // Invalid; must have space after ]
+     &quot;[variable-2 + ][meta [ ]]][variable-2  [world]]]&quot;, // Valid; tests reference style links
+     &quot;    [variable-3 + ][property [x]]][variable-3  foo]&quot;); // Valid; can be nested
+
+  MT(&quot;taskListDash&quot;,
+     &quot;[variable-2 - []] foo]&quot;, // Invalid; must have space or x between []
+     &quot;[variable-2 - [ ]]bar]&quot;, // Invalid; must have space after ]
+     &quot;[variable-2 - [x]]hello]&quot;, // Invalid; must have space after ]
+     &quot;[variable-2 - ][meta [ ]]][variable-2  [world]]]&quot;, // Valid; tests reference style links
+     &quot;    [variable-3 - ][property [x]]][variable-3  foo]&quot;); // Valid; can be nested
+
+  MT(&quot;taskListNumber&quot;,
+     &quot;[variable-2 1. []] foo]&quot;, // Invalid; must have space or x between []
+     &quot;[variable-2 2. [ ]]bar]&quot;, // Invalid; must have space after ]
+     &quot;[variable-2 3. [x]]hello]&quot;, // Invalid; must have space after ]
+     &quot;[variable-2 4. ][meta [ ]]][variable-2  [world]]]&quot;, // Valid; tests reference style links
+     &quot;    [variable-3 1. ][property [x]]][variable-3  foo]&quot;); // Valid; can be nested
+
+  MT(&quot;SHA&quot;,
+     &quot;foo [link be6a8cc1c1ecfe9489fb51e4869af15a13fc2cd2] bar&quot;);
+
+  MT(&quot;SHAEmphasis&quot;,
+     &quot;[em *foo ][em&amp;link be6a8cc1c1ecfe9489fb51e4869af15a13fc2cd2][em *]&quot;);
+
+  MT(&quot;shortSHA&quot;,
+     &quot;foo [link be6a8cc] bar&quot;);
+
+  MT(&quot;tooShortSHA&quot;,
+     &quot;foo be6a8c bar&quot;);
+
+  MT(&quot;longSHA&quot;,
+     &quot;foo be6a8cc1c1ecfe9489fb51e4869af15a13fc2cd22 bar&quot;);
+
+  MT(&quot;badSHA&quot;,
+     &quot;foo be6a8cc1c1ecfe9489fb51e4869af15a13fc2cg2 bar&quot;);
+
+  MT(&quot;userSHA&quot;,
+     &quot;foo [link bar@be6a8cc1c1ecfe9489fb51e4869af15a13fc2cd2] hello&quot;);
+
+  MT(&quot;userSHAEmphasis&quot;,
+     &quot;[em *foo ][em&amp;link bar@be6a8cc1c1ecfe9489fb51e4869af15a13fc2cd2][em *]&quot;);
+
+  MT(&quot;userProjectSHA&quot;,
+     &quot;foo [link bar/hello@be6a8cc1c1ecfe9489fb51e4869af15a13fc2cd2] world&quot;);
+
+  MT(&quot;userProjectSHAEmphasis&quot;,
+     &quot;[em *foo ][em&amp;link bar/hello@be6a8cc1c1ecfe9489fb51e4869af15a13fc2cd2][em *]&quot;);
+
+  MT(&quot;num&quot;,
+     &quot;foo [link #1] bar&quot;);
+
+  MT(&quot;numEmphasis&quot;,
+     &quot;[em *foo ][em&amp;link #1][em *]&quot;);
+
+  MT(&quot;badNum&quot;,
+     &quot;foo #1bar hello&quot;);
+
+  MT(&quot;userNum&quot;,
+     &quot;foo [link bar#1] hello&quot;);
+
+  MT(&quot;userNumEmphasis&quot;,
+     &quot;[em *foo ][em&amp;link bar#1][em *]&quot;);
+
+  MT(&quot;userProjectNum&quot;,
+     &quot;foo [link bar/hello#1] world&quot;);
+
+  MT(&quot;userProjectNumEmphasis&quot;,
+     &quot;[em *foo ][em&amp;link bar/hello#1][em *]&quot;);
+
+  MT(&quot;vanillaLink&quot;,
+     &quot;foo [link http://www.example.com/] bar&quot;);
+
+  MT(&quot;vanillaLinkPunctuation&quot;,
+     &quot;foo [link http://www.example.com/]. bar&quot;);
+
+  MT(&quot;vanillaLinkExtension&quot;,
+     &quot;foo [link http://www.example.com/index.html] bar&quot;);
+
+  MT(&quot;vanillaLinkEmphasis&quot;,
+     &quot;foo [em *][em&amp;link http://www.example.com/index.html][em *] bar&quot;);
+
+  MT(&quot;notALink&quot;,
+     &quot;[comment ```css]&quot;,
+     &quot;[tag foo] {[property color]:[keyword black];}&quot;,
+     &quot;[comment ```][link http://www.example.com/]&quot;);
+
+  MT(&quot;notALink&quot;,
+     &quot;[comment ``foo `bar` http://www.example.com/``] hello&quot;);
+
+  MT(&quot;notALink&quot;,
+     &quot;[comment `foo]&quot;,
+     &quot;[link http://www.example.com/]&quot;,
+     &quot;[comment `foo]&quot;,
+     &quot;&quot;,
+     &quot;[link http://www.example.com/]&quot;);
+
+  MT(&quot;headerCodeBlockGithub&quot;,
+     &quot;[header&amp;header-1 # heading]&quot;,
+     &quot;&quot;,
+     &quot;[comment ```]&quot;,
+     &quot;[comment code]&quot;,
+     &quot;[comment ```]&quot;,
+     &quot;&quot;,
+     &quot;Commit: [link be6a8cc1c1ecfe9489fb51e4869af15a13fc2cd2]&quot;,
+     &quot;Issue: [link #1]&quot;,
+     &quot;Link: [link http://www.example.com/]&quot;);
+})();
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

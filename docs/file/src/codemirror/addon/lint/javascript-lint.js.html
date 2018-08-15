@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/addon/lint/javascript-lint.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/addon/lint/javascript-lint.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+  &quot;use strict&quot;;
+  // declare global: JSHINT
+
+  var bogus = [ &quot;Dangerous comment&quot; ];
+
+  var warnings = [ [ &quot;Expected &apos;{&apos;&quot;,
+                     &quot;Statement body should be inside &apos;{ }&apos; braces.&quot; ] ];
+
+  var errors = [ &quot;Missing semicolon&quot;, &quot;Extra comma&quot;, &quot;Missing property name&quot;,
+                 &quot;Unmatched &quot;, &quot; and instead saw&quot;, &quot; is not defined&quot;,
+                 &quot;Unclosed string&quot;, &quot;Stopping, unable to continue&quot; ];
+
+  function validator(text, options) {
+    if (!window.JSHINT) return [];
+    JSHINT(text, options);
+    var errors = JSHINT.data().errors, result = [];
+    if (errors) parseErrors(errors, result);
+    return result;
+  }
+
+  CodeMirror.registerHelper(&quot;lint&quot;, &quot;javascript&quot;, validator);
+
+  function cleanup(error) {
+    // All problems are warnings by default
+    fixWith(error, warnings, &quot;warning&quot;, true);
+    fixWith(error, errors, &quot;error&quot;);
+
+    return isBogus(error) ? null : error;
+  }
+
+  function fixWith(error, fixes, severity, force) {
+    var description, fix, find, replace, found;
+
+    description = error.description;
+
+    for ( var i = 0; i &lt; fixes.length; i++) {
+      fix = fixes[i];
+      find = (typeof fix === &quot;string&quot; ? fix : fix[0]);
+      replace = (typeof fix === &quot;string&quot; ? null : fix[1]);
+      found = description.indexOf(find) !== -1;
+
+      if (force || found) {
+        error.severity = severity;
+      }
+      if (found &amp;&amp; replace) {
+        error.description = replace;
+      }
+    }
+  }
+
+  function isBogus(error) {
+    var description = error.description;
+    for ( var i = 0; i &lt; bogus.length; i++) {
+      if (description.indexOf(bogus[i]) !== -1) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function parseErrors(errors, output) {
+    for ( var i = 0; i &lt; errors.length; i++) {
+      var error = errors[i];
+      if (error) {
+        var linetabpositions, index;
+
+        linetabpositions = [];
+
+        // This next block is to fix a problem in jshint. Jshint
+        // replaces
+        // all tabs with spaces then performs some checks. The error
+        // positions (character/space) are then reported incorrectly,
+        // not taking the replacement step into account. Here we look
+        // at the evidence line and try to adjust the character position
+        // to the correct value.
+        if (error.evidence) {
+          // Tab positions are computed once per line and cached
+          var tabpositions = linetabpositions[error.line];
+          if (!tabpositions) {
+            var evidence = error.evidence;
+            tabpositions = [];
+            // ugggh phantomjs does not like this
+            // forEachChar(evidence, function(item, index) {
+            Array.prototype.forEach.call(evidence, function(item,
+                                                            index) {
+              if (item === &apos;\t&apos;) {
+                // First col is 1 (not 0) to match error
+                // positions
+                tabpositions.push(index + 1);
+              }
+            });
+            linetabpositions[error.line] = tabpositions;
+          }
+          if (tabpositions.length &gt; 0) {
+            var pos = error.character;
+            tabpositions.forEach(function(tabposition) {
+              if (pos &gt; tabposition) pos -= 1;
+            });
+            error.character = pos;
+          }
+        }
+
+        var start = error.character - 1, end = start + 1;
+        if (error.evidence) {
+          index = error.evidence.substring(start).search(/.\b/);
+          if (index &gt; -1) {
+            end += index;
+          }
+        }
+
+        // Convert to format expected by validation service
+        error.description = error.reason;// + &quot;(jshint)&quot;;
+        error.start = error.character;
+        error.end = end;
+        error = cleanup(error);
+
+        if (error)
+          output.push({message: error.description,
+                       severity: error.severity,
+                       from: CodeMirror.Pos(error.line - 1, start),
+                       to: CodeMirror.Pos(error.line - 1, end)});
+      }
+    }
+  }
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

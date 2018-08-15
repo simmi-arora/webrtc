@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/perl/perl.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/perl/perl.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+// CodeMirror2 mode/perl/perl.js (text/x-perl) beta 0.10 (2011-11-08)
+// This is a part of CodeMirror from https://github.com/sabaca/CodeMirror_mode_perl (mail@sabaca.com)
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+&quot;use strict&quot;;
+
+CodeMirror.defineMode(&quot;perl&quot;,function(){
+        // http://perldoc.perl.org
+        var PERL={                                      //   null - magic touch
+                                                        //   1 - keyword
+                                                        //   2 - def
+                                                        //   3 - atom
+                                                        //   4 - operator
+                                                        //   5 - variable-2 (predefined)
+                                                        //   [x,y] - x=1,2,3; y=must be defined if x{...}
+                                                //      PERL operators
+                &apos;-&gt;&apos;                            :   4,
+                &apos;++&apos;                            :   4,
+                &apos;--&apos;                            :   4,
+                &apos;**&apos;                            :   4,
+                                                        //   ! ~ \ and unary + and -
+                &apos;=~&apos;                            :   4,
+                &apos;!~&apos;                            :   4,
+                &apos;*&apos;                             :   4,
+                &apos;/&apos;                             :   4,
+                &apos;%&apos;                             :   4,
+                &apos;x&apos;                             :   4,
+                &apos;+&apos;                             :   4,
+                &apos;-&apos;                             :   4,
+                &apos;.&apos;                             :   4,
+                &apos;&lt;&lt;&apos;                            :   4,
+                &apos;&gt;&gt;&apos;                            :   4,
+                                                        //   named unary operators
+                &apos;&lt;&apos;                             :   4,
+                &apos;&gt;&apos;                             :   4,
+                &apos;&lt;=&apos;                            :   4,
+                &apos;&gt;=&apos;                            :   4,
+                &apos;lt&apos;                            :   4,
+                &apos;gt&apos;                            :   4,
+                &apos;le&apos;                            :   4,
+                &apos;ge&apos;                            :   4,
+                &apos;==&apos;                            :   4,
+                &apos;!=&apos;                            :   4,
+                &apos;&lt;=&gt;&apos;                           :   4,
+                &apos;eq&apos;                            :   4,
+                &apos;ne&apos;                            :   4,
+                &apos;cmp&apos;                           :   4,
+                &apos;~~&apos;                            :   4,
+                &apos;&amp;&apos;                             :   4,
+                &apos;|&apos;                             :   4,
+                &apos;^&apos;                             :   4,
+                &apos;&amp;&amp;&apos;                            :   4,
+                &apos;||&apos;                            :   4,
+                &apos;//&apos;                            :   4,
+                &apos;..&apos;                            :   4,
+                &apos;...&apos;                           :   4,
+                &apos;?&apos;                             :   4,
+                &apos;:&apos;                             :   4,
+                &apos;=&apos;                             :   4,
+                &apos;+=&apos;                            :   4,
+                &apos;-=&apos;                            :   4,
+                &apos;*=&apos;                            :   4,  //   etc. ???
+                &apos;,&apos;                             :   4,
+                &apos;=&gt;&apos;                            :   4,
+                &apos;::&apos;                            :   4,
+                                                        //   list operators (rightward)
+                &apos;not&apos;                           :   4,
+                &apos;and&apos;                           :   4,
+                &apos;or&apos;                            :   4,
+                &apos;xor&apos;                           :   4,
+                                                //      PERL predefined variables (I know, what this is a paranoid idea, but may be needed for people, who learn PERL, and for me as well, ...and may be for you?;)
+                &apos;BEGIN&apos;                         :   [5,1],
+                &apos;END&apos;                           :   [5,1],
+                &apos;PRINT&apos;                         :   [5,1],
+                &apos;PRINTF&apos;                        :   [5,1],
+                &apos;GETC&apos;                          :   [5,1],
+                &apos;READ&apos;                          :   [5,1],
+                &apos;READLINE&apos;                      :   [5,1],
+                &apos;DESTROY&apos;                       :   [5,1],
+                &apos;TIE&apos;                           :   [5,1],
+                &apos;TIEHANDLE&apos;                     :   [5,1],
+                &apos;UNTIE&apos;                         :   [5,1],
+                &apos;STDIN&apos;                         :    5,
+                &apos;STDIN_TOP&apos;                     :    5,
+                &apos;STDOUT&apos;                        :    5,
+                &apos;STDOUT_TOP&apos;                    :    5,
+                &apos;STDERR&apos;                        :    5,
+                &apos;STDERR_TOP&apos;                    :    5,
+                &apos;$ARG&apos;                          :    5,
+                &apos;$_&apos;                            :    5,
+                &apos;@ARG&apos;                          :    5,
+                &apos;@_&apos;                            :    5,
+                &apos;$LIST_SEPARATOR&apos;               :    5,
+                &apos;$&quot;&apos;                            :    5,
+                &apos;$PROCESS_ID&apos;                   :    5,
+                &apos;$PID&apos;                          :    5,
+                &apos;$$&apos;                            :    5,
+                &apos;$REAL_GROUP_ID&apos;                :    5,
+                &apos;$GID&apos;                          :    5,
+                &apos;$(&apos;                            :    5,
+                &apos;$EFFECTIVE_GROUP_ID&apos;           :    5,
+                &apos;$EGID&apos;                         :    5,
+                &apos;$)&apos;                            :    5,
+                &apos;$PROGRAM_NAME&apos;                 :    5,
+                &apos;$0&apos;                            :    5,
+                &apos;$SUBSCRIPT_SEPARATOR&apos;          :    5,
+                &apos;$SUBSEP&apos;                       :    5,
+                &apos;$;&apos;                            :    5,
+                &apos;$REAL_USER_ID&apos;                 :    5,
+                &apos;$UID&apos;                          :    5,
+                &apos;$&lt;&apos;                            :    5,
+                &apos;$EFFECTIVE_USER_ID&apos;            :    5,
+                &apos;$EUID&apos;                         :    5,
+                &apos;$&gt;&apos;                            :    5,
+                &apos;$a&apos;                            :    5,
+                &apos;$b&apos;                            :    5,
+                &apos;$COMPILING&apos;                    :    5,
+                &apos;$^C&apos;                           :    5,
+                &apos;$DEBUGGING&apos;                    :    5,
+                &apos;$^D&apos;                           :    5,
+                &apos;${^ENCODING}&apos;                  :    5,
+                &apos;$ENV&apos;                          :    5,
+                &apos;%ENV&apos;                          :    5,
+                &apos;$SYSTEM_FD_MAX&apos;                :    5,
+                &apos;$^F&apos;                           :    5,
+                &apos;@F&apos;                            :    5,
+                &apos;${^GLOBAL_PHASE}&apos;              :    5,
+                &apos;$^H&apos;                           :    5,
+                &apos;%^H&apos;                           :    5,
+                &apos;@INC&apos;                          :    5,
+                &apos;%INC&apos;                          :    5,
+                &apos;$INPLACE_EDIT&apos;                 :    5,
+                &apos;$^I&apos;                           :    5,
+                &apos;$^M&apos;                           :    5,
+                &apos;$OSNAME&apos;                       :    5,
+                &apos;$^O&apos;                           :    5,
+                &apos;${^OPEN}&apos;                      :    5,
+                &apos;$PERLDB&apos;                       :    5,
+                &apos;$^P&apos;                           :    5,
+                &apos;$SIG&apos;                          :    5,
+                &apos;%SIG&apos;                          :    5,
+                &apos;$BASETIME&apos;                     :    5,
+                &apos;$^T&apos;                           :    5,
+                &apos;${^TAINT}&apos;                     :    5,
+                &apos;${^UNICODE}&apos;                   :    5,
+                &apos;${^UTF8CACHE}&apos;                 :    5,
+                &apos;${^UTF8LOCALE}&apos;                :    5,
+                &apos;$PERL_VERSION&apos;                 :    5,
+                &apos;$^V&apos;                           :    5,
+                &apos;${^WIN32_SLOPPY_STAT}&apos;         :    5,
+                &apos;$EXECUTABLE_NAME&apos;              :    5,
+                &apos;$^X&apos;                           :    5,
+                &apos;$1&apos;                            :    5, // - regexp $1, $2...
+                &apos;$MATCH&apos;                        :    5,
+                &apos;$&amp;&apos;                            :    5,
+                &apos;${^MATCH}&apos;                     :    5,
+                &apos;$PREMATCH&apos;                     :    5,
+                &apos;$`&apos;                            :    5,
+                &apos;${^PREMATCH}&apos;                  :    5,
+                &apos;$POSTMATCH&apos;                    :    5,
+                &quot;$&apos;&quot;                            :    5,
+                &apos;${^POSTMATCH}&apos;                 :    5,
+                &apos;$LAST_PAREN_MATCH&apos;             :    5,
+                &apos;$+&apos;                            :    5,
+                &apos;$LAST_SUBMATCH_RESULT&apos;         :    5,
+                &apos;$^N&apos;                           :    5,
+                &apos;@LAST_MATCH_END&apos;               :    5,
+                &apos;@+&apos;                            :    5,
+                &apos;%LAST_PAREN_MATCH&apos;             :    5,
+                &apos;%+&apos;                            :    5,
+                &apos;@LAST_MATCH_START&apos;             :    5,
+                &apos;@-&apos;                            :    5,
+                &apos;%LAST_MATCH_START&apos;             :    5,
+                &apos;%-&apos;                            :    5,
+                &apos;$LAST_REGEXP_CODE_RESULT&apos;      :    5,
+                &apos;$^R&apos;                           :    5,
+                &apos;${^RE_DEBUG_FLAGS}&apos;            :    5,
+                &apos;${^RE_TRIE_MAXBUF}&apos;            :    5,
+                &apos;$ARGV&apos;                         :    5,
+                &apos;@ARGV&apos;                         :    5,
+                &apos;ARGV&apos;                          :    5,
+                &apos;ARGVOUT&apos;                       :    5,
+                &apos;$OUTPUT_FIELD_SEPARATOR&apos;       :    5,
+                &apos;$OFS&apos;                          :    5,
+                &apos;$,&apos;                            :    5,
+                &apos;$INPUT_LINE_NUMBER&apos;            :    5,
+                &apos;$NR&apos;                           :    5,
+                &apos;$.&apos;                            :    5,
+                &apos;$INPUT_RECORD_SEPARATOR&apos;       :    5,
+                &apos;$RS&apos;                           :    5,
+                &apos;$/&apos;                            :    5,
+                &apos;$OUTPUT_RECORD_SEPARATOR&apos;      :    5,
+                &apos;$ORS&apos;                          :    5,
+                &apos;$\\&apos;                           :    5,
+                &apos;$OUTPUT_AUTOFLUSH&apos;             :    5,
+                &apos;$|&apos;                            :    5,
+                &apos;$ACCUMULATOR&apos;                  :    5,
+                &apos;$^A&apos;                           :    5,
+                &apos;$FORMAT_FORMFEED&apos;              :    5,
+                &apos;$^L&apos;                           :    5,
+                &apos;$FORMAT_PAGE_NUMBER&apos;           :    5,
+                &apos;$%&apos;                            :    5,
+                &apos;$FORMAT_LINES_LEFT&apos;            :    5,
+                &apos;$-&apos;                            :    5,
+                &apos;$FORMAT_LINE_BREAK_CHARACTERS&apos; :    5,
+                &apos;$:&apos;                            :    5,
+                &apos;$FORMAT_LINES_PER_PAGE&apos;        :    5,
+                &apos;$=&apos;                            :    5,
+                &apos;$FORMAT_TOP_NAME&apos;              :    5,
+                &apos;$^&apos;                            :    5,
+                &apos;$FORMAT_NAME&apos;                  :    5,
+                &apos;$~&apos;                            :    5,
+                &apos;${^CHILD_ERROR_NATIVE}&apos;        :    5,
+                &apos;$EXTENDED_OS_ERROR&apos;            :    5,
+                &apos;$^E&apos;                           :    5,
+                &apos;$EXCEPTIONS_BEING_CAUGHT&apos;      :    5,
+                &apos;$^S&apos;                           :    5,
+                &apos;$WARNING&apos;                      :    5,
+                &apos;$^W&apos;                           :    5,
+                &apos;${^WARNING_BITS}&apos;              :    5,
+                &apos;$OS_ERROR&apos;                     :    5,
+                &apos;$ERRNO&apos;                        :    5,
+                &apos;$!&apos;                            :    5,
+                &apos;%OS_ERROR&apos;                     :    5,
+                &apos;%ERRNO&apos;                        :    5,
+                &apos;%!&apos;                            :    5,
+                &apos;$CHILD_ERROR&apos;                  :    5,
+                &apos;$?&apos;                            :    5,
+                &apos;$EVAL_ERROR&apos;                   :    5,
+                &apos;$@&apos;                            :    5,
+                &apos;$OFMT&apos;                         :    5,
+                &apos;$#&apos;                            :    5,
+                &apos;$*&apos;                            :    5,
+                &apos;$ARRAY_BASE&apos;                   :    5,
+                &apos;$[&apos;                            :    5,
+                &apos;$OLD_PERL_VERSION&apos;             :    5,
+                &apos;$]&apos;                            :    5,
+                                                //      PERL blocks
+                &apos;if&apos;                            :[1,1],
+                elsif                           :[1,1],
+                &apos;else&apos;                          :[1,1],
+                &apos;while&apos;                         :[1,1],
+                unless                          :[1,1],
+                &apos;for&apos;                           :[1,1],
+                foreach                         :[1,1],
+                                                //      PERL functions
+                &apos;abs&apos;                           :1,     // - absolute value function
+                accept                          :1,     // - accept an incoming socket connect
+                alarm                           :1,     // - schedule a SIGALRM
+                &apos;atan2&apos;                         :1,     // - arctangent of Y/X in the range -PI to PI
+                bind                            :1,     // - binds an address to a socket
+                binmode                         :1,     // - prepare binary files for I/O
+                bless                           :1,     // - create an object
+                bootstrap                       :1,     //
+                &apos;break&apos;                         :1,     // - break out of a &quot;given&quot; block
+                caller                          :1,     // - get context of the current subroutine call
+                chdir                           :1,     // - change your current working directory
+                chmod                           :1,     // - changes the permissions on a list of files
+                chomp                           :1,     // - remove a trailing record separator from a string
+                chop                            :1,     // - remove the last character from a string
+                chown                           :1,     // - change the owership on a list of files
+                chr                             :1,     // - get character this number represents
+                chroot                          :1,     // - make directory new root for path lookups
+                close                           :1,     // - close file (or pipe or socket) handle
+                closedir                        :1,     // - close directory handle
+                connect                         :1,     // - connect to a remote socket
+                &apos;continue&apos;                      :[1,1], // - optional trailing block in a while or foreach
+                &apos;cos&apos;                           :1,     // - cosine function
+                crypt                           :1,     // - one-way passwd-style encryption
+                dbmclose                        :1,     // - breaks binding on a tied dbm file
+                dbmopen                         :1,     // - create binding on a tied dbm file
+                &apos;default&apos;                       :1,     //
+                defined                         :1,     // - test whether a value, variable, or function is defined
+                &apos;delete&apos;                        :1,     // - deletes a value from a hash
+                die                             :1,     // - raise an exception or bail out
+                &apos;do&apos;                            :1,     // - turn a BLOCK into a TERM
+                dump                            :1,     // - create an immediate core dump
+                each                            :1,     // - retrieve the next key/value pair from a hash
+                endgrent                        :1,     // - be done using group file
+                endhostent                      :1,     // - be done using hosts file
+                endnetent                       :1,     // - be done using networks file
+                endprotoent                     :1,     // - be done using protocols file
+                endpwent                        :1,     // - be done using passwd file
+                endservent                      :1,     // - be done using services file
+                eof                             :1,     // - test a filehandle for its end
+                &apos;eval&apos;                          :1,     // - catch exceptions or compile and run code
+                &apos;exec&apos;                          :1,     // - abandon this program to run another
+                exists                          :1,     // - test whether a hash key is present
+                exit                            :1,     // - terminate this program
+                &apos;exp&apos;                           :1,     // - raise I to a power
+                fcntl                           :1,     // - file control system call
+                fileno                          :1,     // - return file descriptor from filehandle
+                flock                           :1,     // - lock an entire file with an advisory lock
+                fork                            :1,     // - create a new process just like this one
+                format                          :1,     // - declare a picture format with use by the write() function
+                formline                        :1,     // - internal function used for formats
+                getc                            :1,     // - get the next character from the filehandle
+                getgrent                        :1,     // - get next group record
+                getgrgid                        :1,     // - get group record given group user ID
+                getgrnam                        :1,     // - get group record given group name
+                gethostbyaddr                   :1,     // - get host record given its address
+                gethostbyname                   :1,     // - get host record given name
+                gethostent                      :1,     // - get next hosts record
+                getlogin                        :1,     // - return who logged in at this tty
+                getnetbyaddr                    :1,     // - get network record given its address
+                getnetbyname                    :1,     // - get networks record given name
+                getnetent                       :1,     // - get next networks record
+                getpeername                     :1,     // - find the other end of a socket connection
+                getpgrp                         :1,     // - get process group
+                getppid                         :1,     // - get parent process ID
+                getpriority                     :1,     // - get current nice value
+                getprotobyname                  :1,     // - get protocol record given name
+                getprotobynumber                :1,     // - get protocol record numeric protocol
+                getprotoent                     :1,     // - get next protocols record
+                getpwent                        :1,     // - get next passwd record
+                getpwnam                        :1,     // - get passwd record given user login name
+                getpwuid                        :1,     // - get passwd record given user ID
+                getservbyname                   :1,     // - get services record given its name
+                getservbyport                   :1,     // - get services record given numeric port
+                getservent                      :1,     // - get next services record
+                getsockname                     :1,     // - retrieve the sockaddr for a given socket
+                getsockopt                      :1,     // - get socket options on a given socket
+                given                           :1,     //
+                glob                            :1,     // - expand filenames using wildcards
+                gmtime                          :1,     // - convert UNIX time into record or string using Greenwich time
+                &apos;goto&apos;                          :1,     // - create spaghetti code
+                grep                            :1,     // - locate elements in a list test true against a given criterion
+                hex                             :1,     // - convert a string to a hexadecimal number
+                &apos;import&apos;                        :1,     // - patch a module&apos;s namespace into your own
+                index                           :1,     // - find a substring within a string
+                &apos;int&apos;                           :1,     // - get the integer portion of a number
+                ioctl                           :1,     // - system-dependent device control system call
+                &apos;join&apos;                          :1,     // - join a list into a string using a separator
+                keys                            :1,     // - retrieve list of indices from a hash
+                kill                            :1,     // - send a signal to a process or process group
+                last                            :1,     // - exit a block prematurely
+                lc                              :1,     // - return lower-case version of a string
+                lcfirst                         :1,     // - return a string with just the next letter in lower case
+                length                          :1,     // - return the number of bytes in a string
+                &apos;link&apos;                          :1,     // - create a hard link in the filesytem
+                listen                          :1,     // - register your socket as a server
+                local                           : 2,    // - create a temporary value for a global variable (dynamic scoping)
+                localtime                       :1,     // - convert UNIX time into record or string using local time
+                lock                            :1,     // - get a thread lock on a variable, subroutine, or method
+                &apos;log&apos;                           :1,     // - retrieve the natural logarithm for a number
+                lstat                           :1,     // - stat a symbolic link
+                m                               :null,  // - match a string with a regular expression pattern
+                map                             :1,     // - apply a change to a list to get back a new list with the changes
+                mkdir                           :1,     // - create a directory
+                msgctl                          :1,     // - SysV IPC message control operations
+                msgget                          :1,     // - get SysV IPC message queue
+                msgrcv                          :1,     // - receive a SysV IPC message from a message queue
+                msgsnd                          :1,     // - send a SysV IPC message to a message queue
+                my                              : 2,    // - declare and assign a local variable (lexical scoping)
+                &apos;new&apos;                           :1,     //
+                next                            :1,     // - iterate a block prematurely
+                no                              :1,     // - unimport some module symbols or semantics at compile time
+                oct                             :1,     // - convert a string to an octal number
+                open                            :1,     // - open a file, pipe, or descriptor
+                opendir                         :1,     // - open a directory
+                ord                             :1,     // - find a character&apos;s numeric representation
+                our                             : 2,    // - declare and assign a package variable (lexical scoping)
+                pack                            :1,     // - convert a list into a binary representation
+                &apos;package&apos;                       :1,     // - declare a separate global namespace
+                pipe                            :1,     // - open a pair of connected filehandles
+                pop                             :1,     // - remove the last element from an array and return it
+                pos                             :1,     // - find or set the offset for the last/next m//g search
+                print                           :1,     // - output a list to a filehandle
+                printf                          :1,     // - output a formatted list to a filehandle
+                prototype                       :1,     // - get the prototype (if any) of a subroutine
+                push                            :1,     // - append one or more elements to an array
+                q                               :null,  // - singly quote a string
+                qq                              :null,  // - doubly quote a string
+                qr                              :null,  // - Compile pattern
+                quotemeta                       :null,  // - quote regular expression magic characters
+                qw                              :null,  // - quote a list of words
+                qx                              :null,  // - backquote quote a string
+                rand                            :1,     // - retrieve the next pseudorandom number
+                read                            :1,     // - fixed-length buffered input from a filehandle
+                readdir                         :1,     // - get a directory from a directory handle
+                readline                        :1,     // - fetch a record from a file
+                readlink                        :1,     // - determine where a symbolic link is pointing
+                readpipe                        :1,     // - execute a system command and collect standard output
+                recv                            :1,     // - receive a message over a Socket
+                redo                            :1,     // - start this loop iteration over again
+                ref                             :1,     // - find out the type of thing being referenced
+                rename                          :1,     // - change a filename
+                require                         :1,     // - load in external functions from a library at runtime
+                reset                           :1,     // - clear all variables of a given name
+                &apos;return&apos;                        :1,     // - get out of a function early
+                reverse                         :1,     // - flip a string or a list
+                rewinddir                       :1,     // - reset directory handle
+                rindex                          :1,     // - right-to-left substring search
+                rmdir                           :1,     // - remove a directory
+                s                               :null,  // - replace a pattern with a string
+                say                             :1,     // - print with newline
+                scalar                          :1,     // - force a scalar context
+                seek                            :1,     // - reposition file pointer for random-access I/O
+                seekdir                         :1,     // - reposition directory pointer
+                select                          :1,     // - reset default output or do I/O multiplexing
+                semctl                          :1,     // - SysV semaphore control operations
+                semget                          :1,     // - get set of SysV semaphores
+                semop                           :1,     // - SysV semaphore operations
+                send                            :1,     // - send a message over a socket
+                setgrent                        :1,     // - prepare group file for use
+                sethostent                      :1,     // - prepare hosts file for use
+                setnetent                       :1,     // - prepare networks file for use
+                setpgrp                         :1,     // - set the process group of a process
+                setpriority                     :1,     // - set a process&apos;s nice value
+                setprotoent                     :1,     // - prepare protocols file for use
+                setpwent                        :1,     // - prepare passwd file for use
+                setservent                      :1,     // - prepare services file for use
+                setsockopt                      :1,     // - set some socket options
+                shift                           :1,     // - remove the first element of an array, and return it
+                shmctl                          :1,     // - SysV shared memory operations
+                shmget                          :1,     // - get SysV shared memory segment identifier
+                shmread                         :1,     // - read SysV shared memory
+                shmwrite                        :1,     // - write SysV shared memory
+                shutdown                        :1,     // - close down just half of a socket connection
+                &apos;sin&apos;                           :1,     // - return the sine of a number
+                sleep                           :1,     // - block for some number of seconds
+                socket                          :1,     // - create a socket
+                socketpair                      :1,     // - create a pair of sockets
+                &apos;sort&apos;                          :1,     // - sort a list of values
+                splice                          :1,     // - add or remove elements anywhere in an array
+                &apos;split&apos;                         :1,     // - split up a string using a regexp delimiter
+                sprintf                         :1,     // - formatted print into a string
+                &apos;sqrt&apos;                          :1,     // - square root function
+                srand                           :1,     // - seed the random number generator
+                stat                            :1,     // - get a file&apos;s status information
+                state                           :1,     // - declare and assign a state variable (persistent lexical scoping)
+                study                           :1,     // - optimize input data for repeated searches
+                &apos;sub&apos;                           :1,     // - declare a subroutine, possibly anonymously
+                &apos;substr&apos;                        :1,     // - get or alter a portion of a stirng
+                symlink                         :1,     // - create a symbolic link to a file
+                syscall                         :1,     // - execute an arbitrary system call
+                sysopen                         :1,     // - open a file, pipe, or descriptor
+                sysread                         :1,     // - fixed-length unbuffered input from a filehandle
+                sysseek                         :1,     // - position I/O pointer on handle used with sysread and syswrite
+                system                          :1,     // - run a separate program
+                syswrite                        :1,     // - fixed-length unbuffered output to a filehandle
+                tell                            :1,     // - get current seekpointer on a filehandle
+                telldir                         :1,     // - get current seekpointer on a directory handle
+                tie                             :1,     // - bind a variable to an object class
+                tied                            :1,     // - get a reference to the object underlying a tied variable
+                time                            :1,     // - return number of seconds since 1970
+                times                           :1,     // - return elapsed time for self and child processes
+                tr                              :null,  // - transliterate a string
+                truncate                        :1,     // - shorten a file
+                uc                              :1,     // - return upper-case version of a string
+                ucfirst                         :1,     // - return a string with just the next letter in upper case
+                umask                           :1,     // - set file creation mode mask
+                undef                           :1,     // - remove a variable or function definition
+                unlink                          :1,     // - remove one link to a file
+                unpack                          :1,     // - convert binary structure into normal perl variables
+                unshift                         :1,     // - prepend more elements to the beginning of a list
+                untie                           :1,     // - break a tie binding to a variable
+                use                             :1,     // - load in a module at compile time
+                utime                           :1,     // - set a file&apos;s last access and modify times
+                values                          :1,     // - return a list of the values in a hash
+                vec                             :1,     // - test or set particular bits in a string
+                wait                            :1,     // - wait for any child process to die
+                waitpid                         :1,     // - wait for a particular child process to die
+                wantarray                       :1,     // - get void vs scalar vs list context of current subroutine call
+                warn                            :1,     // - print debugging info
+                when                            :1,     //
+                write                           :1,     // - print a picture record
+                y                               :null}; // - transliterate a string
+
+        var RXstyle=&quot;string-2&quot;;
+        var RXmodifiers=/[goseximacplud]/;              // NOTE: &quot;m&quot;, &quot;s&quot;, &quot;y&quot; and &quot;tr&quot; need to correct real modifiers for each regexp type
+
+        function tokenChain(stream,state,chain,style,tail){     // NOTE: chain.length &gt; 2 is not working now (it&apos;s for s[...][...]geos;)
+                state.chain=null;                               //                                                          12   3tail
+                state.style=null;
+                state.tail=null;
+                state.tokenize=function(stream,state){
+                        var e=false,c,i=0;
+                        while(c=stream.next()){
+                                if(c===chain[i]&amp;&amp;!e){
+                                        if(chain[++i]!==undefined){
+                                                state.chain=chain[i];
+                                                state.style=style;
+                                                state.tail=tail;}
+                                        else if(tail)
+                                                stream.eatWhile(tail);
+                                        state.tokenize=tokenPerl;
+                                        return style;}
+                                e=!e&amp;&amp;c==&quot;\\&quot;;}
+                        return style;};
+                return state.tokenize(stream,state);}
+
+        function tokenSOMETHING(stream,state,string){
+                state.tokenize=function(stream,state){
+                        if(stream.string==string)
+                                state.tokenize=tokenPerl;
+                        stream.skipToEnd();
+                        return &quot;string&quot;;};
+                return state.tokenize(stream,state);}
+
+        function tokenPerl(stream,state){
+                if(stream.eatSpace())
+                        return null;
+                if(state.chain)
+                        return tokenChain(stream,state,state.chain,state.style,state.tail);
+                if(stream.match(/^\-?[\d\.]/,false))
+                        if(stream.match(/^(\-?(\d*\.\d+(e[+-]?\d+)?|\d+\.\d*)|0x[\da-fA-F]+|0b[01]+|\d+(e[+-]?\d+)?)/))
+                                return &apos;number&apos;;
+                if(stream.match(/^&lt;&lt;(?=\w)/)){                  // NOTE: &lt;&lt;SOMETHING\n...\nSOMETHING\n
+                        stream.eatWhile(/\w/);
+                        return tokenSOMETHING(stream,state,stream.current().substr(2));}
+                if(stream.sol()&amp;&amp;stream.match(/^\=item(?!\w)/)){// NOTE: \n=item...\n=cut\n
+                        return tokenSOMETHING(stream,state,&apos;=cut&apos;);}
+                var ch=stream.next();
+                if(ch==&apos;&quot;&apos;||ch==&quot;&apos;&quot;){                           // NOTE: &apos; or &quot; or &lt;&lt;&apos;SOMETHING&apos;\n...\nSOMETHING\n or &lt;&lt;&quot;SOMETHING&quot;\n...\nSOMETHING\n
+                        if(prefix(stream, 3)==&quot;&lt;&lt;&quot;+ch){
+                                var p=stream.pos;
+                                stream.eatWhile(/\w/);
+                                var n=stream.current().substr(1);
+                                if(n&amp;&amp;stream.eat(ch))
+                                        return tokenSOMETHING(stream,state,n);
+                                stream.pos=p;}
+                        return tokenChain(stream,state,[ch],&quot;string&quot;);}
+                if(ch==&quot;q&quot;){
+                        var c=look(stream, -2);
+                        if(!(c&amp;&amp;/\w/.test(c))){
+                                c=look(stream, 0);
+                                if(c==&quot;x&quot;){
+                                        c=look(stream, 1);
+                                        if(c==&quot;(&quot;){
+                                                eatSuffix(stream, 2);
+                                                return tokenChain(stream,state,[&quot;)&quot;],RXstyle,RXmodifiers);}
+                                        if(c==&quot;[&quot;){
+                                                eatSuffix(stream, 2);
+                                                return tokenChain(stream,state,[&quot;]&quot;],RXstyle,RXmodifiers);}
+                                        if(c==&quot;{&quot;){
+                                                eatSuffix(stream, 2);
+                                                return tokenChain(stream,state,[&quot;}&quot;],RXstyle,RXmodifiers);}
+                                        if(c==&quot;&lt;&quot;){
+                                                eatSuffix(stream, 2);
+                                                return tokenChain(stream,state,[&quot;&gt;&quot;],RXstyle,RXmodifiers);}
+                                        if(/[\^&apos;&quot;!~\/]/.test(c)){
+                                                eatSuffix(stream, 1);
+                                                return tokenChain(stream,state,[stream.eat(c)],RXstyle,RXmodifiers);}}
+                                else if(c==&quot;q&quot;){
+                                        c=look(stream, 1);
+                                        if(c==&quot;(&quot;){
+                                                eatSuffix(stream, 2);
+                                                return tokenChain(stream,state,[&quot;)&quot;],&quot;string&quot;);}
+                                        if(c==&quot;[&quot;){
+                                                eatSuffix(stream, 2);
+                                                return tokenChain(stream,state,[&quot;]&quot;],&quot;string&quot;);}
+                                        if(c==&quot;{&quot;){
+                                                eatSuffix(stream, 2);
+                                                return tokenChain(stream,state,[&quot;}&quot;],&quot;string&quot;);}
+                                        if(c==&quot;&lt;&quot;){
+                                                eatSuffix(stream, 2);
+                                                return tokenChain(stream,state,[&quot;&gt;&quot;],&quot;string&quot;);}
+                                        if(/[\^&apos;&quot;!~\/]/.test(c)){
+                                                eatSuffix(stream, 1);
+                                                return tokenChain(stream,state,[stream.eat(c)],&quot;string&quot;);}}
+                                else if(c==&quot;w&quot;){
+                                        c=look(stream, 1);
+                                        if(c==&quot;(&quot;){
+                                                eatSuffix(stream, 2);
+                                                return tokenChain(stream,state,[&quot;)&quot;],&quot;bracket&quot;);}
+                                        if(c==&quot;[&quot;){
+                                                eatSuffix(stream, 2);
+                                                return tokenChain(stream,state,[&quot;]&quot;],&quot;bracket&quot;);}
+                                        if(c==&quot;{&quot;){
+                                                eatSuffix(stream, 2);
+                                                return tokenChain(stream,state,[&quot;}&quot;],&quot;bracket&quot;);}
+                                        if(c==&quot;&lt;&quot;){
+                                                eatSuffix(stream, 2);
+                                                return tokenChain(stream,state,[&quot;&gt;&quot;],&quot;bracket&quot;);}
+                                        if(/[\^&apos;&quot;!~\/]/.test(c)){
+                                                eatSuffix(stream, 1);
+                                                return tokenChain(stream,state,[stream.eat(c)],&quot;bracket&quot;);}}
+                                else if(c==&quot;r&quot;){
+                                        c=look(stream, 1);
+                                        if(c==&quot;(&quot;){
+                                                eatSuffix(stream, 2);
+                                                return tokenChain(stream,state,[&quot;)&quot;],RXstyle,RXmodifiers);}
+                                        if(c==&quot;[&quot;){
+                                                eatSuffix(stream, 2);
+                                                return tokenChain(stream,state,[&quot;]&quot;],RXstyle,RXmodifiers);}
+                                        if(c==&quot;{&quot;){
+                                                eatSuffix(stream, 2);
+                                                return tokenChain(stream,state,[&quot;}&quot;],RXstyle,RXmodifiers);}
+                                        if(c==&quot;&lt;&quot;){
+                                                eatSuffix(stream, 2);
+                                                return tokenChain(stream,state,[&quot;&gt;&quot;],RXstyle,RXmodifiers);}
+                                        if(/[\^&apos;&quot;!~\/]/.test(c)){
+                                                eatSuffix(stream, 1);
+                                                return tokenChain(stream,state,[stream.eat(c)],RXstyle,RXmodifiers);}}
+                                else if(/[\^&apos;&quot;!~\/(\[{&lt;]/.test(c)){
+                                        if(c==&quot;(&quot;){
+                                                eatSuffix(stream, 1);
+                                                return tokenChain(stream,state,[&quot;)&quot;],&quot;string&quot;);}
+                                        if(c==&quot;[&quot;){
+                                                eatSuffix(stream, 1);
+                                                return tokenChain(stream,state,[&quot;]&quot;],&quot;string&quot;);}
+                                        if(c==&quot;{&quot;){
+                                                eatSuffix(stream, 1);
+                                                return tokenChain(stream,state,[&quot;}&quot;],&quot;string&quot;);}
+                                        if(c==&quot;&lt;&quot;){
+                                                eatSuffix(stream, 1);
+                                                return tokenChain(stream,state,[&quot;&gt;&quot;],&quot;string&quot;);}
+                                        if(/[\^&apos;&quot;!~\/]/.test(c)){
+                                                return tokenChain(stream,state,[stream.eat(c)],&quot;string&quot;);}}}}
+                if(ch==&quot;m&quot;){
+                        var c=look(stream, -2);
+                        if(!(c&amp;&amp;/\w/.test(c))){
+                                c=stream.eat(/[(\[{&lt;\^&apos;&quot;!~\/]/);
+                                if(c){
+                                        if(/[\^&apos;&quot;!~\/]/.test(c)){
+                                                return tokenChain(stream,state,[c],RXstyle,RXmodifiers);}
+                                        if(c==&quot;(&quot;){
+                                                return tokenChain(stream,state,[&quot;)&quot;],RXstyle,RXmodifiers);}
+                                        if(c==&quot;[&quot;){
+                                                return tokenChain(stream,state,[&quot;]&quot;],RXstyle,RXmodifiers);}
+                                        if(c==&quot;{&quot;){
+                                                return tokenChain(stream,state,[&quot;}&quot;],RXstyle,RXmodifiers);}
+                                        if(c==&quot;&lt;&quot;){
+                                                return tokenChain(stream,state,[&quot;&gt;&quot;],RXstyle,RXmodifiers);}}}}
+                if(ch==&quot;s&quot;){
+                        var c=/[\/&gt;\]})\w]/.test(look(stream, -2));
+                        if(!c){
+                                c=stream.eat(/[(\[{&lt;\^&apos;&quot;!~\/]/);
+                                if(c){
+                                        if(c==&quot;[&quot;)
+                                                return tokenChain(stream,state,[&quot;]&quot;,&quot;]&quot;],RXstyle,RXmodifiers);
+                                        if(c==&quot;{&quot;)
+                                                return tokenChain(stream,state,[&quot;}&quot;,&quot;}&quot;],RXstyle,RXmodifiers);
+                                        if(c==&quot;&lt;&quot;)
+                                                return tokenChain(stream,state,[&quot;&gt;&quot;,&quot;&gt;&quot;],RXstyle,RXmodifiers);
+                                        if(c==&quot;(&quot;)
+                                                return tokenChain(stream,state,[&quot;)&quot;,&quot;)&quot;],RXstyle,RXmodifiers);
+                                        return tokenChain(stream,state,[c,c],RXstyle,RXmodifiers);}}}
+                if(ch==&quot;y&quot;){
+                        var c=/[\/&gt;\]})\w]/.test(look(stream, -2));
+                        if(!c){
+                                c=stream.eat(/[(\[{&lt;\^&apos;&quot;!~\/]/);
+                                if(c){
+                                        if(c==&quot;[&quot;)
+                                                return tokenChain(stream,state,[&quot;]&quot;,&quot;]&quot;],RXstyle,RXmodifiers);
+                                        if(c==&quot;{&quot;)
+                                                return tokenChain(stream,state,[&quot;}&quot;,&quot;}&quot;],RXstyle,RXmodifiers);
+                                        if(c==&quot;&lt;&quot;)
+                                                return tokenChain(stream,state,[&quot;&gt;&quot;,&quot;&gt;&quot;],RXstyle,RXmodifiers);
+                                        if(c==&quot;(&quot;)
+                                                return tokenChain(stream,state,[&quot;)&quot;,&quot;)&quot;],RXstyle,RXmodifiers);
+                                        return tokenChain(stream,state,[c,c],RXstyle,RXmodifiers);}}}
+                if(ch==&quot;t&quot;){
+                        var c=/[\/&gt;\]})\w]/.test(look(stream, -2));
+                        if(!c){
+                                c=stream.eat(&quot;r&quot;);if(c){
+                                c=stream.eat(/[(\[{&lt;\^&apos;&quot;!~\/]/);
+                                if(c){
+                                        if(c==&quot;[&quot;)
+                                                return tokenChain(stream,state,[&quot;]&quot;,&quot;]&quot;],RXstyle,RXmodifiers);
+                                        if(c==&quot;{&quot;)
+                                                return tokenChain(stream,state,[&quot;}&quot;,&quot;}&quot;],RXstyle,RXmodifiers);
+                                        if(c==&quot;&lt;&quot;)
+                                                return tokenChain(stream,state,[&quot;&gt;&quot;,&quot;&gt;&quot;],RXstyle,RXmodifiers);
+                                        if(c==&quot;(&quot;)
+                                                return tokenChain(stream,state,[&quot;)&quot;,&quot;)&quot;],RXstyle,RXmodifiers);
+                                        return tokenChain(stream,state,[c,c],RXstyle,RXmodifiers);}}}}
+                if(ch==&quot;`&quot;){
+                        return tokenChain(stream,state,[ch],&quot;variable-2&quot;);}
+                if(ch==&quot;/&quot;){
+                        if(!/~\s*$/.test(prefix(stream)))
+                                return &quot;operator&quot;;
+                        else
+                                return tokenChain(stream,state,[ch],RXstyle,RXmodifiers);}
+                if(ch==&quot;$&quot;){
+                        var p=stream.pos;
+                        if(stream.eatWhile(/\d/)||stream.eat(&quot;{&quot;)&amp;&amp;stream.eatWhile(/\d/)&amp;&amp;stream.eat(&quot;}&quot;))
+                                return &quot;variable-2&quot;;
+                        else
+                                stream.pos=p;}
+                if(/[$@%]/.test(ch)){
+                        var p=stream.pos;
+                        if(stream.eat(&quot;^&quot;)&amp;&amp;stream.eat(/[A-Z]/)||!/[@$%&amp;]/.test(look(stream, -2))&amp;&amp;stream.eat(/[=|\\\-#?@;:&amp;`~\^!\[\]*&apos;&quot;$+.,\/&lt;&gt;()]/)){
+                                var c=stream.current();
+                                if(PERL[c])
+                                        return &quot;variable-2&quot;;}
+                        stream.pos=p;}
+                if(/[$@%&amp;]/.test(ch)){
+                        if(stream.eatWhile(/[\w$\[\]]/)||stream.eat(&quot;{&quot;)&amp;&amp;stream.eatWhile(/[\w$\[\]]/)&amp;&amp;stream.eat(&quot;}&quot;)){
+                                var c=stream.current();
+                                if(PERL[c])
+                                        return &quot;variable-2&quot;;
+                                else
+                                        return &quot;variable&quot;;}}
+                if(ch==&quot;#&quot;){
+                        if(look(stream, -2)!=&quot;$&quot;){
+                                stream.skipToEnd();
+                                return &quot;comment&quot;;}}
+                if(/[:+\-\^*$&amp;%@=&lt;&gt;!?|\/~\.]/.test(ch)){
+                        var p=stream.pos;
+                        stream.eatWhile(/[:+\-\^*$&amp;%@=&lt;&gt;!?|\/~\.]/);
+                        if(PERL[stream.current()])
+                                return &quot;operator&quot;;
+                        else
+                                stream.pos=p;}
+                if(ch==&quot;_&quot;){
+                        if(stream.pos==1){
+                                if(suffix(stream, 6)==&quot;_END__&quot;){
+                                        return tokenChain(stream,state,[&apos;\0&apos;],&quot;comment&quot;);}
+                                else if(suffix(stream, 7)==&quot;_DATA__&quot;){
+                                        return tokenChain(stream,state,[&apos;\0&apos;],&quot;variable-2&quot;);}
+                                else if(suffix(stream, 7)==&quot;_C__&quot;){
+                                        return tokenChain(stream,state,[&apos;\0&apos;],&quot;string&quot;);}}}
+                if(/\w/.test(ch)){
+                        var p=stream.pos;
+                        if(look(stream, -2)==&quot;{&quot;&amp;&amp;(look(stream, 0)==&quot;}&quot;||stream.eatWhile(/\w/)&amp;&amp;look(stream, 0)==&quot;}&quot;))
+                                return &quot;string&quot;;
+                        else
+                                stream.pos=p;}
+                if(/[A-Z]/.test(ch)){
+                        var l=look(stream, -2);
+                        var p=stream.pos;
+                        stream.eatWhile(/[A-Z_]/);
+                        if(/[\da-z]/.test(look(stream, 0))){
+                                stream.pos=p;}
+                        else{
+                                var c=PERL[stream.current()];
+                                if(!c)
+                                        return &quot;meta&quot;;
+                                if(c[1])
+                                        c=c[0];
+                                if(l!=&quot;:&quot;){
+                                        if(c==1)
+                                                return &quot;keyword&quot;;
+                                        else if(c==2)
+                                                return &quot;def&quot;;
+                                        else if(c==3)
+                                                return &quot;atom&quot;;
+                                        else if(c==4)
+                                                return &quot;operator&quot;;
+                                        else if(c==5)
+                                                return &quot;variable-2&quot;;
+                                        else
+                                                return &quot;meta&quot;;}
+                                else
+                                        return &quot;meta&quot;;}}
+                if(/[a-zA-Z_]/.test(ch)){
+                        var l=look(stream, -2);
+                        stream.eatWhile(/\w/);
+                        var c=PERL[stream.current()];
+                        if(!c)
+                                return &quot;meta&quot;;
+                        if(c[1])
+                                c=c[0];
+                        if(l!=&quot;:&quot;){
+                                if(c==1)
+                                        return &quot;keyword&quot;;
+                                else if(c==2)
+                                        return &quot;def&quot;;
+                                else if(c==3)
+                                        return &quot;atom&quot;;
+                                else if(c==4)
+                                        return &quot;operator&quot;;
+                                else if(c==5)
+                                        return &quot;variable-2&quot;;
+                                else
+                                        return &quot;meta&quot;;}
+                        else
+                                return &quot;meta&quot;;}
+                return null;}
+
+        return{
+                startState:function(){
+                        return{
+                                tokenize:tokenPerl,
+                                chain:null,
+                                style:null,
+                                tail:null};},
+                token:function(stream,state){
+                        return (state.tokenize||tokenPerl)(stream,state);}
+                };});
+
+CodeMirror.registerHelper(&quot;wordChars&quot;, &quot;perl&quot;, /[\w$]/);
+
+CodeMirror.defineMIME(&quot;text/x-perl&quot;, &quot;perl&quot;);
+
+// it&apos;s like &quot;peek&quot;, but need for look-ahead or look-behind if index &lt; 0
+function look(stream, c){
+  return stream.string.charAt(stream.pos+(c||0));
+}
+
+// return a part of prefix of current stream from current position
+function prefix(stream, c){
+  if(c){
+    var x=stream.pos-c;
+    return stream.string.substr((x&gt;=0?x:0),c);}
+  else{
+    return stream.string.substr(0,stream.pos-1);
+  }
+}
+
+// return a part of suffix of current stream from current position
+function suffix(stream, c){
+  var y=stream.string.length;
+  var x=y-stream.pos+1;
+  return stream.string.substr(stream.pos,(c&amp;&amp;c&lt;y?c:x));
+}
+
+// eating and vomiting a part of stream from current position
+function eatSuffix(stream, c){
+  var x=stream.pos+c;
+  var y;
+  if(x&lt;=0)
+    stream.pos=0;
+  else if(x&gt;=(y=stream.string.length-1))
+    stream.pos=y;
+  else
+    stream.pos=x;
+}
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

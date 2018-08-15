@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/addon/selection/active-line.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/addon/selection/active-line.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+// Because sometimes you need to style the cursor&apos;s line.
+//
+// Adds an option &apos;styleActiveLine&apos; which, when enabled, gives the
+// active line&apos;s wrapping &lt;div&gt; the CSS class &quot;CodeMirror-activeline&quot;,
+// and gives its background &lt;div&gt; the class &quot;CodeMirror-activeline-background&quot;.
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+  &quot;use strict&quot;;
+  var WRAP_CLASS = &quot;CodeMirror-activeline&quot;;
+  var BACK_CLASS = &quot;CodeMirror-activeline-background&quot;;
+
+  CodeMirror.defineOption(&quot;styleActiveLine&quot;, false, function(cm, val, old) {
+    var prev = old &amp;&amp; old != CodeMirror.Init;
+    if (val &amp;&amp; !prev) {
+      cm.state.activeLines = [];
+      updateActiveLines(cm, cm.listSelections());
+      cm.on(&quot;beforeSelectionChange&quot;, selectionChange);
+    } else if (!val &amp;&amp; prev) {
+      cm.off(&quot;beforeSelectionChange&quot;, selectionChange);
+      clearActiveLines(cm);
+      delete cm.state.activeLines;
+    }
+  });
+
+  function clearActiveLines(cm) {
+    for (var i = 0; i &lt; cm.state.activeLines.length; i++) {
+      cm.removeLineClass(cm.state.activeLines[i], &quot;wrap&quot;, WRAP_CLASS);
+      cm.removeLineClass(cm.state.activeLines[i], &quot;background&quot;, BACK_CLASS);
+    }
+  }
+
+  function sameArray(a, b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i &lt; a.length; i++)
+      if (a[i] != b[i]) return false;
+    return true;
+  }
+
+  function updateActiveLines(cm, ranges) {
+    var active = [];
+    for (var i = 0; i &lt; ranges.length; i++) {
+      var range = ranges[i];
+      if (!range.empty()) continue;
+      var line = cm.getLineHandleVisualStart(range.head.line);
+      if (active[active.length - 1] != line) active.push(line);
+    }
+    if (sameArray(cm.state.activeLines, active)) return;
+    cm.operation(function() {
+      clearActiveLines(cm);
+      for (var i = 0; i &lt; active.length; i++) {
+        cm.addLineClass(active[i], &quot;wrap&quot;, WRAP_CLASS);
+        cm.addLineClass(active[i], &quot;background&quot;, BACK_CLASS);
+      }
+      cm.state.activeLines = active;
+    });
+  }
+
+  function selectionChange(cm, sel) {
+    updateActiveLines(cm, sel.ranges);
+  }
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

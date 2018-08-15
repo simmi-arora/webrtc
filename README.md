@@ -687,10 +687,15 @@ Used Libs
 
 Following are the additioanl libraries packed with the project 
 
-###### Gulp
-Minify and concat the js and css files  into minscripts
+###### Task Runner 
+you can run gulp alone to minify and concat the js and css files  into minscripts
 ```
 gulp
+```
+
+or can run grunt to concat , minifify , ugligy , push to git and npm all together 
+```
+grunt production 
 ```
 
 ###### forever 
@@ -698,6 +703,14 @@ Keeps running even when window is not active
 ```
 cd WebCall
 forever start webrtcserver.js
+```
+
+##### Developing / Aletring the Libs
+
+creating doc 
+```
+ ./node_modules/.bin/esdoc
+  open ./docs/index.html
 ```
 
 ###### PM2

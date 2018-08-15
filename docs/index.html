@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl">
+  <title data-ice="title">Home | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="webrtc">webrtc</h1><p>web real time communication platform </p>
+<p><img src="http://s20.postimg.org/sywx5rjx5/webrtc_development_logo_1_1.png" alt="alt webrtc development "></p>
+<p><a href="https://gitter.im/altanai/webrtc?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge">![Gitter][GS image]</a>
+<a href="https://travis-ci.org/altanai/webrtc"><img src="https://api.travis-ci.org/altanai/webrtc.png" alt="Build Status"></a>
+<a href="https://david-dm.org/altanai/webrtc"><img src="https://david-dm.org/altanai/webrtc.svg" alt="Dependency Status"></a>
+<a href="https://www.npmjs.com/package/webrtcdevelopment"><img src="https://nodei.co/npm/webrtcdevelopment.png" alt="NPM Status"></a></p>
+<p>This is a ready to deploy webrtc SDK and SaaS for a customized and flexible communication and collaboration solution .</p>
+<h2 id="sdk">SDK</h2><h5 id="architecture">Architecture</h5><p>The Solution primarily contains nodejs frameworks for hosting the project and webbsockets over socket.io to perform offer - answer handshake and share SDP (Session description protocol ).
+<img src="https://s32.postimg.org/uamq0uq9h/webrtcdevelopment_SDK.png" alt="alt webrtc development architecture "></p>
+<h5 id="technologies-used">Technologies used</h5><ol>
+<li><p>WebRTC 
+Web based real time communication framework.
+read more on <a href="https://altanaitelecom.wordpress.com/2013/08/02/what-is-webrtc/">webrtc</a></p>
+</li>
+<li><p>Node ( v10.0.0)
+Asynchronous event driven JavaScript runtime</p>
+</li>
+<li><p>socket.io ( v0.9)
+Communication and signalling </p>
+</li>
+</ol>
+<p>Note  : while its possible to use any prtotocol like SIP , XMPP , AJAX , JSON etc for this purpose , modifying thsi libabry will require a lot of rework . It would be advisble to start from apprtc directly in that case .  </p>
+<ol start="4">
+<li>Grunt
+It is a task Runner and its used to automate running of command in gruntfile<pre><code><code class="source-code prettyprint">grunt -verbose</code>
+</code></pre></li>
+</ol>
+<h2 id="build-sdk">Build SDK</h2><p>Project is divided into 4 parts </p>
+<ol>
+<li>Core RTC Conn Lib </li>
+<li>Wrappers for the Core Lib containing feature sets and widgets like screensharing , recording , pointer share , machine learning , face detection etc</li>
+<li>Demo Applicatins like two party full-features , multi-party full features etc which implement and use the SDK by invoking the constructirs , emitters and listeners .</li>
+</ol>
+<h5 id="building-the-sdk">Building the SDK</h5><p>Download the dev dependencies by setting the NODE_ENV to dev . 
+This will install all grunt and gulp dependencies used for building the SDK</p>
+<pre><code><code class="source-code prettyprint">NODE_ENV=development npm install</code>
+</code></pre><p>To build the RtcConn , outputs RTCMultiConn</p>
+<pre><code><code class="source-code prettyprint">grunt rtcconn</code>
+</code></pre><p>To build the webrtcdev lib . 
+It encapsulates the rtcconn core along with external libs for building various custom features .
+Outputs webrtcdevelopment.js , webrtcdevelopment_header.js , webrtcdevelopment.css , webrtcdevelopment_header.css and webrtcdevelopmentserver.js</p>
+<pre><code><code class="source-code prettyprint">gulp production</code>
+</code></pre><h2 id="get-started">Get Started</h2><p>To run this project following steps need to be followed in that order :</p>
+<h5 id="1--get-the-project-from-github">1. get the project from github</h5><pre><code><code class="source-code prettyprint">git clone https://github.com/altanai/webrtc.git webrtc</code>
+</code></pre><h5 id="2--install-nvm---node-version-manager--">2. install nvm ( node version manager )</h5><pre><code><code class="source-code prettyprint">curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.2/install.sh | bash
+. ~/.nvm/nvm.sh
+nvm install v5.0.0
+nvm use v5.0.0</code>
+</code></pre><h5 id="3--install-npm-and-update-the-dependencies">3. install npm and update the dependencies</h5><p>It will read the package.json and update the dependencies in node_modules folder on project location</p>
+<pre><code><code class="source-code prettyprint">    sudo apt-get install npm
+    npm install </code>
+</code></pre><h5 id="4--change-env-variables-and-test">4. Change ENV variables and Test</h5><p>To change the ports for running the https server and rest server, goto env.json</p>
+<pre><code><code class="source-code prettyprint">{       
+    &quot;hostname&quot;      : &quot;host&quot;,        
+    &quot;enviornment&quot;   : &quot;local&quot;,        
+    &quot;host&quot;            : &quot;localhost&quot;,
+    &quot;jsdebug&quot;      :  true,          
+    &quot;httpsPort&quot;    :  8086,
+    &quot;restPort&quot;     :  8087,
+    &quot;extensionID&quot;   : &quot;elfbfompfpakbefoaicaeoabnnoihoac&quot;
+}</code>
+</code></pre><p>To run the tests</p>
+<pre><code><code class="source-code prettyprint">    npm test</code>
+</code></pre><h5 id="5--start-up-the-server">5. Start up the Server</h5><p>To start the Server in dev mode  and stop the server as soon as Ctrl+ C is hit or the terminal widnow is closed . </p>
+<pre><code><code class="source-code prettyprint">    node webrtcserver.js</code>
+</code></pre><p>read more about <a href="https://nodejs.org/en/about/">node</a></p>
+<p>To start the Server using npm start ( using package.json) , behaves same as earlier run using node. We use supervisor to restart the server incase of exceptions or new code .</p>
+<pre><code><code class="source-code prettyprint">    npm start</code>
+</code></pre><h5 id="6--js-and-css-libs">6. JS and CSS Libs</h5><p>Make a webpage and give holders for video and button elements that SDK will use .</p>
+<p>Inside the head tag of html
+    build/webrtcdevelopment_header.css
+    build/webrtcdevelopment_header.js</p>
+<p>After the body tag of html
+    build/webrtcdevelopment.css
+    build/webrtcdevelopment.js</p>
+<h5 id="7--configure">7. Configure</h5><p>Create the webrtc dom object with local and remote objects</p>
+<p>local object  :</p>
+<pre><code><code class="source-code prettyprint">    var local={
+        video           :   &quot;myAloneVideo&quot;,            // name of the local video element
+        videoClass      :   &quot;&quot;,                        // class of the localvideo
+        videoContainer  :   &quot;singleVideoContainer&quot;,    // outer container of the video element
+        userDisplay :       false,                     // do you want to display user details
+        userMetaDisplay :   false,
+        userdetails:{                                   // users details include name , email , color
+            username    : username,
+            usercolor   : &quot;#DDECEF&quot;,
+            useremail   : useremail,
+            role        : &quot;participant&quot;                 // role of user in the session , can be participant , admin , inspector
+        }
+    };</code>
+</code></pre><p>remote object  :</p>
+<pre><code><code class="source-code prettyprint">    var remote={
+        videoarr        : [&quot;myConferenceVideo&quot;, &quot;otherConferenceVideo&quot;], // conatiners for the video after session is made 
+                                                                // first one is usually the local video holder followed by remote video holders
+        videoClass      : &quot;&quot;,
+        maxAllowed      : &quot;6&quot;,
+        videoContainer  : &quot;confVideoContainer&quot;,
+        userDisplay     : false,
+        userMetaDisplay : false,
+        dynamicVideos   : false 
+    };
+</code>
+</code></pre><p>Incoming and outgoing media configiration  ( self exlanatory ) :</p>
+<pre><code><code class="source-code prettyprint">    var incoming={
+        audio :  true,
+        video :  true,
+        data  :  true,
+        screen:  true
+    };
+
+    var outgoing={
+        audio :  true,
+        video :  true,
+        data  :  true,
+        screen:  true
+    };
+
+    webrtcdomobj= new WebRTCdom(
+        local, remote, incoming, outgoing
+    );</code>
+</code></pre><hr>
+<p>Get session id automaically</p>
+<pre><code><code class="source-code prettyprint">sessionid = init(true);</code>
+</code></pre><p>or get session name from user</p>
+<pre><code><code class="source-code prettyprint">sessionid = init(false);</code>
+</code></pre><hr>
+<p>Create a session json object with turn credentials nd the session created from above step</p>
+<p>Set widgets and their properties . Currently available widgets are </p>
+<pre><code><code class="source-code prettyprint">* Chat 
+* Fileshare
+* Timer
+* Screen Record
+* Screen Share
+* Video Record
+* Snapshot
+* Minimising/ maximising Video
+* Mute (audio and/or video)
+* Draw on Canvas and Sync
+* Text Editor and Sync
+* Reconnect</code>
+</code></pre><p>Description of Widgets with SDK invocation</p>
+<h3 id="1--chat">1. Chat</h3><p>User RTCDataConnection api from webRTC to send peer to peer nessages within a session. If camera is present the SDK captures a screenshot with user&apos;s cemars feed at the isnatnt of typing the message and send along with the message. </p>
+<p>When the chat widget is active  , if the dom specified by the container id is present then webSDK uses as it is,  else it creates one default box </p>
+<pre><code><code class="source-code prettyprint">{
+    active: true,
+    container: {
+        id: &quot;chatContainer&quot;                 // dom id of the chat conatiner 
+    },
+    inputBox:{
+        text_id:&quot;chatInputText&quot;,            // dom id of the chta&apos;s input box
+        sendbutton_id:&quot;chatSendButton&quot;,     // dom id for the chat&apos;s send button
+        minbutton_id:&quot;minimizeChatButton&quot;   // dom id for minimizing the Chat conaginer 
+    },
+    chatBox:{
+        id: &quot;chatBoard&quot;                     // dom id for the chat board where all messages are dispalyed 
+    },
+    button:{                                // on and off button states for the chat widget button
+        class_on:&quot;btn btn-warning glyphicon glyphicon-font topPanelButton&quot;,  
+        html_on:&quot;Chat&quot;,
+        class_off:&quot;btn btn-success glyphicon glyphicon-font topPanelButton&quot;,
+        html_off:&quot;Chat&quot;
+    }
+}</code>
+</code></pre><p>Upcoming : Adding emoticons to Chat</p>
+<h3 id="2--fileshare">2. Fileshare</h3><p>Uses the RTCDataConnection API from WebRTC to excahnge files peer to peer. Progress bar is displayed for the chunks of file transferrred out of total number of chunks. Many different kindes of file transfer have been tested such as media files ( mp3 , mp4 ) , text or pdf files , microsoft pr libra office dicuments , images ( jpg , png etc ) etc .</p>
+<p>File share widgets creates uses 2 conatiners - File Share and File List . If the dom ids of the container are not present on the page , the SDK crestes default conainers and appends them to page </p>
+<p>The list of files with buttons to view , hide or remove them from file viewers are in file Viewer container .
+Displaying or playing the text or media files happens in file share conainer , which also has button to maximize , minimize the viewer window or in case of images to rotate them. </p>
+<pre><code><code class="source-code prettyprint">{
+    active : true,
+    fileShareContainer : &quot;fileSharingRow&quot;,                  // File sharing container
+    fileshare:{                                             // components of file sharing container
+         rotateicon:&quot;assets/images/refresh-icon.png&quot;,       // rotate icon
+         minicon:&quot;assets/images/arrow-icon-down.png&quot;,       // min icon 
+         maxicon:&quot;assets/images/arrow-icon.png&quot;,            // max icon
+         closeicon:&quot;assets/images/cross-icon.png&quot;           // close icon
+    },
+    fileListContainer : &quot;fileListingRow&quot;,                   // File List container container 
+    filelist:{                                              // components of file list conainer 
+         downloadicon:&quot;&quot;,                                   // icon donwload 
+         trashicon:&quot;&quot;,                                      // icon trash
+         saveicon:&quot;&quot;,                                       // icon save
+         showicon:&quot;&quot;,                                       // icon show
+         hideicon:&quot;&quot;,                                       // icon hide
+    },
+    button:{
+        id: &quot;fileshareBtn&quot;,                                 // dom for widget button to call file share
+        class_on: &quot;col-xs-8 text-center fileshareclass&quot;,
+        html:&quot;File&quot;
+    },
+    props:{
+        fileShare:&quot;divided&quot;,                                // Can be divided for two particiapnts , chatpreview  , single for many participants  , hidden 
+        fileList:&quot;divided&quot;                                  // same as aboev Can be divided , single   , hidden
+    }
+}</code>
+</code></pre><h3 id="3--timer">3. Timer</h3><p>Creates or assigns a timer for teh ongoing sesssion . Also displays the geolocation and timezone of the peers if perssion if provided . Timer can start upwards or downwards. 
+Can be used for billing and policy control .</p>
+<pre><code><code class="source-code prettyprint">{
+    active: true,
+    type: &quot;forward&quot;,                                        // Forwards timer starts from 0:0:00 goes thereafter, backward timer ticks backword from prespecified time limit
+    counter:{                   
+        hours: &quot;countdownHours&quot;,                            // dom id for hours 
+        minutes:&quot;countdownMinutes&quot;,                         // dom id for mins
+        seconds :&quot;countdownSeconds&quot;                         // dom if for seconds
+    },
+    upperlimit: {                                           // upperlimit of time for the session 
+        hour:0 ,                                            
+        min: 3 , 
+        sec: 60 
+    },
+    span:{                                                  // dom ids for local and remote time labels
+        currentTime_id:&quot;currentTimeArea&quot;,
+        currentTimeZone_id:&quot;currentTimeZoneArea&quot;,
+        remoteTime_id :&quot;remoteTimeArea&quot;,
+        remoteTimeZone_id:&quot;remoteTimeZoneArea&quot;,
+        class_on:&quot;&quot;
+    },
+    container:{
+        id:&apos;collapseThree&apos;,
+        minbutton_id:&apos;timerBtn&apos;
+    },
+    button :{
+        id: &apos;timerBtn&apos;                                      // dom for widget timer button to call
+    }
+}</code>
+</code></pre><h3 id="4--screen-record">4. Screen Record</h3><p>Records everything pesent on the tab selected along with audio and displays recording as mp4 file. Use an extension and pre-declared safe-site  to facilitate captuing the tab.</p>
+<pre><code><code class="source-code prettyprint">{
+    active : true,
+    videoRecordContainer: true,                                 // container for storing or displaying recorded video
+    button:{                                                    // button to control screen control wisget and its on / off states
+        id: &quot;scrRecordBtn&quot;,
+        class_on:&quot;btn btn-lg screenRecordBtnClass On&quot;,
+        html_on:&apos;&lt;img title=&quot;Session Record&quot; src=&quot;assets/images/icon_5.png&quot;/&gt;&apos;,
+        class_off:&quot;btn btn-lg screenRecordBtnClass Off&quot;,
+        html_off: &apos;&lt;img title=&quot;Session Record&quot; src=&quot;assets/images/icon_5.png&quot;/&gt;&apos;
+    }
+},   </code>
+</code></pre><h3 id="5--screen-share">5. Screen-share</h3><p>One of the most powerful features of the SDK is to capture the current screen and share it with peer over RTC Peer connection channel. Simmilar to csreen record , uses an extension and pre-declared site ownership to capture the screen and share as peer to peer stream .
+Button for screen share has 3 states - </p>
+<ul>
+<li>install button for inline isnatllation of extension from page , </li>
+<li>share screen button and </li>
+<li>view button for incoming screen by peer .</li>
+</ul>
+<pre><code><code class="source-code prettyprint">{
+    active : true,
+    screenshareContainer: &quot;screenShareRow&quot;,                 // container to display screen being shared
+    extensionID: props.extensionID,                         // extension id 
+    button:{
+        installButton:{                                     // widget button to start inline installation of extension
+            id:&quot;scrInstallButton&quot;,
+            class_on:&quot;screeninstall-btn on&quot;,
+            html_on:&quot;Stop Install&quot;,
+            class_off:&quot;screeninstall-btn off&quot;,
+            html_off:&quot;ScreenShare&quot;
+        },
+        shareButton:{                                       // widget button to start sharing screen , deactivated once already active or when peer is sharig 
+            id:&quot;scrShareButton&quot;,
+            class_on:&quot;btn btn-lg on&quot;,
+            html_on:&apos;&lt;img title=&quot;Stop Screen Share&quot;  src=assets/images/icon_2.png /&gt;&apos;,
+            class_off:&quot;btn btn-lg off&quot;,
+            html_off:&apos;&lt;img title=&quot;Start Screen Share&quot; src=assets/images/icon_2.png /&gt;&apos;,
+            class_busy:&quot;btn btn-lg busy&quot;,
+            html_busy:&apos;&lt;img title=&quot;Peer is Sharing Screen&quot; src=assets/images/icon_2.png /&gt;&apos;
+        },
+        viewButton:{                                        // button to view the icnoming screen share 
+            id:&quot;scrViewButton&quot;,
+            class_on:&quot;screeninstall-btn on&quot;,
+            html_on:&quot;Stop Viewing&quot;,
+            class_off:&quot;screeninstall-btn off&quot;,
+            html_off:&quot;View Screen&quot;
+        }
+    }
+}</code>
+</code></pre><h3 id="6--video-record">6. Video Record</h3><p>Records video stream . Created for each peer video .</p>
+<pre><code><code class="source-code prettyprint">{
+    active : true,
+    videoRecordContainer : true,
+    button:{
+        class_on:&quot;pull-right btn btn-modify-video2_on videoButtonClass on&quot;,
+        html_on:&quot;&lt;i class=&apos;fa fa-circle&apos; title=&apos;Stop recording this Video&apos;&gt;&lt;/i&gt;&quot;,
+        class_off:&quot;pull-right btn btn-modify-video2 videoButtonClass off&quot;,
+        html_off:&quot;&lt;i class=&apos;fa fa-circle&apos; title=&apos;Record this Video&apos;&gt;&lt;/i&gt;&quot;
+    }
+}</code>
+</code></pre><h3 id="7--snapshot">7. Snapshot</h3><p>Takes a snapshot from video stream . Will be created for each inidvidual peer video .</p>
+<pre><code><code class="source-code prettyprint">{
+    active : true,
+    snapshotContainer: true,
+    button:{
+        class_on:&quot;pull-right btn btn-modify-video2 videoButtonClass&quot;,
+        html_on:&quot;&lt;i class=&apos;fa fa-th-large&apos; title=&apos;Take a snapshot&apos;&gt;&lt;/i&gt;&quot;
+    }
+} 
+</code>
+</code></pre><h3 id="8--minimising--maximising-video">8. Minimising/ maximising Video</h3><p>To enable the user to watch video in full screen mode or to inimize the video to hide it from screen. Will be seprately created for each individual peer video .</p>
+<pre><code><code class="source-code prettyprint">{
+    active : true,
+    max:{
+        button:{                                                                // button to maximise the video to full screen mode 
+            id: &apos;maxVideoButton&apos;,
+            class_on:&quot;pull-right btn btn-modify-video2 videoButtonClass On&quot;,
+            html_on:&quot;&lt;i class=&apos;fa fa-laptop&apos; title=&apos;full Screen&apos;&gt;&lt;/i&gt;&quot;,
+            class_off:&quot;pull-right btn btn-modify-video2 videoButtonClass Off&quot;,
+            html_off:&quot;&lt;i class=&apos; fa fa-laptop&apos; title=&apos;full Screen&apos;&gt;&lt;/i&gt;&quot;
+        }  
+    } ,
+    min :{
+        button:{                                                                // button to minimize or hide the video 
+            id: &apos;minVideoButton&apos;,
+            class_on:&quot;pull-right btn btn-modify-video2 videoButtonClass On&quot;,
+            html_on:&quot;&lt;i class=&apos;fa fa-minus&apos; title=&apos;minimize Video&apos;&gt;&lt;/i&gt;&quot;,
+            class_off:&quot;pull-right btn btn-modify-video2 videoButtonClass Off&quot;,
+            html_off:&quot;&lt;i class=&apos;fa fa-minus&apos; title=&apos;minimize Video&apos;&gt;&lt;/i&gt;&quot;
+        }  
+    }                    
+}
+</code>
+</code></pre><h3 id="9--mute--audio-and-or-video-">9. Mute (audio and/or video)</h3><p>Mutes the audio or video of the peer video . Created for each peer video.</p>
+<pre><code><code class="source-code prettyprint">
+ {
+    active: true,
+    drawCanvasContainer: &quot;drawBoardRow&quot;,
+    container:{
+            id:&apos;drawContainer&apos;,
+            minbutton_id:&apos;minimizeDrawButton&apos;
+        },
+    button:{
+        id: &quot;draw-webrtc&quot; , 
+        class_on:&quot;btn btn-lg draw-webrtc On&quot;,
+        html_on:&apos;&lt;img title=&quot;Draw&quot; src=assets/images/icon_3.png /&gt;&apos;,
+        class_off:&quot;btn btn-lg draw-webrtc Off&quot;,
+        html_off:&apos;&lt;img title=&quot;Draw&quot; src=assets/images/icon_3.png /&gt;&apos;
+    }
+}
+</code>
+</code></pre><h3 id="10---reconnect">10 . Reconnect</h3><p>Allows a user to recoonect a session without refreshing a page . Will enable him to drop the session and create a new one.</p>
+<pre><code><code class="source-code prettyprint">{
+    active: false,
+    button:{
+        id: &quot;reconnectBtn&quot;,
+        class:&quot;btn btn-success glyphicon glyphicon-refresh topPanelButton&quot;,
+        html:&quot;Reconnect&quot;,
+        resyncfiles:false
+    }
+}</code>
+</code></pre><h3 id="11--cursor">11. Cursor</h3><pre><code><code class="source-code prettyprint">{
+    active : true,
+    pointer:{
+        class_on: &quot;fa fa-hand-o-up fa-3x&quot;
+    },
+    button:{
+        id: &apos;shareCursorButton&apos;,
+        class_on:&quot;pull-right btn btn-modify-video2 videoButtonClass On&quot;,
+        html_on:&quot;&lt;i class=&apos;fa fa-hand-o-up&apos; title=&apos;Cursor&apos;&gt;&lt;/i&gt;&quot;,
+        class_off:&quot;pull-right btn btn-modify-video2 videoButtonClass Off&quot;,
+        html_off:&quot;&lt;i class=&apos;fa fa-hand-o-up&apos; title=&apos;Cursor&apos;&gt;&lt;/i&gt;&quot;
+    }                   
+},</code>
+</code></pre><h3 id="12--inspector">12. Inspector</h3><p>{
+    active: true,
+    button:{
+        id:&quot;ListenInButton&quot;,
+        textbox : &quot;listenInLink&quot;
+    }
+}</p>
+<h3 id="13--debug">13. Debug</h3><pre><code><code class="source-code prettyprint"> debug   : false,</code>
+</code></pre><h3 id="14--help">14. Help</h3><pre><code><code class="source-code prettyprint">{
+  active : true , 
+  helpContainer : &quot;help-view-body&quot;,
+  screenshotContainer: &quot;help-screenshot-body&quot;,
+  descriptionContainer: &quot;help-description-body&quot;
+}</code>
+</code></pre><h3 id="15--stats">15. Stats</h3><pre><code><code class="source-code prettyprint">{
+  active : true , 
+  statsConainer : &quot;network-stats-body&quot;
+}</code>
+</code></pre><h3 id="assign-individual-widgets-to-a-json-object-called-widgets">Assign individual widgets to a json object called widgets</h3><pre><code><code class="source-code prettyprint">    var widgets={
+
+        chat : &lt; add chat widget json &gt;,
+
+        fileshare : &lt; fieshare widget&gt;,
+
+        debug   : false,
+
+        reconnect   :{
+                            active: false,
+                            button:{
+                                id: &quot;reconnectBtn&quot;,
+                                class:&quot;btn btn-success glyphicon glyphicon-refresh topPanelButton&quot;,
+                                html:&quot;Reconnect&quot;,
+                                resyncfiles:false
+                            }
+                        },
+            timer   :{
+                        active: true,
+                        type: &quot;forward&quot;,
+                        counter:{
+                            hours: &quot;countdownHours&quot;,
+                            minutes:&quot;countdownMinutes&quot;,
+                            seconds :&quot;countdownSeconds&quot;
+                        },
+                        upperlimit: {
+                            hour:0 , 
+                            min: 3 , 
+                            sec: 60 
+                        },
+                        span:{
+                            currentTime_id:&quot;currentTimeArea&quot;,
+                            currentTimeZone_id:&quot;currentTimeZoneArea&quot;,
+                            remoteTime_id :&quot;remoteTimeArea&quot;,
+                            remoteTimeZone_id:&quot;remoteTimeZoneArea&quot;,
+                            class_on:&quot;&quot;
+                        },
+                        container:{
+                            id:&apos;collapseThree&apos;,
+                            minbutton_id:&apos;timerBtn&apos;
+                        },
+                        button :{
+                            id: &apos;timerBtn&apos;
+                        }
+                    },
+
+            chat    : &lt; chat widget &gt;
+
+            fileShare :&lt; file share widget &gt;
+
+            mute    : &lt; mute unmute widget &gt;
+
+            videoRecord : &lt; video record widget &gt;
+
+            snapshot : &lt; snapshot widget &gt;
+
+            cursor : &lt; widget for cursor sharing &gt;
+
+            minmax  : &lt; widget to maximize or minimize the video &gt;
+
+            drawCanvas  : &lt; draw widget &gt;
+
+            screenrecord : &lt; screen record widget &gt;       
+
+            screenshare : &lt; screen share &gt;
+
+            listenin : &lt; listen in widget &gt;
+
+            help : {
+              active : true , 
+              helpContainer : &quot;help-view-body&quot;,
+              screenshotContainer: &quot;help-screenshot-body&quot;,
+              descriptionContainer: &quot;help-description-body&quot;
+            },
+
+            statistics:{
+              active : true , 
+              statsConainer : &quot;network-stats-body&quot;
+            }
+
+
+    }</code>
+</code></pre><p>Initiate the webrtcdev contructor </p>
+<pre><code><code class="source-code prettyprint">webrtcdevobj = new WebRTCdev( local, remote, incoming, outgoing ,session , widgets)
+</code>
+</code></pre><p>Start the session </p>
+<pre><code><code class="source-code prettyprint">    startcall();</code>
+</code></pre><p>Implement evenet listners </p>
+<ol>
+<li><p>onLocalConnect</p>
+</li>
+<li><p>onSessionConnect</p>
+</li>
+<li><p>onScreenShareStarted</p>
+</li>
+<li><p>onScreenShareSEnded</p>
+</li>
+<li><p>onNoCameraCard</p>
+</li>
+</ol>
+<h5 id="8--add-the-key-and-certs">8. Add the Key and certs</h5><p>openssl req -x509 -newkey rsa:4096 -sha256 -nodes -keyout ssl_certs/server.key -out ssl_certs/server.crt -subj &quot;/CN=webrtc.altanai.com&quot; -days 3650</p>
+<h5 id="9--voip-calls-and-conf">9. VOIP calls and conf</h5><p>open tab on chrome or mozilla browser and add a link to the https server using nodejs script
+<a href="https://127.0.0.1:8086/multiparty_fullfeatures.html">https://127.0.0.1:8086/multiparty_fullfeatures.html</a></p>
+<h2 id="used-libs">Used Libs</h2><p>Following are the additioanl libraries packed with the project </p>
+<h6 id="task-runner">Task Runner</h6><p>you can run gulp alone to minify and concat the js and css files  into minscripts</p>
+<pre><code><code class="source-code prettyprint">gulp</code>
+</code></pre><p>or can run grunt to concat , minifify , ugligy , push to git and npm all together </p>
+<pre><code><code class="source-code prettyprint">grunt production </code>
+</code></pre><h6 id="forever">forever</h6><p>Keeps running even when window is not active </p>
+<pre><code><code class="source-code prettyprint">cd WebCall
+forever start webrtcserver.js</code>
+</code></pre><h5 id="developing---aletring-the-libs">Developing / Aletring the Libs</h5><p>creating doc </p>
+<pre><code><code class="source-code prettyprint"> ./node_modules/.bin/esdoc
+  open ./docs/index.html</code>
+</code></pre><h6 id="pm2">PM2</h6><p>To start the Server using PM2 ( a process manager for nodejs)</p>
+<h2 id="license">License</h2><p>MIT</p>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

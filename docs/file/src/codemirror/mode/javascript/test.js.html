@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/javascript/test.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/javascript/test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function() {
+  var mode = CodeMirror.getMode({indentUnit: 2}, &quot;javascript&quot;);
+  function MT(name) { test.mode(name, mode, Array.prototype.slice.call(arguments, 1)); }
+
+  MT(&quot;locals&quot;,
+     &quot;[keyword function] [variable foo]([def a], [def b]) { [keyword var] [def c] [operator =] [number 10]; [keyword return] [variable-2 a] [operator +] [variable-2 c] [operator +] [variable d]; }&quot;);
+
+  MT(&quot;comma-and-binop&quot;,
+     &quot;[keyword function](){ [keyword var] [def x] [operator =] [number 1] [operator +] [number 2], [def y]; }&quot;);
+
+  MT(&quot;destructuring&quot;,
+     &quot;([keyword function]([def a], [[[def b], [def c] ]]) {&quot;,
+     &quot;  [keyword let] {[def d], [property foo]: [def c][operator =][number 10], [def x]} [operator =] [variable foo]([variable-2 a]);&quot;,
+     &quot;  [[[variable-2 c], [variable y] ]] [operator =] [variable-2 c];&quot;,
+     &quot;})();&quot;);
+
+  MT(&quot;class_body&quot;,
+     &quot;[keyword class] [variable Foo] {&quot;,
+     &quot;  [property constructor]() {}&quot;,
+     &quot;  [property sayName]() {&quot;,
+     &quot;    [keyword return] [string-2 `foo${][variable foo][string-2 }oo`];&quot;,
+     &quot;  }&quot;,
+     &quot;}&quot;);
+
+  MT(&quot;class&quot;,
+     &quot;[keyword class] [variable Point] [keyword extends] [variable SuperThing] {&quot;,
+     &quot;  [property get] [property prop]() { [keyword return] [number 24]; }&quot;,
+     &quot;  [property constructor]([def x], [def y]) {&quot;,
+     &quot;    [keyword super]([string &apos;something&apos;]);&quot;,
+     &quot;    [keyword this].[property x] [operator =] [variable-2 x];&quot;,
+     &quot;  }&quot;,
+     &quot;}&quot;);
+
+  MT(&quot;module&quot;,
+     &quot;[keyword module] [string &apos;foo&apos;] {&quot;,
+     &quot;  [keyword export] [keyword let] [def x] [operator =] [number 42];&quot;,
+     &quot;  [keyword export] [keyword *] [keyword from] [string &apos;somewhere&apos;];&quot;,
+     &quot;}&quot;);
+
+  MT(&quot;import&quot;,
+     &quot;[keyword function] [variable foo]() {&quot;,
+     &quot;  [keyword import] [def $] [keyword from] [string &apos;jquery&apos;];&quot;,
+     &quot;  [keyword module] [def crypto] [keyword from] [string &apos;crypto&apos;];&quot;,
+     &quot;  [keyword import] { [def encrypt], [def decrypt] } [keyword from] [string &apos;crypto&apos;];&quot;,
+     &quot;}&quot;);
+
+  MT(&quot;const&quot;,
+     &quot;[keyword function] [variable f]() {&quot;,
+     &quot;  [keyword const] [[ [def a], [def b] ]] [operator =] [[ [number 1], [number 2] ]];&quot;,
+     &quot;}&quot;);
+
+  MT(&quot;for/of&quot;,
+     &quot;[keyword for]([keyword let] [variable of] [keyword of] [variable something]) {}&quot;);
+
+  MT(&quot;generator&quot;,
+     &quot;[keyword function*] [variable repeat]([def n]) {&quot;,
+     &quot;  [keyword for]([keyword var] [def i] [operator =] [number 0]; [variable-2 i] [operator &lt;] [variable-2 n]; [operator ++][variable-2 i])&quot;,
+     &quot;    [keyword yield] [variable-2 i];&quot;,
+     &quot;}&quot;);
+
+  MT(&quot;fatArrow&quot;,
+     &quot;[variable array].[property filter]([def a] [operator =&gt;] [variable-2 a] [operator +] [number 1]);&quot;,
+     &quot;[variable a];&quot;, // No longer in scope
+     &quot;[keyword let] [variable f] [operator =] ([[ [def a], [def b] ]], [def c]) [operator =&gt;] [variable-2 a] [operator +] [variable-2 c];&quot;,
+     &quot;[variable c];&quot;);
+
+  MT(&quot;spread&quot;,
+     &quot;[keyword function] [variable f]([def a], [meta ...][def b]) {&quot;,
+     &quot;  [variable something]([variable-2 a], [meta ...][variable-2 b]);&quot;,
+     &quot;}&quot;);
+
+  MT(&quot;comprehension&quot;,
+     &quot;[keyword function] [variable f]() {&quot;,
+     &quot;  [[([variable x] [operator +] [number 1]) [keyword for] ([keyword var] [def x] [keyword in] [variable y]) [keyword if] [variable pred]([variable-2 x]) ]];&quot;,
+     &quot;  ([variable u] [keyword for] ([keyword var] [def u] [keyword of] [variable generateValues]()) [keyword if] ([variable-2 u].[property color] [operator ===] [string &apos;blue&apos;]));&quot;,
+     &quot;}&quot;);
+
+  MT(&quot;quasi&quot;,
+     &quot;[variable re][string-2 `fofdlakj${][variable x] [operator +] ([variable re][string-2 `foo`]) [operator +] [number 1][string-2 }fdsa`] [operator +] [number 2]&quot;);
+
+  MT(&quot;quasi_no_function&quot;,
+     &quot;[variable x] [operator =] [string-2 `fofdlakj${][variable x] [operator +] [string-2 `foo`] [operator +] [number 1][string-2 }fdsa`] [operator +] [number 2]&quot;);
+
+  MT(&quot;indent_statement&quot;,
+     &quot;[keyword var] [variable x] [operator =] [number 10]&quot;,
+     &quot;[variable x] [operator +=] [variable y] [operator +]&quot;,
+     &quot;  [atom Infinity]&quot;,
+     &quot;[keyword debugger];&quot;);
+
+  MT(&quot;indent_if&quot;,
+     &quot;[keyword if] ([number 1])&quot;,
+     &quot;  [keyword break];&quot;,
+     &quot;[keyword else] [keyword if] ([number 2])&quot;,
+     &quot;  [keyword continue];&quot;,
+     &quot;[keyword else]&quot;,
+     &quot;  [number 10];&quot;,
+     &quot;[keyword if] ([number 1]) {&quot;,
+     &quot;  [keyword break];&quot;,
+     &quot;} [keyword else] [keyword if] ([number 2]) {&quot;,
+     &quot;  [keyword continue];&quot;,
+     &quot;} [keyword else] {&quot;,
+     &quot;  [number 10];&quot;,
+     &quot;}&quot;);
+
+  MT(&quot;indent_for&quot;,
+     &quot;[keyword for] ([keyword var] [variable i] [operator =] [number 0];&quot;,
+     &quot;     [variable i] [operator &lt;] [number 100];&quot;,
+     &quot;     [variable i][operator ++])&quot;,
+     &quot;  [variable doSomething]([variable i]);&quot;,
+     &quot;[keyword debugger];&quot;);
+
+  MT(&quot;indent_c_style&quot;,
+     &quot;[keyword function] [variable foo]()&quot;,
+     &quot;{&quot;,
+     &quot;  [keyword debugger];&quot;,
+     &quot;}&quot;);
+
+  MT(&quot;indent_else&quot;,
+     &quot;[keyword for] (;;)&quot;,
+     &quot;  [keyword if] ([variable foo])&quot;,
+     &quot;    [keyword if] ([variable bar])&quot;,
+     &quot;      [number 1];&quot;,
+     &quot;    [keyword else]&quot;,
+     &quot;      [number 2];&quot;,
+     &quot;  [keyword else]&quot;,
+     &quot;    [number 3];&quot;);
+
+  MT(&quot;indent_funarg&quot;,
+     &quot;[variable foo]([number 10000],&quot;,
+     &quot;    [keyword function]([def a]) {&quot;,
+     &quot;  [keyword debugger];&quot;,
+     &quot;};&quot;);
+
+  MT(&quot;indent_below_if&quot;,
+     &quot;[keyword for] (;;)&quot;,
+     &quot;  [keyword if] ([variable foo])&quot;,
+     &quot;    [number 1];&quot;,
+     &quot;[number 2];&quot;);
+
+  MT(&quot;multilinestring&quot;,
+     &quot;[keyword var] [variable x] [operator =] [string &apos;foo\\]&quot;,
+     &quot;[string bar&apos;];&quot;);
+
+  MT(&quot;scary_regexp&quot;,
+     &quot;[string-2 /foo[[/]]bar/];&quot;);
+
+  MT(&quot;indent_strange_array&quot;,
+     &quot;[keyword var] [variable x] [operator =] [[&quot;,
+     &quot;  [number 1],,&quot;,
+     &quot;  [number 2],&quot;,
+     &quot;]];&quot;,
+     &quot;[number 10];&quot;);
+
+  var jsonld_mode = CodeMirror.getMode(
+    {indentUnit: 2},
+    {name: &quot;javascript&quot;, jsonld: true}
+  );
+  function LD(name) {
+    test.mode(name, jsonld_mode, Array.prototype.slice.call(arguments, 1));
+  }
+
+  LD(&quot;json_ld_keywords&quot;,
+    &apos;{&apos;,
+    &apos;  [meta &quot;@context&quot;]: {&apos;,
+    &apos;    [meta &quot;@base&quot;]: [string &quot;http://example.com&quot;],&apos;,
+    &apos;    [meta &quot;@vocab&quot;]: [string &quot;http://xmlns.com/foaf/0.1/&quot;],&apos;,
+    &apos;    [property &quot;likesFlavor&quot;]: {&apos;,
+    &apos;      [meta &quot;@container&quot;]: [meta &quot;@list&quot;]&apos;,
+    &apos;      [meta &quot;@reverse&quot;]: [string &quot;@beFavoriteOf&quot;]&apos;,
+    &apos;    },&apos;,
+    &apos;    [property &quot;nick&quot;]: { [meta &quot;@container&quot;]: [meta &quot;@set&quot;] },&apos;,
+    &apos;    [property &quot;nick&quot;]: { [meta &quot;@container&quot;]: [meta &quot;@index&quot;] }&apos;,
+    &apos;  },&apos;,
+    &apos;  [meta &quot;@graph&quot;]: [[ {&apos;,
+    &apos;    [meta &quot;@id&quot;]: [string &quot;http://dbpedia.org/resource/John_Lennon&quot;],&apos;,
+    &apos;    [property &quot;name&quot;]: [string &quot;John Lennon&quot;],&apos;,
+    &apos;    [property &quot;modified&quot;]: {&apos;,
+    &apos;      [meta &quot;@value&quot;]: [string &quot;2010-05-29T14:17:39+02:00&quot;],&apos;,
+    &apos;      [meta &quot;@type&quot;]: [string &quot;http://www.w3.org/2001/XMLSchema#dateTime&quot;]&apos;,
+    &apos;    }&apos;,
+    &apos;  } ]]&apos;,
+    &apos;}&apos;);
+
+  LD(&quot;json_ld_fake&quot;,
+    &apos;{&apos;,
+    &apos;  [property &quot;@fake&quot;]: [string &quot;@fake&quot;],&apos;,
+    &apos;  [property &quot;@contextual&quot;]: [string &quot;@identifier&quot;],&apos;,
+    &apos;  [property &quot;user@domain.com&quot;]: [string &quot;@graphical&quot;],&apos;,
+    &apos;  [property &quot;@ID&quot;]: [string &quot;@@ID&quot;]&apos;,
+    &apos;}&apos;);
+})();
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

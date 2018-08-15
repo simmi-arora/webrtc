@@ -308,9 +308,9 @@ function webrtcdevScreenConstraints(chromeMediaSourceId) {
                 stream.type = "local",
                 //scrConn.setStreamEndHandler(stream),
                 getRMCMediaElement(stream, function(mediaElement) {
-                    webrtcdev.log(" getRMCMediaElement Callback function --> " + stream.streamid +" .. " + stream.id);
+                    webrtcdev.log("[screenshare JS] getRMCMediaElement Callback , streamid = " + stream.streamid +" ,  id = " + stream.id);
                     if(stream.streamid){
-                        webrtcdev.log("using streamid");
+                        webrtcdev.log("[screenshare JS] getRMCMediaElement Callback  ,  using streamid");
                         mediaElement.id = stream.streamid,
                         mediaElement.muted = !0,
                         mediaElement.volume = 0,
@@ -329,7 +329,7 @@ function webrtcdevScreenConstraints(chromeMediaSourceId) {
                         };
                         scrConn.onstream(scrConn.streamEvents[stream.streamid])
                     }else if(stream.id){
-                        webrtcdev.log("using id");
+                        webrtcdev.log("[screenshare JS] getRMCMediaElement Callback  ,  using id");
                         mediaElement.id = stream.id,
                         mediaElement.muted = !0,
                         mediaElement.volume = 0,
@@ -346,7 +346,7 @@ function webrtcdevScreenConstraints(chromeMediaSourceId) {
                             /*blobURL: mediaElement.src || mediaElement.srcObject ,*/
                             isAudioMuted: !0
                         };
-                        webrtcdev.log(scrConn.streamEvents[stream.id]);
+                        webrtcdev.log(" [screenshare JS] Stream object  " , scrConn.streamEvents[stream.id]);
                         /*setHarkEvents(scrConn, scrConn.streamEvents[stream.streamid]),*/
                         /*setMuteHandlers(scrConn, scrConn.streamEvents[stream.streamid]),*/
                         scrConn.onstream(scrConn.streamEvents[stream.id])

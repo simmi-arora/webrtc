@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../">
+  <title data-ice="title">src/scripts/rtcconn/SocketConnection.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/scripts/rtcconn/SocketConnection.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">function SocketConnection(connection, connectCallback) {
+    var parameters = &apos;&apos;;
+
+    parameters += &apos;?userid=&apos; + connection.userid;
+    parameters += &apos;&amp;sessionid=&apos; + connection.sessionid;
+    parameters += &apos;&amp;msgEvent=&apos; + connection.socketMessageEvent;
+    parameters += &apos;&amp;socketCustomEvent=&apos; + connection.socketCustomEvent;
+    parameters += &apos;&amp;autoCloseEntireSession=&apos; + !!connection.autoCloseEntireSession;
+
+    if (connection.session.broadcast === true) {
+        parameters += &apos;&amp;oneToMany=true&apos;;
+    }
+
+    parameters += &apos;&amp;maxParticipantsAllowed=&apos; + connection.maxParticipantsAllowed;
+
+    if (connection.enableScalableBroadcast) {
+        parameters += &apos;&amp;enableScalableBroadcast=true&apos;;
+        parameters += &apos;&amp;maxRelayLimitPerUser=&apos; + (connection.maxRelayLimitPerUser || 2);
+    }
+
+    if (connection.socketCustomParameters) {
+        parameters += connection.socketCustomParameters;
+    }
+
+    try {
+        io.sockets = {};
+    } catch (e) {};
+
+    if (!connection.socketURL) {
+        connection.socketURL = &apos;/&apos;;
+    }
+
+    if (connection.socketURL.substr(connection.socketURL.length - 1, 1) != &apos;/&apos;) {
+        // connection.socketURL = &apos;https://domain.com:9001/&apos;;
+        throw &apos;&quot;socketURL&quot; MUST end with a slash.&apos;;
+    }
+
+    if (connection.enableLogs) {
+        if (connection.socketURL == &apos;/&apos;) {
+            console.info(&apos;socket.io is connected at: &apos;, location.origin + &apos;/&apos;);
+        } else {
+            console.info(&apos;socket.io is connected at: &apos;, connection.socketURL);
+        }
+    }
+
+    try {
+        connection.socket = io(connection.socketURL + parameters);
+    } catch (e) {
+        connection.socket = io.connect(connection.socketURL + parameters, connection.socketOptions);
+    }
+
+    // detect signaling medium
+    connection.socket.isIO = true;
+
+    var mPeer = connection.multiPeersHandler;
+
+    connection.socket.on(&apos;extra-data-updated&apos;, function(remoteUserId, extra) {
+        if (!connection.peers[remoteUserId]) return;
+        connection.peers[remoteUserId].extra = extra;
+
+        connection.onExtraDataUpdated({
+            userid: remoteUserId,
+            extra: extra
+        });
+
+        if (!connection.peersBackup[remoteUserId]) {
+            connection.peersBackup[remoteUserId] = {
+                userid: remoteUserId,
+                extra: {}
+            };
+        }
+
+        connection.peersBackup[remoteUserId].extra = extra;
+    });
+
+    function onMessageEvent(message) {
+        if (message.remoteUserId != connection.userid) return;
+
+        if (connection.peers[message.sender] &amp;&amp; connection.peers[message.sender].extra != message.message.extra) {
+            connection.peers[message.sender].extra = message.extra;
+            connection.onExtraDataUpdated({
+                userid: message.sender,
+                extra: message.extra
+            });
+        }
+
+        if (message.message.streamSyncNeeded &amp;&amp; connection.peers[message.sender]) {
+            var stream = connection.streamEvents[message.message.streamid];
+            if (!stream || !stream.stream) {
+                return;
+            }
+
+            var action = message.message.action;
+
+            if (action === &apos;ended&apos; || action === &apos;inactive&apos; || action === &apos;stream-removed&apos;) {
+                if (connection.peersBackup[stream.userid]) {
+                    stream.extra = connection.peersBackup[stream.userid].extra;
+                }
+                connection.onstreamended(stream);
+                return;
+            }
+
+            var type = message.message.type != &apos;both&apos; ? message.message.type : null;
+
+            if (typeof stream.stream[action] == &apos;function&apos;) {
+                stream.stream[action](type);
+            }
+            return;
+        }
+
+        if (message.message === &apos;connectWithAllParticipants&apos;) {
+            if (connection.broadcasters.indexOf(message.sender) === -1) {
+                connection.broadcasters.push(message.sender);
+            }
+
+            mPeer.onNegotiationNeeded({
+                allParticipants: connection.getAllParticipants(message.sender)
+            }, message.sender);
+            return;
+        }
+
+        if (message.message === &apos;removeFromBroadcastersList&apos;) {
+            if (connection.broadcasters.indexOf(message.sender) !== -1) {
+                delete connection.broadcasters[connection.broadcasters.indexOf(message.sender)];
+                connection.broadcasters = removeNullEntries(connection.broadcasters);
+            }
+            return;
+        }
+
+        if (message.message === &apos;dropPeerConnection&apos;) {
+            connection.deletePeer(message.sender);
+            return;
+        }
+
+        if (message.message.allParticipants) {
+            if (message.message.allParticipants.indexOf(message.sender) === -1) {
+                message.message.allParticipants.push(message.sender);
+            }
+
+            message.message.allParticipants.forEach(function(participant) {
+                mPeer[!connection.peers[participant] ? &apos;createNewPeer&apos; : &apos;renegotiatePeer&apos;](participant, {
+                    localPeerSdpConstraints: {
+                        OfferToReceiveAudio: connection.sdpConstraints.mandatory.OfferToReceiveAudio,
+                        OfferToReceiveVideo: connection.sdpConstraints.mandatory.OfferToReceiveVideo
+                    },
+                    remotePeerSdpConstraints: {
+                        OfferToReceiveAudio: connection.session.oneway ? !!connection.session.audio : connection.sdpConstraints.mandatory.OfferToReceiveAudio,
+                        OfferToReceiveVideo: connection.session.oneway ? !!connection.session.video || !!connection.session.screen : connection.sdpConstraints.mandatory.OfferToReceiveVideo
+                    },
+                    isOneWay: !!connection.session.oneway || connection.direction === &apos;one-way&apos;,
+                    isDataOnly: isData(connection.session)
+                });
+            });
+            return;
+        }
+
+        if (message.message.newParticipant) {
+            if (message.message.newParticipant == connection.userid) return;
+            if (!!connection.peers[message.message.newParticipant]) return;
+
+            mPeer.createNewPeer(message.message.newParticipant, message.message.userPreferences || {
+                localPeerSdpConstraints: {
+                    OfferToReceiveAudio: connection.sdpConstraints.mandatory.OfferToReceiveAudio,
+                    OfferToReceiveVideo: connection.sdpConstraints.mandatory.OfferToReceiveVideo
+                },
+                remotePeerSdpConstraints: {
+                    OfferToReceiveAudio: connection.session.oneway ? !!connection.session.audio : connection.sdpConstraints.mandatory.OfferToReceiveAudio,
+                    OfferToReceiveVideo: connection.session.oneway ? !!connection.session.video || !!connection.session.screen : connection.sdpConstraints.mandatory.OfferToReceiveVideo
+                },
+                isOneWay: !!connection.session.oneway || connection.direction === &apos;one-way&apos;,
+                isDataOnly: isData(connection.session)
+            });
+            return;
+        }
+
+        if (message.message.readyForOffer || message.message.addMeAsBroadcaster) {
+            if (connection.waitingForLocalMedia) {
+                // if someone is waiting to join you
+                // make sure that we&apos;ve local media before making a handshake
+                setTimeout(function() {
+                    onMessageEvent(message);
+                }, 1000);
+                return;
+            }
+
+            connection.addNewBroadcaster(message.sender);
+        }
+
+        if (message.message.newParticipationRequest &amp;&amp; message.sender !== connection.userid) {
+            if (connection.peers[message.sender]) {
+                connection.deletePeer(message.sender);
+            }
+
+            var userPreferences = {
+                extra: message.extra || {},
+                localPeerSdpConstraints: message.message.remotePeerSdpConstraints || {
+                    OfferToReceiveAudio: connection.sdpConstraints.mandatory.OfferToReceiveAudio,
+                    OfferToReceiveVideo: connection.sdpConstraints.mandatory.OfferToReceiveVideo
+                },
+                remotePeerSdpConstraints: message.message.localPeerSdpConstraints || {
+                    OfferToReceiveAudio: connection.session.oneway ? !!connection.session.audio : connection.sdpConstraints.mandatory.OfferToReceiveAudio,
+                    OfferToReceiveVideo: connection.session.oneway ? !!connection.session.video || !!connection.session.screen : connection.sdpConstraints.mandatory.OfferToReceiveVideo
+                },
+                isOneWay: typeof message.message.isOneWay !== &apos;undefined&apos; ? message.message.isOneWay : !!connection.session.oneway || connection.direction === &apos;one-way&apos;,
+                isDataOnly: typeof message.message.isDataOnly !== &apos;undefined&apos; ? message.message.isDataOnly : isData(connection.session),
+                dontGetRemoteStream: typeof message.message.isOneWay !== &apos;undefined&apos; ? message.message.isOneWay : !!connection.session.oneway || connection.direction === &apos;one-way&apos;,
+                dontAttachLocalStream: !!message.message.dontGetRemoteStream,
+                connectionDescription: message,
+                successCallback: function() {
+                    // if its oneway----- todo: THIS SEEMS NOT IMPORTANT.
+                    if (typeof message.message.isOneWay !== &apos;undefined&apos; ? message.message.isOneWay : !!connection.session.oneway || connection.direction === &apos;one-way&apos;) {
+                        connection.addNewBroadcaster(message.sender, userPreferences);
+                    }
+
+                    if (!!connection.session.oneway || connection.direction === &apos;one-way&apos; || isData(connection.session)) {
+                        connection.addNewBroadcaster(message.sender, userPreferences);
+                    }
+                }
+            };
+
+            connection.onNewParticipant(message.sender, userPreferences);
+            return;
+        }
+
+        if (message.message.shiftedModerationControl) {
+            connection.onShiftedModerationControl(message.sender, message.message.broadcasters);
+            return;
+        }
+
+        if (message.message.changedUUID) {
+            if (connection.peers[message.message.oldUUID]) {
+                connection.peers[message.message.newUUID] = connection.peers[message.message.oldUUID];
+                delete connection.peers[message.message.oldUUID];
+            }
+        }
+
+        if (message.message.userLeft) {
+            mPeer.onUserLeft(message.sender);
+
+            if (!!message.message.autoCloseEntireSession) {
+                connection.leave();
+            }
+
+            return;
+        }
+
+        mPeer.addNegotiatedMessage(message.message, message.sender);
+    }
+
+    connection.socket.on(connection.socketMessageEvent, onMessageEvent);
+
+    connection.socket.on(&apos;user-left&apos;, function(userid) {
+        onUserLeft(userid);
+
+        connection.onUserStatusChanged({
+            userid: userid,
+            status: &apos;offline&apos;,
+            extra: connection.peers[userid] ? connection.peers[userid].extra || {} : {}
+        });
+
+        var eventObject = {
+            userid: userid,
+            extra: {}
+        };
+
+        if (connection.peersBackup[eventObject.userid]) {
+            eventObject.extra = connection.peersBackup[eventObject.userid].extra;
+        }
+
+        connection.onleave(eventObject);
+    });
+
+    var alreadyConnected = false;
+
+    connection.socket.resetProps = function() {
+        alreadyConnected = false;
+    };
+
+    connection.socket.on(&apos;connect&apos;, function() {
+        if (alreadyConnected) {
+            return;
+        }
+        alreadyConnected = true;
+
+        if (connection.enableLogs) {
+            console.info(&apos;socket.io connection is opened.&apos;);
+        }
+
+        setTimeout(function() {
+            connection.socket.emit(&apos;extra-data-updated&apos;, connection.extra);
+
+            if (connectCallback) {
+                connectCallback(connection.socket);
+            }
+        }, 1000);
+    });
+
+    connection.socket.on(&apos;disconnect&apos;, function() {
+        if (connection.enableLogs) {
+            console.warn(&apos;socket.io connection is closed&apos;);
+        }
+    });
+
+    connection.socket.on(&apos;join-with-password&apos;, function(remoteUserId) {
+        connection.onJoinWithPassword(remoteUserId);
+    });
+
+    connection.socket.on(&apos;invalid-password&apos;, function(remoteUserId, oldPassword) {
+        connection.onInvalidPassword(remoteUserId, oldPassword);
+    });
+
+    connection.socket.on(&apos;password-max-tries-over&apos;, function(remoteUserId) {
+        connection.onPasswordMaxTriesOver(remoteUserId);
+    });
+
+    connection.socket.on(&apos;user-disconnected&apos;, function(remoteUserId) {
+        if (remoteUserId === connection.userid) {
+            return;
+        }
+
+        connection.onUserStatusChanged({
+            userid: remoteUserId,
+            status: &apos;offline&apos;,
+            extra: connection.peers[remoteUserId] ? connection.peers[remoteUserId].extra || {} : {}
+        });
+
+        connection.deletePeer(remoteUserId);
+    });
+
+    connection.socket.on(&apos;user-connected&apos;, function(userid) {
+        if (userid === connection.userid) {
+            return;
+        }
+
+        connection.onUserStatusChanged({
+            userid: userid,
+            status: &apos;online&apos;,
+            extra: connection.peers[userid] ? connection.peers[userid].extra || {} : {}
+        });
+    });
+
+    connection.socket.on(&apos;closed-entire-session&apos;, function(sessionid, extra) {
+        connection.leave();
+        connection.onEntireSessionClosed({
+            sessionid: sessionid,
+            userid: sessionid,
+            extra: extra
+        });
+    });
+
+    connection.socket.on(&apos;userid-already-taken&apos;, function(useridAlreadyTaken, yourNewUserId) {
+        connection.isInitiator = false;
+        connection.userid = yourNewUserId;
+
+        connection.onUserIdAlreadyTaken(useridAlreadyTaken, yourNewUserId);
+    })
+
+    connection.socket.on(&apos;logs&apos;, function(log) {
+        if (!connection.enableLogs) return;
+        console.debug(&apos;server-logs&apos;, log);
+    });
+
+    connection.socket.on(&apos;number-of-broadcast-viewers-updated&apos;, function(data) {
+        connection.onNumberOfBroadcastViewersUpdated(data);
+    });
+
+    connection.socket.on(&apos;room-full&apos;, function(roomid) {
+        connection.onRoomFull(roomid);
+    });
+
+    connection.socket.on(&apos;become-next-modrator&apos;, function(sessionid) {
+        if (sessionid != connection.sessionid) return;
+        setTimeout(function() {
+            connection.open(sessionid);
+            connection.socket.emit(&apos;shift-moderator-control-on-disconnect&apos;);
+        }, 1000);
+    });
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

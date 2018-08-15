@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/addon/hint/javascript-hint.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/addon/hint/javascript-hint.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+  var Pos = CodeMirror.Pos;
+
+  function forEach(arr, f) {
+    for (var i = 0, e = arr.length; i &lt; e; ++i) f(arr[i]);
+  }
+
+  function arrayContains(arr, item) {
+    if (!Array.prototype.indexOf) {
+      var i = arr.length;
+      while (i--) {
+        if (arr[i] === item) {
+          return true;
+        }
+      }
+      return false;
+    }
+    return arr.indexOf(item) != -1;
+  }
+
+  function scriptHint(editor, keywords, getToken, options) {
+    // Find the token at the cursor
+    var cur = editor.getCursor(), token = getToken(editor, cur), tprop = token;
+    if (/\b(?:string|comment)\b/.test(token.type)) return;
+    token.state = CodeMirror.innerMode(editor.getMode(), token.state).state;
+
+    // If it&apos;s not a &apos;word-style&apos; token, ignore the token.
+    if (!/^[\w$_]*$/.test(token.string)) {
+      token = tprop = {start: cur.ch, end: cur.ch, string: &quot;&quot;, state: token.state,
+                       type: token.string == &quot;.&quot; ? &quot;property&quot; : null};
+    }
+    // If it is a property, find out what it is a property of.
+    while (tprop.type == &quot;property&quot;) {
+      tprop = getToken(editor, Pos(cur.line, tprop.start));
+      if (tprop.string != &quot;.&quot;) return;
+      tprop = getToken(editor, Pos(cur.line, tprop.start));
+      if (!context) var context = [];
+      context.push(tprop);
+    }
+    return {list: getCompletions(token, context, keywords, options),
+            from: Pos(cur.line, token.start),
+            to: Pos(cur.line, token.end)};
+  }
+
+  function javascriptHint(editor, options) {
+    return scriptHint(editor, javascriptKeywords,
+                      function (e, cur) {return e.getTokenAt(cur);},
+                      options);
+  };
+  CodeMirror.registerHelper(&quot;hint&quot;, &quot;javascript&quot;, javascriptHint);
+
+  function getCoffeeScriptToken(editor, cur) {
+  // This getToken, it is for coffeescript, imitates the behavior of
+  // getTokenAt method in javascript.js, that is, returning &quot;property&quot;
+  // type and treat &quot;.&quot; as indepenent token.
+    var token = editor.getTokenAt(cur);
+    if (cur.ch == token.start + 1 &amp;&amp; token.string.charAt(0) == &apos;.&apos;) {
+      token.end = token.start;
+      token.string = &apos;.&apos;;
+      token.type = &quot;property&quot;;
+    }
+    else if (/^\.[\w$_]*$/.test(token.string)) {
+      token.type = &quot;property&quot;;
+      token.start++;
+      token.string = token.string.replace(/\./, &apos;&apos;);
+    }
+    return token;
+  }
+
+  function coffeescriptHint(editor, options) {
+    return scriptHint(editor, coffeescriptKeywords, getCoffeeScriptToken, options);
+  }
+  CodeMirror.registerHelper(&quot;hint&quot;, &quot;coffeescript&quot;, coffeescriptHint);
+
+  var stringProps = (&quot;charAt charCodeAt indexOf lastIndexOf substring substr slice trim trimLeft trimRight &quot; +
+                     &quot;toUpperCase toLowerCase split concat match replace search&quot;).split(&quot; &quot;);
+  var arrayProps = (&quot;length concat join splice push pop shift unshift slice reverse sort indexOf &quot; +
+                    &quot;lastIndexOf every some filter forEach map reduce reduceRight &quot;).split(&quot; &quot;);
+  var funcProps = &quot;prototype apply call bind&quot;.split(&quot; &quot;);
+  var javascriptKeywords = (&quot;break case catch continue debugger default delete do else false finally for function &quot; +
+                  &quot;if in instanceof new null return switch throw true try typeof var void while with&quot;).split(&quot; &quot;);
+  var coffeescriptKeywords = (&quot;and break catch class continue delete do else extends false finally for &quot; +
+                  &quot;if in instanceof isnt new no not null of off on or return switch then throw true try typeof until void while with yes&quot;).split(&quot; &quot;);
+
+  function getCompletions(token, context, keywords, options) {
+    var found = [], start = token.string;
+    function maybeAdd(str) {
+      if (str.lastIndexOf(start, 0) == 0 &amp;&amp; !arrayContains(found, str)) found.push(str);
+    }
+    function gatherCompletions(obj) {
+      if (typeof obj == &quot;string&quot;) forEach(stringProps, maybeAdd);
+      else if (obj instanceof Array) forEach(arrayProps, maybeAdd);
+      else if (obj instanceof Function) forEach(funcProps, maybeAdd);
+      for (var name in obj) maybeAdd(name);
+    }
+
+    if (context &amp;&amp; context.length) {
+      // If this is a property, see if it belongs to some object we can
+      // find in the current environment.
+      var obj = context.pop(), base;
+      if (obj.type &amp;&amp; obj.type.indexOf(&quot;variable&quot;) === 0) {
+        if (options &amp;&amp; options.additionalContext)
+          base = options.additionalContext[obj.string];
+        if (!options || options.useGlobalScope !== false)
+          base = base || window[obj.string];
+      } else if (obj.type == &quot;string&quot;) {
+        base = &quot;&quot;;
+      } else if (obj.type == &quot;atom&quot;) {
+        base = 1;
+      } else if (obj.type == &quot;function&quot;) {
+        if (window.jQuery != null &amp;&amp; (obj.string == &apos;$&apos; || obj.string == &apos;jQuery&apos;) &amp;&amp;
+            (typeof window.jQuery == &apos;function&apos;))
+          base = window.jQuery();
+        else if (window._ != null &amp;&amp; (obj.string == &apos;_&apos;) &amp;&amp; (typeof window._ == &apos;function&apos;))
+          base = window._();
+      }
+      while (base != null &amp;&amp; context.length)
+        base = base[context.pop().string];
+      if (base != null) gatherCompletions(base);
+    } else {
+      // If not, just look in the window object and any local scope
+      // (reading into JS mode internals to get at the local and global variables)
+      for (var v = token.state.localVars; v; v = v.next) maybeAdd(v.name);
+      for (var v = token.state.globalVars; v; v = v.next) maybeAdd(v.name);
+      if (!options || options.useGlobalScope !== false)
+        gatherCompletions(window);
+      forEach(keywords, maybeAdd);
+    }
+    return found;
+  }
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

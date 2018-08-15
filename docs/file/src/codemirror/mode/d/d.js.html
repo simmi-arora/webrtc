@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/d/d.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/d/d.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+&quot;use strict&quot;;
+
+CodeMirror.defineMode(&quot;d&quot;, function(config, parserConfig) {
+  var indentUnit = config.indentUnit,
+      statementIndentUnit = parserConfig.statementIndentUnit || indentUnit,
+      keywords = parserConfig.keywords || {},
+      builtin = parserConfig.builtin || {},
+      blockKeywords = parserConfig.blockKeywords || {},
+      atoms = parserConfig.atoms || {},
+      hooks = parserConfig.hooks || {},
+      multiLineStrings = parserConfig.multiLineStrings;
+  var isOperatorChar = /[+\-*&amp;%=&lt;&gt;!?|\/]/;
+
+  var curPunc;
+
+  function tokenBase(stream, state) {
+    var ch = stream.next();
+    if (hooks[ch]) {
+      var result = hooks[ch](stream, state);
+      if (result !== false) return result;
+    }
+    if (ch == &apos;&quot;&apos; || ch == &quot;&apos;&quot; || ch == &quot;`&quot;) {
+      state.tokenize = tokenString(ch);
+      return state.tokenize(stream, state);
+    }
+    if (/[\[\]{}\(\),;\:\.]/.test(ch)) {
+      curPunc = ch;
+      return null;
+    }
+    if (/\d/.test(ch)) {
+      stream.eatWhile(/[\w\.]/);
+      return &quot;number&quot;;
+    }
+    if (ch == &quot;/&quot;) {
+      if (stream.eat(&quot;+&quot;)) {
+        state.tokenize = tokenComment;
+        return tokenNestedComment(stream, state);
+      }
+      if (stream.eat(&quot;*&quot;)) {
+        state.tokenize = tokenComment;
+        return tokenComment(stream, state);
+      }
+      if (stream.eat(&quot;/&quot;)) {
+        stream.skipToEnd();
+        return &quot;comment&quot;;
+      }
+    }
+    if (isOperatorChar.test(ch)) {
+      stream.eatWhile(isOperatorChar);
+      return &quot;operator&quot;;
+    }
+    stream.eatWhile(/[\w\$_\xa1-\uffff]/);
+    var cur = stream.current();
+    if (keywords.propertyIsEnumerable(cur)) {
+      if (blockKeywords.propertyIsEnumerable(cur)) curPunc = &quot;newstatement&quot;;
+      return &quot;keyword&quot;;
+    }
+    if (builtin.propertyIsEnumerable(cur)) {
+      if (blockKeywords.propertyIsEnumerable(cur)) curPunc = &quot;newstatement&quot;;
+      return &quot;builtin&quot;;
+    }
+    if (atoms.propertyIsEnumerable(cur)) return &quot;atom&quot;;
+    return &quot;variable&quot;;
+  }
+
+  function tokenString(quote) {
+    return function(stream, state) {
+      var escaped = false, next, end = false;
+      while ((next = stream.next()) != null) {
+        if (next == quote &amp;&amp; !escaped) {end = true; break;}
+        escaped = !escaped &amp;&amp; next == &quot;\\&quot;;
+      }
+      if (end || !(escaped || multiLineStrings))
+        state.tokenize = null;
+      return &quot;string&quot;;
+    };
+  }
+
+  function tokenComment(stream, state) {
+    var maybeEnd = false, ch;
+    while (ch = stream.next()) {
+      if (ch == &quot;/&quot; &amp;&amp; maybeEnd) {
+        state.tokenize = null;
+        break;
+      }
+      maybeEnd = (ch == &quot;*&quot;);
+    }
+    return &quot;comment&quot;;
+  }
+
+  function tokenNestedComment(stream, state) {
+    var maybeEnd = false, ch;
+    while (ch = stream.next()) {
+      if (ch == &quot;/&quot; &amp;&amp; maybeEnd) {
+        state.tokenize = null;
+        break;
+      }
+      maybeEnd = (ch == &quot;+&quot;);
+    }
+    return &quot;comment&quot;;
+  }
+
+  function Context(indented, column, type, align, prev) {
+    this.indented = indented;
+    this.column = column;
+    this.type = type;
+    this.align = align;
+    this.prev = prev;
+  }
+  function pushContext(state, col, type) {
+    var indent = state.indented;
+    if (state.context &amp;&amp; state.context.type == &quot;statement&quot;)
+      indent = state.context.indented;
+    return state.context = new Context(indent, col, type, null, state.context);
+  }
+  function popContext(state) {
+    var t = state.context.type;
+    if (t == &quot;)&quot; || t == &quot;]&quot; || t == &quot;}&quot;)
+      state.indented = state.context.indented;
+    return state.context = state.context.prev;
+  }
+
+  // Interface
+
+  return {
+    startState: function(basecolumn) {
+      return {
+        tokenize: null,
+        context: new Context((basecolumn || 0) - indentUnit, 0, &quot;top&quot;, false),
+        indented: 0,
+        startOfLine: true
+      };
+    },
+
+    token: function(stream, state) {
+      var ctx = state.context;
+      if (stream.sol()) {
+        if (ctx.align == null) ctx.align = false;
+        state.indented = stream.indentation();
+        state.startOfLine = true;
+      }
+      if (stream.eatSpace()) return null;
+      curPunc = null;
+      var style = (state.tokenize || tokenBase)(stream, state);
+      if (style == &quot;comment&quot; || style == &quot;meta&quot;) return style;
+      if (ctx.align == null) ctx.align = true;
+
+      if ((curPunc == &quot;;&quot; || curPunc == &quot;:&quot; || curPunc == &quot;,&quot;) &amp;&amp; ctx.type == &quot;statement&quot;) popContext(state);
+      else if (curPunc == &quot;{&quot;) pushContext(state, stream.column(), &quot;}&quot;);
+      else if (curPunc == &quot;[&quot;) pushContext(state, stream.column(), &quot;]&quot;);
+      else if (curPunc == &quot;(&quot;) pushContext(state, stream.column(), &quot;)&quot;);
+      else if (curPunc == &quot;}&quot;) {
+        while (ctx.type == &quot;statement&quot;) ctx = popContext(state);
+        if (ctx.type == &quot;}&quot;) ctx = popContext(state);
+        while (ctx.type == &quot;statement&quot;) ctx = popContext(state);
+      }
+      else if (curPunc == ctx.type) popContext(state);
+      else if (((ctx.type == &quot;}&quot; || ctx.type == &quot;top&quot;) &amp;&amp; curPunc != &apos;;&apos;) || (ctx.type == &quot;statement&quot; &amp;&amp; curPunc == &quot;newstatement&quot;))
+        pushContext(state, stream.column(), &quot;statement&quot;);
+      state.startOfLine = false;
+      return style;
+    },
+
+    indent: function(state, textAfter) {
+      if (state.tokenize != tokenBase &amp;&amp; state.tokenize != null) return CodeMirror.Pass;
+      var ctx = state.context, firstChar = textAfter &amp;&amp; textAfter.charAt(0);
+      if (ctx.type == &quot;statement&quot; &amp;&amp; firstChar == &quot;}&quot;) ctx = ctx.prev;
+      var closing = firstChar == ctx.type;
+      if (ctx.type == &quot;statement&quot;) return ctx.indented + (firstChar == &quot;{&quot; ? 0 : statementIndentUnit);
+      else if (ctx.align) return ctx.column + (closing ? 0 : 1);
+      else return ctx.indented + (closing ? 0 : indentUnit);
+    },
+
+    electricChars: &quot;{}&quot;
+  };
+});
+
+  function words(str) {
+    var obj = {}, words = str.split(&quot; &quot;);
+    for (var i = 0; i &lt; words.length; ++i) obj[words[i]] = true;
+    return obj;
+  }
+
+  var blockKeywords = &quot;body catch class do else enum for foreach foreach_reverse if in interface mixin &quot; +
+                      &quot;out scope struct switch try union unittest version while with&quot;;
+
+  CodeMirror.defineMIME(&quot;text/x-d&quot;, {
+    name: &quot;d&quot;,
+    keywords: words(&quot;abstract alias align asm assert auto break case cast cdouble cent cfloat const continue &quot; +
+                    &quot;debug default delegate delete deprecated export extern final finally function goto immutable &quot; +
+                    &quot;import inout invariant is lazy macro module new nothrow override package pragma private &quot; +
+                    &quot;protected public pure ref return shared short static super synchronized template this &quot; +
+                    &quot;throw typedef typeid typeof volatile __FILE__ __LINE__ __gshared __traits __vector __parameters &quot; +
+                    blockKeywords),
+    blockKeywords: words(blockKeywords),
+    builtin: words(&quot;bool byte char creal dchar double float idouble ifloat int ireal long real short ubyte &quot; +
+                   &quot;ucent uint ulong ushort wchar wstring void size_t sizediff_t&quot;),
+    atoms: words(&quot;exit failure success true false null&quot;),
+    hooks: {
+      &quot;@&quot;: function(stream, _state) {
+        stream.eatWhile(/[\w\$_]/);
+        return &quot;meta&quot;;
+      }
+    }
+  });
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

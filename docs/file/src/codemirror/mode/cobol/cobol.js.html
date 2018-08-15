@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/cobol/cobol.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/cobol/cobol.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+/**
+ * Author: Gautam Mehta
+ * Branched from CodeMirror&apos;s Scheme mode
+ */
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+&quot;use strict&quot;;
+
+CodeMirror.defineMode(&quot;cobol&quot;, function () {
+  var BUILTIN = &quot;builtin&quot;, COMMENT = &quot;comment&quot;, STRING = &quot;string&quot;,
+      ATOM = &quot;atom&quot;, NUMBER = &quot;number&quot;, KEYWORD = &quot;keyword&quot;, MODTAG = &quot;header&quot;,
+      COBOLLINENUM = &quot;def&quot;, PERIOD = &quot;link&quot;;
+  function makeKeywords(str) {
+    var obj = {}, words = str.split(&quot; &quot;);
+    for (var i = 0; i &lt; words.length; ++i) obj[words[i]] = true;
+    return obj;
+  }
+  var atoms = makeKeywords(&quot;TRUE FALSE ZEROES ZEROS ZERO SPACES SPACE LOW-VALUE LOW-VALUES &quot;);
+  var keywords = makeKeywords(
+      &quot;ACCEPT ACCESS ACQUIRE ADD ADDRESS &quot; +
+      &quot;ADVANCING AFTER ALIAS ALL ALPHABET &quot; +
+      &quot;ALPHABETIC ALPHABETIC-LOWER ALPHABETIC-UPPER ALPHANUMERIC ALPHANUMERIC-EDITED &quot; +
+      &quot;ALSO ALTER ALTERNATE AND ANY &quot; +
+      &quot;ARE AREA AREAS ARITHMETIC ASCENDING &quot; +
+      &quot;ASSIGN AT ATTRIBUTE AUTHOR AUTO &quot; +
+      &quot;AUTO-SKIP AUTOMATIC B-AND B-EXOR B-LESS &quot; +
+      &quot;B-NOT B-OR BACKGROUND-COLOR BACKGROUND-COLOUR BEEP &quot; +
+      &quot;BEFORE BELL BINARY BIT BITS &quot; +
+      &quot;BLANK BLINK BLOCK BOOLEAN BOTTOM &quot; +
+      &quot;BY CALL CANCEL CD CF &quot; +
+      &quot;CH CHARACTER CHARACTERS CLASS CLOCK-UNITS &quot; +
+      &quot;CLOSE COBOL CODE CODE-SET COL &quot; +
+      &quot;COLLATING COLUMN COMMA COMMIT COMMITMENT &quot; +
+      &quot;COMMON COMMUNICATION COMP COMP-0 COMP-1 &quot; +
+      &quot;COMP-2 COMP-3 COMP-4 COMP-5 COMP-6 &quot; +
+      &quot;COMP-7 COMP-8 COMP-9 COMPUTATIONAL COMPUTATIONAL-0 &quot; +
+      &quot;COMPUTATIONAL-1 COMPUTATIONAL-2 COMPUTATIONAL-3 COMPUTATIONAL-4 COMPUTATIONAL-5 &quot; +
+      &quot;COMPUTATIONAL-6 COMPUTATIONAL-7 COMPUTATIONAL-8 COMPUTATIONAL-9 COMPUTE &quot; +
+      &quot;CONFIGURATION CONNECT CONSOLE CONTAINED CONTAINS &quot; +
+      &quot;CONTENT CONTINUE CONTROL CONTROL-AREA CONTROLS &quot; +
+      &quot;CONVERTING COPY CORR CORRESPONDING COUNT &quot; +
+      &quot;CRT CRT-UNDER CURRENCY CURRENT CURSOR &quot; +
+      &quot;DATA DATE DATE-COMPILED DATE-WRITTEN DAY &quot; +
+      &quot;DAY-OF-WEEK DB DB-ACCESS-CONTROL-KEY DB-DATA-NAME DB-EXCEPTION &quot; +
+      &quot;DB-FORMAT-NAME DB-RECORD-NAME DB-SET-NAME DB-STATUS DBCS &quot; +
+      &quot;DBCS-EDITED DE DEBUG-CONTENTS DEBUG-ITEM DEBUG-LINE &quot; +
+      &quot;DEBUG-NAME DEBUG-SUB-1 DEBUG-SUB-2 DEBUG-SUB-3 DEBUGGING &quot; +
+      &quot;DECIMAL-POINT DECLARATIVES DEFAULT DELETE DELIMITED &quot; +
+      &quot;DELIMITER DEPENDING DESCENDING DESCRIBED DESTINATION &quot; +
+      &quot;DETAIL DISABLE DISCONNECT DISPLAY DISPLAY-1 &quot; +
+      &quot;DISPLAY-2 DISPLAY-3 DISPLAY-4 DISPLAY-5 DISPLAY-6 &quot; +
+      &quot;DISPLAY-7 DISPLAY-8 DISPLAY-9 DIVIDE DIVISION &quot; +
+      &quot;DOWN DROP DUPLICATE DUPLICATES DYNAMIC &quot; +
+      &quot;EBCDIC EGI EJECT ELSE EMI &quot; +
+      &quot;EMPTY EMPTY-CHECK ENABLE END END. END-ACCEPT END-ACCEPT. &quot; +
+      &quot;END-ADD END-CALL END-COMPUTE END-DELETE END-DISPLAY &quot; +
+      &quot;END-DIVIDE END-EVALUATE END-IF END-INVOKE END-MULTIPLY &quot; +
+      &quot;END-OF-PAGE END-PERFORM END-READ END-RECEIVE END-RETURN &quot; +
+      &quot;END-REWRITE END-SEARCH END-START END-STRING END-SUBTRACT &quot; +
+      &quot;END-UNSTRING END-WRITE END-XML ENTER ENTRY &quot; +
+      &quot;ENVIRONMENT EOP EQUAL EQUALS ERASE &quot; +
+      &quot;ERROR ESI EVALUATE EVERY EXCEEDS &quot; +
+      &quot;EXCEPTION EXCLUSIVE EXIT EXTEND EXTERNAL &quot; +
+      &quot;EXTERNALLY-DESCRIBED-KEY FD FETCH FILE FILE-CONTROL &quot; +
+      &quot;FILE-STREAM FILES FILLER FINAL FIND &quot; +
+      &quot;FINISH FIRST FOOTING FOR FOREGROUND-COLOR &quot; +
+      &quot;FOREGROUND-COLOUR FORMAT FREE FROM FULL &quot; +
+      &quot;FUNCTION GENERATE GET GIVING GLOBAL &quot; +
+      &quot;GO GOBACK GREATER GROUP HEADING &quot; +
+      &quot;HIGH-VALUE HIGH-VALUES HIGHLIGHT I-O I-O-CONTROL &quot; +
+      &quot;ID IDENTIFICATION IF IN INDEX &quot; +
+      &quot;INDEX-1 INDEX-2 INDEX-3 INDEX-4 INDEX-5 &quot; +
+      &quot;INDEX-6 INDEX-7 INDEX-8 INDEX-9 INDEXED &quot; +
+      &quot;INDIC INDICATE INDICATOR INDICATORS INITIAL &quot; +
+      &quot;INITIALIZE INITIATE INPUT INPUT-OUTPUT INSPECT &quot; +
+      &quot;INSTALLATION INTO INVALID INVOKE IS &quot; +
+      &quot;JUST JUSTIFIED KANJI KEEP KEY &quot; +
+      &quot;LABEL LAST LD LEADING LEFT &quot; +
+      &quot;LEFT-JUSTIFY LENGTH LENGTH-CHECK LESS LIBRARY &quot; +
+      &quot;LIKE LIMIT LIMITS LINAGE LINAGE-COUNTER &quot; +
+      &quot;LINE LINE-COUNTER LINES LINKAGE LOCAL-STORAGE &quot; +
+      &quot;LOCALE LOCALLY LOCK &quot; +
+      &quot;MEMBER MEMORY MERGE MESSAGE METACLASS &quot; +
+      &quot;MODE MODIFIED MODIFY MODULES MOVE &quot; +
+      &quot;MULTIPLE MULTIPLY NATIONAL NATIVE NEGATIVE &quot; +
+      &quot;NEXT NO NO-ECHO NONE NOT &quot; +
+      &quot;NULL NULL-KEY-MAP NULL-MAP NULLS NUMBER &quot; +
+      &quot;NUMERIC NUMERIC-EDITED OBJECT OBJECT-COMPUTER OCCURS &quot; +
+      &quot;OF OFF OMITTED ON ONLY &quot; +
+      &quot;OPEN OPTIONAL OR ORDER ORGANIZATION &quot; +
+      &quot;OTHER OUTPUT OVERFLOW OWNER PACKED-DECIMAL &quot; +
+      &quot;PADDING PAGE PAGE-COUNTER PARSE PERFORM &quot; +
+      &quot;PF PH PIC PICTURE PLUS &quot; +
+      &quot;POINTER POSITION POSITIVE PREFIX PRESENT &quot; +
+      &quot;PRINTING PRIOR PROCEDURE PROCEDURE-POINTER PROCEDURES &quot; +
+      &quot;PROCEED PROCESS PROCESSING PROGRAM PROGRAM-ID &quot; +
+      &quot;PROMPT PROTECTED PURGE QUEUE QUOTE &quot; +
+      &quot;QUOTES RANDOM RD READ READY &quot; +
+      &quot;REALM RECEIVE RECONNECT RECORD RECORD-NAME &quot; +
+      &quot;RECORDS RECURSIVE REDEFINES REEL REFERENCE &quot; +
+      &quot;REFERENCE-MONITOR REFERENCES RELATION RELATIVE RELEASE &quot; +
+      &quot;REMAINDER REMOVAL RENAMES REPEATED REPLACE &quot; +
+      &quot;REPLACING REPORT REPORTING REPORTS REPOSITORY &quot; +
+      &quot;REQUIRED RERUN RESERVE RESET RETAINING &quot; +
+      &quot;RETRIEVAL RETURN RETURN-CODE RETURNING REVERSE-VIDEO &quot; +
+      &quot;REVERSED REWIND REWRITE RF RH &quot; +
+      &quot;RIGHT RIGHT-JUSTIFY ROLLBACK ROLLING ROUNDED &quot; +
+      &quot;RUN SAME SCREEN SD SEARCH &quot; +
+      &quot;SECTION SECURE SECURITY SEGMENT SEGMENT-LIMIT &quot; +
+      &quot;SELECT SEND SENTENCE SEPARATE SEQUENCE &quot; +
+      &quot;SEQUENTIAL SET SHARED SIGN SIZE &quot; +
+      &quot;SKIP1 SKIP2 SKIP3 SORT SORT-MERGE &quot; +
+      &quot;SORT-RETURN SOURCE SOURCE-COMPUTER SPACE-FILL &quot; +
+      &quot;SPECIAL-NAMES STANDARD STANDARD-1 STANDARD-2 &quot; +
+      &quot;START STARTING STATUS STOP STORE &quot; +
+      &quot;STRING SUB-QUEUE-1 SUB-QUEUE-2 SUB-QUEUE-3 SUB-SCHEMA &quot; +
+      &quot;SUBFILE SUBSTITUTE SUBTRACT SUM SUPPRESS &quot; +
+      &quot;SYMBOLIC SYNC SYNCHRONIZED SYSIN SYSOUT &quot; +
+      &quot;TABLE TALLYING TAPE TENANT TERMINAL &quot; +
+      &quot;TERMINATE TEST TEXT THAN THEN &quot; +
+      &quot;THROUGH THRU TIME TIMES TITLE &quot; +
+      &quot;TO TOP TRAILING TRAILING-SIGN TRANSACTION &quot; +
+      &quot;TYPE TYPEDEF UNDERLINE UNEQUAL UNIT &quot; +
+      &quot;UNSTRING UNTIL UP UPDATE UPON &quot; +
+      &quot;USAGE USAGE-MODE USE USING VALID &quot; +
+      &quot;VALIDATE VALUE VALUES VARYING VLR &quot; +
+      &quot;WAIT WHEN WHEN-COMPILED WITH WITHIN &quot; +
+      &quot;WORDS WORKING-STORAGE WRITE XML XML-CODE &quot; +
+      &quot;XML-EVENT XML-NTEXT XML-TEXT ZERO ZERO-FILL &quot; );
+
+  var builtins = makeKeywords(&quot;- * ** / + &lt; &lt;= = &gt; &gt;= &quot;);
+  var tests = {
+    digit: /\d/,
+    digit_or_colon: /[\d:]/,
+    hex: /[0-9a-f]/i,
+    sign: /[+-]/,
+    exponent: /e/i,
+    keyword_char: /[^\s\(\[\;\)\]]/,
+    symbol: /[\w*+\-]/
+  };
+  function isNumber(ch, stream){
+    // hex
+    if ( ch === &apos;0&apos; &amp;&amp; stream.eat(/x/i) ) {
+      stream.eatWhile(tests.hex);
+      return true;
+    }
+    // leading sign
+    if ( ( ch == &apos;+&apos; || ch == &apos;-&apos; ) &amp;&amp; ( tests.digit.test(stream.peek()) ) ) {
+      stream.eat(tests.sign);
+      ch = stream.next();
+    }
+    if ( tests.digit.test(ch) ) {
+      stream.eat(ch);
+      stream.eatWhile(tests.digit);
+      if ( &apos;.&apos; == stream.peek()) {
+        stream.eat(&apos;.&apos;);
+        stream.eatWhile(tests.digit);
+      }
+      if ( stream.eat(tests.exponent) ) {
+        stream.eat(tests.sign);
+        stream.eatWhile(tests.digit);
+      }
+      return true;
+    }
+    return false;
+  }
+  return {
+    startState: function () {
+      return {
+        indentStack: null,
+        indentation: 0,
+        mode: false
+      };
+    },
+    token: function (stream, state) {
+      if (state.indentStack == null &amp;&amp; stream.sol()) {
+        // update indentation, but only if indentStack is empty
+        state.indentation = 6 ; //stream.indentation();
+      }
+      // skip spaces
+      if (stream.eatSpace()) {
+        return null;
+      }
+      var returnType = null;
+      switch(state.mode){
+      case &quot;string&quot;: // multi-line string parsing mode
+        var next = false;
+        while ((next = stream.next()) != null) {
+          if (next == &quot;\&quot;&quot; || next == &quot;\&apos;&quot;) {
+            state.mode = false;
+            break;
+          }
+        }
+        returnType = STRING; // continue on in string mode
+        break;
+      default: // default parsing mode
+        var ch = stream.next();
+        var col = stream.column();
+        if (col &gt;= 0 &amp;&amp; col &lt;= 5) {
+          returnType = COBOLLINENUM;
+        } else if (col &gt;= 72 &amp;&amp; col &lt;= 79) {
+          stream.skipToEnd();
+          returnType = MODTAG;
+        } else if (ch == &quot;*&quot; &amp;&amp; col == 6) { // comment
+          stream.skipToEnd(); // rest of the line is a comment
+          returnType = COMMENT;
+        } else if (ch == &quot;\&quot;&quot; || ch == &quot;\&apos;&quot;) {
+          state.mode = &quot;string&quot;;
+          returnType = STRING;
+        } else if (ch == &quot;&apos;&quot; &amp;&amp; !( tests.digit_or_colon.test(stream.peek()) )) {
+          returnType = ATOM;
+        } else if (ch == &quot;.&quot;) {
+          returnType = PERIOD;
+        } else if (isNumber(ch,stream)){
+          returnType = NUMBER;
+        } else {
+          if (stream.current().match(tests.symbol)) {
+            while (col &lt; 71) {
+              if (stream.eat(tests.symbol) === undefined) {
+                break;
+              } else {
+                col++;
+              }
+            }
+          }
+          if (keywords &amp;&amp; keywords.propertyIsEnumerable(stream.current().toUpperCase())) {
+            returnType = KEYWORD;
+          } else if (builtins &amp;&amp; builtins.propertyIsEnumerable(stream.current().toUpperCase())) {
+            returnType = BUILTIN;
+          } else if (atoms &amp;&amp; atoms.propertyIsEnumerable(stream.current().toUpperCase())) {
+            returnType = ATOM;
+          } else returnType = null;
+        }
+      }
+      return returnType;
+    },
+    indent: function (state) {
+      if (state.indentStack == null) return state.indentation;
+      return state.indentStack.indent;
+    }
+  };
+});
+
+CodeMirror.defineMIME(&quot;text/x-cobol&quot;, &quot;cobol&quot;);
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

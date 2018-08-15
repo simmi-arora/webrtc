@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/addon/hint/python-hint.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/addon/hint/python-hint.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+  &quot;use strict&quot;;
+
+  function forEach(arr, f) {
+    for (var i = 0, e = arr.length; i &lt; e; ++i) f(arr[i]);
+  }
+
+  function arrayContains(arr, item) {
+    if (!Array.prototype.indexOf) {
+      var i = arr.length;
+      while (i--) {
+        if (arr[i] === item) {
+          return true;
+        }
+      }
+      return false;
+    }
+    return arr.indexOf(item) != -1;
+  }
+
+  function scriptHint(editor, _keywords, getToken) {
+    // Find the token at the cursor
+    var cur = editor.getCursor(), token = getToken(editor, cur), tprop = token;
+    // If it&apos;s not a &apos;word-style&apos; token, ignore the token.
+
+    if (!/^[\w$_]*$/.test(token.string)) {
+        token = tprop = {start: cur.ch, end: cur.ch, string: &quot;&quot;, state: token.state,
+                         className: token.string == &quot;:&quot; ? &quot;python-type&quot; : null};
+    }
+
+    if (!context) var context = [];
+    context.push(tprop);
+
+    var completionList = getCompletions(token, context);
+    completionList = completionList.sort();
+
+    return {list: completionList,
+            from: CodeMirror.Pos(cur.line, token.start),
+            to: CodeMirror.Pos(cur.line, token.end)};
+  }
+
+  function pythonHint(editor) {
+    return scriptHint(editor, pythonKeywordsU, function (e, cur) {return e.getTokenAt(cur);});
+  }
+  CodeMirror.registerHelper(&quot;hint&quot;, &quot;python&quot;, pythonHint);
+
+  var pythonKeywords = &quot;and del from not while as elif global or with assert else if pass yield&quot;
++ &quot;break except import print class exec in raise continue finally is return def for lambda try&quot;;
+  var pythonKeywordsL = pythonKeywords.split(&quot; &quot;);
+  var pythonKeywordsU = pythonKeywords.toUpperCase().split(&quot; &quot;);
+
+  var pythonBuiltins = &quot;abs divmod input open staticmethod all enumerate int ord str &quot;
++ &quot;any eval isinstance pow sum basestring execfile issubclass print super&quot;
++ &quot;bin file iter property tuple bool filter len range type&quot;
++ &quot;bytearray float list raw_input unichr callable format locals reduce unicode&quot;
++ &quot;chr frozenset long reload vars classmethod getattr map repr xrange&quot;
++ &quot;cmp globals max reversed zip compile hasattr memoryview round __import__&quot;
++ &quot;complex hash min set apply delattr help next setattr buffer&quot;
++ &quot;dict hex object slice coerce dir id oct sorted intern &quot;;
+  var pythonBuiltinsL = pythonBuiltins.split(&quot; &quot;).join(&quot;() &quot;).split(&quot; &quot;);
+  var pythonBuiltinsU = pythonBuiltins.toUpperCase().split(&quot; &quot;).join(&quot;() &quot;).split(&quot; &quot;);
+
+  function getCompletions(token, context) {
+    var found = [], start = token.string;
+    function maybeAdd(str) {
+      if (str.lastIndexOf(start, 0) == 0 &amp;&amp; !arrayContains(found, str)) found.push(str);
+    }
+
+    function gatherCompletions(_obj) {
+        forEach(pythonBuiltinsL, maybeAdd);
+        forEach(pythonBuiltinsU, maybeAdd);
+        forEach(pythonKeywordsL, maybeAdd);
+        forEach(pythonKeywordsU, maybeAdd);
+    }
+
+    if (context) {
+      // If this is a property, see if it belongs to some object we can
+      // find in the current environment.
+      var obj = context.pop(), base;
+
+      if (obj.type == &quot;variable&quot;)
+          base = obj.string;
+      else if(obj.type == &quot;variable-3&quot;)
+          base = &quot;:&quot; + obj.string;
+
+      while (base != null &amp;&amp; context.length)
+        base = base[context.pop().string];
+      if (base != null) gatherCompletions(base);
+    }
+    return found;
+  }
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

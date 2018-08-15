@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../">
+  <title data-ice="title">src/codemirror/keymap/emacs.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/keymap/emacs.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../lib/codemirror&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../lib/codemirror&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+  &quot;use strict&quot;;
+
+  var Pos = CodeMirror.Pos;
+  function posEq(a, b) { return a.line == b.line &amp;&amp; a.ch == b.ch; }
+
+  // Kill &apos;ring&apos;
+
+  var killRing = [];
+  function addToRing(str) {
+    killRing.push(str);
+    if (killRing.length &gt; 50) killRing.shift();
+  }
+  function growRingTop(str) {
+    if (!killRing.length) return addToRing(str);
+    killRing[killRing.length - 1] += str;
+  }
+  function getFromRing(n) { return killRing[killRing.length - (n ? Math.min(n, 1) : 1)] || &quot;&quot;; }
+  function popFromRing() { if (killRing.length &gt; 1) killRing.pop(); return getFromRing(); }
+
+  var lastKill = null;
+
+  function kill(cm, from, to, mayGrow, text) {
+    if (text == null) text = cm.getRange(from, to);
+
+    if (mayGrow &amp;&amp; lastKill &amp;&amp; lastKill.cm == cm &amp;&amp; posEq(from, lastKill.pos) &amp;&amp; cm.isClean(lastKill.gen))
+      growRingTop(text);
+    else
+      addToRing(text);
+    cm.replaceRange(&quot;&quot;, from, to, &quot;+delete&quot;);
+
+    if (mayGrow) lastKill = {cm: cm, pos: from, gen: cm.changeGeneration()};
+    else lastKill = null;
+  }
+
+  // Boundaries of various units
+
+  function byChar(cm, pos, dir) {
+    return cm.findPosH(pos, dir, &quot;char&quot;, true);
+  }
+
+  function byWord(cm, pos, dir) {
+    return cm.findPosH(pos, dir, &quot;word&quot;, true);
+  }
+
+  function byLine(cm, pos, dir) {
+    return cm.findPosV(pos, dir, &quot;line&quot;, cm.doc.sel.goalColumn);
+  }
+
+  function byPage(cm, pos, dir) {
+    return cm.findPosV(pos, dir, &quot;page&quot;, cm.doc.sel.goalColumn);
+  }
+
+  function byParagraph(cm, pos, dir) {
+    var no = pos.line, line = cm.getLine(no);
+    var sawText = /\S/.test(dir &lt; 0 ? line.slice(0, pos.ch) : line.slice(pos.ch));
+    var fst = cm.firstLine(), lst = cm.lastLine();
+    for (;;) {
+      no += dir;
+      if (no &lt; fst || no &gt; lst)
+        return cm.clipPos(Pos(no - dir, dir &lt; 0 ? 0 : null));
+      line = cm.getLine(no);
+      var hasText = /\S/.test(line);
+      if (hasText) sawText = true;
+      else if (sawText) return Pos(no, 0);
+    }
+  }
+
+  function bySentence(cm, pos, dir) {
+    var line = pos.line, ch = pos.ch;
+    var text = cm.getLine(pos.line), sawWord = false;
+    for (;;) {
+      var next = text.charAt(ch + (dir &lt; 0 ? -1 : 0));
+      if (!next) { // End/beginning of line reached
+        if (line == (dir &lt; 0 ? cm.firstLine() : cm.lastLine())) return Pos(line, ch);
+        text = cm.getLine(line + dir);
+        if (!/\S/.test(text)) return Pos(line, ch);
+        line += dir;
+        ch = dir &lt; 0 ? text.length : 0;
+        continue;
+      }
+      if (sawWord &amp;&amp; /[!?.]/.test(next)) return Pos(line, ch + (dir &gt; 0 ? 1 : 0));
+      if (!sawWord) sawWord = /\w/.test(next);
+      ch += dir;
+    }
+  }
+
+  function byExpr(cm, pos, dir) {
+    var wrap;
+    if (cm.findMatchingBracket &amp;&amp; (wrap = cm.findMatchingBracket(pos, true))
+        &amp;&amp; wrap.match &amp;&amp; (wrap.forward ? 1 : -1) == dir)
+      return dir &gt; 0 ? Pos(wrap.to.line, wrap.to.ch + 1) : wrap.to;
+
+    for (var first = true;; first = false) {
+      var token = cm.getTokenAt(pos);
+      var after = Pos(pos.line, dir &lt; 0 ? token.start : token.end);
+      if (first &amp;&amp; dir &gt; 0 &amp;&amp; token.end == pos.ch || !/\w/.test(token.string)) {
+        var newPos = cm.findPosH(after, dir, &quot;char&quot;);
+        if (posEq(after, newPos)) return pos;
+        else pos = newPos;
+      } else {
+        return after;
+      }
+    }
+  }
+
+  // Prefixes (only crudely supported)
+
+  function getPrefix(cm, precise) {
+    var digits = cm.state.emacsPrefix;
+    if (!digits) return precise ? null : 1;
+    clearPrefix(cm);
+    return digits == &quot;-&quot; ? -1 : Number(digits);
+  }
+
+  function repeated(cmd) {
+    var f = typeof cmd == &quot;string&quot; ? function(cm) { cm.execCommand(cmd); } : cmd;
+    return function(cm) {
+      var prefix = getPrefix(cm);
+      f(cm);
+      for (var i = 1; i &lt; prefix; ++i) f(cm);
+    };
+  }
+
+  function findEnd(cm, by, dir) {
+    var pos = cm.getCursor(), prefix = getPrefix(cm);
+    if (prefix &lt; 0) { dir = -dir; prefix = -prefix; }
+    for (var i = 0; i &lt; prefix; ++i) {
+      var newPos = by(cm, pos, dir);
+      if (posEq(newPos, pos)) break;
+      pos = newPos;
+    }
+    return pos;
+  }
+
+  function move(by, dir) {
+    var f = function(cm) {
+      cm.extendSelection(findEnd(cm, by, dir));
+    };
+    f.motion = true;
+    return f;
+  }
+
+  function killTo(cm, by, dir) {
+    kill(cm, cm.getCursor(), findEnd(cm, by, dir), true);
+  }
+
+  function addPrefix(cm, digit) {
+    if (cm.state.emacsPrefix) {
+      if (digit != &quot;-&quot;) cm.state.emacsPrefix += digit;
+      return;
+    }
+    // Not active yet
+    cm.state.emacsPrefix = digit;
+    cm.on(&quot;keyHandled&quot;, maybeClearPrefix);
+    cm.on(&quot;inputRead&quot;, maybeDuplicateInput);
+  }
+
+  var prefixPreservingKeys = {&quot;Alt-G&quot;: true, &quot;Ctrl-X&quot;: true, &quot;Ctrl-Q&quot;: true, &quot;Ctrl-U&quot;: true};
+
+  function maybeClearPrefix(cm, arg) {
+    if (!cm.state.emacsPrefixMap &amp;&amp; !prefixPreservingKeys.hasOwnProperty(arg))
+      clearPrefix(cm);
+  }
+
+  function clearPrefix(cm) {
+    cm.state.emacsPrefix = null;
+    cm.off(&quot;keyHandled&quot;, maybeClearPrefix);
+    cm.off(&quot;inputRead&quot;, maybeDuplicateInput);
+  }
+
+  function maybeDuplicateInput(cm, event) {
+    var dup = getPrefix(cm);
+    if (dup &gt; 1 &amp;&amp; event.origin == &quot;+input&quot;) {
+      var one = event.text.join(&quot;\n&quot;), txt = &quot;&quot;;
+      for (var i = 1; i &lt; dup; ++i) txt += one;
+      cm.replaceSelection(txt);
+    }
+  }
+
+  function addPrefixMap(cm) {
+    cm.state.emacsPrefixMap = true;
+    cm.addKeyMap(prefixMap);
+    cm.on(&quot;keyHandled&quot;, maybeRemovePrefixMap);
+    cm.on(&quot;inputRead&quot;, maybeRemovePrefixMap);
+  }
+
+  function maybeRemovePrefixMap(cm, arg) {
+    if (typeof arg == &quot;string&quot; &amp;&amp; (/^\d$/.test(arg) || arg == &quot;Ctrl-U&quot;)) return;
+    cm.removeKeyMap(prefixMap);
+    cm.state.emacsPrefixMap = false;
+    cm.off(&quot;keyHandled&quot;, maybeRemovePrefixMap);
+    cm.off(&quot;inputRead&quot;, maybeRemovePrefixMap);
+  }
+
+  // Utilities
+
+  function setMark(cm) {
+    cm.setCursor(cm.getCursor());
+    cm.setExtending(!cm.getExtending());
+    cm.on(&quot;change&quot;, function() { cm.setExtending(false); });
+  }
+
+  function clearMark(cm) {
+    cm.setExtending(false);
+    cm.setCursor(cm.getCursor());
+  }
+
+  function getInput(cm, msg, f) {
+    if (cm.openDialog)
+      cm.openDialog(msg + &quot;: &lt;input type=\&quot;text\&quot; style=\&quot;width: 10em\&quot;/&gt;&quot;, f, {bottom: true});
+    else
+      f(prompt(msg, &quot;&quot;));
+  }
+
+  function operateOnWord(cm, op) {
+    var start = cm.getCursor(), end = cm.findPosH(start, 1, &quot;word&quot;);
+    cm.replaceRange(op(cm.getRange(start, end)), start, end);
+    cm.setCursor(end);
+  }
+
+  function toEnclosingExpr(cm) {
+    var pos = cm.getCursor(), line = pos.line, ch = pos.ch;
+    var stack = [];
+    while (line &gt;= cm.firstLine()) {
+      var text = cm.getLine(line);
+      for (var i = ch == null ? text.length : ch; i &gt; 0;) {
+        var ch = text.charAt(--i);
+        if (ch == &quot;)&quot;)
+          stack.push(&quot;(&quot;);
+        else if (ch == &quot;]&quot;)
+          stack.push(&quot;[&quot;);
+        else if (ch == &quot;}&quot;)
+          stack.push(&quot;{&quot;);
+        else if (/[\(\{\[]/.test(ch) &amp;&amp; (!stack.length || stack.pop() != ch))
+          return cm.extendSelection(Pos(line, i));
+      }
+      --line; ch = null;
+    }
+  }
+
+  function quit(cm) {
+    cm.execCommand(&quot;clearSearch&quot;);
+    clearMark(cm);
+  }
+
+  // Actual keymap
+
+  var keyMap = CodeMirror.keyMap.emacs = {
+    &quot;Ctrl-W&quot;: function(cm) {kill(cm, cm.getCursor(&quot;start&quot;), cm.getCursor(&quot;end&quot;));},
+    &quot;Ctrl-K&quot;: repeated(function(cm) {
+      var start = cm.getCursor(), end = cm.clipPos(Pos(start.line));
+      var text = cm.getRange(start, end);
+      if (!/\S/.test(text)) {
+        text += &quot;\n&quot;;
+        end = Pos(start.line + 1, 0);
+      }
+      kill(cm, start, end, true, text);
+    }),
+    &quot;Alt-W&quot;: function(cm) {
+      addToRing(cm.getSelection());
+      clearMark(cm);
+    },
+    &quot;Ctrl-Y&quot;: function(cm) {
+      var start = cm.getCursor();
+      cm.replaceRange(getFromRing(getPrefix(cm)), start, start, &quot;paste&quot;);
+      cm.setSelection(start, cm.getCursor());
+    },
+    &quot;Alt-Y&quot;: function(cm) {cm.replaceSelection(popFromRing(), &quot;around&quot;, &quot;paste&quot;);},
+
+    &quot;Ctrl-Space&quot;: setMark, &quot;Ctrl-Shift-2&quot;: setMark,
+
+    &quot;Ctrl-F&quot;: move(byChar, 1), &quot;Ctrl-B&quot;: move(byChar, -1),
+    &quot;Right&quot;: move(byChar, 1), &quot;Left&quot;: move(byChar, -1),
+    &quot;Ctrl-D&quot;: function(cm) { killTo(cm, byChar, 1); },
+    &quot;Delete&quot;: function(cm) { killTo(cm, byChar, 1); },
+    &quot;Ctrl-H&quot;: function(cm) { killTo(cm, byChar, -1); },
+    &quot;Backspace&quot;: function(cm) { killTo(cm, byChar, -1); },
+
+    &quot;Alt-F&quot;: move(byWord, 1), &quot;Alt-B&quot;: move(byWord, -1),
+    &quot;Alt-D&quot;: function(cm) { killTo(cm, byWord, 1); },
+    &quot;Alt-Backspace&quot;: function(cm) { killTo(cm, byWord, -1); },
+
+    &quot;Ctrl-N&quot;: move(byLine, 1), &quot;Ctrl-P&quot;: move(byLine, -1),
+    &quot;Down&quot;: move(byLine, 1), &quot;Up&quot;: move(byLine, -1),
+    &quot;Ctrl-A&quot;: &quot;goLineStart&quot;, &quot;Ctrl-E&quot;: &quot;goLineEnd&quot;,
+    &quot;End&quot;: &quot;goLineEnd&quot;, &quot;Home&quot;: &quot;goLineStart&quot;,
+
+    &quot;Alt-V&quot;: move(byPage, -1), &quot;Ctrl-V&quot;: move(byPage, 1),
+    &quot;PageUp&quot;: move(byPage, -1), &quot;PageDown&quot;: move(byPage, 1),
+
+    &quot;Ctrl-Up&quot;: move(byParagraph, -1), &quot;Ctrl-Down&quot;: move(byParagraph, 1),
+
+    &quot;Alt-A&quot;: move(bySentence, -1), &quot;Alt-E&quot;: move(bySentence, 1),
+    &quot;Alt-K&quot;: function(cm) { killTo(cm, bySentence, 1); },
+
+    &quot;Ctrl-Alt-K&quot;: function(cm) { killTo(cm, byExpr, 1); },
+    &quot;Ctrl-Alt-Backspace&quot;: function(cm) { killTo(cm, byExpr, -1); },
+    &quot;Ctrl-Alt-F&quot;: move(byExpr, 1), &quot;Ctrl-Alt-B&quot;: move(byExpr, -1),
+
+    &quot;Shift-Ctrl-Alt-2&quot;: function(cm) {
+      cm.setSelection(findEnd(cm, byExpr, 1), cm.getCursor());
+    },
+    &quot;Ctrl-Alt-T&quot;: function(cm) {
+      var leftStart = byExpr(cm, cm.getCursor(), -1), leftEnd = byExpr(cm, leftStart, 1);
+      var rightEnd = byExpr(cm, leftEnd, 1), rightStart = byExpr(cm, rightEnd, -1);
+      cm.replaceRange(cm.getRange(rightStart, rightEnd) + cm.getRange(leftEnd, rightStart) +
+                      cm.getRange(leftStart, leftEnd), leftStart, rightEnd);
+    },
+    &quot;Ctrl-Alt-U&quot;: repeated(toEnclosingExpr),
+
+    &quot;Alt-Space&quot;: function(cm) {
+      var pos = cm.getCursor(), from = pos.ch, to = pos.ch, text = cm.getLine(pos.line);
+      while (from &amp;&amp; /\s/.test(text.charAt(from - 1))) --from;
+      while (to &lt; text.length &amp;&amp; /\s/.test(text.charAt(to))) ++to;
+      cm.replaceRange(&quot; &quot;, Pos(pos.line, from), Pos(pos.line, to));
+    },
+    &quot;Ctrl-O&quot;: repeated(function(cm) { cm.replaceSelection(&quot;\n&quot;, &quot;start&quot;); }),
+    &quot;Ctrl-T&quot;: repeated(function(cm) {
+      cm.execCommand(&quot;transposeChars&quot;);
+    }),
+
+    &quot;Alt-C&quot;: repeated(function(cm) {
+      operateOnWord(cm, function(w) {
+        var letter = w.search(/\w/);
+        if (letter == -1) return w;
+        return w.slice(0, letter) + w.charAt(letter).toUpperCase() + w.slice(letter + 1).toLowerCase();
+      });
+    }),
+    &quot;Alt-U&quot;: repeated(function(cm) {
+      operateOnWord(cm, function(w) { return w.toUpperCase(); });
+    }),
+    &quot;Alt-L&quot;: repeated(function(cm) {
+      operateOnWord(cm, function(w) { return w.toLowerCase(); });
+    }),
+
+    &quot;Alt-;&quot;: &quot;toggleComment&quot;,
+
+    &quot;Ctrl-/&quot;: repeated(&quot;undo&quot;), &quot;Shift-Ctrl--&quot;: repeated(&quot;undo&quot;),
+    &quot;Ctrl-Z&quot;: repeated(&quot;undo&quot;), &quot;Cmd-Z&quot;: repeated(&quot;undo&quot;),
+    &quot;Shift-Alt-,&quot;: &quot;goDocStart&quot;, &quot;Shift-Alt-.&quot;: &quot;goDocEnd&quot;,
+    &quot;Ctrl-S&quot;: &quot;findNext&quot;, &quot;Ctrl-R&quot;: &quot;findPrev&quot;, &quot;Ctrl-G&quot;: quit, &quot;Shift-Alt-5&quot;: &quot;replace&quot;,
+    &quot;Alt-/&quot;: &quot;autocomplete&quot;,
+    &quot;Ctrl-J&quot;: &quot;newlineAndIndent&quot;, &quot;Enter&quot;: false, &quot;Tab&quot;: &quot;indentAuto&quot;,
+
+    &quot;Alt-G&quot;: function(cm) {cm.setOption(&quot;keyMap&quot;, &quot;emacs-Alt-G&quot;);},
+    &quot;Ctrl-X&quot;: function(cm) {cm.setOption(&quot;keyMap&quot;, &quot;emacs-Ctrl-X&quot;);},
+    &quot;Ctrl-Q&quot;: function(cm) {cm.setOption(&quot;keyMap&quot;, &quot;emacs-Ctrl-Q&quot;);},
+    &quot;Ctrl-U&quot;: addPrefixMap
+  };
+
+  CodeMirror.keyMap[&quot;emacs-Ctrl-X&quot;] = {
+    &quot;Tab&quot;: function(cm) {
+      cm.indentSelection(getPrefix(cm, true) || cm.getOption(&quot;indentUnit&quot;));
+    },
+    &quot;Ctrl-X&quot;: function(cm) {
+      cm.setSelection(cm.getCursor(&quot;head&quot;), cm.getCursor(&quot;anchor&quot;));
+    },
+
+    &quot;Ctrl-S&quot;: &quot;save&quot;, &quot;Ctrl-W&quot;: &quot;save&quot;, &quot;S&quot;: &quot;saveAll&quot;, &quot;F&quot;: &quot;open&quot;, &quot;U&quot;: repeated(&quot;undo&quot;), &quot;K&quot;: &quot;close&quot;,
+    &quot;Delete&quot;: function(cm) { kill(cm, cm.getCursor(), bySentence(cm, cm.getCursor(), 1), true); },
+    auto: &quot;emacs&quot;, nofallthrough: true, disableInput: true
+  };
+
+  CodeMirror.keyMap[&quot;emacs-Alt-G&quot;] = {
+    &quot;G&quot;: function(cm) {
+      var prefix = getPrefix(cm, true);
+      if (prefix != null &amp;&amp; prefix &gt; 0) return cm.setCursor(prefix - 1);
+
+      getInput(cm, &quot;Goto line&quot;, function(str) {
+        var num;
+        if (str &amp;&amp; !isNaN(num = Number(str)) &amp;&amp; num == num|0 &amp;&amp; num &gt; 0)
+          cm.setCursor(num - 1);
+      });
+    },
+    auto: &quot;emacs&quot;, nofallthrough: true, disableInput: true
+  };
+
+  CodeMirror.keyMap[&quot;emacs-Ctrl-Q&quot;] = {
+    &quot;Tab&quot;: repeated(&quot;insertTab&quot;),
+    auto: &quot;emacs&quot;, nofallthrough: true
+  };
+
+  var prefixMap = {&quot;Ctrl-G&quot;: clearPrefix};
+  function regPrefix(d) {
+    prefixMap[d] = function(cm) { addPrefix(cm, d); };
+    keyMap[&quot;Ctrl-&quot; + d] = function(cm) { addPrefix(cm, d); };
+    prefixPreservingKeys[&quot;Ctrl-&quot; + d] = true;
+  }
+  for (var i = 0; i &lt; 10; ++i) regPrefix(String(i));
+  regPrefix(&quot;-&quot;);
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

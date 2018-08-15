@@ -25,58 +25,29 @@ function sendwebrtcdevLogs(url , key){
 		zip.file("webrtcDevSessionLogs.txt", webrtcdevlogs);
 		// var img = zip.folder("images");
 		// img.file("smile.gif", imgData, {base64: true});
-		//zip.generateAsync({type:"blob"})
+		// zip.generateAsync({type:"blob"})
 		zip.generateAsync({type:"base64"})
 		.then(function(content) {
 		    // see FileSaver.js
-		    //saveAs(content, "webrtcDevSessionLogs.zip");
-		    
-			// var params = {
-			//           Key: "webrtcDevSessionLogs.zip",
-			//           ContentType: "application/zip",
-			//           ContentEncoding: 'base64',
-			//           Body: content
-			//       };
-
-		    // $.ajax({
-		    //     url: url ,
-		    //     method: 'POST',
-		    //     crossDomain: true,
-		    //     ContentEncoding: 'base64',
-		    //     data: { 
-		    //         apikey : key ,
-		    //         useremail: selfemail, 
-		    //         sessionid: sessionid,
-		    //         webrtcZip : content , //Zip file (Max File Size 2MB)
-		    //         webrtcTxt : 'traceswebrtcdev'
-		    //     },
-		    //     beforeSend: function ( xhr ) {
-		    //         xhr.setRequestHeader( 'Authorization', key);
-		    //     },
-		    //     success: function( data, txtStatus, xhr ) {
-		    //         console.log( data  , xhr.status );
-		    //     }
-		    // });
-
-
+		    // saveAs(content, "webrtcDevSessionLogs.zip");
 		    fetch(url, {
-			  method: 'post',
-			  crossDomain: true,
+			  method		: 'post',
+			  crossDomain	: true,
 			  ContentEncoding: 'base64',
-			  headers: {
-			    'Accept': 'application/json, text/plain, */*',
+			  headers		: {
+			    'Accept': 'application/zip, text/plain, */*',
 			    'Content-Type': 'application/json',
 			    'Authorization' : key
 			  },
 			  body: { 
-		            apikey : key ,
-		            useremail: selfemail, 
-		            sessionid: sessionid,
-		            webrtcZip : content , //Zip file (Max File Size 2MB)
-		            webrtcTxt : 'traceswebrtcdev'
+		            apikey 		: key ,
+		            useremail	: selfemail, 
+		            sessionid	: sessionid,
+		            webrtcZip 	: content , //Zip file (Max File Size 2MB)
+		            webrtcTxt 	: 'traceswebrtcdev'
 		        }
 			})
-			.then(res=>res.json())
+			.then(res => res.json())
 			.then(res => console.log(res));
 
 		});
