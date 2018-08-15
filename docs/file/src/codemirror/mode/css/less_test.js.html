@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/css/less_test.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/css/less_test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function() {
+  &quot;use strict&quot;;
+
+  var mode = CodeMirror.getMode({indentUnit: 2}, &quot;text/x-less&quot;);
+  function MT(name) { test.mode(name, mode, Array.prototype.slice.call(arguments, 1), &quot;less&quot;); }
+
+  MT(&quot;variable&quot;,
+     &quot;[variable-2 @base]: [atom #f04615];&quot;,
+     &quot;[qualifier .class] {&quot;,
+     &quot;  [property width]: [variable percentage]([number 0.5]); [comment // returns `50%`]&quot;,
+     &quot;  [property color]: [variable saturate]([variable-2 @base], [number 5%]);&quot;,
+     &quot;}&quot;);
+
+  MT(&quot;amp&quot;,
+     &quot;[qualifier .child], [qualifier .sibling] {&quot;,
+     &quot;  [qualifier .parent] [atom &amp;] {&quot;,
+     &quot;    [property color]: [keyword black];&quot;,
+     &quot;  }&quot;,
+     &quot;  [atom &amp;] + [atom &amp;] {&quot;,
+     &quot;    [property color]: [keyword red];&quot;,
+     &quot;  }&quot;,
+     &quot;}&quot;);
+
+  MT(&quot;mixin&quot;,
+     &quot;[qualifier .mixin] ([variable dark]; [variable-2 @color]) {&quot;,
+     &quot;  [property color]: [variable darken]([variable-2 @color], [number 10%]);&quot;,
+     &quot;}&quot;,
+     &quot;[qualifier .mixin] ([variable light]; [variable-2 @color]) {&quot;,
+     &quot;  [property color]: [variable lighten]([variable-2 @color], [number 10%]);&quot;,
+     &quot;}&quot;,
+     &quot;[qualifier .mixin] ([variable-2 @_]; [variable-2 @color]) {&quot;,
+     &quot;  [property display]: [atom block];&quot;,
+     &quot;}&quot;,
+     &quot;[variable-2 @switch]: [variable light];&quot;,
+     &quot;[qualifier .class] {&quot;,
+     &quot;  [qualifier .mixin]([variable-2 @switch]; [atom #888]);&quot;,
+     &quot;}&quot;);
+
+  MT(&quot;nest&quot;,
+     &quot;[qualifier .one] {&quot;,
+     &quot;  [def @media] ([property width]: [number 400px]) {&quot;,
+     &quot;    [property font-size]: [number 1.2em];&quot;,
+     &quot;    [def @media] [attribute print] [keyword and] [property color] {&quot;,
+     &quot;      [property color]: [keyword blue];&quot;,
+     &quot;    }&quot;,
+     &quot;  }&quot;,
+     &quot;}&quot;);
+})();
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/scripts/_snapshot.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/scripts/_snapshot.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">function createSnapshotButton(controlBarName , peerinfo){
+    var snapshotButton=document.createElement(&quot;div&quot;);
+    snapshotButton.id=controlBarName+&quot;snapshotButton&quot;;
+    snapshotButton.setAttribute(&quot;title&quot;, &quot;Snapshot&quot;);
+    snapshotButton.setAttribute(&quot;data-placement&quot;, &quot;bottom&quot;);
+    snapshotButton.setAttribute(&quot;data-toggle&quot;, &quot;tooltip&quot;);
+    snapshotButton.setAttribute(&quot;data-container&quot;, &quot;body&quot;);
+    snapshotButton.className=snapshotobj.button.class_on;
+    snapshotButton.innerHTML=snapshotobj.button.html_on;
+    snapshotButton.onclick = function() {
+        /*rtcMultiConnection.streams[streamid].takeSnapshot(function(datasnapshot) {*/
+        /*
+        for(i in webcallpeers ){
+            if(webcallpeers[i].userid==rtcMultiConnection.userid){
+            }
+        }*/
+
+        takeSnapshot(peerinfo, function(datasnapshot) {    
+            var snapshotname = &quot;snapshot&quot;+ new Date().getTime();
+        
+            var peerinfo;
+            if(selfuserid)
+                peerinfo = findPeerInfo(selfuserid);
+            else
+                peerinfo = findPeerInfo(rtcConn.userid);
+
+            peerinfo.filearray.push(snapshotname);
+            var numFile= document.createElement(&quot;div&quot;);
+            numFile.value= peerinfo.filearray.length;
+
+            if(fileshareobj.active){
+                syncSnapshot(datasnapshot , &quot;imagesnapshot&quot; , snapshotname );
+                displayList(peerinfo.uuid , peerinfo , datasnapshot , snapshotname, &quot;imagesnapshot&quot;);
+                displayFile(peerinfo.uuid , peerinfo , datasnapshot , snapshotname, &quot;imagesnapshot&quot;);
+            }else{
+                displayFile(peerinfo.uuid , peerinfo , datasnapshot , snapshotname, &quot;imagesnapshot&quot;);
+            } 
+        });         
+    };
+    return snapshotButton;
+}
+
+/* *************************************
+Snapshot
+************************************************/
+function takeSnapshot(peerinfo , callback) {
+    try{
+
+        function _takeSnapshot(video) {
+
+            if(video){
+                var canvas = document.createElement(&apos;canvas&apos;);
+                canvas.width = video.videoWidth || video.clientWidth;
+                canvas.height = video.videoHeight || video.clientHeight;
+
+                var context = canvas.getContext(&apos;2d&apos;);
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                /*
+                connection.snapshots[userid] = canvas.toDataURL(&apos;image/png&apos;);
+                args.callback &amp;&amp; args.callback(connection.snapshots[userid]);*/
+            
+                callback(canvas.toDataURL(&apos;image/png&apos;));
+            }else{
+                callback(&quot;&quot;);
+            }
+
+        }
+
+        if (peerinfo.videoContainer) return _takeSnapshot(document.getElementById(peerinfo.videoContainer));
+        else return &quot;empty&quot;;
+    }catch(e){
+        webrtcdev.error(&quot; [Snapshot - take snapshot] &quot; , e);
+    }
+    /*
+    var userid = args.userid;
+    var connection = args.connection;*/
+
+    /*
+    for (var stream in connection.streams) {
+        stream = connection.streams[stream];
+        if (stream.userid == userid &amp;&amp; stream.stream &amp;&amp; stream.stream.getVideoTracks &amp;&amp; stream.stream.getVideoTracks().length) {
+            _takeSnapshot(stream.mediaElement);
+            continue;
+        }
+    }*/
+}
+    
+function syncSnapshot(datasnapshot , datatype , dataname ){
+    rtcConn.send({
+        type:datatype, 
+        message:datasnapshot, 
+        name : dataname
+    });
+}
+
+/*function displaySnapshot(snapshotViewer , datasnapshot){
+    var snaspshot=document.createElement(&quot;img&quot;);
+    snaspshot.src = datasnapshot;
+    document.getElementById(snapshotViewer).appendChild(snaspshot);
+    webrtcdev.log(&quot;snaspshot &quot;,datasnapshot);
+}*/
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

@@ -1,10 +1,24 @@
 /**************************************************8
 Timer 
 ***************************************************/
+/**
+ * {@link https://github.com/altanai/webrtc/blob/master/client/build/scripts/_timer.js|TIMER} 
+ * @summary Takes local and remote peers time , localtion and show and shows timer for session
+ * @author {@link https://telecom.altanai.com/about-me/|Altanai}
+ * @typedef _turn.js
+ * @function
+ */
+
 var hours,mins,secs;
 var today = new Date();
 var zone="";
 
+/**
+ * function to start session timer with timerobj
+ * @method
+ * @name startsessionTimer
+ * @param {json} timerobj
+ */
 function startsessionTimer(timerobj){
 
     if(timerobj.counter.hours && timerobj.counter.minutes && timerobj.counter.seconds ){
@@ -30,8 +44,28 @@ function startsessionTimer(timerobj){
 
 }
 
+/**
+ * function to start forward increasing session timer 
+ * @method
+ * @name startForwardTimer
+ */
+ function startForwardTimer(){
+    webrtcdev.log("[timerjs] startForwardTimer");
+    var cd = secs;
+    var cdm = mins;
+    var c = parseInt(cd.innerHTML,10);
+    var m =  parseInt(cdm.innerHTML,10);
+    //alert(" Time for session validy is "+m +" minutes :"+ c+ " seconds");
+    ftimer(cd , c , cdm ,  m); 
+}
+
+/**
+ * function to start backward decreasing session timer 
+ * @method
+ * @name startBackwardTimer
+ */
 function startBackwardTimer(){
-    webrtcdev.log("startBackwardTimer", hours ,mins , secs);
+    webrtcdev.log("[timerjs] startBackwardTimer", hours ,mins , secs);
     var cd = secs;
     var cdm = mins;
     var c = parseInt(cd.innerHTML,10);
@@ -40,15 +74,6 @@ function startBackwardTimer(){
     btimer(cd , c , cdm ,  m);  
 }
 
-function startForwardTimer(){
-    webrtcdev.log("forward vtime started ");
-    var cd = secs;
-    var cdm = mins;
-    var c = parseInt(cd.innerHTML,10);
-    var m =  parseInt(cdm.innerHTML,10);
-    //alert(" Time for session validy is "+m +" minutes :"+ c+ " seconds");
-    ftimer(cd , c , cdm ,  m); 
-}
 
 function ftimer(cd , c , cdm , m ){
     var interv = setInterval(function() {
@@ -89,18 +114,19 @@ function prepareTime(){
 
 }
 
+
+/**
+ * function to start local peers time based on locally captured time zone 
+ * @method
+ * @name startTime
+ */
 function startTime() {
     try{
-        var h = today.getHours();
-        var m = today.getMinutes();
-        var s = today.getSeconds();
-        m = checkTime(m);
-        s = checkTime(s);
 
         if(timerobj.span.currentTime_id && document.getElementById(timerobj.span.currentTime_id)){
-            var timerspan = document.getElementById(timerobj.span.currentTime_id);
-            timerspan.innerHTML =   h + ":" + m + ":" + s;
-            var t = setTimeout(startTime, 500);
+            var timerspanlocal = document.getElementById(timerobj.span.currentTime_id);
+            timerspanlocal.innerHTML = new Date().toLocaleTimeString();
+            var t = setTimeout(startTime, 1000);
         }else{
             webrtcdev.error(" No place for timerobj.span.currentTime_id");
         }
@@ -110,21 +136,29 @@ function startTime() {
     //webrtcdev.log(" localdate :" , today);
 }
 
+/**
+ * function to fetch and show local peers time zone based on locally captured values
+ * @method
+ * @name startTime
+ */
 function timeZone(){
     try{
         if(timerobj.span.currentTimeZone_id && document.getElementById(timerobj.span.currentTimeZone_id)){
-            zone=Intl.DateTimeFormat().resolvedOptions().timeZone;
-            var timerspan=document.getElementById(timerobj.span.currentTimeZone_id);
-            timerspan.innerHTML = zone;
+            zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            var timerzonelocal = document.getElementById(timerobj.span.currentTimeZone_id);
+            timerzonelocal.innerHTML = zone;
         }else{
             webrtcdev.error(" timerobj.span.currentTimeZone_id DOM doesnt exist ");
         }
     }catch(e){
         webrtcdev.error(e);
     }
-
 }
 
+/**
+ * function to share local tiem and zone to other peer
+ * @name shareTimePeer
+ */
 function shareTimePeer(){
     try{
         var msg={
@@ -136,40 +170,28 @@ function shareTimePeer(){
     }catch(e){
         webrtcdev.error(e);   
     }
-
 }
 
+/**
+ * function to fetch and show Peers peers time based on onmesaage val
+ * @name startPeersTime
+ */
 function startPeersTime(date,zone){
     
     try{
-        /*    
-        var smday = new Date();
-        smday.setHours(h);
-        smday.setMinutes(m);
-        smday.setSeconds(s);*/
-        webrtcdev.log(" startPeersTime " , date , zone);
+        webrtcdev.log(" [timerjs] startPeersTime " , date , zone);
 
-        if(timerobj.span.remoteTimeZone_id && document.getElementById(timerobj.span.remoteTimeZone_id)){
-            var timerspan = document.getElementById(timerobj.span.remoteTimeZone_id);
-            timerspan.innerHTML = zone;
+        if(timerobj.span.remoteTimeZone_id && document.getElementById(timerobj.span.remoteTimeZone_id) && !document.getElementById(timerobj.span.remoteTimeZone_id).innerHTML){
+            let timerzonepeer = document.getElementById(timerobj.span.remoteTimeZone_id);
+            timerzonepeer.innerHTML = zone;
         }else{
             webrtcdev.error("timerobj.span.remoteTimeZone_id DOM doesnt exist ");
         }
         
         if(timerobj.span.remoteTime_id && document.getElementById(timerobj.span.remoteTime_id)){
-            var remotedate = new Date(date);
-            //var remotedate = new Date().toLocaleString('en-US', { timeZone: zone });
-            webrtcdev.log(" remotedate :" , remotedate);
-            var h = remotedate.getHours();
-            var m = remotedate.getMinutes();
-            var s = remotedate.getSeconds();
-
-            h = checkTime(h);
-            m = checkTime(m);
-            s = checkTime(s);
-            var timerspan=document.getElementById(timerobj.span.remoteTime_id);
-            timerspan.innerHTML =   h + ":" + m + ":" + s;
-            var t = setTimeout(startTime, 500);
+            let timerspanpeer = document.getElementById(timerobj.span.remoteTime_id);
+            timerspanpeer.innerHTML = new Date().toLocaleString('', { timeZone: zone})
+            var t = setTimeout(startPeersTime, 1000);
         }else{
             webrtcdev.error(" timerobj.span.remoteTime_id DOM does not exist");
         }

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/tiki/tiki.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/tiki/tiki.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+&quot;use strict&quot;;
+
+CodeMirror.defineMode(&apos;tiki&apos;, function(config) {
+  function inBlock(style, terminator, returnTokenizer) {
+    return function(stream, state) {
+      while (!stream.eol()) {
+        if (stream.match(terminator)) {
+          state.tokenize = inText;
+          break;
+        }
+        stream.next();
+      }
+
+      if (returnTokenizer) state.tokenize = returnTokenizer;
+
+      return style;
+    };
+  }
+
+  function inLine(style) {
+    return function(stream, state) {
+      while(!stream.eol()) {
+        stream.next();
+      }
+      state.tokenize = inText;
+      return style;
+    };
+  }
+
+  function inText(stream, state) {
+    function chain(parser) {
+      state.tokenize = parser;
+      return parser(stream, state);
+    }
+
+    var sol = stream.sol();
+    var ch = stream.next();
+
+    //non start of line
+    switch (ch) { //switch is generally much faster than if, so it is used here
+    case &quot;{&quot;: //plugin
+      stream.eat(&quot;/&quot;);
+      stream.eatSpace();
+      var tagName = &quot;&quot;;
+      var c;
+      while ((c = stream.eat(/[^\s\u00a0=\&quot;\&apos;\/?(}]/))) tagName += c;
+      state.tokenize = inPlugin;
+      return &quot;tag&quot;;
+      break;
+    case &quot;_&quot;: //bold
+      if (stream.eat(&quot;_&quot;)) {
+        return chain(inBlock(&quot;strong&quot;, &quot;__&quot;, inText));
+      }
+      break;
+    case &quot;&apos;&quot;: //italics
+      if (stream.eat(&quot;&apos;&quot;)) {
+        // Italic text
+        return chain(inBlock(&quot;em&quot;, &quot;&apos;&apos;&quot;, inText));
+      }
+      break;
+    case &quot;(&quot;:// Wiki Link
+      if (stream.eat(&quot;(&quot;)) {
+        return chain(inBlock(&quot;variable-2&quot;, &quot;))&quot;, inText));
+      }
+      break;
+    case &quot;[&quot;:// Weblink
+      return chain(inBlock(&quot;variable-3&quot;, &quot;]&quot;, inText));
+      break;
+    case &quot;|&quot;: //table
+      if (stream.eat(&quot;|&quot;)) {
+        return chain(inBlock(&quot;comment&quot;, &quot;||&quot;));
+      }
+      break;
+    case &quot;-&quot;:
+      if (stream.eat(&quot;=&quot;)) {//titleBar
+        return chain(inBlock(&quot;header string&quot;, &quot;=-&quot;, inText));
+      } else if (stream.eat(&quot;-&quot;)) {//deleted
+        return chain(inBlock(&quot;error tw-deleted&quot;, &quot;--&quot;, inText));
+      }
+      break;
+    case &quot;=&quot;: //underline
+      if (stream.match(&quot;==&quot;)) {
+        return chain(inBlock(&quot;tw-underline&quot;, &quot;===&quot;, inText));
+      }
+      break;
+    case &quot;:&quot;:
+      if (stream.eat(&quot;:&quot;)) {
+        return chain(inBlock(&quot;comment&quot;, &quot;::&quot;));
+      }
+      break;
+    case &quot;^&quot;: //box
+      return chain(inBlock(&quot;tw-box&quot;, &quot;^&quot;));
+      break;
+    case &quot;~&quot;: //np
+      if (stream.match(&quot;np~&quot;)) {
+        return chain(inBlock(&quot;meta&quot;, &quot;~/np~&quot;));
+      }
+      break;
+    }
+
+    //start of line types
+    if (sol) {
+      switch (ch) {
+      case &quot;!&quot;: //header at start of line
+        if (stream.match(&apos;!!!!!&apos;)) {
+          return chain(inLine(&quot;header string&quot;));
+        } else if (stream.match(&apos;!!!!&apos;)) {
+          return chain(inLine(&quot;header string&quot;));
+        } else if (stream.match(&apos;!!!&apos;)) {
+          return chain(inLine(&quot;header string&quot;));
+        } else if (stream.match(&apos;!!&apos;)) {
+          return chain(inLine(&quot;header string&quot;));
+        } else {
+          return chain(inLine(&quot;header string&quot;));
+        }
+        break;
+      case &quot;*&quot;: //unordered list line item, or &lt;li /&gt; at start of line
+      case &quot;#&quot;: //ordered list line item, or &lt;li /&gt; at start of line
+      case &quot;+&quot;: //ordered list line item, or &lt;li /&gt; at start of line
+        return chain(inLine(&quot;tw-listitem bracket&quot;));
+        break;
+      }
+    }
+
+    //stream.eatWhile(/[&amp;{]/); was eating up plugins, turned off to act less like html and more like tiki
+    return null;
+  }
+
+  var indentUnit = config.indentUnit;
+
+  // Return variables for tokenizers
+  var pluginName, type;
+  function inPlugin(stream, state) {
+    var ch = stream.next();
+    var peek = stream.peek();
+
+    if (ch == &quot;}&quot;) {
+      state.tokenize = inText;
+      //type = ch == &quot;)&quot; ? &quot;endPlugin&quot; : &quot;selfclosePlugin&quot;; inPlugin
+      return &quot;tag&quot;;
+    } else if (ch == &quot;(&quot; || ch == &quot;)&quot;) {
+      return &quot;bracket&quot;;
+    } else if (ch == &quot;=&quot;) {
+      type = &quot;equals&quot;;
+
+      if (peek == &quot;&gt;&quot;) {
+        ch = stream.next();
+        peek = stream.peek();
+      }
+
+      //here we detect values directly after equal character with no quotes
+      if (!/[\&apos;\&quot;]/.test(peek)) {
+        state.tokenize = inAttributeNoQuote();
+      }
+      //end detect values
+
+      return &quot;operator&quot;;
+    } else if (/[\&apos;\&quot;]/.test(ch)) {
+      state.tokenize = inAttribute(ch);
+      return state.tokenize(stream, state);
+    } else {
+      stream.eatWhile(/[^\s\u00a0=\&quot;\&apos;\/?]/);
+      return &quot;keyword&quot;;
+    }
+  }
+
+  function inAttribute(quote) {
+    return function(stream, state) {
+      while (!stream.eol()) {
+        if (stream.next() == quote) {
+          state.tokenize = inPlugin;
+          break;
+        }
+      }
+      return &quot;string&quot;;
+    };
+  }
+
+  function inAttributeNoQuote() {
+    return function(stream, state) {
+      while (!stream.eol()) {
+        var ch = stream.next();
+        var peek = stream.peek();
+        if (ch == &quot; &quot; || ch == &quot;,&quot; || /[ )}]/.test(peek)) {
+      state.tokenize = inPlugin;
+      break;
+    }
+  }
+  return &quot;string&quot;;
+};
+                     }
+
+var curState, setStyle;
+function pass() {
+  for (var i = arguments.length - 1; i &gt;= 0; i--) curState.cc.push(arguments[i]);
+}
+
+function cont() {
+  pass.apply(null, arguments);
+  return true;
+}
+
+function pushContext(pluginName, startOfLine) {
+  var noIndent = curState.context &amp;&amp; curState.context.noIndent;
+  curState.context = {
+    prev: curState.context,
+    pluginName: pluginName,
+    indent: curState.indented,
+    startOfLine: startOfLine,
+    noIndent: noIndent
+  };
+}
+
+function popContext() {
+  if (curState.context) curState.context = curState.context.prev;
+}
+
+function element(type) {
+  if (type == &quot;openPlugin&quot;) {curState.pluginName = pluginName; return cont(attributes, endplugin(curState.startOfLine));}
+  else if (type == &quot;closePlugin&quot;) {
+    var err = false;
+    if (curState.context) {
+      err = curState.context.pluginName != pluginName;
+      popContext();
+    } else {
+      err = true;
+    }
+    if (err) setStyle = &quot;error&quot;;
+    return cont(endcloseplugin(err));
+  }
+  else if (type == &quot;string&quot;) {
+    if (!curState.context || curState.context.name != &quot;!cdata&quot;) pushContext(&quot;!cdata&quot;);
+    if (curState.tokenize == inText) popContext();
+    return cont();
+  }
+  else return cont();
+}
+
+function endplugin(startOfLine) {
+  return function(type) {
+    if (
+      type == &quot;selfclosePlugin&quot; ||
+        type == &quot;endPlugin&quot;
+    )
+      return cont();
+    if (type == &quot;endPlugin&quot;) {pushContext(curState.pluginName, startOfLine); return cont();}
+    return cont();
+  };
+}
+
+function endcloseplugin(err) {
+  return function(type) {
+    if (err) setStyle = &quot;error&quot;;
+    if (type == &quot;endPlugin&quot;) return cont();
+    return pass();
+  };
+}
+
+function attributes(type) {
+  if (type == &quot;keyword&quot;) {setStyle = &quot;attribute&quot;; return cont(attributes);}
+  if (type == &quot;equals&quot;) return cont(attvalue, attributes);
+  return pass();
+}
+function attvalue(type) {
+  if (type == &quot;keyword&quot;) {setStyle = &quot;string&quot;; return cont();}
+  if (type == &quot;string&quot;) return cont(attvaluemaybe);
+  return pass();
+}
+function attvaluemaybe(type) {
+  if (type == &quot;string&quot;) return cont(attvaluemaybe);
+  else return pass();
+}
+return {
+  startState: function() {
+    return {tokenize: inText, cc: [], indented: 0, startOfLine: true, pluginName: null, context: null};
+  },
+  token: function(stream, state) {
+    if (stream.sol()) {
+      state.startOfLine = true;
+      state.indented = stream.indentation();
+    }
+    if (stream.eatSpace()) return null;
+
+    setStyle = type = pluginName = null;
+    var style = state.tokenize(stream, state);
+    if ((style || type) &amp;&amp; style != &quot;comment&quot;) {
+      curState = state;
+      while (true) {
+        var comb = state.cc.pop() || element;
+        if (comb(type || style)) break;
+      }
+    }
+    state.startOfLine = false;
+    return setStyle || style;
+  },
+  indent: function(state, textAfter) {
+    var context = state.context;
+    if (context &amp;&amp; context.noIndent) return 0;
+    if (context &amp;&amp; /^{\//.test(textAfter))
+        context = context.prev;
+        while (context &amp;&amp; !context.startOfLine)
+          context = context.prev;
+        if (context) return context.indent + indentUnit;
+        else return 0;
+       },
+    electricChars: &quot;/&quot;
+  };
+});
+
+CodeMirror.defineMIME(&quot;text/tiki&quot;, &quot;tiki&quot;);
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

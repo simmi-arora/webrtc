@@ -1,4 +1,4 @@
-/*! webrtcdevelopment 2018-08-12 */
+/*! webrtcdevelopment 2018-08-15 */
 var t = "";
 var e = null;
 var n = "";
@@ -30,7 +30,7 @@ var latitude="" , longitude="" , operatingsystem="";
 
 /* webrtc session intilization */
 var autoload = true;
-var sessionid = null, socketAddr = "/", webrtcdevIceServers;
+var sessionid = null, socketAddr = "/", webrtcdevIceServers=[];
 var localStream , localStreamId, remoteStream , remoteStreamId;
 
 /* incoming and outgoing call params */
@@ -3033,9 +3033,9 @@ function spawnNotification(theBody,theIcon,theTitle) {
                 arrayOfUsers.forEach(function(participant) {
                     fbr.getNextChunk(uuid, function(nextChunk) {
                         connection.peers[participant].channels.forEach(function(channel) {
-                            //channel.send(nextChunk);
+                            // channel.send(nextChunk);
 
-                            /*Altanai patch for trash on file upload 
+                            /* Altanai patch for trash on file upload 
                             */
                             for(x in webcallpeers){
                                 if(webcallpeers[x].userid == selfuserid ){
@@ -3043,7 +3043,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
                                     for( y in webcallpeers[x].filearray){
                                         if(webcallpeers[x].filearray[y].name == file.name && webcallpeers[x].filearray[y].status =="progress") 
                                          {
-                                            console.log(" filename " , webcallpeers[x].filearray[y].name , " | status " , webcallpeers[x].filearray[y].status);
+                                            console.log("[ rtcMultiConnectionjs ] filename " , webcallpeers[x].filearray[y].name , " | status " , webcallpeers[x].filearray[y].status);
                                             channel.send(nextChunk)
                                          }   
                                     }
@@ -5218,9 +5218,9 @@ function webrtcdevScreenConstraints(chromeMediaSourceId) {
                 stream.type = "local",
                 //scrConn.setStreamEndHandler(stream),
                 getRMCMediaElement(stream, function(mediaElement) {
-                    webrtcdev.log(" getRMCMediaElement Callback function --> " + stream.streamid +" .. " + stream.id);
+                    webrtcdev.log("[screenshare JS] getRMCMediaElement Callback , streamid = " + stream.streamid +" ,  id = " + stream.id);
                     if(stream.streamid){
-                        webrtcdev.log("using streamid");
+                        webrtcdev.log("[screenshare JS] getRMCMediaElement Callback  ,  using streamid");
                         mediaElement.id = stream.streamid,
                         mediaElement.muted = !0,
                         mediaElement.volume = 0,
@@ -5239,7 +5239,7 @@ function webrtcdevScreenConstraints(chromeMediaSourceId) {
                         };
                         scrConn.onstream(scrConn.streamEvents[stream.streamid])
                     }else if(stream.id){
-                        webrtcdev.log("using id");
+                        webrtcdev.log("[screenshare JS] getRMCMediaElement Callback  ,  using id");
                         mediaElement.id = stream.id,
                         mediaElement.muted = !0,
                         mediaElement.volume = 0,
@@ -5256,7 +5256,7 @@ function webrtcdevScreenConstraints(chromeMediaSourceId) {
                             /*blobURL: mediaElement.src || mediaElement.srcObject ,*/
                             isAudioMuted: !0
                         };
-                        webrtcdev.log(scrConn.streamEvents[stream.id]);
+                        webrtcdev.log(" [screenshare JS] Stream object  " , scrConn.streamEvents[stream.id]);
                         /*setHarkEvents(scrConn, scrConn.streamEvents[stream.streamid]),*/
                         /*setMuteHandlers(scrConn, scrConn.streamEvents[stream.streamid]),*/
                         scrConn.onstream(scrConn.streamEvents[stream.id])
@@ -18670,22 +18670,6 @@ function createCORSRequest(method, url) {
 
 //function getICEServer(username , secretkey , domain , appname , roomname , secure){
 function getICEServer(){
-
-    // New Xirsys Implementation 
-    //  $.ajax ({
-    //      url: "https://global.xirsys.net/_turn/Amplechat/",
-    //      type: "PUT",
-    //      async: false,
-    //      headers: {
-    //        "Authorization": "Basic " + btoa("farookafsari:e35af4d2-dbd5-11e7-b927-0c3f27cba33f")
-    //      },
-    //      success: function (res){
-    //         //console.log("ICE List: "+res.v.iceServers);
-    //         webrtcdevIceServers = res.v.iceServers;
-    //         webrtcdev.log(" [ Turn.js ] obtained iceServers" , webrtcdevIceServers);
-    //      }
-    // });
-
     var url = 'https://global.xirsys.net/_turn/Amplechat/';
     var xhr = createCORSRequest('PUT', url);
     xhr.onload = function () {
@@ -18703,36 +18687,25 @@ function getICEServer(){
     };
     xhr.setRequestHeader("Authorization", "Basic " + btoa("farookafsari:e35af4d2-dbd5-11e7-b927-0c3f27cba33f"));
     xhr.send();
-    // xhr.send('ident='+username+'&secret='+secretkey +
-    //     '&domain='+domain +'&application='+appname+
-    //     '&room='+ roomname+'&secure='+secure);
-
-
-    // Old Xirsys 
-    // var url = 'https://service.xirsys.com/ice';
-    // var xhr = createCORSRequest('POST', url);
-    // xhr.onload = function () {
-    //     webrtcdev.log(xhr.responseText);
-    //     if(JSON.parse(xhr.responseText).d==null){
-    //         webrtcdevIceServers = "err";
-    //         shownotification(" media not able to pass through "+ JSON.parse(xhr.responseText).e);
-    //     }else{
-    //         webrtcdevIceServers = JSON.parse(xhr.responseText).d.iceServers;
-    //         webrtcdev.log(" otained iceServers" , webrtcdevIceServers);
-    //     }
-    // };
-    // xhr.onerror = function () {
-    //     webrtcdev.error('Woops, there was an error making xhr request.');
-    // };
-    // xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    // xhr.send('ident='+username+'&secret='+secretkey +
-    //     '&domain='+domain +'&application='+appname+
-    //     '&room='+ roomname+'&secure='+secure);
 }
+/**
+ * {@link https://github.com/altanai/webrtc/blob/master/client/build/scripts/_timer.js|TIMER} 
+ * @summary Takes local and remote peers time , localtion and show and shows timer for session
+ * @author {@link https://telecom.altanai.com/about-me/|Altanai}
+ * @typedef _turn.js
+ * @function
+ */
+
 var hours,mins,secs;
 var today = new Date();
 var zone="";
 
+/**
+ * function to start session timer with timerobj
+ * @method
+ * @name startsessionTimer
+ * @param {json} timerobj
+ */
 function startsessionTimer(timerobj){
 
     if(timerobj.counter.hours && timerobj.counter.minutes && timerobj.counter.seconds ){
@@ -18758,8 +18731,28 @@ function startsessionTimer(timerobj){
 
 }
 
+/**
+ * function to start forward increasing session timer 
+ * @method
+ * @name startForwardTimer
+ */
+ function startForwardTimer(){
+    webrtcdev.log("[timerjs] startForwardTimer");
+    var cd = secs;
+    var cdm = mins;
+    var c = parseInt(cd.innerHTML,10);
+    var m =  parseInt(cdm.innerHTML,10);
+    //alert(" Time for session validy is "+m +" minutes :"+ c+ " seconds");
+    ftimer(cd , c , cdm ,  m); 
+}
+
+/**
+ * function to start backward decreasing session timer 
+ * @method
+ * @name startBackwardTimer
+ */
 function startBackwardTimer(){
-    webrtcdev.log("startBackwardTimer", hours ,mins , secs);
+    webrtcdev.log("[timerjs] startBackwardTimer", hours ,mins , secs);
     var cd = secs;
     var cdm = mins;
     var c = parseInt(cd.innerHTML,10);
@@ -18768,15 +18761,6 @@ function startBackwardTimer(){
     btimer(cd , c , cdm ,  m);  
 }
 
-function startForwardTimer(){
-    webrtcdev.log("forward vtime started ");
-    var cd = secs;
-    var cdm = mins;
-    var c = parseInt(cd.innerHTML,10);
-    var m =  parseInt(cdm.innerHTML,10);
-    //alert(" Time for session validy is "+m +" minutes :"+ c+ " seconds");
-    ftimer(cd , c , cdm ,  m); 
-}
 
 function ftimer(cd , c , cdm , m ){
     var interv = setInterval(function() {
@@ -18817,18 +18801,19 @@ function prepareTime(){
 
 }
 
+
+/**
+ * function to start local peers time based on locally captured time zone 
+ * @method
+ * @name startTime
+ */
 function startTime() {
     try{
-        var h = today.getHours();
-        var m = today.getMinutes();
-        var s = today.getSeconds();
-        m = checkTime(m);
-        s = checkTime(s);
 
         if(timerobj.span.currentTime_id && document.getElementById(timerobj.span.currentTime_id)){
-            var timerspan = document.getElementById(timerobj.span.currentTime_id);
-            timerspan.innerHTML =   h + ":" + m + ":" + s;
-            var t = setTimeout(startTime, 500);
+            var timerspanlocal = document.getElementById(timerobj.span.currentTime_id);
+            timerspanlocal.innerHTML = new Date().toLocaleTimeString();
+            var t = setTimeout(startTime, 1000);
         }else{
             webrtcdev.error(" No place for timerobj.span.currentTime_id");
         }
@@ -18838,21 +18823,29 @@ function startTime() {
     //webrtcdev.log(" localdate :" , today);
 }
 
+/**
+ * function to fetch and show local peers time zone based on locally captured values
+ * @method
+ * @name startTime
+ */
 function timeZone(){
     try{
         if(timerobj.span.currentTimeZone_id && document.getElementById(timerobj.span.currentTimeZone_id)){
-            zone=Intl.DateTimeFormat().resolvedOptions().timeZone;
-            var timerspan=document.getElementById(timerobj.span.currentTimeZone_id);
-            timerspan.innerHTML = zone;
+            zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            var timerzonelocal = document.getElementById(timerobj.span.currentTimeZone_id);
+            timerzonelocal.innerHTML = zone;
         }else{
             webrtcdev.error(" timerobj.span.currentTimeZone_id DOM doesnt exist ");
         }
     }catch(e){
         webrtcdev.error(e);
     }
-
 }
 
+/**
+ * function to share local tiem and zone to other peer
+ * @name shareTimePeer
+ */
 function shareTimePeer(){
     try{
         var msg={
@@ -18864,40 +18857,28 @@ function shareTimePeer(){
     }catch(e){
         webrtcdev.error(e);   
     }
-
 }
 
+/**
+ * function to fetch and show Peers peers time based on onmesaage val
+ * @name startPeersTime
+ */
 function startPeersTime(date,zone){
     
     try{
-        /*    
-        var smday = new Date();
-        smday.setHours(h);
-        smday.setMinutes(m);
-        smday.setSeconds(s);*/
-        webrtcdev.log(" startPeersTime " , date , zone);
+        webrtcdev.log(" [timerjs] startPeersTime " , date , zone);
 
-        if(timerobj.span.remoteTimeZone_id && document.getElementById(timerobj.span.remoteTimeZone_id)){
-            var timerspan = document.getElementById(timerobj.span.remoteTimeZone_id);
-            timerspan.innerHTML = zone;
+        if(timerobj.span.remoteTimeZone_id && document.getElementById(timerobj.span.remoteTimeZone_id) && !document.getElementById(timerobj.span.remoteTimeZone_id).innerHTML){
+            let timerzonepeer = document.getElementById(timerobj.span.remoteTimeZone_id);
+            timerzonepeer.innerHTML = zone;
         }else{
             webrtcdev.error("timerobj.span.remoteTimeZone_id DOM doesnt exist ");
         }
         
         if(timerobj.span.remoteTime_id && document.getElementById(timerobj.span.remoteTime_id)){
-            var remotedate = new Date(date);
-            //var remotedate = new Date().toLocaleString('en-US', { timeZone: zone });
-            webrtcdev.log(" remotedate :" , remotedate);
-            var h = remotedate.getHours();
-            var m = remotedate.getMinutes();
-            var s = remotedate.getSeconds();
-
-            h = checkTime(h);
-            m = checkTime(m);
-            s = checkTime(s);
-            var timerspan=document.getElementById(timerobj.span.remoteTime_id);
-            timerspan.innerHTML =   h + ":" + m + ":" + s;
-            var t = setTimeout(startTime, 500);
+            let timerspanpeer = document.getElementById(timerobj.span.remoteTime_id);
+            timerspanpeer.innerHTML = new Date().toLocaleString('', { timeZone: zone})
+            var t = setTimeout(startPeersTime, 1000);
         }else{
             webrtcdev.error(" timerobj.span.remoteTime_id DOM does not exist");
         }
@@ -19252,58 +19233,29 @@ function sendwebrtcdevLogs(url , key){
 		zip.file("webrtcDevSessionLogs.txt", webrtcdevlogs);
 		// var img = zip.folder("images");
 		// img.file("smile.gif", imgData, {base64: true});
-		//zip.generateAsync({type:"blob"})
+		// zip.generateAsync({type:"blob"})
 		zip.generateAsync({type:"base64"})
 		.then(function(content) {
 		    // see FileSaver.js
-		    //saveAs(content, "webrtcDevSessionLogs.zip");
-		    
-			// var params = {
-			//           Key: "webrtcDevSessionLogs.zip",
-			//           ContentType: "application/zip",
-			//           ContentEncoding: 'base64',
-			//           Body: content
-			//       };
-
-		    // $.ajax({
-		    //     url: url ,
-		    //     method: 'POST',
-		    //     crossDomain: true,
-		    //     ContentEncoding: 'base64',
-		    //     data: { 
-		    //         apikey : key ,
-		    //         useremail: selfemail, 
-		    //         sessionid: sessionid,
-		    //         webrtcZip : content , //Zip file (Max File Size 2MB)
-		    //         webrtcTxt : 'traceswebrtcdev'
-		    //     },
-		    //     beforeSend: function ( xhr ) {
-		    //         xhr.setRequestHeader( 'Authorization', key);
-		    //     },
-		    //     success: function( data, txtStatus, xhr ) {
-		    //         console.log( data  , xhr.status );
-		    //     }
-		    // });
-
-
+		    // saveAs(content, "webrtcDevSessionLogs.zip");
 		    fetch(url, {
-			  method: 'post',
-			  crossDomain: true,
+			  method		: 'post',
+			  crossDomain	: true,
 			  ContentEncoding: 'base64',
-			  headers: {
-			    'Accept': 'application/json, text/plain, */*',
+			  headers		: {
+			    'Accept': 'application/zip, text/plain, */*',
 			    'Content-Type': 'application/json',
 			    'Authorization' : key
 			  },
 			  body: { 
-		            apikey : key ,
-		            useremail: selfemail, 
-		            sessionid: sessionid,
-		            webrtcZip : content , //Zip file (Max File Size 2MB)
-		            webrtcTxt : 'traceswebrtcdev'
+		            apikey 		: key ,
+		            useremail	: selfemail, 
+		            sessionid	: sessionid,
+		            webrtcZip 	: content , //Zip file (Max File Size 2MB)
+		            webrtcTxt 	: 'traceswebrtcdev'
 		        }
 			})
-			.then(res=>res.json())
+			.then(res => res.json())
 			.then(res => console.log(res));
 
 		});
@@ -30989,20 +30941,21 @@ var localobj={}, remoteobj={};
         //     alert(" Session object doesnt have all parameters ");
         // }
 
-        //try{
-            turn    = (session.hasOwnProperty('turn')?session.turn:null);
-            webrtcdev.log("WebRTCdev --> TURN ", turn);
-            if(turn && turn !="none"){
-                // getICEServer( turn.username ,turn.secretkey , turn.domain,
-                //                 turn.application , turn.room , turn.secure); 
-                getICEServer(); 
+        turn    = (session.hasOwnProperty('turn')?session.turn:null);
+        webrtcdev.log("WebRTCdev --> TURN ", turn);
+        if(turn && turn !="none"){
+            if(turn.active && turn.iceServers){
+                webrtcdev.log("WebRTCdev --> Getting preset static ICE servers " , turn.iceServers);
+                webrtcdevIceServers = turn.iceServers;
             }else{
-                webrtcdev.log("WebRTCdev --> TURN not applied ");
+                webrtcdev.info("WebRTCdev --> Calling API to fetch dynamic ICE servers ");
+                getICEServer();  
+                // getICEServer( turn.username ,turn.secretkey , turn.domain,
+                //                 turn.application , turn.room , turn.secure);                
             }
-        // }catch(e){
-        //     webrtcdev.error(e);
-        //     alert(" cannot get TURN ");
-        // }
+        }else{
+            webrtcdev.log("WebRTCdev --> TURN not applied ");
+        }
 
         if(widgets){
 
@@ -31097,7 +31050,7 @@ function funcStartWebrtcdev(){
             else if(!localStorage.getItem("channel")) localStorage.setItem("channel", sessionid);
             else webrtcdev.log(" no action taken on localStorage");
             resolve("done");
-        })
+        });
     }).then(function(res){
 
         webrtcdev.log(" [ startJS webrtcdom ] : incoming " , incoming);
@@ -31723,6 +31676,7 @@ var setRtcConn = function ( sessionid) {
 
         rtcConn.dontCaptureUserMedia = true,
 
+        rtcConn.iceServers = webrtcdevIceServers,
         tempuserid = supportSessionRefresh(),
         webrtcdev.log(" RTCConn : ", rtcConn);
 
@@ -31732,7 +31686,7 @@ var setRtcConn = function ( sessionid) {
         //     }
         //     webrtcdev.info(" WebRTC dev ICE servers ", webrtcdevIceServers);
         //     rtcConn.iceServers = webrtcdevIceServers;
-        //     window.clearInterval(repeatInitilization);
+        //     //window.clearInterval(repeatInitilization);
         // }
 
         if(rtcConn)
@@ -31905,7 +31859,7 @@ var setRtcConn = function ( sessionid) {
         }
 
         if (timerobj && timerobj.active) {
-            //startTime();
+            startTime();
             timeZone();
             activateBttons(timerobj);
             document.getElementById(timerobj.container.id).hidden = true;
@@ -32421,12 +32375,12 @@ var setRtcConn = function ( sessionid) {
     }
 
     /**
-     * find information about a peer form array of peers basedon userid
+     * find information about a peer form array of peers based on userid
      * @method
      * @name findPeerInfo
      * @param {string} userid
      */
-    findPeerInfo = function (userid){
+    var findPeerInfo = function (userid){
         var peerInfo;
         /*    
         if(rtcConn.userid==userid){
@@ -32450,7 +32404,7 @@ var setRtcConn = function ( sessionid) {
      * @param {string} channel
      * @param {string} userid
      */
-    openWebRTC=function(channel , userid){
+    var openWebRTC = function(channel , userid){
         webrtcdev.info(" [openWebRTC] channel: " , channel);
 
          socket.emit("open-channel", {
@@ -32472,7 +32426,7 @@ var setRtcConn = function ( sessionid) {
      * @param {string} userid
      * @param {string} remoteUsers
      */
-    connectWebRTC=function(type, channel, userid ,remoteUsers){
+    var connectWebRTC=function(type, channel, userid ,remoteUsers){
         webrtcdev.info(" [start ConnectWebRTC ] type : " , type , " , Channel :" , channel , 
                                         " , Userid : " ,  userid , " , remote users : " , remoteUsers);
         /*void(document.title = channel);*/
@@ -32536,7 +32490,7 @@ var setRtcConn = function ( sessionid) {
      * @param {string} channel
      * @param {string} userid
      */
-    joinWebRTC = function(channel , userid){
+    var joinWebRTC = function(channel , userid){
         shownotification("Joining an existing session " + channel);
         webrtcdev.info(" [joinWebRTC] channel: " , channel);
         
@@ -32561,7 +32515,7 @@ var setRtcConn = function ( sessionid) {
      * @method
      * @name leaveWebRTC
      */
-    leaveWebRTC=function(){
+    var leaveWebRTC=function(){
         shownotification("Leaving the session ");
     }
 

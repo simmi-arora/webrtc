@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/scripts/_notify.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/scripts/_notify.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/**
+ * function to show bootstrap based notification to client
+ * @constructor
+ * @param {string} message - message passed inside the notification 
+ * @param {string} type - type of message passed inside the notification 
+ */
+function shownotification(message , type){
+
+  if(document.getElementById(&quot;alertBox&quot;)){
+    var alertDiv =document.createElement(&quot;div&quot;);
+    if(type==&quot;warning&quot;)
+      alertDiv.className=&quot;alert alert-warning fade in&quot;;
+    else if (type==&quot;crtical&quot;)
+      alertDiv.className=&quot;alert alert-crtical&quot;;
+    else
+      alertDiv.className=&quot;alert alert-success fade in&quot;;
+    
+    alertDiv.innerHTML=&apos;&lt;a href=&quot;#&quot; class=&quot;close&quot; data-dismiss=&quot;alert&quot; aria-label=&quot;close&quot;&gt;&amp;times;&lt;/a&gt;&apos;+ message;
+
+    document.getElementById(&quot;alertBox&quot;).hidden=false;
+    // document.getElementById(&quot;alertBox&quot;).innerHTML=&quot;&quot;;
+    document.getElementById(&quot;alertBox&quot;).appendChild(alertDiv);
+
+    setTimeout(function() {
+      document.getElementById(&quot;alertBox&quot;).hidden=true;
+    }, 3000);
+  }else{
+    alert(message);
+  }
+
+}
+
+function shownotificationWarning(message){
+
+  if(document.getElementById(&quot;alertBox&quot;)){
+    var alertDiv =document.createElement(&quot;div&quot;);
+    alertDiv.className=&quot;alert alert-warning fade in&quot;;
+    alertDiv.innerHTML=&apos;&lt;a href=&quot;#&quot; class=&quot;close&quot; data-dismiss=&quot;alert&quot; aria-label=&quot;close&quot;&gt;&amp;times;&lt;/a&gt;&apos;+ message;
+
+    document.getElementById(&quot;alertBox&quot;).hidden=false;
+    document.getElementById(&quot;alertBox&quot;).innerHTML=&quot;&quot;;
+    document.getElementById(&quot;alertBox&quot;).appendChild(alertDiv);
+
+    setTimeout(function() {
+      document.getElementById(&quot;alertBox&quot;).hidden=true;
+    }, 3000);
+  }else{
+    alert(message);
+  }
+
+}
+
+function showdesktopnotification() {
+  // Let&apos;s check if the browser supports notifications
+  if (!(&quot;Notification&quot; in window)) {
+     alert(&quot;This browser does not support desktop notification&quot;);
+  }
+
+  // Let&apos;s check whether notification permissions have already been granted
+  else if (Notification.permission === &quot;granted&quot;) {
+     // If it&apos;s okay let&apos;s create a notification
+      var options = {
+          body: &quot;The remote has joined the session&quot;
+          /*icon: &quot;images/villagexpertslogo2.png&quot;*/
+      };
+
+     var notification = new Notification(&quot;Vilageexperts&quot; , options);
+  }
+
+  // Otherwise, we need to ask the user for permission
+  else if (Notification.permission !== &apos;denied&apos;) {
+    Notification.requestPermission(function (permission) {
+      // If the user accepts, let&apos;s create a notification
+      if (permission === &quot;granted&quot;) {
+        var notification = new Notification(&quot;villageexpsrts&quot;);
+      }
+
+    });
+
+  }
+
+  // At last, if the user has denied notifications, and you 
+  // want to be respectful there is no need to bother them any more.
+}
+
+Notification.requestPermission().then(function(result) {
+  webrtcdev.log(result);
+});
+
+function spawnNotification(theBody,theIcon,theTitle) {
+  var options = {
+    body: theBody,
+    icon: theIcon
+  }
+  var n = new Notification(theTitle,options);
+}
+
+
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

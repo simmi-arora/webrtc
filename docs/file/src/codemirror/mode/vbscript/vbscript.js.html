@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/vbscript/vbscript.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/vbscript/vbscript.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+/*
+For extra ASP classic objects, initialize CodeMirror instance with this option:
+    isASP: true
+
+E.G.:
+    var editor = CodeMirror.fromTextArea(document.getElementById(&quot;code&quot;), {
+        lineNumbers: true,
+        isASP: true
+      });
+*/
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+&quot;use strict&quot;;
+
+CodeMirror.defineMode(&quot;vbscript&quot;, function(conf, parserConf) {
+    var ERRORCLASS = &apos;error&apos;;
+
+    function wordRegexp(words) {
+        return new RegExp(&quot;^((&quot; + words.join(&quot;)|(&quot;) + &quot;))\\b&quot;, &quot;i&quot;);
+    }
+
+    var singleOperators = new RegExp(&quot;^[\\+\\-\\*/&amp;\\\\\\^&lt;&gt;=]&quot;);
+    var doubleOperators = new RegExp(&quot;^((&lt;&gt;)|(&lt;=)|(&gt;=))&quot;);
+    var singleDelimiters = new RegExp(&apos;^[\\.,]&apos;);
+    var brakets = new RegExp(&apos;^[\\(\\)]&apos;);
+    var identifiers = new RegExp(&quot;^[A-Za-z][_A-Za-z0-9]*&quot;);
+
+    var openingKeywords = [&apos;class&apos;,&apos;sub&apos;,&apos;select&apos;,&apos;while&apos;,&apos;if&apos;,&apos;function&apos;, &apos;property&apos;, &apos;with&apos;, &apos;for&apos;];
+    var middleKeywords = [&apos;else&apos;,&apos;elseif&apos;,&apos;case&apos;];
+    var endKeywords = [&apos;next&apos;,&apos;loop&apos;,&apos;wend&apos;];
+
+    var wordOperators = wordRegexp([&apos;and&apos;, &apos;or&apos;, &apos;not&apos;, &apos;xor&apos;, &apos;is&apos;, &apos;mod&apos;, &apos;eqv&apos;, &apos;imp&apos;]);
+    var commonkeywords = [&apos;dim&apos;, &apos;redim&apos;, &apos;then&apos;,  &apos;until&apos;, &apos;randomize&apos;,
+                          &apos;byval&apos;,&apos;byref&apos;,&apos;new&apos;,&apos;property&apos;, &apos;exit&apos;, &apos;in&apos;,
+                          &apos;const&apos;,&apos;private&apos;, &apos;public&apos;,
+                          &apos;get&apos;,&apos;set&apos;,&apos;let&apos;, &apos;stop&apos;, &apos;on error resume next&apos;, &apos;on error goto 0&apos;, &apos;option explicit&apos;, &apos;call&apos;, &apos;me&apos;];
+
+    //This list was from: http://msdn.microsoft.com/en-us/library/f8tbc79x(v=vs.84).aspx
+    var atomWords = [&apos;true&apos;, &apos;false&apos;, &apos;nothing&apos;, &apos;empty&apos;, &apos;null&apos;];
+    //This list was from: http://msdn.microsoft.com/en-us/library/3ca8tfek(v=vs.84).aspx
+    var builtinFuncsWords = [&apos;abs&apos;, &apos;array&apos;, &apos;asc&apos;, &apos;atn&apos;, &apos;cbool&apos;, &apos;cbyte&apos;, &apos;ccur&apos;, &apos;cdate&apos;, &apos;cdbl&apos;, &apos;chr&apos;, &apos;cint&apos;, &apos;clng&apos;, &apos;cos&apos;, &apos;csng&apos;, &apos;cstr&apos;, &apos;date&apos;, &apos;dateadd&apos;, &apos;datediff&apos;, &apos;datepart&apos;,
+                        &apos;dateserial&apos;, &apos;datevalue&apos;, &apos;day&apos;, &apos;escape&apos;, &apos;eval&apos;, &apos;execute&apos;, &apos;exp&apos;, &apos;filter&apos;, &apos;formatcurrency&apos;, &apos;formatdatetime&apos;, &apos;formatnumber&apos;, &apos;formatpercent&apos;, &apos;getlocale&apos;, &apos;getobject&apos;,
+                        &apos;getref&apos;, &apos;hex&apos;, &apos;hour&apos;, &apos;inputbox&apos;, &apos;instr&apos;, &apos;instrrev&apos;, &apos;int&apos;, &apos;fix&apos;, &apos;isarray&apos;, &apos;isdate&apos;, &apos;isempty&apos;, &apos;isnull&apos;, &apos;isnumeric&apos;, &apos;isobject&apos;, &apos;join&apos;, &apos;lbound&apos;, &apos;lcase&apos;, &apos;left&apos;,
+                        &apos;len&apos;, &apos;loadpicture&apos;, &apos;log&apos;, &apos;ltrim&apos;, &apos;rtrim&apos;, &apos;trim&apos;, &apos;maths&apos;, &apos;mid&apos;, &apos;minute&apos;, &apos;month&apos;, &apos;monthname&apos;, &apos;msgbox&apos;, &apos;now&apos;, &apos;oct&apos;, &apos;replace&apos;, &apos;rgb&apos;, &apos;right&apos;, &apos;rnd&apos;, &apos;round&apos;,
+                        &apos;scriptengine&apos;, &apos;scriptenginebuildversion&apos;, &apos;scriptenginemajorversion&apos;, &apos;scriptengineminorversion&apos;, &apos;second&apos;, &apos;setlocale&apos;, &apos;sgn&apos;, &apos;sin&apos;, &apos;space&apos;, &apos;split&apos;, &apos;sqr&apos;, &apos;strcomp&apos;,
+                        &apos;string&apos;, &apos;strreverse&apos;, &apos;tan&apos;, &apos;time&apos;, &apos;timer&apos;, &apos;timeserial&apos;, &apos;timevalue&apos;, &apos;typename&apos;, &apos;ubound&apos;, &apos;ucase&apos;, &apos;unescape&apos;, &apos;vartype&apos;, &apos;weekday&apos;, &apos;weekdayname&apos;, &apos;year&apos;];
+
+    //This list was from: http://msdn.microsoft.com/en-us/library/ydz4cfk3(v=vs.84).aspx
+    var builtinConsts = [&apos;vbBlack&apos;, &apos;vbRed&apos;, &apos;vbGreen&apos;, &apos;vbYellow&apos;, &apos;vbBlue&apos;, &apos;vbMagenta&apos;, &apos;vbCyan&apos;, &apos;vbWhite&apos;, &apos;vbBinaryCompare&apos;, &apos;vbTextCompare&apos;,
+                         &apos;vbSunday&apos;, &apos;vbMonday&apos;, &apos;vbTuesday&apos;, &apos;vbWednesday&apos;, &apos;vbThursday&apos;, &apos;vbFriday&apos;, &apos;vbSaturday&apos;, &apos;vbUseSystemDayOfWeek&apos;, &apos;vbFirstJan1&apos;, &apos;vbFirstFourDays&apos;, &apos;vbFirstFullWeek&apos;,
+                         &apos;vbGeneralDate&apos;, &apos;vbLongDate&apos;, &apos;vbShortDate&apos;, &apos;vbLongTime&apos;, &apos;vbShortTime&apos;, &apos;vbObjectError&apos;,
+                         &apos;vbOKOnly&apos;, &apos;vbOKCancel&apos;, &apos;vbAbortRetryIgnore&apos;, &apos;vbYesNoCancel&apos;, &apos;vbYesNo&apos;, &apos;vbRetryCancel&apos;, &apos;vbCritical&apos;, &apos;vbQuestion&apos;, &apos;vbExclamation&apos;, &apos;vbInformation&apos;, &apos;vbDefaultButton1&apos;, &apos;vbDefaultButton2&apos;,
+                         &apos;vbDefaultButton3&apos;, &apos;vbDefaultButton4&apos;, &apos;vbApplicationModal&apos;, &apos;vbSystemModal&apos;, &apos;vbOK&apos;, &apos;vbCancel&apos;, &apos;vbAbort&apos;, &apos;vbRetry&apos;, &apos;vbIgnore&apos;, &apos;vbYes&apos;, &apos;vbNo&apos;,
+                         &apos;vbCr&apos;, &apos;VbCrLf&apos;, &apos;vbFormFeed&apos;, &apos;vbLf&apos;, &apos;vbNewLine&apos;, &apos;vbNullChar&apos;, &apos;vbNullString&apos;, &apos;vbTab&apos;, &apos;vbVerticalTab&apos;, &apos;vbUseDefault&apos;, &apos;vbTrue&apos;, &apos;vbFalse&apos;,
+                         &apos;vbEmpty&apos;, &apos;vbNull&apos;, &apos;vbInteger&apos;, &apos;vbLong&apos;, &apos;vbSingle&apos;, &apos;vbDouble&apos;, &apos;vbCurrency&apos;, &apos;vbDate&apos;, &apos;vbString&apos;, &apos;vbObject&apos;, &apos;vbError&apos;, &apos;vbBoolean&apos;, &apos;vbVariant&apos;, &apos;vbDataObject&apos;, &apos;vbDecimal&apos;, &apos;vbByte&apos;, &apos;vbArray&apos;];
+    //This list was from: http://msdn.microsoft.com/en-us/library/hkc375ea(v=vs.84).aspx
+    var builtinObjsWords = [&apos;WScript&apos;, &apos;err&apos;, &apos;debug&apos;, &apos;RegExp&apos;];
+    var knownProperties = [&apos;description&apos;, &apos;firstindex&apos;, &apos;global&apos;, &apos;helpcontext&apos;, &apos;helpfile&apos;, &apos;ignorecase&apos;, &apos;length&apos;, &apos;number&apos;, &apos;pattern&apos;, &apos;source&apos;, &apos;value&apos;, &apos;count&apos;];
+    var knownMethods = [&apos;clear&apos;, &apos;execute&apos;, &apos;raise&apos;, &apos;replace&apos;, &apos;test&apos;, &apos;write&apos;, &apos;writeline&apos;, &apos;close&apos;, &apos;open&apos;, &apos;state&apos;, &apos;eof&apos;, &apos;update&apos;, &apos;addnew&apos;, &apos;end&apos;, &apos;createobject&apos;, &apos;quit&apos;];
+
+    var aspBuiltinObjsWords = [&apos;server&apos;, &apos;response&apos;, &apos;request&apos;, &apos;session&apos;, &apos;application&apos;];
+    var aspKnownProperties = [&apos;buffer&apos;, &apos;cachecontrol&apos;, &apos;charset&apos;, &apos;contenttype&apos;, &apos;expires&apos;, &apos;expiresabsolute&apos;, &apos;isclientconnected&apos;, &apos;pics&apos;, &apos;status&apos;, //response
+                              &apos;clientcertificate&apos;, &apos;cookies&apos;, &apos;form&apos;, &apos;querystring&apos;, &apos;servervariables&apos;, &apos;totalbytes&apos;, //request
+                              &apos;contents&apos;, &apos;staticobjects&apos;, //application
+                              &apos;codepage&apos;, &apos;lcid&apos;, &apos;sessionid&apos;, &apos;timeout&apos;, //session
+                              &apos;scripttimeout&apos;]; //server
+    var aspKnownMethods = [&apos;addheader&apos;, &apos;appendtolog&apos;, &apos;binarywrite&apos;, &apos;end&apos;, &apos;flush&apos;, &apos;redirect&apos;, //response
+                           &apos;binaryread&apos;, //request
+                           &apos;remove&apos;, &apos;removeall&apos;, &apos;lock&apos;, &apos;unlock&apos;, //application
+                           &apos;abandon&apos;, //session
+                           &apos;getlasterror&apos;, &apos;htmlencode&apos;, &apos;mappath&apos;, &apos;transfer&apos;, &apos;urlencode&apos;]; //server
+
+    var knownWords = knownMethods.concat(knownProperties);
+
+    builtinObjsWords = builtinObjsWords.concat(builtinConsts);
+
+    if (conf.isASP){
+        builtinObjsWords = builtinObjsWords.concat(aspBuiltinObjsWords);
+        knownWords = knownWords.concat(aspKnownMethods, aspKnownProperties);
+    };
+
+    var keywords = wordRegexp(commonkeywords);
+    var atoms = wordRegexp(atomWords);
+    var builtinFuncs = wordRegexp(builtinFuncsWords);
+    var builtinObjs = wordRegexp(builtinObjsWords);
+    var known = wordRegexp(knownWords);
+    var stringPrefixes = &apos;&quot;&apos;;
+
+    var opening = wordRegexp(openingKeywords);
+    var middle = wordRegexp(middleKeywords);
+    var closing = wordRegexp(endKeywords);
+    var doubleClosing = wordRegexp([&apos;end&apos;]);
+    var doOpening = wordRegexp([&apos;do&apos;]);
+    var noIndentWords = wordRegexp([&apos;on error resume next&apos;, &apos;exit&apos;]);
+    var comment = wordRegexp([&apos;rem&apos;]);
+
+
+    function indent(_stream, state) {
+      state.currentIndent++;
+    }
+
+    function dedent(_stream, state) {
+      state.currentIndent--;
+    }
+    // tokenizers
+    function tokenBase(stream, state) {
+        if (stream.eatSpace()) {
+            return &apos;space&apos;;
+            //return null;
+        }
+
+        var ch = stream.peek();
+
+        // Handle Comments
+        if (ch === &quot;&apos;&quot;) {
+            stream.skipToEnd();
+            return &apos;comment&apos;;
+        }
+        if (stream.match(comment)){
+            stream.skipToEnd();
+            return &apos;comment&apos;;
+        }
+
+
+        // Handle Number Literals
+        if (stream.match(/^((&amp;H)|(&amp;O))?[0-9\.]/i, false) &amp;&amp; !stream.match(/^((&amp;H)|(&amp;O))?[0-9\.]+[a-z_]/i, false)) {
+            var floatLiteral = false;
+            // Floats
+            if (stream.match(/^\d*\.\d+/i)) { floatLiteral = true; }
+            else if (stream.match(/^\d+\.\d*/)) { floatLiteral = true; }
+            else if (stream.match(/^\.\d+/)) { floatLiteral = true; }
+
+            if (floatLiteral) {
+                // Float literals may be &quot;imaginary&quot;
+                stream.eat(/J/i);
+                return &apos;number&apos;;
+            }
+            // Integers
+            var intLiteral = false;
+            // Hex
+            if (stream.match(/^&amp;H[0-9a-f]+/i)) { intLiteral = true; }
+            // Octal
+            else if (stream.match(/^&amp;O[0-7]+/i)) { intLiteral = true; }
+            // Decimal
+            else if (stream.match(/^[1-9]\d*F?/)) {
+                // Decimal literals may be &quot;imaginary&quot;
+                stream.eat(/J/i);
+                // TODO - Can you have imaginary longs?
+                intLiteral = true;
+            }
+            // Zero by itself with no other piece of number.
+            else if (stream.match(/^0(?![\dx])/i)) { intLiteral = true; }
+            if (intLiteral) {
+                // Integer literals may be &quot;long&quot;
+                stream.eat(/L/i);
+                return &apos;number&apos;;
+            }
+        }
+
+        // Handle Strings
+        if (stream.match(stringPrefixes)) {
+            state.tokenize = tokenStringFactory(stream.current());
+            return state.tokenize(stream, state);
+        }
+
+        // Handle operators and Delimiters
+        if (stream.match(doubleOperators)
+            || stream.match(singleOperators)
+            || stream.match(wordOperators)) {
+            return &apos;operator&apos;;
+        }
+        if (stream.match(singleDelimiters)) {
+            return null;
+        }
+
+        if (stream.match(brakets)) {
+            return &quot;bracket&quot;;
+        }
+
+        if (stream.match(noIndentWords)) {
+            state.doInCurrentLine = true;
+
+            return &apos;keyword&apos;;
+        }
+
+        if (stream.match(doOpening)) {
+            indent(stream,state);
+            state.doInCurrentLine = true;
+
+            return &apos;keyword&apos;;
+        }
+        if (stream.match(opening)) {
+            if (! state.doInCurrentLine)
+              indent(stream,state);
+            else
+              state.doInCurrentLine = false;
+
+            return &apos;keyword&apos;;
+        }
+        if (stream.match(middle)) {
+            return &apos;keyword&apos;;
+        }
+
+
+        if (stream.match(doubleClosing)) {
+            dedent(stream,state);
+            dedent(stream,state);
+
+            return &apos;keyword&apos;;
+        }
+        if (stream.match(closing)) {
+            if (! state.doInCurrentLine)
+              dedent(stream,state);
+            else
+              state.doInCurrentLine = false;
+
+            return &apos;keyword&apos;;
+        }
+
+        if (stream.match(keywords)) {
+            return &apos;keyword&apos;;
+        }
+
+        if (stream.match(atoms)) {
+            return &apos;atom&apos;;
+        }
+
+        if (stream.match(known)) {
+            return &apos;variable-2&apos;;
+        }
+
+        if (stream.match(builtinFuncs)) {
+            return &apos;builtin&apos;;
+        }
+
+        if (stream.match(builtinObjs)){
+            return &apos;variable-2&apos;;
+        }
+
+        if (stream.match(identifiers)) {
+            return &apos;variable&apos;;
+        }
+
+        // Handle non-detected items
+        stream.next();
+        return ERRORCLASS;
+    }
+
+    function tokenStringFactory(delimiter) {
+        var singleline = delimiter.length == 1;
+        var OUTCLASS = &apos;string&apos;;
+
+        return function(stream, state) {
+            while (!stream.eol()) {
+                stream.eatWhile(/[^&apos;&quot;]/);
+                if (stream.match(delimiter)) {
+                    state.tokenize = tokenBase;
+                    return OUTCLASS;
+                } else {
+                    stream.eat(/[&apos;&quot;]/);
+                }
+            }
+            if (singleline) {
+                if (parserConf.singleLineStringErrors) {
+                    return ERRORCLASS;
+                } else {
+                    state.tokenize = tokenBase;
+                }
+            }
+            return OUTCLASS;
+        };
+    }
+
+
+    function tokenLexer(stream, state) {
+        var style = state.tokenize(stream, state);
+        var current = stream.current();
+
+        // Handle &apos;.&apos; connected identifiers
+        if (current === &apos;.&apos;) {
+            style = state.tokenize(stream, state);
+
+            current = stream.current();
+            if (style &amp;&amp; (style.substr(0, 8) === &apos;variable&apos; || style===&apos;builtin&apos; || style===&apos;keyword&apos;)){//|| knownWords.indexOf(current.substring(1)) &gt; -1) {
+                if (style === &apos;builtin&apos; || style === &apos;keyword&apos;) style=&apos;variable&apos;;
+                if (knownWords.indexOf(current.substr(1)) &gt; -1) style=&apos;variable-2&apos;;
+
+                return style;
+            } else {
+                return ERRORCLASS;
+            }
+        }
+
+        return style;
+    }
+
+    var external = {
+        electricChars:&quot;dDpPtTfFeE &quot;,
+        startState: function() {
+            return {
+              tokenize: tokenBase,
+              lastToken: null,
+              currentIndent: 0,
+              nextLineIndent: 0,
+              doInCurrentLine: false,
+              ignoreKeyword: false
+
+
+          };
+        },
+
+        token: function(stream, state) {
+            if (stream.sol()) {
+              state.currentIndent += state.nextLineIndent;
+              state.nextLineIndent = 0;
+              state.doInCurrentLine = 0;
+            }
+            var style = tokenLexer(stream, state);
+
+            state.lastToken = {style:style, content: stream.current()};
+
+            if (style===&apos;space&apos;) style=null;
+
+            return style;
+        },
+
+        indent: function(state, textAfter) {
+            var trueText = textAfter.replace(/^\s+|\s+$/g, &apos;&apos;) ;
+            if (trueText.match(closing) || trueText.match(doubleClosing) || trueText.match(middle)) return conf.indentUnit*(state.currentIndent-1);
+            if(state.currentIndent &lt; 0) return 0;
+            return state.currentIndent * conf.indentUnit;
+        }
+
+    };
+    return external;
+});
+
+CodeMirror.defineMIME(&quot;text/vbscript&quot;, &quot;vbscript&quot;);
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

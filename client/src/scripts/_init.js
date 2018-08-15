@@ -34,7 +34,7 @@ var latitude="" , longitude="" , operatingsystem="";
 
 /* webrtc session intilization */
 var autoload = true;
-var sessionid = null, socketAddr = "/", webrtcdevIceServers;
+var sessionid = null, socketAddr = "/", webrtcdevIceServers=[];
 var localStream , localStreamId, remoteStream , remoteStreamId;
 
 /* incoming and outgoing call params */

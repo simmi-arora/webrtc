@@ -1,4 +1,4 @@
-/*! webrtcdevelopment 2018-08-12 */
+/*! webrtcdevelopment 2018-08-15 */
 window.RTCMultiConnection = function(roomid, forceOptions) {
 
 function SocketConnection(connection, connectCallback) {

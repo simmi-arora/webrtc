@@ -31,22 +31,6 @@ function createCORSRequest(method, url) {
 
 //function getICEServer(username , secretkey , domain , appname , roomname , secure){
 function getICEServer(){
-
-    // New Xirsys Implementation 
-    //  $.ajax ({
-    //      url: "https://global.xirsys.net/_turn/Amplechat/",
-    //      type: "PUT",
-    //      async: false,
-    //      headers: {
-    //        "Authorization": "Basic " + btoa("farookafsari:e35af4d2-dbd5-11e7-b927-0c3f27cba33f")
-    //      },
-    //      success: function (res){
-    //         //console.log("ICE List: "+res.v.iceServers);
-    //         webrtcdevIceServers = res.v.iceServers;
-    //         webrtcdev.log(" [ Turn.js ] obtained iceServers" , webrtcdevIceServers);
-    //      }
-    // });
-
     var url = 'https://global.xirsys.net/_turn/Amplechat/';
     var xhr = createCORSRequest('PUT', url);
     xhr.onload = function () {
@@ -64,29 +48,4 @@ function getICEServer(){
     };
     xhr.setRequestHeader("Authorization", "Basic " + btoa("farookafsari:e35af4d2-dbd5-11e7-b927-0c3f27cba33f"));
     xhr.send();
-    // xhr.send('ident='+username+'&secret='+secretkey +
-    //     '&domain='+domain +'&application='+appname+
-    //     '&room='+ roomname+'&secure='+secure);
-
-
-    // Old Xirsys 
-    // var url = 'https://service.xirsys.com/ice';
-    // var xhr = createCORSRequest('POST', url);
-    // xhr.onload = function () {
-    //     webrtcdev.log(xhr.responseText);
-    //     if(JSON.parse(xhr.responseText).d==null){
-    //         webrtcdevIceServers = "err";
-    //         shownotification(" media not able to pass through "+ JSON.parse(xhr.responseText).e);
-    //     }else{
-    //         webrtcdevIceServers = JSON.parse(xhr.responseText).d.iceServers;
-    //         webrtcdev.log(" otained iceServers" , webrtcdevIceServers);
-    //     }
-    // };
-    // xhr.onerror = function () {
-    //     webrtcdev.error('Woops, there was an error making xhr request.');
-    // };
-    // xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    // xhr.send('ident='+username+'&secret='+secretkey +
-    //     '&domain='+domain +'&application='+appname+
-    //     '&room='+ roomname+'&secure='+secure);
 }

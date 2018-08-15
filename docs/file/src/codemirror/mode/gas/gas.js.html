@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/gas/gas.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/gas/gas.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+&quot;use strict&quot;;
+
+CodeMirror.defineMode(&quot;gas&quot;, function(_config, parserConfig) {
+  &apos;use strict&apos;;
+
+  // If an architecture is specified, its initialization function may
+  // populate this array with custom parsing functions which will be
+  // tried in the event that the standard functions do not find a match.
+  var custom = [];
+
+  // The symbol used to start a line comment changes based on the target
+  // architecture.
+  // If no architecture is pased in &quot;parserConfig&quot; then only multiline
+  // comments will have syntax support.
+  var lineCommentStartSymbol = &quot;&quot;;
+
+  // These directives are architecture independent.
+  // Machine specific directives should go in their respective
+  // architecture initialization function.
+  // Reference:
+  // http://sourceware.org/binutils/docs/as/Pseudo-Ops.html#Pseudo-Ops
+  var directives = {
+    &quot;.abort&quot; : &quot;builtin&quot;,
+    &quot;.align&quot; : &quot;builtin&quot;,
+    &quot;.altmacro&quot; : &quot;builtin&quot;,
+    &quot;.ascii&quot; : &quot;builtin&quot;,
+    &quot;.asciz&quot; : &quot;builtin&quot;,
+    &quot;.balign&quot; : &quot;builtin&quot;,
+    &quot;.balignw&quot; : &quot;builtin&quot;,
+    &quot;.balignl&quot; : &quot;builtin&quot;,
+    &quot;.bundle_align_mode&quot; : &quot;builtin&quot;,
+    &quot;.bundle_lock&quot; : &quot;builtin&quot;,
+    &quot;.bundle_unlock&quot; : &quot;builtin&quot;,
+    &quot;.byte&quot; : &quot;builtin&quot;,
+    &quot;.cfi_startproc&quot; : &quot;builtin&quot;,
+    &quot;.comm&quot; : &quot;builtin&quot;,
+    &quot;.data&quot; : &quot;builtin&quot;,
+    &quot;.def&quot; : &quot;builtin&quot;,
+    &quot;.desc&quot; : &quot;builtin&quot;,
+    &quot;.dim&quot; : &quot;builtin&quot;,
+    &quot;.double&quot; : &quot;builtin&quot;,
+    &quot;.eject&quot; : &quot;builtin&quot;,
+    &quot;.else&quot; : &quot;builtin&quot;,
+    &quot;.elseif&quot; : &quot;builtin&quot;,
+    &quot;.end&quot; : &quot;builtin&quot;,
+    &quot;.endef&quot; : &quot;builtin&quot;,
+    &quot;.endfunc&quot; : &quot;builtin&quot;,
+    &quot;.endif&quot; : &quot;builtin&quot;,
+    &quot;.equ&quot; : &quot;builtin&quot;,
+    &quot;.equiv&quot; : &quot;builtin&quot;,
+    &quot;.eqv&quot; : &quot;builtin&quot;,
+    &quot;.err&quot; : &quot;builtin&quot;,
+    &quot;.error&quot; : &quot;builtin&quot;,
+    &quot;.exitm&quot; : &quot;builtin&quot;,
+    &quot;.extern&quot; : &quot;builtin&quot;,
+    &quot;.fail&quot; : &quot;builtin&quot;,
+    &quot;.file&quot; : &quot;builtin&quot;,
+    &quot;.fill&quot; : &quot;builtin&quot;,
+    &quot;.float&quot; : &quot;builtin&quot;,
+    &quot;.func&quot; : &quot;builtin&quot;,
+    &quot;.global&quot; : &quot;builtin&quot;,
+    &quot;.gnu_attribute&quot; : &quot;builtin&quot;,
+    &quot;.hidden&quot; : &quot;builtin&quot;,
+    &quot;.hword&quot; : &quot;builtin&quot;,
+    &quot;.ident&quot; : &quot;builtin&quot;,
+    &quot;.if&quot; : &quot;builtin&quot;,
+    &quot;.incbin&quot; : &quot;builtin&quot;,
+    &quot;.include&quot; : &quot;builtin&quot;,
+    &quot;.int&quot; : &quot;builtin&quot;,
+    &quot;.internal&quot; : &quot;builtin&quot;,
+    &quot;.irp&quot; : &quot;builtin&quot;,
+    &quot;.irpc&quot; : &quot;builtin&quot;,
+    &quot;.lcomm&quot; : &quot;builtin&quot;,
+    &quot;.lflags&quot; : &quot;builtin&quot;,
+    &quot;.line&quot; : &quot;builtin&quot;,
+    &quot;.linkonce&quot; : &quot;builtin&quot;,
+    &quot;.list&quot; : &quot;builtin&quot;,
+    &quot;.ln&quot; : &quot;builtin&quot;,
+    &quot;.loc&quot; : &quot;builtin&quot;,
+    &quot;.loc_mark_labels&quot; : &quot;builtin&quot;,
+    &quot;.local&quot; : &quot;builtin&quot;,
+    &quot;.long&quot; : &quot;builtin&quot;,
+    &quot;.macro&quot; : &quot;builtin&quot;,
+    &quot;.mri&quot; : &quot;builtin&quot;,
+    &quot;.noaltmacro&quot; : &quot;builtin&quot;,
+    &quot;.nolist&quot; : &quot;builtin&quot;,
+    &quot;.octa&quot; : &quot;builtin&quot;,
+    &quot;.offset&quot; : &quot;builtin&quot;,
+    &quot;.org&quot; : &quot;builtin&quot;,
+    &quot;.p2align&quot; : &quot;builtin&quot;,
+    &quot;.popsection&quot; : &quot;builtin&quot;,
+    &quot;.previous&quot; : &quot;builtin&quot;,
+    &quot;.print&quot; : &quot;builtin&quot;,
+    &quot;.protected&quot; : &quot;builtin&quot;,
+    &quot;.psize&quot; : &quot;builtin&quot;,
+    &quot;.purgem&quot; : &quot;builtin&quot;,
+    &quot;.pushsection&quot; : &quot;builtin&quot;,
+    &quot;.quad&quot; : &quot;builtin&quot;,
+    &quot;.reloc&quot; : &quot;builtin&quot;,
+    &quot;.rept&quot; : &quot;builtin&quot;,
+    &quot;.sbttl&quot; : &quot;builtin&quot;,
+    &quot;.scl&quot; : &quot;builtin&quot;,
+    &quot;.section&quot; : &quot;builtin&quot;,
+    &quot;.set&quot; : &quot;builtin&quot;,
+    &quot;.short&quot; : &quot;builtin&quot;,
+    &quot;.single&quot; : &quot;builtin&quot;,
+    &quot;.size&quot; : &quot;builtin&quot;,
+    &quot;.skip&quot; : &quot;builtin&quot;,
+    &quot;.sleb128&quot; : &quot;builtin&quot;,
+    &quot;.space&quot; : &quot;builtin&quot;,
+    &quot;.stab&quot; : &quot;builtin&quot;,
+    &quot;.string&quot; : &quot;builtin&quot;,
+    &quot;.struct&quot; : &quot;builtin&quot;,
+    &quot;.subsection&quot; : &quot;builtin&quot;,
+    &quot;.symver&quot; : &quot;builtin&quot;,
+    &quot;.tag&quot; : &quot;builtin&quot;,
+    &quot;.text&quot; : &quot;builtin&quot;,
+    &quot;.title&quot; : &quot;builtin&quot;,
+    &quot;.type&quot; : &quot;builtin&quot;,
+    &quot;.uleb128&quot; : &quot;builtin&quot;,
+    &quot;.val&quot; : &quot;builtin&quot;,
+    &quot;.version&quot; : &quot;builtin&quot;,
+    &quot;.vtable_entry&quot; : &quot;builtin&quot;,
+    &quot;.vtable_inherit&quot; : &quot;builtin&quot;,
+    &quot;.warning&quot; : &quot;builtin&quot;,
+    &quot;.weak&quot; : &quot;builtin&quot;,
+    &quot;.weakref&quot; : &quot;builtin&quot;,
+    &quot;.word&quot; : &quot;builtin&quot;
+  };
+
+  var registers = {};
+
+  function x86(_parserConfig) {
+    lineCommentStartSymbol = &quot;#&quot;;
+
+    registers.ax  = &quot;variable&quot;;
+    registers.eax = &quot;variable-2&quot;;
+    registers.rax = &quot;variable-3&quot;;
+
+    registers.bx  = &quot;variable&quot;;
+    registers.ebx = &quot;variable-2&quot;;
+    registers.rbx = &quot;variable-3&quot;;
+
+    registers.cx  = &quot;variable&quot;;
+    registers.ecx = &quot;variable-2&quot;;
+    registers.rcx = &quot;variable-3&quot;;
+
+    registers.dx  = &quot;variable&quot;;
+    registers.edx = &quot;variable-2&quot;;
+    registers.rdx = &quot;variable-3&quot;;
+
+    registers.si  = &quot;variable&quot;;
+    registers.esi = &quot;variable-2&quot;;
+    registers.rsi = &quot;variable-3&quot;;
+
+    registers.di  = &quot;variable&quot;;
+    registers.edi = &quot;variable-2&quot;;
+    registers.rdi = &quot;variable-3&quot;;
+
+    registers.sp  = &quot;variable&quot;;
+    registers.esp = &quot;variable-2&quot;;
+    registers.rsp = &quot;variable-3&quot;;
+
+    registers.bp  = &quot;variable&quot;;
+    registers.ebp = &quot;variable-2&quot;;
+    registers.rbp = &quot;variable-3&quot;;
+
+    registers.ip  = &quot;variable&quot;;
+    registers.eip = &quot;variable-2&quot;;
+    registers.rip = &quot;variable-3&quot;;
+
+    registers.cs  = &quot;keyword&quot;;
+    registers.ds  = &quot;keyword&quot;;
+    registers.ss  = &quot;keyword&quot;;
+    registers.es  = &quot;keyword&quot;;
+    registers.fs  = &quot;keyword&quot;;
+    registers.gs  = &quot;keyword&quot;;
+  }
+
+  function armv6(_parserConfig) {
+    // Reference:
+    // http://infocenter.arm.com/help/topic/com.arm.doc.qrc0001l/QRC0001_UAL.pdf
+    // http://infocenter.arm.com/help/topic/com.arm.doc.ddi0301h/DDI0301H_arm1176jzfs_r0p7_trm.pdf
+    lineCommentStartSymbol = &quot;@&quot;;
+    directives.syntax = &quot;builtin&quot;;
+
+    registers.r0  = &quot;variable&quot;;
+    registers.r1  = &quot;variable&quot;;
+    registers.r2  = &quot;variable&quot;;
+    registers.r3  = &quot;variable&quot;;
+    registers.r4  = &quot;variable&quot;;
+    registers.r5  = &quot;variable&quot;;
+    registers.r6  = &quot;variable&quot;;
+    registers.r7  = &quot;variable&quot;;
+    registers.r8  = &quot;variable&quot;;
+    registers.r9  = &quot;variable&quot;;
+    registers.r10 = &quot;variable&quot;;
+    registers.r11 = &quot;variable&quot;;
+    registers.r12 = &quot;variable&quot;;
+
+    registers.sp  = &quot;variable-2&quot;;
+    registers.lr  = &quot;variable-2&quot;;
+    registers.pc  = &quot;variable-2&quot;;
+    registers.r13 = registers.sp;
+    registers.r14 = registers.lr;
+    registers.r15 = registers.pc;
+
+    custom.push(function(ch, stream) {
+      if (ch === &apos;#&apos;) {
+        stream.eatWhile(/\w/);
+        return &quot;number&quot;;
+      }
+    });
+  }
+
+  var arch = (parserConfig.architecture || &quot;x86&quot;).toLowerCase();
+  if (arch === &quot;x86&quot;) {
+    x86(parserConfig);
+  } else if (arch === &quot;arm&quot; || arch === &quot;armv6&quot;) {
+    armv6(parserConfig);
+  }
+
+  function nextUntilUnescaped(stream, end) {
+    var escaped = false, next;
+    while ((next = stream.next()) != null) {
+      if (next === end &amp;&amp; !escaped) {
+        return false;
+      }
+      escaped = !escaped &amp;&amp; next === &quot;\\&quot;;
+    }
+    return escaped;
+  }
+
+  function clikeComment(stream, state) {
+    var maybeEnd = false, ch;
+    while ((ch = stream.next()) != null) {
+      if (ch === &quot;/&quot; &amp;&amp; maybeEnd) {
+        state.tokenize = null;
+        break;
+      }
+      maybeEnd = (ch === &quot;*&quot;);
+    }
+    return &quot;comment&quot;;
+  }
+
+  return {
+    startState: function() {
+      return {
+        tokenize: null
+      };
+    },
+
+    token: function(stream, state) {
+      if (state.tokenize) {
+        return state.tokenize(stream, state);
+      }
+
+      if (stream.eatSpace()) {
+        return null;
+      }
+
+      var style, cur, ch = stream.next();
+
+      if (ch === &quot;/&quot;) {
+        if (stream.eat(&quot;*&quot;)) {
+          state.tokenize = clikeComment;
+          return clikeComment(stream, state);
+        }
+      }
+
+      if (ch === lineCommentStartSymbol) {
+        stream.skipToEnd();
+        return &quot;comment&quot;;
+      }
+
+      if (ch === &apos;&quot;&apos;) {
+        nextUntilUnescaped(stream, &apos;&quot;&apos;);
+        return &quot;string&quot;;
+      }
+
+      if (ch === &apos;.&apos;) {
+        stream.eatWhile(/\w/);
+        cur = stream.current().toLowerCase();
+        style = directives[cur];
+        return style || null;
+      }
+
+      if (ch === &apos;=&apos;) {
+        stream.eatWhile(/\w/);
+        return &quot;tag&quot;;
+      }
+
+      if (ch === &apos;{&apos;) {
+        return &quot;braket&quot;;
+      }
+
+      if (ch === &apos;}&apos;) {
+        return &quot;braket&quot;;
+      }
+
+      if (/\d/.test(ch)) {
+        if (ch === &quot;0&quot; &amp;&amp; stream.eat(&quot;x&quot;)) {
+          stream.eatWhile(/[0-9a-fA-F]/);
+          return &quot;number&quot;;
+        }
+        stream.eatWhile(/\d/);
+        return &quot;number&quot;;
+      }
+
+      if (/\w/.test(ch)) {
+        stream.eatWhile(/\w/);
+        if (stream.eat(&quot;:&quot;)) {
+          return &apos;tag&apos;;
+        }
+        cur = stream.current().toLowerCase();
+        style = registers[cur];
+        return style || null;
+      }
+
+      for (var i = 0; i &lt; custom.length; i++) {
+        style = custom[i](ch, stream, state);
+        if (style) {
+          return style;
+        }
+      }
+    },
+
+    lineComment: lineCommentStartSymbol,
+    blockCommentStart: &quot;/*&quot;,
+    blockCommentEnd: &quot;*/&quot;
+  };
+});
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

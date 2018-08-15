@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/verilog/test.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/verilog/test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function() {
+  var mode = CodeMirror.getMode({indentUnit: 4}, &quot;verilog&quot;);
+  function MT(name) { test.mode(name, mode, Array.prototype.slice.call(arguments, 1)); }
+
+  MT(&quot;binary_literals&quot;,
+     &quot;[number 1&apos;b0]&quot;,
+     &quot;[number 1&apos;b1]&quot;,
+     &quot;[number 1&apos;bx]&quot;,
+     &quot;[number 1&apos;bz]&quot;,
+     &quot;[number 1&apos;bX]&quot;,
+     &quot;[number 1&apos;bZ]&quot;,
+     &quot;[number 1&apos;B0]&quot;,
+     &quot;[number 1&apos;B1]&quot;,
+     &quot;[number 1&apos;Bx]&quot;,
+     &quot;[number 1&apos;Bz]&quot;,
+     &quot;[number 1&apos;BX]&quot;,
+     &quot;[number 1&apos;BZ]&quot;,
+     &quot;[number 1&apos;b0]&quot;,
+     &quot;[number 1&apos;b1]&quot;,
+     &quot;[number 2&apos;b01]&quot;,
+     &quot;[number 2&apos;bxz]&quot;,
+     &quot;[number 2&apos;b11]&quot;,
+     &quot;[number 2&apos;b10]&quot;,
+     &quot;[number 2&apos;b1Z]&quot;,
+     &quot;[number 12&apos;b0101_0101_0101]&quot;,
+     &quot;[number 1&apos;b 0]&quot;,
+     &quot;[number &apos;b0101]&quot;
+  );
+
+  MT(&quot;octal_literals&quot;,
+     &quot;[number 3&apos;o7]&quot;,
+     &quot;[number 3&apos;O7]&quot;,
+     &quot;[number 3&apos;so7]&quot;,
+     &quot;[number 3&apos;SO7]&quot;
+  );
+
+  MT(&quot;decimal_literals&quot;,
+     &quot;[number 0]&quot;,
+     &quot;[number 1]&quot;,
+     &quot;[number 7]&quot;,
+     &quot;[number 123_456]&quot;,
+     &quot;[number &apos;d33]&quot;,
+     &quot;[number 8&apos;d255]&quot;,
+     &quot;[number 8&apos;D255]&quot;,
+     &quot;[number 8&apos;sd255]&quot;,
+     &quot;[number 8&apos;SD255]&quot;,
+     &quot;[number 32&apos;d123]&quot;,
+     &quot;[number 32 &apos;d123]&quot;,
+     &quot;[number 32 &apos;d 123]&quot;
+  );
+
+  MT(&quot;hex_literals&quot;,
+     &quot;[number 4&apos;h0]&quot;,
+     &quot;[number 4&apos;ha]&quot;,
+     &quot;[number 4&apos;hF]&quot;,
+     &quot;[number 4&apos;hx]&quot;,
+     &quot;[number 4&apos;hz]&quot;,
+     &quot;[number 4&apos;hX]&quot;,
+     &quot;[number 4&apos;hZ]&quot;,
+     &quot;[number 32&apos;hdc78]&quot;,
+     &quot;[number 32&apos;hDC78]&quot;,
+     &quot;[number 32 &apos;hDC78]&quot;,
+     &quot;[number 32&apos;h DC78]&quot;,
+     &quot;[number 32 &apos;h DC78]&quot;,
+     &quot;[number 32&apos;h44x7]&quot;,
+     &quot;[number 32&apos;hFFF?]&quot;
+  );
+
+  MT(&quot;real_number_literals&quot;,
+     &quot;[number 1.2]&quot;,
+     &quot;[number 0.1]&quot;,
+     &quot;[number 2394.26331]&quot;,
+     &quot;[number 1.2E12]&quot;,
+     &quot;[number 1.2e12]&quot;,
+     &quot;[number 1.30e-2]&quot;,
+     &quot;[number 0.1e-0]&quot;,
+     &quot;[number 23E10]&quot;,
+     &quot;[number 29E-2]&quot;,
+     &quot;[number 236.123_763_e-12]&quot;
+  );
+
+  MT(&quot;operators&quot;,
+     &quot;[meta ^]&quot;
+  );
+
+  MT(&quot;keywords&quot;,
+     &quot;[keyword logic]&quot;,
+     &quot;[keyword logic] [variable foo]&quot;,
+     &quot;[keyword reg] [variable abc]&quot;
+  );
+
+  MT(&quot;variables&quot;,
+     &quot;[variable _leading_underscore]&quot;,
+     &quot;[variable _if]&quot;,
+     &quot;[number 12] [variable foo]&quot;,
+     &quot;[variable foo] [number 14]&quot;
+  );
+
+  MT(&quot;tick_defines&quot;,
+     &quot;[def `FOO]&quot;,
+     &quot;[def `foo]&quot;,
+     &quot;[def `FOO_bar]&quot;
+  );
+
+  MT(&quot;system_calls&quot;,
+     &quot;[meta $display]&quot;,
+     &quot;[meta $vpi_printf]&quot;
+  );
+
+  MT(&quot;line_comment&quot;, &quot;[comment // Hello world]&quot;);
+
+  // Alignment tests
+  MT(&quot;align_port_map_style1&quot;,
+     /**
+      * mod mod(.a(a),
+      *         .b(b)
+      *        );
+      */
+     &quot;[variable mod] [variable mod][bracket (].[variable a][bracket (][variable a][bracket )],&quot;,
+     &quot;        .[variable b][bracket (][variable b][bracket )]&quot;,
+     &quot;       [bracket )];&quot;,
+     &quot;&quot;
+  );
+
+  MT(&quot;align_port_map_style2&quot;,
+     /**
+      * mod mod(
+      *     .a(a),
+      *     .b(b)
+      * );
+      */
+     &quot;[variable mod] [variable mod][bracket (]&quot;,
+     &quot;    .[variable a][bracket (][variable a][bracket )],&quot;,
+     &quot;    .[variable b][bracket (][variable b][bracket )]&quot;,
+     &quot;[bracket )];&quot;,
+     &quot;&quot;
+  );
+
+  // Indentation tests
+  MT(&quot;indent_single_statement_if&quot;,
+      &quot;[keyword if] [bracket (][variable foo][bracket )]&quot;,
+      &quot;    [keyword break];&quot;,
+      &quot;&quot;
+  );
+
+  MT(&quot;no_indent_after_single_line_if&quot;,
+      &quot;[keyword if] [bracket (][variable foo][bracket )] [keyword break];&quot;,
+      &quot;&quot;
+  );
+
+  MT(&quot;indent_after_if_begin_same_line&quot;,
+      &quot;[keyword if] [bracket (][variable foo][bracket )] [keyword begin]&quot;,
+      &quot;    [keyword break];&quot;,
+      &quot;    [keyword break];&quot;,
+      &quot;[keyword end]&quot;,
+      &quot;&quot;
+  );
+
+  MT(&quot;indent_after_if_begin_next_line&quot;,
+      &quot;[keyword if] [bracket (][variable foo][bracket )]&quot;,
+      &quot;    [keyword begin]&quot;,
+      &quot;        [keyword break];&quot;,
+      &quot;        [keyword break];&quot;,
+      &quot;    [keyword end]&quot;,
+      &quot;&quot;
+  );
+
+  MT(&quot;indent_single_statement_if_else&quot;,
+      &quot;[keyword if] [bracket (][variable foo][bracket )]&quot;,
+      &quot;    [keyword break];&quot;,
+      &quot;[keyword else]&quot;,
+      &quot;    [keyword break];&quot;,
+      &quot;&quot;
+  );
+
+  MT(&quot;indent_if_else_begin_same_line&quot;,
+      &quot;[keyword if] [bracket (][variable foo][bracket )] [keyword begin]&quot;,
+      &quot;    [keyword break];&quot;,
+      &quot;    [keyword break];&quot;,
+      &quot;[keyword end] [keyword else] [keyword begin]&quot;,
+      &quot;    [keyword break];&quot;,
+      &quot;    [keyword break];&quot;,
+      &quot;[keyword end]&quot;,
+      &quot;&quot;
+  );
+
+  MT(&quot;indent_if_else_begin_next_line&quot;,
+      &quot;[keyword if] [bracket (][variable foo][bracket )]&quot;,
+      &quot;    [keyword begin]&quot;,
+      &quot;        [keyword break];&quot;,
+      &quot;        [keyword break];&quot;,
+      &quot;    [keyword end]&quot;,
+      &quot;[keyword else]&quot;,
+      &quot;    [keyword begin]&quot;,
+      &quot;        [keyword break];&quot;,
+      &quot;        [keyword break];&quot;,
+      &quot;    [keyword end]&quot;,
+      &quot;&quot;
+  );
+
+  MT(&quot;indent_if_nested_without_begin&quot;,
+      &quot;[keyword if] [bracket (][variable foo][bracket )]&quot;,
+      &quot;    [keyword if] [bracket (][variable foo][bracket )]&quot;,
+      &quot;        [keyword if] [bracket (][variable foo][bracket )]&quot;,
+      &quot;            [keyword break];&quot;,
+      &quot;&quot;
+  );
+
+  MT(&quot;indent_case&quot;,
+      &quot;[keyword case] [bracket (][variable state][bracket )]&quot;,
+      &quot;    [variable FOO]:&quot;,
+      &quot;        [keyword break];&quot;,
+      &quot;    [variable BAR]:&quot;,
+      &quot;        [keyword break];&quot;,
+      &quot;[keyword endcase]&quot;,
+      &quot;&quot;
+  );
+
+  MT(&quot;unindent_after_end_with_preceding_text&quot;,
+      &quot;[keyword begin]&quot;,
+      &quot;    [keyword break]; [keyword end]&quot;,
+      &quot;&quot;
+  );
+
+  MT(&quot;export_function_one_line_does_not_indent&quot;,
+     &quot;[keyword export] [string \&quot;DPI-C\&quot;] [keyword function] [variable helloFromSV];&quot;,
+     &quot;&quot;
+  );
+
+  MT(&quot;export_task_one_line_does_not_indent&quot;,
+     &quot;[keyword export] [string \&quot;DPI-C\&quot;] [keyword task] [variable helloFromSV];&quot;,
+     &quot;&quot;
+  );
+
+  MT(&quot;export_function_two_lines_indents_properly&quot;,
+    &quot;[keyword export]&quot;,
+    &quot;    [string \&quot;DPI-C\&quot;] [keyword function] [variable helloFromSV];&quot;,
+    &quot;&quot;
+  );
+
+  MT(&quot;export_task_two_lines_indents_properly&quot;,
+    &quot;[keyword export]&quot;,
+    &quot;    [string \&quot;DPI-C\&quot;] [keyword task] [variable helloFromSV];&quot;,
+    &quot;&quot;
+  );
+
+  MT(&quot;import_function_one_line_does_not_indent&quot;,
+    &quot;[keyword import] [string \&quot;DPI-C\&quot;] [keyword function] [variable helloFromC];&quot;,
+    &quot;&quot;
+  );
+
+  MT(&quot;import_task_one_line_does_not_indent&quot;,
+    &quot;[keyword import] [string \&quot;DPI-C\&quot;] [keyword task] [variable helloFromC];&quot;,
+    &quot;&quot;
+  );
+
+  MT(&quot;import_package_single_line_does_not_indent&quot;,
+    &quot;[keyword import] [variable p]::[variable x];&quot;,
+    &quot;[keyword import] [variable p]::[variable y];&quot;,
+    &quot;&quot;
+  );
+
+  MT(&quot;covergoup_with_function_indents_properly&quot;,
+    &quot;[keyword covergroup] [variable cg] [keyword with] [keyword function] [variable sample][bracket (][keyword bit] [variable b][bracket )];&quot;,
+    &quot;    [variable c] : [keyword coverpoint] [variable c];&quot;,
+    &quot;[keyword endgroup]: [variable cg]&quot;,
+    &quot;&quot;
+  );
+
+})();
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

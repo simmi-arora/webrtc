@@ -50,20 +50,21 @@ var localobj={}, remoteobj={};
         //     alert(" Session object doesnt have all parameters ");
         // }
 
-        //try{
-            turn    = (session.hasOwnProperty('turn')?session.turn:null);
-            webrtcdev.log("WebRTCdev --> TURN ", turn);
-            if(turn && turn !="none"){
-                // getICEServer( turn.username ,turn.secretkey , turn.domain,
-                //                 turn.application , turn.room , turn.secure); 
-                getICEServer(); 
+        turn    = (session.hasOwnProperty('turn')?session.turn:null);
+        webrtcdev.log("WebRTCdev --> TURN ", turn);
+        if(turn && turn !="none"){
+            if(turn.active && turn.iceServers){
+                webrtcdev.log("WebRTCdev --> Getting preset static ICE servers " , turn.iceServers);
+                webrtcdevIceServers = turn.iceServers;
             }else{
-                webrtcdev.log("WebRTCdev --> TURN not applied ");
+                webrtcdev.info("WebRTCdev --> Calling API to fetch dynamic ICE servers ");
+                getICEServer();  
+                // getICEServer( turn.username ,turn.secretkey , turn.domain,
+                //                 turn.application , turn.room , turn.secure);                
             }
-        // }catch(e){
-        //     webrtcdev.error(e);
-        //     alert(" cannot get TURN ");
-        // }
+        }else{
+            webrtcdev.log("WebRTCdev --> TURN not applied ");
+        }
 
         if(widgets){
 
@@ -158,7 +159,7 @@ function funcStartWebrtcdev(){
             else if(!localStorage.getItem("channel")) localStorage.setItem("channel", sessionid);
             else webrtcdev.log(" no action taken on localStorage");
             resolve("done");
-        })
+        });
     }).then(function(res){
 
         webrtcdev.log(" [ startJS webrtcdom ] : incoming " , incoming);
@@ -784,6 +785,7 @@ var setRtcConn = function ( sessionid) {
 
         rtcConn.dontCaptureUserMedia = true,
 
+        rtcConn.iceServers = webrtcdevIceServers,
         tempuserid = supportSessionRefresh(),
         webrtcdev.log(" RTCConn : ", rtcConn);
 
@@ -793,7 +795,7 @@ var setRtcConn = function ( sessionid) {
         //     }
         //     webrtcdev.info(" WebRTC dev ICE servers ", webrtcdevIceServers);
         //     rtcConn.iceServers = webrtcdevIceServers;
-        //     window.clearInterval(repeatInitilization);
+        //     //window.clearInterval(repeatInitilization);
         // }
 
         if(rtcConn)
@@ -966,7 +968,7 @@ var setRtcConn = function ( sessionid) {
         }
 
         if (timerobj && timerobj.active) {
-            //startTime();
+            startTime();
             timeZone();
             activateBttons(timerobj);
             document.getElementById(timerobj.container.id).hidden = true;
@@ -1482,12 +1484,12 @@ var setRtcConn = function ( sessionid) {
     }
 
     /**
-     * find information about a peer form array of peers basedon userid
+     * find information about a peer form array of peers based on userid
      * @method
      * @name findPeerInfo
      * @param {string} userid
      */
-    findPeerInfo = function (userid){
+    var findPeerInfo = function (userid){
         var peerInfo;
         /*    
         if(rtcConn.userid==userid){
@@ -1511,7 +1513,7 @@ var setRtcConn = function ( sessionid) {
      * @param {string} channel
      * @param {string} userid
      */
-    openWebRTC=function(channel , userid){
+    var openWebRTC = function(channel , userid){
         webrtcdev.info(" [openWebRTC] channel: " , channel);
 
          socket.emit("open-channel", {
@@ -1533,7 +1535,7 @@ var setRtcConn = function ( sessionid) {
      * @param {string} userid
      * @param {string} remoteUsers
      */
-    connectWebRTC=function(type, channel, userid ,remoteUsers){
+    var connectWebRTC=function(type, channel, userid ,remoteUsers){
         webrtcdev.info(" [start ConnectWebRTC ] type : " , type , " , Channel :" , channel , 
                                         " , Userid : " ,  userid , " , remote users : " , remoteUsers);
         /*void(document.title = channel);*/
@@ -1597,7 +1599,7 @@ var setRtcConn = function ( sessionid) {
      * @param {string} channel
      * @param {string} userid
      */
-    joinWebRTC = function(channel , userid){
+    var joinWebRTC = function(channel , userid){
         shownotification("Joining an existing session " + channel);
         webrtcdev.info(" [joinWebRTC] channel: " , channel);
         
@@ -1622,7 +1624,7 @@ var setRtcConn = function ( sessionid) {
      * @method
      * @name leaveWebRTC
      */
-    leaveWebRTC=function(){
+    var leaveWebRTC=function(){
         shownotification("Leaving the session ");
     }
 
