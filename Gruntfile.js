@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = function(grunt) {
 
@@ -110,7 +110,8 @@ module.exports = function(grunt) {
             options: {
                 globals: {
                     jQuery: true
-                }
+                },
+                "esversion": 6
             }
         },
 

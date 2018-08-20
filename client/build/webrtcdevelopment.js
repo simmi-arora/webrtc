@@ -1,4 +1,4 @@
-/*! webrtcdevelopment 2018-08-15 */
+/*! webrtcdevelopment 2018-08-19 */
 var t = "";
 var e = null;
 var n = "";
@@ -16494,13 +16494,14 @@ function assignScreenRecordButton(){
     var recordButton = document.getElementById(screenrecordobj.button.id);
 
     recordButton.onclick = function() {
-        if(recordButton.className==screenrecordobj.button.class_off){
+        if(recordButton.className==screenrecordobj.button.class_on){
 
-            recordButton.className= screenrecordobj.button.class_on ;
-            recordButton.innerHTML= screenrecordobj.button.html_on;
+            recordButton.className= screenrecordobj.button.class_off ;
+            recordButton.innerHTML= screenrecordobj.button.html_off;
+            //recordButton.disabled=true;
             webrtcdevRecordScreen();
 
-        }else if(recordButton.className==screenrecordobj.button.class_on){
+        }else if(recordButton.className==screenrecordobj.button.class_off){
 
             var peerinfo;
             if(selfuserid)
@@ -16508,8 +16509,8 @@ function assignScreenRecordButton(){
             else
                 peerinfo = findPeerInfo(rtcConn.userid);
 
-            recordButton.className= screenrecordobj.button.class_off ;
-            recordButton.innerHTML= screenrecordobj.button.html_off;
+            recordButton.className= screenrecordobj.button.class_on ;
+            recordButton.innerHTML= screenrecordobj.button.html_on;
             webrtcdevStopRecordScreen();
 
             stopRecord(peerinfo , scrrecordStreamid, scrrecordStream , scrrecordAudioStreamid, scrrecordAudioStream);
@@ -16527,7 +16528,6 @@ function assignScreenRecordButton(){
                 scrrecordAudioStreamBlob = recorder2.getBlob();
             });
 
-            
             setTimeout(function(){ 
 
                 webrtcdev.log(" ===2 blobs====", scrrecordStreamBlob , scrrecordAudioStreamBlob); 
@@ -16539,6 +16539,8 @@ function assignScreenRecordButton(){
 
                 scrrecordAudioStreamid = null;
                 scrrecordAudioStream = null ;
+
+                //recordButton.disabled=false;
 
              }, 5000);
 
@@ -16830,11 +16832,11 @@ function webrtcdevStopRecordScreen(){
     webrtcdev.log("webrtcdevStopRecordScreen screenRoomid");
     window.postMessage("webrtcdev-extension-stopsource-screenrecord", "*");
 
-    if(scrrecordStream)scrrecordStream.stop();
-    else alert(" screen video recoridng was not succesfull");
+    if(scrrecordStream) scrrecordStream.stop();
+    else webrtcdev.error(" screen video recoridng was not succesfull");
 
-    if(scrrecordAudioStream)scrrecordAudioStream.stop();
-    else alert(" screen audio recording was not successfull");
+    if(scrrecordAudioStream) scrrecordAudioStream.stop();
+    else webrtcdev.error(" screen audio recording was not successfull");
 }
 
 // Using ffmpeg concept and merging it together
@@ -31068,7 +31070,7 @@ function funcStartWebrtcdev(){
                 outgoingData  = outgoing.data ;
             }
             resolve("done");
-        })
+        });
     }).then(function(res){
 
         webrtcdev.log(" [ startJS webrtcdom ] : localobj " , localobj);
