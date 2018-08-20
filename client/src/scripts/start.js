@@ -177,7 +177,7 @@ function funcStartWebrtcdev(){
                 outgoingData  = outgoing.data ;
             }
             resolve("done");
-        })
+        });
     }).then(function(res){
 
         webrtcdev.log(" [ startJS webrtcdom ] : localobj " , localobj);
@@ -201,7 +201,7 @@ function funcStartWebrtcdev(){
                 }
             }
             resolve("done");
-        })
+        });
     }).then(function(res){
 
         return new Promise(function (resolve , reject){
@@ -227,7 +227,7 @@ function funcStartWebrtcdev(){
                 webrtcdev.warning("remoteobj has no userdetails ");
             }
             resolve("done");
-        })
+        });
 
     }).then( setRtcConn(sessionid)
     ).then( setWidgets(rtcConn)
@@ -255,7 +255,7 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
         }
         socket = io.connect(addr ,{
                                   transports: ['websocket']
-        } );
+        });
        // socket.set('log level', 3);
 
     } catch (e) {
@@ -536,7 +536,7 @@ var setRtcConn = function ( sessionid) {
                         if (e.data.message == "stoppedscreenshare") {
                             shownotification("Screenshare has stopped : " + e.data.screenStreamid);
                             //createScreenViewButton();
-                            var button = document.getElementById(screenshareobj.button.shareButton.id);
+                            let button = document.getElementById(screenshareobj.button.shareButton.id);
                             button.className = screenshareobj.button.shareButton.class_off;
                             button.innerHTML = screenshareobj.button.shareButton.html_off;
                             button.disabled = false;
@@ -549,7 +549,7 @@ var setRtcConn = function ( sessionid) {
                         } else {
                             shownotification("screen is getting shared " + e.data.screenid);
                             //createScreenViewButton();
-                            var button = document.getElementById(screenshareobj.button.shareButton.id);
+                            let button = document.getElementById(screenshareobj.button.shareButton.id);
                             button.className = screenshareobj.button.shareButton.class_busy;
                             button.innerHTML = screenshareobj.button.shareButton.html_busy;
                             button.disabled = true;
@@ -579,17 +579,17 @@ var setRtcConn = function ( sessionid) {
                         });
                         break;
                     case "imagesnapshot":
-                        var peerinfo = findPeerInfo(e.userid);
+                        let peerinfo = findPeerInfo(e.userid);
                         displayList(null, peerinfo, e.data.message, e.data.name, "imagesnapshot");
                         displayFile(null, peerinfo, e.data.message, e.data.name, "imagesnapshot");
                         break;
                     case "videoRecording":
-                        var peerinfo = findPeerInfo(e.userid);
+                        let peerinfo = findPeerInfo(e.userid);
                         displayList(null, peerinfo, e.data.message, e.data.name, "videoRecording");
                         displayFile(null, peerinfo, e.data.message, e.data.name, "videoRecording");
                         break;
                     case "videoScreenRecording":
-                        var peerinfo = findPeerInfo(e.userid);
+                        let peerinfo = findPeerInfo(e.userid);
                         displayList(null, peerinfo, e.data.message, e.data.name, "videoScreenRecording");
                         displayFile(null, peerinfo, e.data.message, e.data.name, "videoScreenRecording");
                         break;
@@ -827,7 +827,7 @@ var setRtcConn = function ( sessionid) {
                 webrtcdev.error(" getCamMedia - dont Capture outgoing video " , outgoingVideo);
                 onNoCameraCard();
             }
-            resolve("success")
+            resolve("success");
         }).catch(
            (reason) => {
                 webrtcdev.error('getCamMedia rejected promise ('+reason+')');
@@ -839,294 +839,292 @@ var setRtcConn = function ( sessionid) {
      */
     var setWidgets = function (rtcConn) {
 
-     return new Promise (function(resolve, reject){
-        if (chatobj.active) {
+        return new Promise (function(resolve, reject){
+            if (chatobj.active) {
 
-            if (chatobj.inputBox && chatobj.inputBox.text_id && document.getElementById(chatobj.inputBox.text_id)) {
-                webrtcdev.log("Assign chat Box ");
-                assignChatBox(chatobj);
-            } else {
-                webrtcdev.log("Create chat Box ");
-                createChatBox(chatobj);
-            }
-            webrtcdev.log("chat widget loaded ");
-        } else {
-            webrtcdev.log(" chat widget not loaded ");
-        }
-
-        if (screenrecordobj && screenrecordobj.active) {
-
-            detectExtension(screenshareobj.extensionID, function (status) {
-                extensioninstalled = status;
-                webrtcdev.log("is screenshareobj extension installed  ? ", status);
-
-                if (status == 'not-installed') {
-                    shownotification(" Sessions recoridng cannot start as there is not extension installed ", "warning");
-                    createExtensionInstallWindow();
-                } else if (status == 'installed-enabled') {
-                    if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
-                        webrtcdev.log("Assign Record Button ");
-                        assignScreenRecordButton(screenrecordobj);
-                    } else {
-                        webrtcdev.log("Create Record Button ");
-                        createScreenRecordButton(screenrecordobj);
-                    }
-                } else if (extensioninstalled == 'installed-disabled') {
-                    shownotification("chrome extension is installed but disabled." , "warning");
-                    if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
-                        assignScreenRecordButton(screenrecordobj);
-                        webrtcdev.log("Assign Record Button ");
-                    } else {
-                        webrtcdev.log("Create Record Button ");
-                        createScreenRecordButton(screenrecordobj);
-                    }
-                } else if (extensioninstalled == 'not-chrome') {
-                    // using non-chrome browser
-                } else{
-                     webrtcdev.error(" screen record extension's state is undefined ");
+                if (chatobj.inputBox && chatobj.inputBox.text_id && document.getElementById(chatobj.inputBox.text_id)) {
+                    webrtcdev.log("Assign chat Box ");
+                    assignChatBox(chatobj);
+                } else {
+                    webrtcdev.log("Create chat Box ");
+                    createChatBox(chatobj);
                 }
-
-            });
-
-            webrtcdev.log(" screen record widget loaded ");
-
-        } else if (screenrecordobj && !screenrecordobj.active) {
-            if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
-                document.getElementById(screenrecordobj.button.id).className = "inactiveButton";
-            }
-            webrtcdev.log(" screen record widget not loaded ");
-        }
-
-        if (screenshareobj.active) {
-
-            detectExtension(screenshareobj.extensionID, function (status) {
-                webrtcdev.log("is screenshareobj extension installed  ? ", status);
-                if (status == 'installed-enabled') {
-                    var screenShareButton = createOrAssignScreenshareButton(screenshareobj);
-                    hideScreenInstallButton();
-                } else if (status == 'installed-disabled') {
-                    shownotification("chrome extension is installed but disabled.");
-                    var screenShareButton = createOrAssignScreenshareButton(screenshareobj);
-                    hideScreenInstallButton();
-                } else if (status == 'not-installed') {
-
-                    //document.getElementById("screensharedialog").showModal();
-                    $("#screensharedialog").modal("show");
-                    hideScreenShareButton();
-
-                    if (screenshareobj.button.installButton.id && document.getElementById(screenshareobj.button.installButton.id)) {
-                        assignScreenInstallButton(screenshareobj.extensionID);
-                    } else {
-                        createScreenInstallButton(screenshareobj.extensionID);
-                    }
-                } else if (status == 'not-chrome') {
-                    // using non-chrome browser
-                    alert(" Screen share extension only works in Chrome for now ");
-                } else{
-                    webrtcdev.error(" screen share extension's state is undefined ");
-                }
-            });
-
-            webrtcdev.log(" screen share widget loaded ");
-        } else {
-            webrtcdev.log(" screen share widget not loaded ");
-        }
-
-        if (reconnectobj && reconnectobj.active) {
-            if (reconnectobj.button.id && document.getElementById(reconnectobj.button.id)) {
-                webrtcdev.log("Rconnect Button Assigned");
-                assignButtonRedial(reconnectobj.button.id);
+                webrtcdev.log("chat widget loaded ");
             } else {
-                webrtcdev.log("Rconnect Button created");
-                createButtonRedial(reconnectobj);
-            }
-            webrtcdev.log(" reconnect widget loacded ");
-        } else if (reconnectobj && !reconnectobj.active) {
-            if (reconnectobj.button.id && document.getElementById(reconnectobj.button.id)) {
-                document.getElementById(reconnectobj.button.id).className = "inactiveButton";
-            }
-            webrtcdev.log(" reconnect widget not loaded ");
-        }
-
-        if (cursorobj.active) {
-            document.getElementById("cursor1").setAttribute("style", "display:none");
-            document.getElementById("cursor2").setAttribute("style", "display:none");
-        }
-
-        if (listeninobj && listeninobj.active) {
-            if (listeninobj.button.id && document.getElementById(listeninobj.button.id)) {
-                //assignButtonRedial(reconnectobj.button.id);
-            } else {
-                //createButtonRedial();
-            }
-            webrtcdev.log(" listen in widget loaded ");
-        } else if (listeninobj && !listeninobj.active) {
-            if (listeninobj.button.id && document.getElementById(listeninobj.button.id)) {
-                document.getElementById(listeninobj.button.id).className = "inactiveButton";
-            }
-            webrtcdev.log(" listenein widget not loaded ");
-        }
-
-        if (timerobj && timerobj.active) {
-            startTime();
-            timeZone();
-            activateBttons(timerobj);
-            document.getElementById(timerobj.container.id).hidden = true;
-        } else if (timerobj && !timerobj.active) {
-            if (timerobj.button.id && document.getElementById(timerobj.button.id)) {
-                document.getElementById(timerobj.button.id).className = "inactiveButton";
-            }
-        }
-
-        if (drawCanvasobj && drawCanvasobj.active) {
-            if (drawCanvasobj.container && drawCanvasobj.container.id && document.getElementById(drawCanvasobj.container.id)) {
-                document.getElementById(drawCanvasobj.container.id).hidden = true;
-            }
-            if (drawCanvasobj.button.id && document.getElementById(drawCanvasobj.button.id)) {
-                assigndrawButton(drawCanvasobj);
-            } else {
-                createdrawButton(drawCanvasobj);
+                webrtcdev.log(" chat widget not loaded ");
             }
 
-            CanvasDesigner = (function () {
-                var iframe;
-                var tools = {
-                    line: true,
-                    pencil: true,
-                    dragSingle: true,
-                    dragMultiple: true,
-                    eraser: true,
-                    rectangle: true,
-                    arc: true,
-                    bezier: true,
-                    quadratic: true,
-                    text: true
-                };
+            if (screenrecordobj && screenrecordobj.active) {
 
-                var selectedIcon = 'pencil';
+                detectExtension(screenshareobj.extensionID, function (status) {
+                    extensioninstalled = status;
+                    webrtcdev.log("is screenshareobj extension installed  ? ", status);
 
-                function syncData(data) {
-                    if (!iframe) return;
-
-                    iframe.contentWindow.postMessage({
-                        canvasDesignerSyncData: data
-                    }, '*');
-                }
-
-                var syncDataListener = function (data) {
-                    webrtcdev.log("syncDataListener", data);
-                };
-
-                function onMessage() {
-                    if (!event.data || !event.data.canvasDesignerSyncData) return;
-                    syncDataListener(event.data.canvasDesignerSyncData);
-                }
-
-                /*window.addEventListener('message', onMessage, false);*/
-
-                var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
-                var eventer = window[eventMethod];
-                var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
-
-                // Listen to message from child window
-                eventer(messageEvent, function (e) {
-                    webrtcdev.log("CanvasDesigner parent received message : ", e.data);
-
-                    if (e.data.modalpopup) {
-                        saveButtonCanvas.click();
-                        //return;
-                    } else if (e.data || e.data.canvasDesignerSyncData) {
-                        syncDataListener(e.data.canvasDesignerSyncData);
-                    } else if (!e.data || !e.data.canvasDesignerSyncData) {
-                        webrtcdev.log("parent received unexpected message");
-                        //return;
-                    }
-
-                }, false);
-
-                return {
-                    appendTo: function (parentNode) {
-                        iframe = document.createElement('iframe');
-                        iframe.id = "drawboard";
-                        iframe.src = 'widget.html?tools=' + JSON.stringify(tools) + '&selectedIcon=' + selectedIcon;
-                        iframe.style.width = "100%";
-                        iframe.style.height = "100%";
-                        iframe.style.border = 0;
-                        parentNode.appendChild(iframe);
-                    },
-                    destroy: function () {
-                        if (iframe) {
-                            iframe.parentNode.removeChild(iframe);
+                    if (status == 'not-installed') {
+                        shownotification(" Sessions recoridng cannot start as there is not extension installed ", "warning");
+                        createExtensionInstallWindow();
+                    } else if (status == 'installed-enabled') {
+                        if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
+                            webrtcdev.log("Assign Record Button ");
+                            assignScreenRecordButton(screenrecordobj);
+                        } else {
+                            webrtcdev.log("Create Record Button ");
+                            createScreenRecordButton(screenrecordobj);
                         }
-                        window.removeEventListener('message', onMessage);
-                    },
-                    addSyncListener: function (callback) {
-                        syncDataListener = callback;
-                    },
-                    syncData: syncData,
-                    setTools: function (_tools) {
-                        tools = _tools;
-                    },
-                    setSelected: function (icon) {
-                        if (typeof tools[icon] !== 'undefined') {
-                            selectedIcon = icon;
+                    } else if (extensioninstalled == 'installed-disabled') {
+                        shownotification("chrome extension is installed but disabled." , "warning");
+                        if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
+                            assignScreenRecordButton(screenrecordobj);
+                            webrtcdev.log("Assign Record Button ");
+                        } else {
+                            webrtcdev.log("Create Record Button ");
+                            createScreenRecordButton(screenrecordobj);
                         }
+                    } else if (extensioninstalled == 'not-chrome') {
+                        // using non-chrome browser
+                    } else{
+                         webrtcdev.error(" screen record extension's state is undefined ");
                     }
-                };
-            })();
-            webrtcdev.log(" draw widget loaded ");
-        } else if (drawCanvasobj && !drawCanvasobj.active) {
-            if (drawCanvasobj.button.id && document.getElementById(drawCanvasobj.button.id)) {
-                document.getElementById(drawCanvasobj.button.id).className = "inactiveButton";
+
+                });
+
+                webrtcdev.log(" screen record widget loaded ");
+            } else if (screenrecordobj && !screenrecordobj.active) {
+                if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
+                    document.getElementById(screenrecordobj.button.id).className = "inactiveButton";
+                }
+                webrtcdev.log(" screen record widget not loaded ");
             }
-            webrtcdev.log(" draw widget not loaded ");
-        }
 
-        if (texteditorobj.active) {
-            createTextEditorButton();
-        }
+            if (screenshareobj.active) {
 
-        if (codeeditorobj.active) {
-            createCodeEditorButton();
-        }
+                detectExtension(screenshareobj.extensionID, function (status) {
+                    webrtcdev.log("is screenshareobj extension installed  ? ", status);
+                    if (status == 'installed-enabled') {
+                        var screenShareButton = createOrAssignScreenshareButton(screenshareobj);
+                        hideScreenInstallButton();
+                    } else if (status == 'installed-disabled') {
+                        shownotification("chrome extension is installed but disabled.");
+                        var screenShareButton = createOrAssignScreenshareButton(screenshareobj);
+                        hideScreenInstallButton();
+                    } else if (status == 'not-installed') {
 
-        if (fileshareobj.active) {
+                        //document.getElementById("screensharedialog").showModal();
+                        $("#screensharedialog").modal("show");
+                        hideScreenShareButton();
 
-            webrtcdev.log(" fileshareobj - rtcConn ", rtcConn),
+                        if (screenshareobj.button.installButton.id && document.getElementById(screenshareobj.button.installButton.id)) {
+                            assignScreenInstallButton(screenshareobj.extensionID);
+                        } else {
+                            createScreenInstallButton(screenshareobj.extensionID);
+                        }
+                    } else if (status == 'not-chrome') {
+                        // using non-chrome browser
+                        alert(" Screen share extension only works in Chrome for now ");
+                    } else{
+                        webrtcdev.error(" screen share extension's state is undefined ");
+                    }
+                });
 
-            rtcConn.enableFileSharing = true;
-            // //rtcConn.filesContainer = document.body || document.documentElement;
-            // /*setFileProgressBarHandlers(rtcConn);*/
-            rtcConn.filesContainer = document.getElementById(fileshareobj.fileShareContainer);
-            if (fileshareobj.button.id && document.getElementById(fileshareobj.button.id)) {
-                assignFileShareButton(fileshareobj);
+                webrtcdev.log(" screen share widget loaded ");
             } else {
-                createFileShareButton(fileshareobj);
+                webrtcdev.log(" screen share widget not loaded ");
             }
-            webrtcdev.log(" File sharing widget loaded ");
-        } else {
-            webrtcdev.log(" File sharing widget not loaded ");
-        }
 
-        if(statisticsobj && statisticsobj.active){
-            try{
-                document.getElementById(statisticsobj.statsConainer).innerHTML="";
-            }catch(e){
-                webrtcdev.error(" statisticsobj statsConainer not found" , e );
+            if (reconnectobj && reconnectobj.active) {
+                if (reconnectobj.button.id && document.getElementById(reconnectobj.button.id)) {
+                    webrtcdev.log("Rconnect Button Assigned");
+                    assignButtonRedial(reconnectobj.button.id);
+                } else {
+                    webrtcdev.log("Rconnect Button created");
+                    createButtonRedial(reconnectobj);
+                }
+                webrtcdev.log(" reconnect widget loacded ");
+            } else if (reconnectobj && !reconnectobj.active) {
+                if (reconnectobj.button.id && document.getElementById(reconnectobj.button.id)) {
+                    document.getElementById(reconnectobj.button.id).className = "inactiveButton";
+                }
+                webrtcdev.log(" reconnect widget not loaded ");
             }
-        }
 
-        if(helpobj && helpobj.active){
-            try{
-                document.getElementById(helpobj.helpContainer).innerHTML="";
-            }catch(e){
-                webrtcdev.error(" helpobj helpContainer not found" , e );
+            if (cursorobj.active) {
+                document.getElementById("cursor1").setAttribute("style", "display:none");
+                document.getElementById("cursor2").setAttribute("style", "display:none");
             }
-        }
-        resolve("success");
-    })
 
-    }
+            if (listeninobj && listeninobj.active) {
+                if (listeninobj.button.id && document.getElementById(listeninobj.button.id)) {
+                    //assignButtonRedial(reconnectobj.button.id);
+                } else {
+                    //createButtonRedial();
+                }
+                webrtcdev.log(" listen in widget loaded ");
+            } else if (listeninobj && !listeninobj.active) {
+                if (listeninobj.button.id && document.getElementById(listeninobj.button.id)) {
+                    document.getElementById(listeninobj.button.id).className = "inactiveButton";
+                }
+                webrtcdev.log(" listenein widget not loaded ");
+            }
+
+            if (timerobj && timerobj.active) {
+                startTime();
+                timeZone();
+                activateBttons(timerobj);
+                document.getElementById(timerobj.container.id).hidden = true;
+            } else if (timerobj && !timerobj.active) {
+                if (timerobj.button.id && document.getElementById(timerobj.button.id)) {
+                    document.getElementById(timerobj.button.id).className = "inactiveButton";
+                }
+            }
+
+            if (drawCanvasobj && drawCanvasobj.active) {
+                if (drawCanvasobj.container && drawCanvasobj.container.id && document.getElementById(drawCanvasobj.container.id)) {
+                    document.getElementById(drawCanvasobj.container.id).hidden = true;
+                }
+                if (drawCanvasobj.button.id && document.getElementById(drawCanvasobj.button.id)) {
+                    assigndrawButton(drawCanvasobj);
+                } else {
+                    createdrawButton(drawCanvasobj);
+                }
+
+                CanvasDesigner = (function () {
+                    var iframe;
+                    var tools = {
+                        line: true,
+                        pencil: true,
+                        dragSingle: true,
+                        dragMultiple: true,
+                        eraser: true,
+                        rectangle: true,
+                        arc: true,
+                        bezier: true,
+                        quadratic: true,
+                        text: true
+                    };
+
+                    var selectedIcon = 'pencil';
+
+                    function syncData(data) {
+                        if (!iframe) return;
+
+                        iframe.contentWindow.postMessage({
+                            canvasDesignerSyncData: data
+                        }, '*');
+                    }
+
+                    var syncDataListener = function (data) {
+                        webrtcdev.log("syncDataListener", data);
+                    };
+
+                    function onMessage() {
+                        if (!event.data || !event.data.canvasDesignerSyncData) return;
+                        syncDataListener(event.data.canvasDesignerSyncData);
+                    }
+
+                    /*window.addEventListener('message', onMessage, false);*/
+
+                    var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+                    var eventer = window[eventMethod];
+                    var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+
+                    // Listen to message from child window
+                    eventer(messageEvent, function (e) {
+                        webrtcdev.log("CanvasDesigner parent received message : ", e.data);
+
+                        if (e.data.modalpopup) {
+                            saveButtonCanvas.click();
+                            //return;
+                        } else if (e.data || e.data.canvasDesignerSyncData) {
+                            syncDataListener(e.data.canvasDesignerSyncData);
+                        } else if (!e.data || !e.data.canvasDesignerSyncData) {
+                            webrtcdev.log("parent received unexpected message");
+                            //return;
+                        }
+
+                    }, false);
+
+                    return {
+                        appendTo: function (parentNode) {
+                            iframe = document.createElement('iframe');
+                            iframe.id = "drawboard";
+                            iframe.src = 'widget.html?tools=' + JSON.stringify(tools) + '&selectedIcon=' + selectedIcon;
+                            iframe.style.width = "100%";
+                            iframe.style.height = "100%";
+                            iframe.style.border = 0;
+                            parentNode.appendChild(iframe);
+                        },
+                        destroy: function () {
+                            if (iframe) {
+                                iframe.parentNode.removeChild(iframe);
+                            }
+                            window.removeEventListener('message', onMessage);
+                        },
+                        addSyncListener: function (callback) {
+                            syncDataListener = callback;
+                        },
+                        syncData: syncData,
+                        setTools: function (_tools) {
+                            tools = _tools;
+                        },
+                        setSelected: function (icon) {
+                            if (typeof tools[icon] !== 'undefined') {
+                                selectedIcon = icon;
+                            }
+                        }
+                    };
+                })();
+                webrtcdev.log(" draw widget loaded ");
+            } else if (drawCanvasobj && !drawCanvasobj.active) {
+                if (drawCanvasobj.button.id && document.getElementById(drawCanvasobj.button.id)) {
+                    document.getElementById(drawCanvasobj.button.id).className = "inactiveButton";
+                }
+                webrtcdev.log(" draw widget not loaded ");
+            }
+
+            if (texteditorobj.active) {
+                createTextEditorButton();
+            }
+
+            if (codeeditorobj.active) {
+                createCodeEditorButton();
+            }
+
+            if (fileshareobj.active) {
+
+                webrtcdev.log(" fileshareobj - rtcConn ", rtcConn),
+
+                rtcConn.enableFileSharing = true;
+                // //rtcConn.filesContainer = document.body || document.documentElement;
+                // /*setFileProgressBarHandlers(rtcConn);*/
+                rtcConn.filesContainer = document.getElementById(fileshareobj.fileShareContainer);
+                if (fileshareobj.button.id && document.getElementById(fileshareobj.button.id)) {
+                    assignFileShareButton(fileshareobj);
+                } else {
+                    createFileShareButton(fileshareobj);
+                }
+                webrtcdev.log(" File sharing widget loaded ");
+            } else {
+                webrtcdev.log(" File sharing widget not loaded ");
+            }
+
+            if(statisticsobj && statisticsobj.active){
+                try{
+                    document.getElementById(statisticsobj.statsConainer).innerHTML="";
+                }catch(e){
+                    webrtcdev.error(" statisticsobj statsConainer not found" , e );
+                }
+            }
+
+            if(helpobj && helpobj.active){
+                try{
+                    document.getElementById(helpobj.helpContainer).innerHTML="";
+                }catch(e){
+                    webrtcdev.error(" helpobj helpContainer not found" , e );
+                }
+            }
+            resolve("success");
+        });
+    };
 
 
     /**
@@ -1259,7 +1257,7 @@ var setRtcConn = function ( sessionid) {
 
                             /*get the next empty index of video and pointer in remote video array */
                             var vi=0;
-                            for(var v=0; v<remoteVideos.length; v++){
+                            for(v in remoteVideos){
                                 webrtcdev.log("Remote Video index array " , v , " || ", remoteVideos[v] , 
                                     document.getElementsByName(remoteVideos[v]),  document.getElementsByName(remoteVideos[v]).src);
                                 if(document.getElementsByName(remoteVideos[v])[0] && document.getElementsByName(remoteVideos[v])[0].src){
@@ -1325,8 +1323,8 @@ var setRtcConn = function ( sessionid) {
             }
 
 
-        }catch(e){
-            webrtcdev.error("[ start.js - update call view ]" , e);
+        }catch(err){
+            webrtcdev.error("[ start.js - update call view ]" , err);
         }
 
         webrtcdev.log(" updateWebCallView - finish");
@@ -1386,7 +1384,7 @@ var setRtcConn = function ( sessionid) {
      */
     function updatePeerInfo(userid , username , usecolor , useremail, userrole ,  type ){
         webrtcdev.log("updating peerInfo: " , userid , username , usecolor , useremail, userrole ,  type);
-        for(x in webcallpeers){
+        for(var x in webcallpeers){
             if(webcallpeers[x].userid==userid) {
                 webrtcdev.log("UserID is already existing , webcallpeers");
                 return;
@@ -1589,7 +1587,7 @@ var setRtcConn = function ( sessionid) {
 
         }
 
-    }
+    };
 
 
     /**
@@ -1617,7 +1615,7 @@ var setRtcConn = function ( sessionid) {
                 role    : role
             }
         });
-    }
+    };
 
     /**
      * function to leave a webrtc socket channel
@@ -1626,7 +1624,7 @@ var setRtcConn = function ( sessionid) {
      */
     var leaveWebRTC=function(){
         shownotification("Leaving the session ");
-    }
+    };
 
     /*window.onload=function(){
         webrtcdev.log( "Local Storage Channel " ,  localStorage.getItem("channel"));
