@@ -114,8 +114,14 @@ function attachControlButtons( vid ,  peerinfo){
 function createFullScreenButton(controlBarName, peerinfo, streamid, stream ){
     var button = document.createElement("span");
     button.id = controlBarName+"fullscreeButton";
+    button.setAttribute("title", "Full Screen");
     button.className = minmaxobj.max.button.class_off;
     button.innerHTML = minmaxobj.max.button.html_off;
+
+    // button.setAttribute("data-placement", "bottom");
+    // button.setAttribute("data-toggle", "tooltip");
+    // button.setAttribute("data-container", "body");
+
     button.onclick = function() {
         if(button.className == minmaxobj.max.button.class_off){
             var vid = document.getElementById(peerinfo.videoContainer);
@@ -136,6 +142,7 @@ function createFullScreenButton(controlBarName, peerinfo, streamid, stream ){
 function createMinimizeVideoButton(controlBarName, peerinfo, streamid, stream){
     var button = document.createElement("span");
     button.id = controlBarName+"minmizevideoButton";
+    button.setAttribute("title", "Minimize Video");
     button.className = minmaxobj.min.button.class_off;
     button.innerHTML = minmaxobj.min.button.html_off;
     var vid=document.getElementById(peerinfo.videoContainer);
@@ -161,9 +168,9 @@ function createAudioMuteButton(controlBarName , peerinfo){
     audioButton.id=controlBarName+"audioButton";
     audioButton.setAttribute("data-val","mute");
     audioButton.setAttribute("title", "Toggle Audio");
-    audioButton.setAttribute("data-placement", "bottom");
-    audioButton.setAttribute("data-toggle", "tooltip");
-    audioButton.setAttribute("data-container", "body");
+    // audioButton.setAttribute("data-placement", "bottom");
+    // audioButton.setAttribute("data-toggle", "tooltip");
+    // audioButton.setAttribute("data-container", "body");
     audioButton.className=muteobj.audio.button.class_on;
     audioButton.innerHTML=muteobj.audio.button.html_on;
     audioButton.onclick = function() {

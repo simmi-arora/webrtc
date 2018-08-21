@@ -1,4 +1,4 @@
-/* Generated on:Sat Aug 18 2018 00:20:53 GMT+0530 (IST) || version: 2.0.3 - Altanai , License : MIT  */
+/* Generated on:Tue Aug 21 2018 12:30:50 GMT+0530 (IST) || version: 2.0.3 - Altanai , License : MIT  */
 /*-------------------------------------------------------------*/
 textarea::::-webkit-scrollbar {
     width: 0;
@@ -311,7 +311,7 @@ input:focus {
     /*-webkit-transform: rotate(270deg) translateX(-100%);*/
     -ms-transform: rotate(270deg) translateX(-100%);
 }
-/* Generated on:Sat Aug 18 2018 00:20:53 GMT+0530 (IST) || version: 2.0.3 - Altanai , License : MIT  */.glyphicon {
+/* Generated on:Tue Aug 21 2018 12:30:50 GMT+0530 (IST) || version: 2.0.3 - Altanai , License : MIT  */.glyphicon {
     cursor: pointer
 }
 .bodyWhole{
@@ -695,7 +695,7 @@ video::-webkit-media-controls-current-time-display {}*/
 .video-block::-webkit-media-controls-timeline {}
 
 .video-block::-webkit-media-controls-current-time-display {}
-/* Generated on:Sat Aug 18 2018 00:20:53 GMT+0530 (IST) || version: 2.0.3 - Altanai , License : MIT  */
+/* Generated on:Tue Aug 21 2018 12:30:50 GMT+0530 (IST) || version: 2.0.3 - Altanai , License : MIT  */
 .chatContainerClass{
 	background: #f5f5f5;
     border: 2px solid #ccc;
@@ -773,7 +773,7 @@ video::-webkit-media-controls-current-time-display {}*/
     font-stretch: expanded;
     font-style: italic
 }
-/* Generated on:Sat Aug 18 2018 00:20:53 GMT+0530 (IST) || version: 2.0.3 - Altanai , License : MIT  */.cursor1Class{
+/* Generated on:Tue Aug 21 2018 12:30:50 GMT+0530 (IST) || version: 2.0.3 - Altanai , License : MIT  */.cursor1Class{
     box-sizing: border-box; 
     -moz-box-sizing: border-box
     width: 0px !important;
@@ -790,7 +790,7 @@ video::-webkit-media-controls-current-time-display {}*/
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
 }
-/* Generated on:Sat Aug 18 2018 00:20:53 GMT+0530 (IST) || version: 2.0.3 - Altanai , License : MIT  */.drawContainerClass{
+/* Generated on:Tue Aug 21 2018 12:30:50 GMT+0530 (IST) || version: 2.0.3 - Altanai , License : MIT  */.drawContainerClass{
     border: 5px solid #777;
 }
 
@@ -809,7 +809,7 @@ video::-webkit-media-controls-current-time-display {}*/
 .drawBoard{
     margin-top: 0px;
 }
-/* Generated on:Sat Aug 18 2018 00:20:53 GMT+0530 (IST) || version: 2.0.3 - Altanai , License : MIT  */
+/* Generated on:Tue Aug 21 2018 12:30:50 GMT+0530 (IST) || version: 2.0.3 - Altanai , License : MIT  *//*
 .filesharing1Box{
     background-color: #9999FF;
     color: #968787;
@@ -830,40 +830,39 @@ video::-webkit-media-controls-current-time-display {}*/
     color:#FFF;
     height:20px
 }
-
+*/
 .fileinputClass{
     background: transparent;
     border: none;
     bottom: 10px;
     position: fixed;
 }
-.filesharingBox{
+/*.filesharingBox{
     color: #A28686;
     font-size: 20px;
     padding-top: 0px !important;
     margin-top: -33px !important;
-}
-.filesharingWidget{
+}*/
+/*.filesharingWidget{
     overflow: auto;
     height: 100%;
 }
-
 
 .iframeClassfileviewer{
     width: 69%;
     border: 0;
     border-left: 1px solid black;
     height: inherit;
-}
+}*/
 
-.fileBoxClass{
+/*.fileBoxClass{
     padding: 10px 10px 10px 10px;
     background: rgba(255, 255, 255, 0.39);
     margin-bottom: 2px;
     margin-top: 2px;
-}   
+} */  
 
-.fileViewing1Box{
+/*.fileViewing1Box{
     background-color: #9999FF;
     color: #968787;
 }
@@ -871,8 +870,23 @@ video::-webkit-media-controls-current-time-display {}*/
 .fileViewing2Box{
     background-color: #666699;
     color: #968787;
+}*/
+
+ .fileviewing-box {
+     border-left: 6px solid white;
+     border-right: 6px solid white;
+     display: table-cell;
+     vertical-align: top;
 }
-/* Generated on:Sat Aug 18 2018 00:20:53 GMT+0530 (IST) || version: 2.0.3 - Altanai , License : MIT  */.screenshareVideoClass{
+ .filesharing-box {
+    border-left: 6px solid white;
+    /*border-right: 1px solid black;*/
+    padding-right: 0px;
+    /*border-bottom: 1px solid black;*/
+    margin-bottom: 10px;
+    margin-left: -6px;
+}
+/* Generated on:Tue Aug 21 2018 12:30:50 GMT+0530 (IST) || version: 2.0.3 - Altanai , License : MIT  */.screenshareVideoClass{
     transform: rotateY(180deg);
     -webkit-transform:rotateY(180deg); /* Safari and Chrome */
     -moz-transform:rotateY(180deg); /* Firefox */

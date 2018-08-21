@@ -160,8 +160,8 @@ module.exports = function(grunt) {
             //     banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             // },
             build: {
-                src: 'client/dist/webrtcdevelopment.js',
-                dest: 'client/dist/webrtcdevelopment.min.js'
+                src: 'client/build/webrtcdevelopment.js',
+                dest: 'client/build/webrtcdevelopment.min.js'
             }
         },
         
@@ -175,46 +175,6 @@ module.exports = function(grunt) {
         //         },
         //     },
         // }
-
-        // publish: {
-        //     options: {
-        //         ignore: [
-        //             'client/google1988a1c5458dd294.html',
-        //             'client/getScreenId.html',
-        //             'client/widget.html',
-        //             'client/scripts',
-        //             'client/css',
-        //             'client/drawboard',
-        //             'client/images',
-        //             'client/twoparty_elearning/',
-        //             'client/home_images',
-        //             'client/elearn',
-        //             'client/src',
-        //             'client/conference',
-        //             'client/ssl_certs',
-        //             'tests/',
-        //             'node_modules',
-        //             'webrtcserver.js',
-        //             'sheetscript.js',
-        //             'webcallservice.conf',
-        //             'realtimecomm.js',
-        //             'propertyWriter.js',
-        //             'gulpfile.js',
-        //             'env.json',
-        //             'client_secret.json',
-        //             '*.html',
-        //             '.vs'
-        //        ]
-        //     },
-        //     main: {
-        //         src: [
-        //             'webrtcdevelopment',
-        //         ]
-        //     },
-        //     // regex: {
-        //     //     src: ['test/fixtures/**/*']
-        //     // }
-        // },
 
         release: {
             options: {
@@ -263,9 +223,9 @@ module.exports = function(grunt) {
 
     // Default task(s).
     grunt.registerTask('dev', ['concat','jshint','uglify']);
-    grunt.registerTask('production', ['jshint','uglify','copy']);
+    // grunt.registerTask('production', ['jshint','uglify','copy']);
+    grunt.registerTask('production', ['concat','uglify','copy']);
     grunt.registerTask('default', ['concat']);
-    // grunt.registerTask('release', ['publish']);
-
+    grunt.registerTask('release', ['release']);
     // grunt.registerTask('rtcconn', ['concat', 'replace', 'jsbeautifier', 'uglify', 'copy', 'clean']);
 };

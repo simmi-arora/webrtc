@@ -530,9 +530,9 @@ var setRtcConn = function ( sessionid) {
             } else if (e.data.stoppedTyping) {
                 updateWhotyping("");
             } else {
+                var msgpeerinfo = findPeerInfo(e.userid);
                 switch (e.data.type) {
                     case "screenshare":
-
                         if (e.data.message == "stoppedscreenshare") {
                             shownotification("Screenshare has stopped : " + e.data.screenStreamid);
                             //createScreenViewButton();
@@ -579,19 +579,16 @@ var setRtcConn = function ( sessionid) {
                         });
                         break;
                     case "imagesnapshot":
-                        let peerinfo = findPeerInfo(e.userid);
-                        displayList(null, peerinfo, e.data.message, e.data.name, "imagesnapshot");
-                        displayFile(null, peerinfo, e.data.message, e.data.name, "imagesnapshot");
+                        displayList(null, msgpeerinfo, e.data.message, e.data.name, "imagesnapshot");
+                        displayFile(null, msgpeerinfo, e.data.message, e.data.name, "imagesnapshot");
                         break;
                     case "videoRecording":
-                        let peerinfo = findPeerInfo(e.userid);
-                        displayList(null, peerinfo, e.data.message, e.data.name, "videoRecording");
-                        displayFile(null, peerinfo, e.data.message, e.data.name, "videoRecording");
+                        displayList(null, msgpeerinfo, e.data.message, e.data.name, "videoRecording");
+                        displayFile(null, msgpeerinfo, e.data.message, e.data.name, "videoRecording");
                         break;
                     case "videoScreenRecording":
-                        let peerinfo = findPeerInfo(e.userid);
-                        displayList(null, peerinfo, e.data.message, e.data.name, "videoScreenRecording");
-                        displayFile(null, peerinfo, e.data.message, e.data.name, "videoScreenRecording");
+                        displayList(null, msgpeerinfo, e.data.message, e.data.name, "videoScreenRecording");
+                        displayFile(null, msgpeerinfo, e.data.message, e.data.name, "videoScreenRecording");
                         break;
                     case "file":
                         addNewMessage({
