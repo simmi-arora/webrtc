@@ -6,9 +6,9 @@ function createRecordButton(controlBarName, peerinfo, streamid, stream){
     var recordButton=document.createElement("div");
     recordButton.id=controlBarName+"recordButton";
     recordButton.setAttribute("title", "Record");
-    recordButton.setAttribute("data-placement", "bottom");
-    recordButton.setAttribute("data-toggle", "tooltip");
-    recordButton.setAttribute("data-container", "body");
+    // recordButton.setAttribute("data-placement", "bottom");
+    // recordButton.setAttribute("data-toggle", "tooltip");
+    // recordButton.setAttribute("data-container", "body");
     recordButton.className=videoRecordobj.button.class_off;
     recordButton.innerHTML=videoRecordobj.button.html_off;
     recordButton.onclick = function(e) {

@@ -125,7 +125,6 @@ function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelpe
             stopuploadButton.style.float="right";
             stopuploadButton.innerHTML ='<i class="fa fa-trash-o" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
             stopuploadButton.onclick=function(event){
-                //alert(" remomve button from progress bar ");
                 if(repeatFlagRemoveButton != filename){
                     hideFile( progressDiv.id , filename );
                     //var tobeHiddenElement = event.target.parentNode.id;
@@ -135,14 +134,15 @@ function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelpe
                         _filename : filename
                     });  
                     removeFile(filename);
-                    stopuploadButton.hidden = true;
                     repeatFlagRemoveButton = filename;
                 }else if(repeatFlagRemoveButton == filename){
                     repeatFlagRemoveButton= "";
-                }  
+                }
+                //Once the button is clicked , remove the button 
+                stopuploadButton.hidden = true;
+                stopuploadButton.hide();
             },
-            document.getElementById(peerinfo.fileList.container).appendChild(stopuploadButton);     
-
+            document.getElementById(peerinfo.fileList.container).appendChild(stopuploadButton);
         }else{
             webrtcdev.log(" Not creating progress bar div as it already exists ");
         }
@@ -188,7 +188,7 @@ function sendOldFiles(){
                 for(o in oldfilesList){
                     if(oldfilesList[o].name == user.filearray[y].name) break;
                 }
-                webrtcdev.log(" ======== user.filearray[y]" , user.filearray[y])
+                webrtcdev.log("[filehsraing js] user.filearray[y]" , user.filearray[y])
                 oldfilesList.push(user.filearray[y]);
             } 
         }
@@ -196,7 +196,7 @@ function sendOldFiles(){
 
     setTimeout(function(){
         if(oldfilesList.length >0 ){
-            webrtcdev.log(" [filehsraing js] sendOldFiles " , oldfilesList );
+            webrtcdev.log("[filehsraing js] sendOldFiles " , oldfilesList );
             for( f in oldfilesList ){
                 sendFile(oldfilesList[f]);
             }
@@ -247,7 +247,7 @@ function simulateClick(buttonName){
 function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     try{
 
-        webrtcdev.log("DisplayList peerinfo->", peerinfo, fileurl, filename, filetype);
+        webrtcdev.log("[filesharing js] DisplayList peerinfo->", peerinfo, fileurl, filename, filetype);
         var showDownloadButton = true , showRemoveButton=true; 
 
         var elementList = peerinfo.fileList.container;

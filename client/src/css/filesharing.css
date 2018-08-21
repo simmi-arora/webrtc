@@ -1,4 +1,4 @@
-
+/*
 .filesharing1Box{
     background-color: #9999FF;
     color: #968787;
@@ -19,40 +19,39 @@
     color:#FFF;
     height:20px
 }
-
+*/
 .fileinputClass{
     background: transparent;
     border: none;
     bottom: 10px;
     position: fixed;
 }
-.filesharingBox{
+/*.filesharingBox{
     color: #A28686;
     font-size: 20px;
     padding-top: 0px !important;
     margin-top: -33px !important;
-}
-.filesharingWidget{
+}*/
+/*.filesharingWidget{
     overflow: auto;
     height: 100%;
 }
-
 
 .iframeClassfileviewer{
     width: 69%;
     border: 0;
     border-left: 1px solid black;
     height: inherit;
-}
+}*/
 
-.fileBoxClass{
+/*.fileBoxClass{
     padding: 10px 10px 10px 10px;
     background: rgba(255, 255, 255, 0.39);
     margin-bottom: 2px;
     margin-top: 2px;
-}   
+} */  
 
-.fileViewing1Box{
+/*.fileViewing1Box{
     background-color: #9999FF;
     color: #968787;
 }
@@ -60,4 +59,19 @@
 .fileViewing2Box{
     background-color: #666699;
     color: #968787;
+}*/
+
+ .fileviewing-box {
+     border-left: 6px solid white;
+     border-right: 6px solid white;
+     display: table-cell;
+     vertical-align: top;
+}
+ .filesharing-box {
+    border-left: 6px solid white;
+    /*border-right: 1px solid black;*/
+    padding-right: 0px;
+    /*border-bottom: 1px solid black;*/
+    margin-bottom: 10px;
+    margin-left: -6px;
 }

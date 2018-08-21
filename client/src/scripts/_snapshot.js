@@ -2,9 +2,9 @@ function createSnapshotButton(controlBarName , peerinfo){
     var snapshotButton=document.createElement("div");
     snapshotButton.id=controlBarName+"snapshotButton";
     snapshotButton.setAttribute("title", "Snapshot");
-    snapshotButton.setAttribute("data-placement", "bottom");
-    snapshotButton.setAttribute("data-toggle", "tooltip");
-    snapshotButton.setAttribute("data-container", "body");
+    // snapshotButton.setAttribute("data-placement", "bottom");
+    // snapshotButton.setAttribute("data-toggle", "tooltip");
+    // snapshotButton.setAttribute("data-container", "body");
     snapshotButton.className=snapshotobj.button.class_on;
     snapshotButton.innerHTML=snapshotobj.button.html_on;
     snapshotButton.onclick = function() {

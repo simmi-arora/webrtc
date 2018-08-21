@@ -56,7 +56,7 @@ function createCursorButton(controlBarName, peerinfo, streamid, stream ){
     var button=document.createElement("span");
     button.id = controlBarName+"cursorButton";
     button.setAttribute("data-val","mute");
-    button.setAttribute("title", "Pointer");
+    button.setAttribute("title", "Cursor");
     button.className=cursorobj.button.class_on;
     button.innerHTML=cursorobj.button.html_on;
     button.onclick = function() {

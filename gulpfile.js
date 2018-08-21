@@ -162,8 +162,8 @@ gulp.task('codecss',function() {
 var scriptList=[
     "client/src/scripts/_init.js",
     "client/src/scripts/_notify.js",
-    "client/src/scripts/RTCMultiConnection_new.js",
-//    "client/src/scripts/RTCMultiConnection.js",
+    //"client/src/scripts/RTCMultiConnection_new.js",
+    "client/src/scripts/RTCMultiConnection.js",
     "client/src/scripts/_screenshare.js",
     "client/src/scripts/_detectRTC.js",
     "client/src/scripts/_webrtcchecks.js",
