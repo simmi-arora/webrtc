@@ -173,24 +173,53 @@ function shareTimePeer(){
 }
 
 /**
- * function to fetch and show Peers peers time based on onmesaage val
- * @name startPeersTime
+ * function to fetch and show local peers time zone based on locally captured values
+ * @method
+ * @name startTime
  */
-function startPeersTime(date,zone){
-    
+function peertimeZone(zone ){
     try{
-        webrtcdev.log(" [timerjs] startPeersTime " , date , zone);
-
-        if(timerobj.span.remoteTimeZone_id && document.getElementById(timerobj.span.remoteTimeZone_id) && !document.getElementById(timerobj.span.remoteTimeZone_id).innerHTML){
+        if(timerobj.span.remoteTimeZone_id && 
+            document.getElementById(timerobj.span.remoteTimeZone_id) && 
+            !document.getElementById(timerobj.span.remoteTimeZone_id).innerHTML){
             let timerzonepeer = document.getElementById(timerobj.span.remoteTimeZone_id);
             timerzonepeer.innerHTML = zone;
         }else{
             webrtcdev.error("timerobj.span.remoteTimeZone_id DOM doesnt exist ");
         }
-        
+    }catch(e){
+        webrtcdev.error(e);
+    }
+}
+
+/**
+ * function to fetch and show Peers peers time based on onmesaage val
+ * @name startPeersTime
+ */
+var remotetime;
+var remotezone;
+
+function startPeersTime(date,zone){
+    
+    try{
+
+        if(!remotetime) remotetime = date;
+        if(!remotezone) remotezone = zone;
+        //webrtcdev.log(" [timerjs] startPeersTime " , remotetime , remotezone);
+
+        options = {
+          //year: 'numeric', month: 'numeric', day: 'numeric',
+          hour: 'numeric', minute: 'numeric', second: 'numeric',
+          hour12: false,
+          timeZone: remotezone 
+        };
+
         if(timerobj.span.remoteTime_id && document.getElementById(timerobj.span.remoteTime_id)){
             let timerspanpeer = document.getElementById(timerobj.span.remoteTime_id);
-            timerspanpeer.innerHTML = new Date().toLocaleString('', { timeZone: zone})
+            //timerspanpeer.innerHTML = new Date().toLocaleString('', { timeZone: zone})
+           timerspanpeer.innerHTML = new Date().toLocaleString('en-US', options );
+           //timerspanpeer.innerHTML = new Intl.DateTimeFormat('en-US', options ).format(date);
+           
             var t = setTimeout(startPeersTime, 1000);
         }else{
             webrtcdev.error(" timerobj.span.remoteTime_id DOM does not exist");
