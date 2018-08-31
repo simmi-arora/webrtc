@@ -383,7 +383,8 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         }
 
         if(fileshareobj.active){
-            filedom.id=filename;
+            filedom.id = filename;
+            filedom.type = peerinfo.type;  // local or remote ,
             filedom.innerHTML="";
             filedom.className="row";
             filedom.appendChild(name);
@@ -396,8 +397,10 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
                 filedom.appendChild(removeButton);
         }
 
-        if(parentdom)
+        if(parentdom){
             parentdom.appendChild(filedom); 
+            fileListed(filedom);
+        }
 
     }catch(e){
         webrtcdev.error(" [filesharing ] Display list exception " , e);
@@ -748,7 +751,7 @@ function createFileSharingBox(peerinfo, parent){
         }
 
         // rotate the content of file viewer box
-        var angle = 0;
+        var angle = 0 , orientation = null;
         var rotateButton = document.createElement("span");
         if (fileshareobj.fileshare.rotateicon) {
             var img = document.createElement("img");
@@ -761,8 +764,14 @@ function createFileSharingBox(peerinfo, parent){
         rotateButton.style.float = "right";
         rotateButton.onclick = function () {
             var img = document.getElementById(peerinfo.fileShare.container).firstChild;
+            if(!img.getAttribute("orientation")) {
+                if( img.width > img.height ) orientation = "landscape";
+                else orientation = "portrait";
+                img.setAttribute("orientation",  orientation);
+            }
             angle = (angle + 90) % 360;
-            img.className = "rotate" + angle;
+            
+            img.className = "rotate" + angle + img.getAttribute("orientation");
         }
 
         fileControlBar.appendChild(rotateButton);
@@ -816,7 +825,7 @@ function createFileListingBox(peerinfo, parent){
         if(fileshareobj.props.fileList =="single"){
             fileListingBox.className = "col-sm-12 filesharing-box";
         }else {
-            fileListingBox.className = "col-sm-6 filesharing-box";            
+            fileListingBox.className = "filesharing-box";            
         }
 
         fileListingBox.id = peerinfo.fileList.outerbox;
