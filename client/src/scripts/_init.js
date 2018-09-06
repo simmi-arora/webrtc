@@ -6,7 +6,7 @@
 var t = "";
 var e = null;
 var n = "";
-var rtcConn ;
+var rtcConn= null;
 var selfuserid=null , remoteUserId=null;
 var containerDiv;
 var webcallpeers=[];
@@ -16,16 +16,15 @@ var repeatFlagShowButton =null, repeatFlagHideButton =null, repeatFlagRemoveButt
 /* DOM objects for single user video , user in conf and all other users*/
 var localVideo=null, selfVideo=null, remoteVideos=[];
 
-    var RTCPeerConnection = null;
-    var webrtcDetectedBrowser = null;
-    var webrtcDetectedVersion = null;
-    /*var usersList     = document.getElementById("userslist");
-    var numbersOfUsers  = document.getElementById("numbersofusers");
-    var usersContainer  = document.getElementById("usersContainer");*/
-    var tempuserid ;
-    var sessions = {};
-    var detectRTC ;
-
+var RTCPeerConnection = null;
+var webrtcDetectedBrowser = null;
+var webrtcDetectedVersion = null;
+/*var usersList     = document.getElementById("userslist");
+var numbersOfUsers  = document.getElementById("numbersofusers");
+var usersContainer  = document.getElementById("usersContainer");*/
+var tempuserid ;
+var sessions = {};
+var detectRTC ;
     
 var selfusername="" , selfemail="" , selfcolor="" ;
 var remoteusername="" , remoteemail="" , remotecolor="" ;
