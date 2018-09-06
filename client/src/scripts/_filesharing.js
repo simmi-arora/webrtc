@@ -763,15 +763,47 @@ function createFileSharingBox(peerinfo, parent){
         rotateButton.id = "btnRotate";
         rotateButton.style.float = "right";
         rotateButton.onclick = function () {
-            var img = document.getElementById(peerinfo.fileShare.container).firstChild;
-            if(!img.getAttribute("orientation")) {
-                if( img.width > img.height ) orientation = "landscape";
-                else orientation = "portrait";
-                img.setAttribute("orientation",  orientation);
+
+            var domparent = document.getElementById(peerinfo.fileShare.container);
+            var dom = domparent.firstChild;
+
+            webrtcdev.log(" [filehsraing ] rotateButton dom ", dom  , dom.nodeName, "dom parent ", domparent);
+
+            if(dom && !dom.getAttribute("orientation")) {
+                //alert(" dom type " + dom.nodeName);
+                if( dom.nodeName == "VIDEO"){
+                    if( dom.videoWidth > dom.videoHeight ){
+                        dom.setAttribute("style","height:"+domparent.clientWidth+"px;margin-left: 0px");
+                        orientation = "landscape";
+                    }else {
+                        orientation = "portrait";
+                    }
+                    dom.setAttribute("orientation",  orientation);
+                
+                }else if (dom.nodeName == "IMG"){
+                    if( dom.width > dom.height ){
+                        orientation = "landscape";
+                        dom.setAttribute("style","height:"+domparent.clientWidth+"px");
+                    } else{
+                        orientation = "portrait";
+                    } 
+                    dom.setAttribute("orientation",  orientation);
+                
+                }else if (dom.nodeName == "IFRAME"){
+                    dom.setAttribute("style","height:"+domparent.clientWidth +"px;width:100%");
+                    dom.setAttribute("orientation",  "portrait");
+                
+                // }else if (dom.nodeName == "VIDEO"){
+                //     dom.setAttribute("style","height:"+domparent.clientWidth +"px;margin-left: 0px");
+                //     dom.setAttribute("orientation",  "landscape");
+                }else{    
+                    // do not allow rotate
+                    dom.setAttribute("orientation",  "");
+                }
             }
+
             angle = (angle + 90) % 360;
-            
-            img.className = "rotate" + angle + img.getAttribute("orientation");
+            dom.className = "rotate" + angle + dom.getAttribute("orientation");
         }
 
         fileControlBar.appendChild(rotateButton);

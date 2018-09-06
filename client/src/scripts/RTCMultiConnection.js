@@ -321,6 +321,8 @@
         }
         ,
         connection.getUserMedia = connection.captureUserMedia = function(callback, sessionForced) {
+            //alert("inside getUserMedia going to call invokeGetUserMedia , dontCaptureUserMedia :" + connection.dontCaptureUserMedia );
+
             callback = callback || function() {};
             var session = sessionForced || connection.session;
             return connection.dontCaptureUserMedia || isData(session) ? void callback() : void ((session.audio || session.video || session.screen) && (session.screen ? connection.getScreenConstraints(function(error, screen_constraints) {
@@ -576,6 +578,8 @@
         }
         ,
         connection.invokeGetUserMedia = function(localMediaConstraints, callback, session) {
+            //alert(" insode invokeGetUserMedia going to call getUserMediaHandler");
+
             session || (session = connection.session),
             localMediaConstraints || (localMediaConstraints = connection.mediaConstraints),
             getUserMediaHandler({
@@ -2282,6 +2286,7 @@
         constraints.mandatory && constraints.mandatory.chromeMediaSource ? stream.isScreen = !0 : constraints.mozMediaSource || constraints.mediaSource ? stream.isScreen = !0 : constraints.video ? stream.isVideo = !0 : constraints.audio && (stream.isAudio = !0)
     }
     function getUserMediaHandler(options) {
+        //alert(" inside get user media going to call navogator function get user media ");
         function streaming(stream, returnBack) {
             setStreamType(options.localMediaConstraints, stream),
             options.onGettingLocalMedia(stream, returnBack),

@@ -6,6 +6,8 @@
  */
 function shownotification(message , type){
 
+  if(!message || message =="undefined") return ;
+
   if(document.getElementById("alertBox")){
     var alertDiv =document.createElement("div");
     if(type=="warning")
