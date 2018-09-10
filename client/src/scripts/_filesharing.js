@@ -422,6 +422,7 @@ function getFileElementDisplayByType(filetype , fileurl , filename){
         var image= document.createElement("img");
         image.src= fileurl;
         image.style.width="100%";
+        image.style.height="100%";
         image.title=filename;
         image.id= "display"+filename; 
         elementDisplay=image;
@@ -768,6 +769,8 @@ function createFileSharingBox(peerinfo, parent){
             var dom = domparent.firstChild;
 
             webrtcdev.log(" [filehsraing ] rotateButton dom ", dom  , dom.nodeName, "dom parent ", domparent);
+            
+            angle = (angle + 90) % 360;
 
             if(dom && !dom.getAttribute("orientation")) {
                 //alert(" dom type " + dom.nodeName);
@@ -783,10 +786,15 @@ function createFileSharingBox(peerinfo, parent){
                 }else if (dom.nodeName == "IMG"){
                     if( dom.width > dom.height ){
                         orientation = "landscape";
-                        dom.setAttribute("style","height:"+domparent.clientWidth+"px");
                     } else{
                         orientation = "portrait";
+                        
                     } 
+                    if(angle =="90" || angle == "270"){
+                        dom.setAttribute("style","height:"+domparent.clientWidth+"px");
+                    }else if(angle =="180" || angle == "0"){
+                        dom.setAttribute("style","width:100%; height:100%");
+                    }
                     dom.setAttribute("orientation",  orientation);
                 
                 }else if (dom.nodeName == "IFRAME"){
@@ -802,7 +810,6 @@ function createFileSharingBox(peerinfo, parent){
                 }
             }
 
-            angle = (angle + 90) % 360;
             dom.className = "rotate" + angle + dom.getAttribute("orientation");
         }
 
