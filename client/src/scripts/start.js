@@ -342,7 +342,7 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
                         }
                     })
                 ).then(function(res){
-                    updatePeerInfo(selfuserid || rtcConn.userid , selfusername, selfcolor, selfemail, "role" , "local");
+                    updatePeerInfo(selfuserid || rtcConn.userid , selfusername, selfcolor, selfemail, role, "local");
                     webrtcdev.info(" Trying to open a channel on WebRTC SDP ");
                 }).then(
                     getCamMedia()
@@ -395,7 +395,8 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
                     webrtcdev.info(" Trying to join a channel on WebRTC SDP ")
                 ).then(function(res){
                     for (x in rtcConn.remoteUsers) {
-                        updatePeerInfo(rtcConn.remoteUsers[x], remoteusername, remotecolor, remoteemail, "participant" , "remote");
+                        remoterole =  "participant"; // will fail in case of 2 listeners 
+                        updatePeerInfo(rtcConn.remoteUsers[x], remoteusername, remotecolor, remoteemail, remoterole , "remote");
                         if (role == "inspector") shownotificationWarning("This session is being inspected ");
                     }
                 }).then(
@@ -457,7 +458,7 @@ var setRtcConn = function ( sessionid) {
             webrtcdev.log("onNewParticipant", participantId, userPreferences);
             shownotification(remoteusername + " requests new participantion ");
             if (webcallpeers.length <= remoteobj.maxAllowed) {
-                updatePeerInfo(participantId, remoteusername, remotecolor, "", "role", "remote");
+                updatePeerInfo(participantId, remoteusername, remotecolor, "", role, "remote");
             } else {
                 shownotification("Another user is trying to join this channel but max count [ " + remoteobj.maxAllowed + " ] is reached", "warning");
             }
