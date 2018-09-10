@@ -786,14 +786,15 @@ function createFileSharingBox(peerinfo, parent){
                 }else if (dom.nodeName == "IMG"){
                     if( dom.width > dom.height ){
                         orientation = "landscape";
+                        if(angle =="180" || angle == "0"){
+                            dom.setAttribute("style","width:100%; height:100%");
+                        }
                     } else{
                         orientation = "portrait";
                         
                     } 
                     if(angle =="90" || angle == "270"){
                         dom.setAttribute("style","height:"+domparent.clientWidth+"px");
-                    }else if(angle =="180" || angle == "0"){
-                        dom.setAttribute("style","width:100%; height:100%");
                     }
                     dom.setAttribute("orientation",  orientation);
                 
@@ -810,7 +811,7 @@ function createFileSharingBox(peerinfo, parent){
                 }
             }
 
-            dom.className = "rotate" + angle + dom.getAttribute("orientation");
+            dom.className = "col rotate" + angle + dom.getAttribute("orientation");
         }
 
         fileControlBar.appendChild(rotateButton);
