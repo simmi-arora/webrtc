@@ -425,6 +425,10 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
                         }
                         updatePeerInfo(event.data.sender, event.data.extra.name, event.data.extra.color, event.data.extra.email, event.data.extra.role , "remote");
                         shownotification( event.data.extra.role  + "  " +event.type);
+                    }else {
+                        // Peer was already present  , this is s rejoin 
+                        updatePeerInfo(event.data.sender, event.data.extra.name, event.data.extra.color, event.data.extra.email, event.data.extra.role , "remote");
+                        shownotification(event.data.extra.role  + "  " +event.type);
                     }
                 } else {
                     if(event.message)
@@ -1343,15 +1347,23 @@ function getCamMedia(){
                                     document.getElementById(remoteobj.dynamicVideos.videoContainer).appendChild(video);
                                 }else{
                                     webrtcdev.log("remote video is limited to size maxAllowed , current index ", vi);
-                                    webrtcdev.log("searching for video with index ", vi , " in remote video : " , document.getElementsByName(remoteVideos[vi])[0] );
-                                    if(document.getElementsByName(remoteVideos[vi])[0]){
-                                        remoteVideos[vi] = { 
-                                            "userid": peerInfo.userid, 
-                                            "video" : document.getElementsByName(remoteVideos[vi])[0] 
-                                        };
+                                    var remVideoHolder = document.getElementsByName(remoteVideos[vi]);
+                                    webrtcdev.log("searching for video with index ", vi , " in remote video : " , remVideoHolder[0] );
+                                    if(remVideoHolder){
+                                        if(remVideoHolder[0]){
+                                            remoteVideos[vi] = { 
+                                                "userid": peerInfo.userid, 
+                                                "video" : remVideoHolder[0] 
+                                            };
+                                        }
                                     }else{
-                                        webrtcdev.error(" document.getElementsByName(remoteVideos[vi])[0] doest exist for vi " , vi);
+                                        // since remvideo holder doesnt exist just overwrite the last remote with the video 
+                                        remoteVideos[remoteVideos.length -1] = { 
+                                            "userid": peerInfo.userid, 
+                                            "video" : remVideoHolder[0] 
+                                        };
                                     }
+
                                 }
 
                                 attachMediaStream(remoteVideos[vi].video, peerInfo.stream);

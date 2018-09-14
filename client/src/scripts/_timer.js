@@ -222,7 +222,7 @@ function startPeersTime(date,zone){
            
             var t = setTimeout(startPeersTime, 1000);
         }else{
-            webrtcdev.error(" timerobj.span.remoteTime_id DOM does not exist");
+            webrtcdev.info(" timerobj.span.remoteTime_id DOM does not exist");
         }
     }catch(e){
         webrtcdev.error(e);   

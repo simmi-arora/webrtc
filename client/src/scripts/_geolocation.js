@@ -19,8 +19,8 @@ if (navigator.geolocation) {
 function showPosition(position) {
     webrtcdev.log("Latitude: " + position.coords.latitude +
     "<br>Longitude: " + position.coords.longitude);
-    latitude=position.coords.latitude;
-    longitude=position.coords.longitude;
+    latitude = position.coords.latitude;
+    longitude = position.coords.longitude;
     /*return position;*/
 }
 
