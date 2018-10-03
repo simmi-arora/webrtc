@@ -43,6 +43,7 @@ var outgoingAudio =true , outgoingVideo =true , outgoingData = true;
 var debug=false;
 
 var timerobj =false;
+var peerTimerStarted = false;
 
 var chatobj=false , chatContainer= null;
 
