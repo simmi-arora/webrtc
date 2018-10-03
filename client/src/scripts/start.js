@@ -682,8 +682,19 @@ var setRtcConn = function ( sessionid) {
 
                         break;
                     case "timer":
-                        peertimeZone(e.data.zone);
-                        startPeersTime(e.data.time, e.data.zone);
+
+                        for(var x in webcallpeers){
+                            if(webcallpeers[x].userid == e.userid && !webcallpeers[x].time && !webcallpeers[x].zone) {
+                                //check if the peer has stored zone and time info
+                                webcallpeers[x].time = e.data.time;
+                                webcallpeers[x].zone = e.data.zone;
+                                webrtcdev.log("webcallpeers appended with zone and datetime");
+                            }
+                        }
+                        if(!peerTimerStarted){
+                            peertimeZone(e.data.zone , e.userid);
+                            startPeersTime(e.data.time, e.data.zone , e.userid);
+                        }
                         break;
                     case "buttonclick":
                         var buttonElement = document.getElementById(e.data.buttonName);

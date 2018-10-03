@@ -61,22 +61,6 @@
     color: #968787;
 }*/
 
- .fileviewing-box {
-     border-left: 6px solid white;
-     border-right: 6px solid white;
-     display: table-cell;
-     vertical-align: top;
-}
- .filesharing-box {
-    border-left: 6px solid white;
-    /*border-right: 1px solid black;*/
-    padding-right: 0px;
-    /*border-bottom: 1px solid black;*/
-    margin-bottom: 10px;
-    margin-left: -6px;
-}
-
-
 
 /* ---------------image rotate -----------------------------*/
 .rotate0portrait {
