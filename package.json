@@ -36,6 +36,7 @@
     "jshint": "^2.9.5"
   },
   "scripts": {
+    "build": "webpack-dev-server",
     "test": "./node_modules/mocha/bin/mocha client/tests",
     "run": "gulp & node webrtcserver.js",
     "prestart": "gulp production & apidoc -v -i /home/altanai/webrtcWSwksppace/webrtcdevelopment/ -e node_modules/  -o client/build/api/doc",

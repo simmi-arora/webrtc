@@ -113,10 +113,12 @@ try{
      * @param {json} widgets - widgets object.
      */
     var WebRTCdev= function(session, widgets){
+        console.log("[startjs] WebRTCdev : widgets ", widgets );
+
         try{
             sessionid  = session.sessionid;
             socketAddr = session.socketAddr;
-            console.log("WebRTCdev --> widgets ", widgets , " || Session " , session);
+            console.log("[startjs] webrtcdev : Session " , session);
         }catch(e){
             console.error(e);
             alert(" Session object doesnt have all parameters ");
@@ -124,6 +126,7 @@ try{
 
         try{
             turn    = (session.hasOwnProperty('turn')?session.turn:null);
+            console.log("[startjs] webrtcdev : Turn " , turn);
             if(turn!=null && turn !="none"){
                 getICEServer( turn.username ,turn.secretkey , turn.domain,
                                 turn.application , turn.room , turn.secure); 
@@ -257,6 +260,7 @@ try{
                             shownotification("connnection type is neither open nor join", "warning");
 
                         if (timerobj && timerobj.active) {
+                            timeZone();
                             startsessionTimer(timerobj);
                             shareTimePeer();
                         }
@@ -680,16 +684,16 @@ try{
                 console.log(" listenein widget not loaded ");
             }
 
-            if (timerobj && timerobj.active) {
-                //startTime();
-                timeZone();
-                activateBttons(timerobj);
-                document.getElementById(timerobj.container.id).hidden = true;
-            } else if (timerobj && !timerobj.active) {
-                if (timerobj.button.id && document.getElementById(timerobj.button.id)) {
-                    document.getElementById(timerobj.button.id).className = "inactiveButton";
-                }
-            }
+            // if (timerobj && timerobj.active) {
+            //     //startTime();
+            //     timeZone();
+            //     activateBttons(timerobj);
+            //     document.getElementById(timerobj.container.id).hidden = true;
+            // } else if (timerobj && !timerobj.active) {
+            //     if (timerobj.button.id && document.getElementById(timerobj.button.id)) {
+            //         document.getElementById(timerobj.button.id).className = "inactiveButton";
+            //     }
+            // }
 
             if (drawCanvasobj && drawCanvasobj.active) {
                 if (drawCanvasobj.container && drawCanvasobj.container.id && document.getElementById(drawCanvasobj.container.id)) {
@@ -1227,7 +1231,6 @@ try{
         }else if(turn!=null){
             repeatInitilization = window.setInterval(obj.startwebrtcdev, 2000);     
         }
-
         return;
     }
 

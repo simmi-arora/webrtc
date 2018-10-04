@@ -1,4 +1,4 @@
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//*
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*//*
 //var username= prompt("Please enter your id ", "");
 var username= " "
 document.getElementById("username").innerHTML=username;
@@ -237,7 +237,7 @@ function bytesToSize(e) {
     var n = parseInt(Math.floor(Math.log(e) / Math.log(1024)));
     return Math.round(e / Math.pow(1024, n), 2) + " " + t[n]
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//**
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*//**
  * function to show bootstrap based notification to client
  * @constructor
  * @param {string} message - message passed inside the notification 
@@ -318,7 +318,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
 
 
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/// Last time updated: 2016-08-12 5:21:05 AM UTC
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/// Last time updated: 2016-08-12 5:21:05 AM UTC
 // _____________________
 // RTCMultiConnection-v3
 // Open-Sourced: https://github.com/muaz-khan/RTCMultiConnection
@@ -3801,7 +3801,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
     window.RTCMultiConnection = RTCMultiConnection
 }();
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//**************************************************************
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*//**************************************************************
 Screenshare 
 ****************************************************************/
 'use strict';
@@ -4545,7 +4545,7 @@ function createExtensionInstallWindow (){
     }
                                 
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/var WebRTCdetect=function() {
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/var WebRTCdetect=function() {
 
     'use strict';
 
@@ -5555,7 +5555,7 @@ function createExtensionInstallWindow (){
         });
     }
 };
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//**
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*//**
  * function to check devices like speakers , webcam ,  microphone etc
  * @method
  * @name checkDevices
@@ -5611,7 +5611,7 @@ function checkWebRTCSupport(obj){
         // seems WebRTC (old-fashioned) RTP data channels feature are supported on this client
     }
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//* ***********************************************
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*//* ***********************************************
 settings
 *********************************************/
 
@@ -5706,7 +5706,7 @@ $("#SettingsButton").click(function() {
         /*$('#'+localobj.userdisplay.operatingsystem).val(operatingsystem);*/
     }
 });
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/// Last time updated: 2016-11-04 7:11:11 AM UTC
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/// Last time updated: 2016-11-04 7:11:11 AM UTC
 
 // ________________
 // FileBufferReader
@@ -6850,7 +6850,7 @@ $("#SettingsButton").click(function() {
     window.FileBufferReader = FileBufferReader;
 })();
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/// Muaz Khan     - www.MuazKhan.com
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/// Muaz Khan     - www.MuazKhan.com
 // MIT License   - www.webrtc-experiment.com/licence
 // Documentation - github.com/streamproc/MediaStreamRecorder
 // ______________________
@@ -8254,7 +8254,7 @@ function SaveToDisk(blobOrFile, fileName) {
 
     (window.URL || window.webkitURL).revokeObjectURL(hyperlink.href);
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/'use strict';
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/'use strict';
 
 // Last time updated: 2016-10-21 11:04:26 AM UTC
 
@@ -12249,7 +12249,7 @@ if (typeof RecordRTC !== 'undefined') {
     RecordRTC.GifRecorder = GifRecorder;
 }
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/// Note: All libraries listed in this file are "external libraries" 
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/// Note: All libraries listed in this file are "external libraries" 
 // ----  and has their own copyrights. Taken from "html2canvas" project.
 "use strict";
 
@@ -14533,7 +14533,7 @@ if (!IE) document.captureEvents(Event.MOUSEMOVE);
 document.addEventListener("mousemove", getMouseXY, false);
 var coordX = 0;
 var coordY = 0
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/function createSnapshotButton(controlBarName , peerinfo){
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/function createSnapshotButton(controlBarName , peerinfo){
     var snapshotButton=document.createElement("div");
     snapshotButton.id=controlBarName+"snapshotButton";
     snapshotButton.setAttribute("title", "Snapshot");
@@ -14636,7 +14636,7 @@ function syncSnapshot(datasnapshot , datatype , dataname ){
     console.log("snaspshot ",datasnapshot);
 }*/
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//* ***********************************************
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*//* ***********************************************
 geolocation
 *********************************************/
 
@@ -14684,7 +14684,7 @@ function showError(error) {
             break;
     }
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//********************************************************************************8
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*//********************************************************************************8
         Chat
 **************************************************************************************/
 function createChatButton(obj){
@@ -14905,7 +14905,7 @@ function addMessageBlockFormat(messageheaderDivclass , messageheader ,messageDiv
 $('#chatbox').css('max-height', $( "#leftVideo" ).height()+ 80);
 $('#chatBoard').css('max-height', $( "#leftVideo" ).height());
 $("#chatBoard").css("overflow-y" , "scroll");
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//***************************************************
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*//***************************************************
 video handling 
 *********************************************************/
 
@@ -15186,13 +15186,10 @@ function attachMediaStream(element, stream) {
 
 }
 
-9036911790
-
-
 function reattachMediaStream(to, from) {
     to.src = from.src;
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//* ***********************************************
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*//* ***********************************************
 Record
 *********************************************/
 
@@ -15323,7 +15320,7 @@ function stopRecord(){
     }, {audio:true, video:true} );
 }*/
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/
 /************************************************************************
 Canvas Record 
 *************************************************************************/
@@ -15866,7 +15863,7 @@ function PostBlob(blob) {
     video.focus();
     video.play();
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//***************************************************************88
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*//***************************************************************88
 File sharing 
 ******************************************************************/
 
@@ -16899,7 +16896,7 @@ function createModalPopup(filetype ){
 
     mainDiv.appendChild(modalBox);
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//**************************************************************************8
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*//**************************************************************************8
 draw 
 ******************************************************************************/
 var CanvasDesigner;
@@ -17051,7 +17048,7 @@ saveButtonCanvas.onclick=function(){
    createModalPopup( "blobcanvas" );
 };
 document.body.appendChild(saveButtonCanvas);
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//**********************************
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*//**********************************
 Reconnect 
 ****************************************/
 /*
@@ -17104,7 +17101,7 @@ function assignButtonRedial(id){
         }
     };
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//* **********************************************
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*//* **********************************************
 Listen -In
 *************************************************/
 
@@ -17183,7 +17180,7 @@ if(document.getElementById('listenInLink')){
 
 }
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//***************************************************************************
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*//***************************************************************************
 cursor sharing 
 ***************************************************************************/
 
@@ -17278,7 +17275,7 @@ function createCursorButton(controlBarName, peerinfo, streamid, stream ){
 /*
     <div id="cursor1" class="fa fa-hand-o-up" style="width:0"></div>
     <div id="cursor2" class="fa fa-hand-o-up" style="width:0"></div>*/
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/function createCodeEditorButton(){
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/function createCodeEditorButton(){
     var codeeditorButton= document.createElement("span");
     codeeditorButton.className=codeeditorobj.button.class_off ;
     codeeditorButton.innerHTML=codeeditorobj.button.html_off;
@@ -17380,7 +17377,7 @@ function stopWebrtcdevcodeeditorSync(){
     document.getElementById(codeeditorobj.codeeditorContainer).removeEventListener("keyup", sendWebrtcdevCodeeditorSync, false);
 }
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/function createTextEditorButton(){
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/function createTextEditorButton(){
     var texteditorButton= document.createElement("span");
     texteditorButton.className=texteditorobj.button.class_off ;
     texteditorButton.innerHTML=texteditorobj.button.html_off;
@@ -17439,7 +17436,7 @@ function stopWebrtcdevTexteditorSync(){
     document.getElementById(texteditorobj.texteditorContainer).removeEventListener("keyup", sendWebrtcdevTexteditorSync, false);
 }
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//*********************************************
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*//*********************************************
 ICE
 **************************************************/
 /**
@@ -17491,13 +17488,16 @@ function getICEServer(username , secretkey , domain , appname , roomname , secur
         '&domain='+domain +'&application='+appname+
         '&room='+ roomname+'&secure='+secure);
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//**************************************************8
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*//**************************************************8
 Timer 
 ***************************************************/
 var hours,mins,secs;
 var today = new Date();
 var zone="";
 
+/*
+* start the session time 
+*/
 function startsessionTimer(timerobj){
 
     if(timerobj.counter.hours && timerobj.counter.minutes && timerobj.counter.seconds ){
@@ -17573,6 +17573,8 @@ function btimer(cd , c , cdm , m ){
     }, 1000);
 }
 
+// -------------------------------------------------------------------
+
 function getDate(){
     var now = new Date();
     return now;
@@ -17603,15 +17605,17 @@ function startTime() {
         console.error(e);
     }
     //console.log(" localdate :" , today);
-
-
 }
 
+
+/*
+* Local Time Zone 
+*/
 function timeZone(){
     try{
         if(timerobj.span.currentTimeZone_id && document.getElementById(timerobj.span.currentTimeZone_id)){
-            zone=Intl.DateTimeFormat().resolvedOptions().timeZone;
-            var timerspan=document.getElementById(timerobj.span.currentTimeZone_id);
+            zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            var timerspan = document.getElementById(timerobj.span.currentTimeZone_id);
             timerspan.innerHTML = zone;
         }else{
             console.error(" timerobj.span.currentTimeZone_id DOM doesnt exist ");
@@ -17619,7 +17623,6 @@ function timeZone(){
     }catch(e){
         console.error(e);
     }
-
 }
 
 function shareTimePeer(){
@@ -17639,12 +17642,8 @@ function shareTimePeer(){
 function startPeersTime(date,zone){
     
     try{
-        /*    
-        var smday = new Date();
-        smday.setHours(h);
-        smday.setMinutes(m);
-        smday.setSeconds(s);*/
-        console.log(" startPeersTime " , date , zone);
+
+        console.log("================>>>>>  startPeersTime " , date , zone);
 
         if(timerobj.span.remoteTimeZone_id && document.getElementById(timerobj.span.remoteTimeZone_id)){
             var timerspan = document.getElementById(timerobj.span.remoteTimeZone_id);
@@ -17653,7 +17652,6 @@ function startPeersTime(date,zone){
             console.error("timerobj.span.remoteTimeZone_id DOM doesnt exist ");
         }
         
-
         if(timerobj.span.remoteTime_id && document.getElementById(timerobj.span.remoteTime_id)){
             var remotedate = new Date(date);
             //var remotedate = new Date().toLocaleString('en-US', { timeZone: zone });
@@ -17676,6 +17674,9 @@ function startPeersTime(date,zone){
     }
 }
 
+/*
+* Activate the time conainers minimize / maximize button
+*/
 function activateBttons(timerobj){
     if(timerobj.container.minbutton_id && document.getElementById(timerobj.container.minbutton_id)){
         var button= document.getElementById(timerobj.container.minbutton_id);
@@ -17692,7 +17693,7 @@ function checkTime(i) {
     if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
     return i;
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/// ___________
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/// ___________
 // getStats.js
 // an abstraction layer runs top over RTCPeerConnection.getStats API
 // cross-browser compatible solution
@@ -17989,7 +17990,7 @@ function activateBandwidthButtons(timerobj){
         console.log(" rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
     }
 
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*/'use strict';
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/'use strict';
 
 // var inherits = require('util').inherits;
 // var EventEmitter = require('events').EventEmitter;
@@ -18104,10 +18105,12 @@ try{
      * @param {json} widgets - widgets object.
      */
     var WebRTCdev= function(session, widgets){
+        console.log("[startjs] WebRTCdev : widgets ", widgets );
+
         try{
             sessionid  = session.sessionid;
             socketAddr = session.socketAddr;
-            console.log("WebRTCdev --> widgets ", widgets , " || Session " , session);
+            console.log("[startjs] webrtcdev : Session " , session);
         }catch(e){
             console.error(e);
             alert(" Session object doesnt have all parameters ");
@@ -18115,6 +18118,7 @@ try{
 
         try{
             turn    = (session.hasOwnProperty('turn')?session.turn:null);
+            console.log("[startjs] webrtcdev : Turn " , turn);
             if(turn!=null && turn !="none"){
                 getICEServer( turn.username ,turn.secretkey , turn.domain,
                                 turn.application , turn.room , turn.secure); 
@@ -18248,6 +18252,7 @@ try{
                             shownotification("connnection type is neither open nor join", "warning");
 
                         if (timerobj && timerobj.active) {
+                            timeZone();
                             startsessionTimer(timerobj);
                             shareTimePeer();
                         }
@@ -18671,16 +18676,16 @@ try{
                 console.log(" listenein widget not loaded ");
             }
 
-            if (timerobj && timerobj.active) {
-                //startTime();
-                timeZone();
-                activateBttons(timerobj);
-                document.getElementById(timerobj.container.id).hidden = true;
-            } else if (timerobj && !timerobj.active) {
-                if (timerobj.button.id && document.getElementById(timerobj.button.id)) {
-                    document.getElementById(timerobj.button.id).className = "inactiveButton";
-                }
-            }
+            // if (timerobj && timerobj.active) {
+            //     //startTime();
+            //     timeZone();
+            //     activateBttons(timerobj);
+            //     document.getElementById(timerobj.container.id).hidden = true;
+            // } else if (timerobj && !timerobj.active) {
+            //     if (timerobj.button.id && document.getElementById(timerobj.button.id)) {
+            //         document.getElementById(timerobj.button.id).className = "inactiveButton";
+            //     }
+            // }
 
             if (drawCanvasobj && drawCanvasobj.active) {
                 if (drawCanvasobj.container && drawCanvasobj.container.id && document.getElementById(drawCanvasobj.container.id)) {
@@ -19500,7 +19505,7 @@ try{
 }catch(e){
     console.log("exception in start " , e);
 }
-/*Generated on:Wed May 23 2018 10:07:39 GMT+0530 (IST)*//* ***************************************************************
+/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*//* ***************************************************************
 Admin
 ******************************************************************/
 

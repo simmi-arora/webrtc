@@ -5,6 +5,9 @@ var hours,mins,secs;
 var today = new Date();
 var zone="";
 
+/*
+* start the session time 
+*/
 function startsessionTimer(timerobj){
 
     if(timerobj.counter.hours && timerobj.counter.minutes && timerobj.counter.seconds ){
@@ -80,6 +83,8 @@ function btimer(cd , c , cdm , m ){
     }, 1000);
 }
 
+// -------------------------------------------------------------------
+
 function getDate(){
     var now = new Date();
     return now;
@@ -110,15 +115,17 @@ function startTime() {
         console.error(e);
     }
     //console.log(" localdate :" , today);
-
-
 }
 
+
+/*
+* Local Time Zone 
+*/
 function timeZone(){
     try{
         if(timerobj.span.currentTimeZone_id && document.getElementById(timerobj.span.currentTimeZone_id)){
-            zone=Intl.DateTimeFormat().resolvedOptions().timeZone;
-            var timerspan=document.getElementById(timerobj.span.currentTimeZone_id);
+            zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            var timerspan = document.getElementById(timerobj.span.currentTimeZone_id);
             timerspan.innerHTML = zone;
         }else{
             console.error(" timerobj.span.currentTimeZone_id DOM doesnt exist ");
@@ -126,7 +133,6 @@ function timeZone(){
     }catch(e){
         console.error(e);
     }
-
 }
 
 function shareTimePeer(){
@@ -146,12 +152,8 @@ function shareTimePeer(){
 function startPeersTime(date,zone){
     
     try{
-        /*    
-        var smday = new Date();
-        smday.setHours(h);
-        smday.setMinutes(m);
-        smday.setSeconds(s);*/
-        console.log(" startPeersTime " , date , zone);
+
+        console.log("================>>>>>  startPeersTime " , date , zone);
 
         if(timerobj.span.remoteTimeZone_id && document.getElementById(timerobj.span.remoteTimeZone_id)){
             var timerspan = document.getElementById(timerobj.span.remoteTimeZone_id);
@@ -160,7 +162,6 @@ function startPeersTime(date,zone){
             console.error("timerobj.span.remoteTimeZone_id DOM doesnt exist ");
         }
         
-
         if(timerobj.span.remoteTime_id && document.getElementById(timerobj.span.remoteTime_id)){
             var remotedate = new Date(date);
             //var remotedate = new Date().toLocaleString('en-US', { timeZone: zone });
@@ -183,6 +184,9 @@ function startPeersTime(date,zone){
     }
 }
 
+/*
+* Activate the time conainers minimize / maximize button
+*/
 function activateBttons(timerobj){
     if(timerobj.container.minbutton_id && document.getElementById(timerobj.container.minbutton_id)){
         var button= document.getElementById(timerobj.container.minbutton_id);
