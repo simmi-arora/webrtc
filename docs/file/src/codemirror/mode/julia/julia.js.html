@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/julia/julia.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/julia/julia.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+&quot;use strict&quot;;
+
+CodeMirror.defineMode(&quot;julia&quot;, function(_conf, parserConf) {
+  var ERRORCLASS = &apos;error&apos;;
+
+  function wordRegexp(words) {
+    return new RegExp(&quot;^((&quot; + words.join(&quot;)|(&quot;) + &quot;))\\b&quot;);
+  }
+
+  var operators = parserConf.operators || /^\.?[|&amp;^\\%*+\-&lt;&gt;!=\/]=?|\?|~|:|\$|\.[&lt;&gt;]|&lt;&lt;=?|&gt;&gt;&gt;?=?|\.[&lt;&gt;=]=|-&gt;?|\/\/|\bin\b/;
+  var delimiters = parserConf.delimiters || /^[;,()[\]{}]/;
+  var identifiers = parserConf.identifiers|| /^[_A-Za-z\u00A1-\uFFFF][_A-Za-z0-9\u00A1-\uFFFF]*!*/;
+  var blockOpeners = [&quot;begin&quot;, &quot;function&quot;, &quot;type&quot;, &quot;immutable&quot;, &quot;let&quot;, &quot;macro&quot;, &quot;for&quot;, &quot;while&quot;, &quot;quote&quot;, &quot;if&quot;, &quot;else&quot;, &quot;elseif&quot;, &quot;try&quot;, &quot;finally&quot;, &quot;catch&quot;, &quot;do&quot;];
+  var blockClosers = [&quot;end&quot;, &quot;else&quot;, &quot;elseif&quot;, &quot;catch&quot;, &quot;finally&quot;];
+  var keywordList = [&apos;if&apos;, &apos;else&apos;, &apos;elseif&apos;, &apos;while&apos;, &apos;for&apos;, &apos;begin&apos;, &apos;let&apos;, &apos;end&apos;, &apos;do&apos;, &apos;try&apos;, &apos;catch&apos;, &apos;finally&apos;, &apos;return&apos;, &apos;break&apos;, &apos;continue&apos;, &apos;global&apos;, &apos;local&apos;, &apos;const&apos;, &apos;export&apos;, &apos;import&apos;, &apos;importall&apos;, &apos;using&apos;, &apos;function&apos;, &apos;macro&apos;, &apos;module&apos;, &apos;baremodule&apos;, &apos;type&apos;, &apos;immutable&apos;, &apos;quote&apos;, &apos;typealias&apos;, &apos;abstract&apos;, &apos;bitstype&apos;, &apos;ccall&apos;];
+  var builtinList = [&apos;true&apos;, &apos;false&apos;, &apos;enumerate&apos;, &apos;open&apos;, &apos;close&apos;, &apos;nothing&apos;, &apos;NaN&apos;, &apos;Inf&apos;, &apos;print&apos;, &apos;println&apos;, &apos;Int&apos;, &apos;Int8&apos;, &apos;Uint8&apos;, &apos;Int16&apos;, &apos;Uint16&apos;, &apos;Int32&apos;, &apos;Uint32&apos;, &apos;Int64&apos;, &apos;Uint64&apos;, &apos;Int128&apos;, &apos;Uint128&apos;, &apos;Bool&apos;, &apos;Char&apos;, &apos;Float16&apos;, &apos;Float32&apos;, &apos;Float64&apos;, &apos;Array&apos;, &apos;Vector&apos;, &apos;Matrix&apos;, &apos;String&apos;, &apos;UTF8String&apos;, &apos;ASCIIString&apos;, &apos;error&apos;, &apos;warn&apos;, &apos;info&apos;, &apos;@printf&apos;];
+
+  //var stringPrefixes = new RegExp(&quot;^[br]?(&apos;|\&quot;)&quot;)
+  var stringPrefixes = /^(`|&apos;|&quot;{3}|([br]?&quot;))/;
+  var keywords = wordRegexp(keywordList);
+  var builtins = wordRegexp(builtinList);
+  var openers = wordRegexp(blockOpeners);
+  var closers = wordRegexp(blockClosers);
+  var macro = /^@[_A-Za-z][_A-Za-z0-9]*/;
+  var symbol = /^:[_A-Za-z][_A-Za-z0-9]*/;
+  var indentInfo = null;
+
+  function in_array(state) {
+    var ch = cur_scope(state);
+    if(ch==&quot;[&quot; || ch==&quot;{&quot;) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  function cur_scope(state) {
+    if(state.scopes.length==0) {
+      return null;
+    }
+    return state.scopes[state.scopes.length - 1];
+  }
+
+  // tokenizers
+  function tokenBase(stream, state) {
+    // Handle scope changes
+    var leaving_expr = state.leaving_expr;
+    if(stream.sol()) {
+      leaving_expr = false;
+    }
+    state.leaving_expr = false;
+    if(leaving_expr) {
+      if(stream.match(/^&apos;+/)) {
+        return &apos;operator&apos;;
+      }
+
+    }
+
+    if(stream.match(/^\.{2,3}/)) {
+      return &apos;operator&apos;;
+    }
+
+    if (stream.eatSpace()) {
+      return null;
+    }
+
+    var ch = stream.peek();
+    // Handle Comments
+    if (ch === &apos;#&apos;) {
+        stream.skipToEnd();
+        return &apos;comment&apos;;
+    }
+    if(ch===&apos;[&apos;) {
+      state.scopes.push(&quot;[&quot;);
+    }
+
+    if(ch===&apos;{&apos;) {
+      state.scopes.push(&quot;{&quot;);
+    }
+
+    var scope=cur_scope(state);
+
+    if(scope===&apos;[&apos; &amp;&amp; ch===&apos;]&apos;) {
+      state.scopes.pop();
+      state.leaving_expr=true;
+    }
+
+    if(scope===&apos;{&apos; &amp;&amp; ch===&apos;}&apos;) {
+      state.scopes.pop();
+      state.leaving_expr=true;
+    }
+
+    if(ch===&apos;)&apos;) {
+      state.leaving_expr = true;
+    }
+
+    var match;
+    if(!in_array(state) &amp;&amp; (match=stream.match(openers, false))) {
+      state.scopes.push(match);
+    }
+
+    if(!in_array(state) &amp;&amp; stream.match(closers, false)) {
+      state.scopes.pop();
+    }
+
+    if(in_array(state)) {
+      if(stream.match(/^end/)) {
+        return &apos;number&apos;;
+      }
+
+    }
+
+    if(stream.match(/^=&gt;/)) {
+      return &apos;operator&apos;;
+    }
+
+
+    // Handle Number Literals
+    if (stream.match(/^[0-9\.]/, false)) {
+      var imMatcher = RegExp(/^im\b/);
+      var floatLiteral = false;
+      // Floats
+      if (stream.match(/^\d*\.(?!\.)\d+([ef][\+\-]?\d+)?/i)) { floatLiteral = true; }
+      if (stream.match(/^\d+\.(?!\.)\d*/)) { floatLiteral = true; }
+      if (stream.match(/^\.\d+/)) { floatLiteral = true; }
+      if (floatLiteral) {
+          // Float literals may be &quot;imaginary&quot;
+          stream.match(imMatcher);
+          state.leaving_expr = true;
+          return &apos;number&apos;;
+      }
+      // Integers
+      var intLiteral = false;
+      // Hex
+      if (stream.match(/^0x[0-9a-f]+/i)) { intLiteral = true; }
+      // Binary
+      if (stream.match(/^0b[01]+/i)) { intLiteral = true; }
+      // Octal
+      if (stream.match(/^0o[0-7]+/i)) { intLiteral = true; }
+      // Decimal
+      if (stream.match(/^[1-9]\d*(e[\+\-]?\d+)?/)) {
+          intLiteral = true;
+      }
+      // Zero by itself with no other piece of number.
+      if (stream.match(/^0(?![\dx])/i)) { intLiteral = true; }
+      if (intLiteral) {
+          // Integer literals may be &quot;long&quot;
+          stream.match(imMatcher);
+          state.leaving_expr = true;
+          return &apos;number&apos;;
+      }
+    }
+
+    if(stream.match(/^(::)|(&lt;:)/)) {
+      return &apos;operator&apos;;
+    }
+
+    // Handle symbols
+    if(!leaving_expr &amp;&amp; stream.match(symbol)) {
+      return &apos;string&apos;;
+    }
+
+    // Handle operators and Delimiters
+    if (stream.match(operators)) {
+      return &apos;operator&apos;;
+    }
+
+
+    // Handle Strings
+    if (stream.match(stringPrefixes)) {
+      state.tokenize = tokenStringFactory(stream.current());
+      return state.tokenize(stream, state);
+    }
+
+    if (stream.match(macro)) {
+      return &apos;meta&apos;;
+    }
+
+
+    if (stream.match(delimiters)) {
+      return null;
+    }
+
+    if (stream.match(keywords)) {
+      return &apos;keyword&apos;;
+    }
+
+    if (stream.match(builtins)) {
+      return &apos;builtin&apos;;
+    }
+
+
+    if (stream.match(identifiers)) {
+      state.leaving_expr=true;
+      return &apos;variable&apos;;
+    }
+    // Handle non-detected items
+    stream.next();
+    return ERRORCLASS;
+  }
+
+  function tokenStringFactory(delimiter) {
+    while (&apos;rub&apos;.indexOf(delimiter.charAt(0).toLowerCase()) &gt;= 0) {
+      delimiter = delimiter.substr(1);
+    }
+    var singleline = delimiter.length == 1;
+    var OUTCLASS = &apos;string&apos;;
+
+    function tokenString(stream, state) {
+      while (!stream.eol()) {
+        stream.eatWhile(/[^&apos;&quot;\\]/);
+        if (stream.eat(&apos;\\&apos;)) {
+            stream.next();
+            if (singleline &amp;&amp; stream.eol()) {
+              return OUTCLASS;
+            }
+        } else if (stream.match(delimiter)) {
+            state.tokenize = tokenBase;
+            return OUTCLASS;
+        } else {
+            stream.eat(/[&apos;&quot;]/);
+        }
+      }
+      if (singleline) {
+        if (parserConf.singleLineStringErrors) {
+            return ERRORCLASS;
+        } else {
+            state.tokenize = tokenBase;
+        }
+      }
+      return OUTCLASS;
+    }
+    tokenString.isString = true;
+    return tokenString;
+  }
+
+  function tokenLexer(stream, state) {
+    indentInfo = null;
+    var style = state.tokenize(stream, state);
+    var current = stream.current();
+
+    // Handle &apos;.&apos; connected identifiers
+    if (current === &apos;.&apos;) {
+      style = stream.match(identifiers, false) ? null : ERRORCLASS;
+      if (style === null &amp;&amp; state.lastStyle === &apos;meta&apos;) {
+          // Apply &apos;meta&apos; style to &apos;.&apos; connected identifiers when
+          // appropriate.
+        style = &apos;meta&apos;;
+      }
+      return style;
+    }
+
+    return style;
+  }
+
+  var external = {
+    startState: function() {
+      return {
+        tokenize: tokenBase,
+        scopes: [],
+        leaving_expr: false
+      };
+    },
+
+    token: function(stream, state) {
+      var style = tokenLexer(stream, state);
+      state.lastStyle = style;
+      return style;
+    },
+
+    indent: function(state, textAfter) {
+      var delta = 0;
+      if(textAfter==&quot;end&quot; || textAfter==&quot;]&quot; || textAfter==&quot;}&quot; || textAfter==&quot;else&quot; || textAfter==&quot;elseif&quot; || textAfter==&quot;catch&quot; || textAfter==&quot;finally&quot;) {
+        delta = -1;
+      }
+      return (state.scopes.length + delta) * 4;
+    },
+
+    lineComment: &quot;#&quot;,
+    fold: &quot;indent&quot;,
+    electricChars: &quot;edlsifyh]}&quot;
+  };
+  return external;
+});
+
+
+CodeMirror.defineMIME(&quot;text/x-julia&quot;, &quot;julia&quot;);
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/scripts/_chat.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/scripts/_chat.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/********************************************************************************8
+        Chat
+**************************************************************************************/
+function createChatButton(obj){
+    var button= document.createElement(&quot;span&quot;);
+    button.className= chatobj.button.class_on;
+    button.innerHTML= chatobj.button.html_on;
+    button.onclick = function() {
+        if(button.className==chatobj.button.class_off){
+            document.getElementById(chatobj.container.id).hidden=true;
+            button.className=chatobj.button.class_on;
+            button.innerHTML= chatobj.button.html_on;
+        }else if(button.className==chatobj.button.class_on){
+            document.getElementById(chatobj.container.id).hidden=false;
+            button.className=chatobj.button.class_off;
+            button.innerHTML= chatobj.button.html_off;
+        }
+    };
+
+    var li =document.createElement(&quot;li&quot;);
+    li.appendChild(button);
+    document.getElementById(&quot;topIconHolder_ul&quot;).appendChild(li);
+}
+
+/*function assignChatButton(chatobj){
+    var button= document.getElementById(chatobj.button.id);
+    button.onclick = function() {
+        if(button.className==chatobj.button.class_off){
+            document.getElementById(chatobj.chatContainer).hidden=true;
+            button.className=chatobj.button.class_on;
+            button.innerHTML= chatobj.button.html_on;
+        }else if(button.className==chatobj.button.class_on){
+            document.getElementById(chatobj.chatContainer).hidden=false;
+            button.className=chatobj.button.class_off;
+            button.innerHTML= chatobj.button.html_off;
+        }
+    };
+}*/
+
+function createChatBox(obj){
+
+    var mainInputBox=document.createElement(&quot;div&quot;);
+
+    var chatInput= document.createElement(&quot;input&quot;);
+    chatInput.setAttribute(&quot;type&quot;, &quot;text&quot;);
+    chatInput.className= &quot;form-control chatInputClass&quot;;
+    chatInput.id=&quot;chatInput&quot;;
+    chatInput.onkeypress=function(e){
+        if (e.keyCode == 13) {
+            sendChatMessage(chatInput.value);
+            chatInput.value = &quot;&quot;;
+        }
+    };
+
+    var chatButton= document.createElement(&quot;span&quot;);
+    chatButton.className= &quot;btn btn-primary&quot;;
+    chatButton.innerHTML= &quot;Enter&quot;;
+    chatButton.onclick=function(){
+        var chatInput=document.getElementById(&quot;chatInput&quot;);
+        sendChatMessage(chatInput.value);
+        chatInput.value = &quot;&quot;;
+    }
+    
+    var whoTyping= document.createElement(&quot;div&quot;);
+    whoTyping.className= &quot;whoTypingClass&quot;;
+    whoTyping.id=&quot;whoTyping&quot;;
+
+    mainInputBox.appendChild(chatInput);
+    mainInputBox.appendChild(chatButton);
+    mainInputBox.appendChild(whoTyping);
+    document.getElementById(chatobj.container.id).appendChild(mainInputBox);
+
+    var chatBoard=document.createElement(&quot;div&quot;);
+    chatBoard.className=&quot;chatMessagesClass&quot;;
+    chatBoard.setAttribute(&quot;contenteditable&quot;,true);
+    chatBoard.id=chatobj.chatBox.id;
+    document.getElementById(chatobj.container.id).appendChild(chatBoard);
+}
+
+function assignChatBox(obj){
+
+    var chatInput = document.getElementById(chatobj.inputBox.text_id);
+    chatInput.onkeypress=function(e){
+        if (e.keyCode == 13) {
+            var peerinfo = findPeerInfo( selfuserid );
+            webrtcdev.log(&quot; chat &quot; , selfuserid , peerinfo);
+            sendChatMessage(chatInput.value , peerinfo);
+            chatInput.value = &quot;&quot;;
+        }
+    };
+
+    if(document.getElementById(chatobj.inputBox.sendbutton_id)){
+        var chatButton= document.getElementById(chatobj.inputBox.sendbutton_id);
+        chatButton.onclick=function(e){
+
+            var peerinfo = findPeerInfo( selfuserid );
+            var chatInput=document.getElementById(chatobj.inputBox.text_id);
+            sendChatMessage(chatInput.value , peerinfo);
+            chatInput.value = &quot;&quot;;
+        }  
+    }
+
+    if(document.getElementById(chatobj.inputBox.minbutton_id)){
+        var button= document.getElementById(chatobj.inputBox.minbutton_id);
+        button.onclick=function(e){
+            if(document.getElementById(chatobj.container.id).hidden)
+                document.getElementById(chatobj.container.id).hidden=false;
+            else
+                document.getElementById(chatobj.container.id).hidden=true;
+        }  
+    }
+}
+
+function updateWhotyping(data){
+    document.getElementById(&quot;whoTyping&quot;).innerHTML=data;
+}
+
+function sendChatMessage(msg,  peerinfo){
+    /*var userinfo;*/
+    /*try{
+        userinfo = getUserinfo(rtcConn.blobURLs[rtcConn.userid], &quot;chat-message.png&quot;);
+    }catch(e){
+        userinfo = &quot;empty&quot;;
+    }*/
+    addNewMessagelocal({
+        header: rtcConn.extra.username,
+        message: msg,
+        userinfo: peerinfo,
+        color: rtcConn.extra.color
+    });
+
+    rtcConn.send({
+        type:&quot;chat&quot;, 
+        userinfo: peerinfo,
+        message: msg 
+    });
+}
+
+
+function replaceURLWithHTMLLinks(text) {
+  var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&amp;@#\/%?=~_|!:,.;]*[-A-Z0-9+&amp;@#\/%=~_|])/ig;
+  return text.replace(exp,&quot;&lt;a href=&apos;$1&apos;&gt;$1&lt;/a&gt;&quot;); 
+}
+
+function addNewMessagelocal(e ) {
+    if (&quot;&quot; != e.message &amp;&amp; &quot; &quot; != e.message) {
+        addMessageSnapshotFormat(&quot;user-activity user-activity-right localMessageClass&quot; , e.userinfo , e.message , chatobj.chatBox.id);
+    }
+}
+
+function addNewMessage(e) {
+    if (&quot;&quot; != e.message &amp;&amp; &quot; &quot; != e.message) {
+        addMessageSnapshotFormat(&quot;user-activity user-activity-right remoteMessageClass&quot; , e.userinfo , e.message , chatobj.chatBox.id);
+    }
+}
+
+function addMessageSnapshotFormat(messageDivclass, userinfo , message , parent){
+    var n = document.createElement(&quot;div&quot;);
+    n.className = messageDivclass; 
+    webrtcdev.log(&quot;addNewMessagelocal&quot; , userinfo);
+
+      takeSnapshot(userinfo, function(datasnapshot) {    
+            var image= document.createElement(&quot;img&quot;);
+            image.src= datasnapshot;
+            image.style.height=&quot;40px&quot;;
+
+            var t = document.createElement(&quot;span&quot;);
+            t.innerHTML =  replaceURLWithHTMLLinks(message);
+
+            n.appendChild(image) ;
+            n.appendChild(t);
+            //n.innerHTML = image +&quot; : &quot;+ replaceURLWithHTMLLinks(message);
+               // displayFile(peerinfo.uuid , peerinfo, datasnapshot , snapshotname, &quot;imagesnapshot&quot;);
+
+        });       
+
+    document.getElementById(parent).insertBefore(n, document.getElementById(parent).firstChild);
+}
+
+function addMessageLineformat(messageDivclass, messageheader , message , parent){
+    var n = document.createElement(&quot;div&quot;);
+    n.className = messageDivclass; 
+    if(messageheader){
+        n.innerHTML = messageheader +&quot; : &quot;+ replaceURLWithHTMLLinks(message);
+    }else{
+        n.innerHTML = replaceURLWithHTMLLinks(message);
+    }
+    
+    document.getElementById(parent).insertBefore(n, document.getElementById(parent).firstChild);
+}
+
+function addMessageBlockFormat(messageheaderDivclass , messageheader ,messageDivclass, message , parent){
+    
+    var t = document.createElement(&quot;div&quot;);
+    t.className = messageheaderDivclass, 
+    t.innerHTML = &apos;&lt;div class=&quot;chatusername&quot;&gt;&apos; + messageheader + &quot;&lt;/div&gt;&quot;;
+
+    var n = document.createElement(&quot;div&quot;);
+    n.className = messageDivclass,
+    n.innerHTML= message,
+
+    t.appendChild(n),  
+    $(&quot;#&quot;+parent).append(n);
+    /* $(&quot;#all-messages&quot;).scrollTop($(&quot;#all-messages&quot;)[0].scrollHeight) */
+}
+
+/*$(&quot;#chatInput&quot;).keypress(function(e) {
+    if (e.keyCode == 13) {
+        sendChatMessage();
+    }
+})*/
+
+/*$(&apos;#send&apos;).click( function() {
+    sendChatMessage();
+    return false; 
+});*/
+
+//$(&apos;#chatbox&apos;).height($( &quot;#leftVideo&quot; ).height());
+$(&apos;#chatbox&apos;).css(&apos;max-height&apos;, $( &quot;#leftVideo&quot; ).height()+ 80);
+$(&apos;#chatBoard&apos;).css(&apos;max-height&apos;, $( &quot;#leftVideo&quot; ).height());
+$(&quot;#chatBoard&quot;).css(&quot;overflow-y&quot; , &quot;scroll&quot;);</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

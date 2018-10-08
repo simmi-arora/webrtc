@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/tiddlywiki/tiddlywiki.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/tiddlywiki/tiddlywiki.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+/***
+    |&apos;&apos;Name&apos;&apos;|tiddlywiki.js|
+    |&apos;&apos;Description&apos;&apos;|Enables TiddlyWikiy syntax highlighting using CodeMirror|
+    |&apos;&apos;Author&apos;&apos;|PMario|
+    |&apos;&apos;Version&apos;&apos;|0.1.7|
+    |&apos;&apos;Status&apos;&apos;|&apos;&apos;stable&apos;&apos;|
+    |&apos;&apos;Source&apos;&apos;|[[GitHub|https://github.com/pmario/CodeMirror2/blob/tw-syntax/mode/tiddlywiki]]|
+    |&apos;&apos;Documentation&apos;&apos;|http://codemirror.tiddlyspace.com/|
+    |&apos;&apos;License&apos;&apos;|[[MIT License|http://www.opensource.org/licenses/mit-license.php]]|
+    |&apos;&apos;CoreVersion&apos;&apos;|2.5.0|
+    |&apos;&apos;Requires&apos;&apos;|codemirror.js|
+    |&apos;&apos;Keywords&apos;&apos;|syntax highlighting color code mirror codemirror|
+    ! Info
+    CoreVersion parameter is needed for TiddlyWiki only!
+***/
+//{{{
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+&quot;use strict&quot;;
+
+CodeMirror.defineMode(&quot;tiddlywiki&quot;, function () {
+  // Tokenizer
+  var textwords = {};
+
+  var keywords = function () {
+    function kw(type) {
+      return { type: type, style: &quot;macro&quot;};
+    }
+    return {
+      &quot;allTags&quot;: kw(&apos;allTags&apos;), &quot;closeAll&quot;: kw(&apos;closeAll&apos;), &quot;list&quot;: kw(&apos;list&apos;),
+      &quot;newJournal&quot;: kw(&apos;newJournal&apos;), &quot;newTiddler&quot;: kw(&apos;newTiddler&apos;),
+      &quot;permaview&quot;: kw(&apos;permaview&apos;), &quot;saveChanges&quot;: kw(&apos;saveChanges&apos;),
+      &quot;search&quot;: kw(&apos;search&apos;), &quot;slider&quot;: kw(&apos;slider&apos;),   &quot;tabs&quot;: kw(&apos;tabs&apos;),
+      &quot;tag&quot;: kw(&apos;tag&apos;), &quot;tagging&quot;: kw(&apos;tagging&apos;),       &quot;tags&quot;: kw(&apos;tags&apos;),
+      &quot;tiddler&quot;: kw(&apos;tiddler&apos;), &quot;timeline&quot;: kw(&apos;timeline&apos;),
+      &quot;today&quot;: kw(&apos;today&apos;), &quot;version&quot;: kw(&apos;version&apos;),   &quot;option&quot;: kw(&apos;option&apos;),
+
+      &quot;with&quot;: kw(&apos;with&apos;),
+      &quot;filter&quot;: kw(&apos;filter&apos;)
+    };
+  }();
+
+  var isSpaceName = /[\w_\-]/i,
+  reHR = /^\-\-\-\-+$/,                                 // &lt;hr&gt;
+  reWikiCommentStart = /^\/\*\*\*$/,            // /***
+  reWikiCommentStop = /^\*\*\*\/$/,             // ***/
+  reBlockQuote = /^&lt;&lt;&lt;$/,
+
+  reJsCodeStart = /^\/\/\{\{\{$/,                       // //{{{ js block start
+  reJsCodeStop = /^\/\/\}\}\}$/,                        // //}}} js stop
+  reXmlCodeStart = /^&lt;!--\{\{\{--&gt;$/,           // xml block start
+  reXmlCodeStop = /^&lt;!--\}\}\}--&gt;$/,            // xml stop
+
+  reCodeBlockStart = /^\{\{\{$/,                        // {{{ TW text div block start
+  reCodeBlockStop = /^\}\}\}$/,                 // }}} TW text stop
+
+  reUntilCodeStop = /.*?\}\}\}/;
+
+  function chain(stream, state, f) {
+    state.tokenize = f;
+    return f(stream, state);
+  }
+
+  // Used as scratch variables to communicate multiple values without
+  // consing up tons of objects.
+  var type, content;
+
+  function ret(tp, style, cont) {
+    type = tp;
+    content = cont;
+    return style;
+  }
+
+  function jsTokenBase(stream, state) {
+    var sol = stream.sol(), ch;
+
+    state.block = false;        // indicates the start of a code block.
+
+    ch = stream.peek();         // don&apos;t eat, to make matching simpler
+
+    // check start of  blocks
+    if (sol &amp;&amp; /[&lt;\/\*{}\-]/.test(ch)) {
+      if (stream.match(reCodeBlockStart)) {
+        state.block = true;
+        return chain(stream, state, twTokenCode);
+      }
+      if (stream.match(reBlockQuote)) {
+        return ret(&apos;quote&apos;, &apos;quote&apos;);
+      }
+      if (stream.match(reWikiCommentStart) || stream.match(reWikiCommentStop)) {
+        return ret(&apos;code&apos;, &apos;comment&apos;);
+      }
+      if (stream.match(reJsCodeStart) || stream.match(reJsCodeStop) || stream.match(reXmlCodeStart) || stream.match(reXmlCodeStop)) {
+        return ret(&apos;code&apos;, &apos;comment&apos;);
+      }
+      if (stream.match(reHR)) {
+        return ret(&apos;hr&apos;, &apos;hr&apos;);
+      }
+    } // sol
+    ch = stream.next();
+
+    if (sol &amp;&amp; /[\/\*!#;:&gt;|]/.test(ch)) {
+      if (ch == &quot;!&quot;) { // tw header
+        stream.skipToEnd();
+        return ret(&quot;header&quot;, &quot;header&quot;);
+      }
+      if (ch == &quot;*&quot;) { // tw list
+        stream.eatWhile(&apos;*&apos;);
+        return ret(&quot;list&quot;, &quot;comment&quot;);
+      }
+      if (ch == &quot;#&quot;) { // tw numbered list
+        stream.eatWhile(&apos;#&apos;);
+        return ret(&quot;list&quot;, &quot;comment&quot;);
+      }
+      if (ch == &quot;;&quot;) { // definition list, term
+        stream.eatWhile(&apos;;&apos;);
+        return ret(&quot;list&quot;, &quot;comment&quot;);
+      }
+      if (ch == &quot;:&quot;) { // definition list, description
+        stream.eatWhile(&apos;:&apos;);
+        return ret(&quot;list&quot;, &quot;comment&quot;);
+      }
+      if (ch == &quot;&gt;&quot;) { // single line quote
+        stream.eatWhile(&quot;&gt;&quot;);
+        return ret(&quot;quote&quot;, &quot;quote&quot;);
+      }
+      if (ch == &apos;|&apos;) {
+        return ret(&apos;table&apos;, &apos;header&apos;);
+      }
+    }
+
+    if (ch == &apos;{&apos; &amp;&amp; stream.match(/\{\{/)) {
+      return chain(stream, state, twTokenCode);
+    }
+
+    // rudimentary html:// file:// link matching. TW knows much more ...
+    if (/[hf]/i.test(ch)) {
+      if (/[ti]/i.test(stream.peek()) &amp;&amp; stream.match(/\b(ttps?|tp|ile):\/\/[\-A-Z0-9+&amp;@#\/%?=~_|$!:,.;]*[A-Z0-9+&amp;@#\/%=~_|$]/i)) {
+        return ret(&quot;link&quot;, &quot;link&quot;);
+      }
+    }
+    // just a little string indicator, don&apos;t want to have the whole string covered
+    if (ch == &apos;&quot;&apos;) {
+      return ret(&apos;string&apos;, &apos;string&apos;);
+    }
+    if (ch == &apos;~&apos;) {    // _no_ CamelCase indicator should be bold
+      return ret(&apos;text&apos;, &apos;brace&apos;);
+    }
+    if (/[\[\]]/.test(ch)) { // check for [[..]]
+      if (stream.peek() == ch) {
+        stream.next();
+        return ret(&apos;brace&apos;, &apos;brace&apos;);
+      }
+    }
+    if (ch == &quot;@&quot;) {    // check for space link. TODO fix @@...@@ highlighting
+      stream.eatWhile(isSpaceName);
+      return ret(&quot;link&quot;, &quot;link&quot;);
+    }
+    if (/\d/.test(ch)) {        // numbers
+      stream.eatWhile(/\d/);
+      return ret(&quot;number&quot;, &quot;number&quot;);
+    }
+    if (ch == &quot;/&quot;) { // tw invisible comment
+      if (stream.eat(&quot;%&quot;)) {
+        return chain(stream, state, twTokenComment);
+      }
+      else if (stream.eat(&quot;/&quot;)) { //
+        return chain(stream, state, twTokenEm);
+      }
+    }
+    if (ch == &quot;_&quot;) { // tw underline
+      if (stream.eat(&quot;_&quot;)) {
+        return chain(stream, state, twTokenUnderline);
+      }
+    }
+    // strikethrough and mdash handling
+    if (ch == &quot;-&quot;) {
+      if (stream.eat(&quot;-&quot;)) {
+        // if strikethrough looks ugly, change CSS.
+        if (stream.peek() != &apos; &apos;)
+          return chain(stream, state, twTokenStrike);
+        // mdash
+        if (stream.peek() == &apos; &apos;)
+          return ret(&apos;text&apos;, &apos;brace&apos;);
+      }
+    }
+    if (ch == &quot;&apos;&quot;) { // tw bold
+      if (stream.eat(&quot;&apos;&quot;)) {
+        return chain(stream, state, twTokenStrong);
+      }
+    }
+    if (ch == &quot;&lt;&quot;) { // tw macro
+      if (stream.eat(&quot;&lt;&quot;)) {
+        return chain(stream, state, twTokenMacro);
+      }
+    }
+    else {
+      return ret(ch);
+    }
+
+    // core macro handling
+    stream.eatWhile(/[\w\$_]/);
+    var word = stream.current(),
+    known = textwords.propertyIsEnumerable(word) &amp;&amp; textwords[word];
+
+    return known ? ret(known.type, known.style, word) : ret(&quot;text&quot;, null, word);
+
+  } // jsTokenBase()
+
+  // tw invisible comment
+  function twTokenComment(stream, state) {
+    var maybeEnd = false,
+    ch;
+    while (ch = stream.next()) {
+      if (ch == &quot;/&quot; &amp;&amp; maybeEnd) {
+        state.tokenize = jsTokenBase;
+        break;
+      }
+      maybeEnd = (ch == &quot;%&quot;);
+    }
+    return ret(&quot;comment&quot;, &quot;comment&quot;);
+  }
+
+  // tw strong / bold
+  function twTokenStrong(stream, state) {
+    var maybeEnd = false,
+    ch;
+    while (ch = stream.next()) {
+      if (ch == &quot;&apos;&quot; &amp;&amp; maybeEnd) {
+        state.tokenize = jsTokenBase;
+        break;
+      }
+      maybeEnd = (ch == &quot;&apos;&quot;);
+    }
+    return ret(&quot;text&quot;, &quot;strong&quot;);
+  }
+
+  // tw code
+  function twTokenCode(stream, state) {
+    var ch, sb = state.block;
+
+    if (sb &amp;&amp; stream.current()) {
+      return ret(&quot;code&quot;, &quot;comment&quot;);
+    }
+
+    if (!sb &amp;&amp; stream.match(reUntilCodeStop)) {
+      state.tokenize = jsTokenBase;
+      return ret(&quot;code&quot;, &quot;comment&quot;);
+    }
+
+    if (sb &amp;&amp; stream.sol() &amp;&amp; stream.match(reCodeBlockStop)) {
+      state.tokenize = jsTokenBase;
+      return ret(&quot;code&quot;, &quot;comment&quot;);
+    }
+
+    ch = stream.next();
+    return (sb) ? ret(&quot;code&quot;, &quot;comment&quot;) : ret(&quot;code&quot;, &quot;comment&quot;);
+  }
+
+  // tw em / italic
+  function twTokenEm(stream, state) {
+    var maybeEnd = false,
+    ch;
+    while (ch = stream.next()) {
+      if (ch == &quot;/&quot; &amp;&amp; maybeEnd) {
+        state.tokenize = jsTokenBase;
+        break;
+      }
+      maybeEnd = (ch == &quot;/&quot;);
+    }
+    return ret(&quot;text&quot;, &quot;em&quot;);
+  }
+
+  // tw underlined text
+  function twTokenUnderline(stream, state) {
+    var maybeEnd = false,
+    ch;
+    while (ch = stream.next()) {
+      if (ch == &quot;_&quot; &amp;&amp; maybeEnd) {
+        state.tokenize = jsTokenBase;
+        break;
+      }
+      maybeEnd = (ch == &quot;_&quot;);
+    }
+    return ret(&quot;text&quot;, &quot;underlined&quot;);
+  }
+
+  // tw strike through text looks ugly
+  // change CSS if needed
+  function twTokenStrike(stream, state) {
+    var maybeEnd = false, ch;
+
+    while (ch = stream.next()) {
+      if (ch == &quot;-&quot; &amp;&amp; maybeEnd) {
+        state.tokenize = jsTokenBase;
+        break;
+      }
+      maybeEnd = (ch == &quot;-&quot;);
+    }
+    return ret(&quot;text&quot;, &quot;strikethrough&quot;);
+  }
+
+  // macro
+  function twTokenMacro(stream, state) {
+    var ch, word, known;
+
+    if (stream.current() == &apos;&lt;&lt;&apos;) {
+      return ret(&apos;brace&apos;, &apos;macro&apos;);
+    }
+
+    ch = stream.next();
+    if (!ch) {
+      state.tokenize = jsTokenBase;
+      return ret(ch);
+    }
+    if (ch == &quot;&gt;&quot;) {
+      if (stream.peek() == &apos;&gt;&apos;) {
+        stream.next();
+        state.tokenize = jsTokenBase;
+        return ret(&quot;brace&quot;, &quot;macro&quot;);
+      }
+    }
+
+    stream.eatWhile(/[\w\$_]/);
+    word = stream.current();
+    known = keywords.propertyIsEnumerable(word) &amp;&amp; keywords[word];
+
+    if (known) {
+      return ret(known.type, known.style, word);
+    }
+    else {
+      return ret(&quot;macro&quot;, null, word);
+    }
+  }
+
+  // Interface
+  return {
+    startState: function () {
+      return {
+        tokenize: jsTokenBase,
+        indented: 0,
+        level: 0
+      };
+    },
+
+    token: function (stream, state) {
+      if (stream.eatSpace()) return null;
+      var style = state.tokenize(stream, state);
+      return style;
+    },
+
+    electricChars: &quot;&quot;
+  };
+});
+
+CodeMirror.defineMIME(&quot;text/x-tiddlywiki&quot;, &quot;tiddlywiki&quot;);
+});
+
+//}}}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

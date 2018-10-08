@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../">
+  <title data-ice="title">src/scripts/rtcconn/FileProgressBarHandler.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/scripts/rtcconn/FileProgressBarHandler.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// FileProgressBarHandler.js
+
+var FileProgressBarHandler = (function() {
+    function handle(connection) {
+        var progressHelper = {};
+
+        // www.RTCMultiConnection.org/docs/onFileStart/
+        connection.onFileStart = function(file) {
+            var div = document.createElement(&apos;div&apos;);
+            div.title = file.name;
+            div.innerHTML = &apos;&lt;label&gt;0%&lt;/label&gt; &lt;progress&gt;&lt;/progress&gt;&apos;;
+
+            if (file.remoteUserId) {
+                div.innerHTML += &apos; (Sharing with:&apos; + file.remoteUserId + &apos;)&apos;;
+            }
+
+            if (!connection.filesContainer) {
+                connection.filesContainer = document.body || document.documentElement;
+            }
+
+            connection.filesContainer.insertBefore(div, connection.filesContainer.firstChild);
+
+            if (!file.remoteUserId) {
+                progressHelper[file.uuid] = {
+                    div: div,
+                    progress: div.querySelector(&apos;progress&apos;),
+                    label: div.querySelector(&apos;label&apos;)
+                };
+                progressHelper[file.uuid].progress.max = file.maxChunks;
+                return;
+            }
+
+            if (!progressHelper[file.uuid]) {
+                progressHelper[file.uuid] = {};
+            }
+
+            progressHelper[file.uuid][file.remoteUserId] = {
+                div: div,
+                progress: div.querySelector(&apos;progress&apos;),
+                label: div.querySelector(&apos;label&apos;)
+            };
+            progressHelper[file.uuid][file.remoteUserId].progress.max = file.maxChunks;
+        };
+
+        // www.RTCMultiConnection.org/docs/onFileProgress/
+        connection.onFileProgress = function(chunk) {
+            var helper = progressHelper[chunk.uuid];
+            if (!helper) {
+                return;
+            }
+            if (chunk.remoteUserId) {
+                helper = progressHelper[chunk.uuid][chunk.remoteUserId];
+                if (!helper) {
+                    return;
+                }
+            }
+
+            helper.progress.value = chunk.currentPosition || chunk.maxChunks || helper.progress.max;
+            updateLabel(helper.progress, helper.label);
+        };
+
+        // www.RTCMultiConnection.org/docs/onFileEnd/
+        connection.onFileEnd = function(file) {
+            var helper = progressHelper[file.uuid];
+            if (!helper) {
+                console.error(&apos;No such progress-helper element exist.&apos;, file);
+                return;
+            }
+
+            if (file.remoteUserId) {
+                helper = progressHelper[file.uuid][file.remoteUserId];
+                if (!helper) {
+                    return;
+                }
+            }
+
+            var div = helper.div;
+            if (file.type.indexOf(&apos;image&apos;) != -1) {
+                div.innerHTML = &apos;&lt;a href=&quot;&apos; + file.url + &apos;&quot; download=&quot;&apos; + file.name + &apos;&quot;&gt;Download &lt;strong style=&quot;color:red;&quot;&gt;&apos; + file.name + &apos;&lt;/strong&gt; &lt;/a&gt;&lt;br /&gt;&lt;img src=&quot;&apos; + file.url + &apos;&quot; title=&quot;&apos; + file.name + &apos;&quot; style=&quot;max-width: 80%;&quot;&gt;&apos;;
+            } else {
+                div.innerHTML = &apos;&lt;a href=&quot;&apos; + file.url + &apos;&quot; download=&quot;&apos; + file.name + &apos;&quot;&gt;Download &lt;strong style=&quot;color:red;&quot;&gt;&apos; + file.name + &apos;&lt;/strong&gt; &lt;/a&gt;&lt;br /&gt;&lt;iframe src=&quot;&apos; + file.url + &apos;&quot; title=&quot;&apos; + file.name + &apos;&quot; style=&quot;width: 80%;border: 0;height: inherit;margin-top:1em;&quot;&gt;&lt;/iframe&gt;&apos;;
+            }
+        };
+
+        function updateLabel(progress, label) {
+            if (progress.position === -1) {
+                return;
+            }
+
+            var position = +progress.position.toFixed(2).split(&apos;.&apos;)[1] || 100;
+            label.innerHTML = position + &apos;%&apos;;
+        }
+    }
+
+    return {
+        handle: handle
+    };
+})();
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

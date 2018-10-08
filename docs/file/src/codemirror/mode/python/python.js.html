@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/python/python.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/python/python.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+  &quot;use strict&quot;;
+
+  function wordRegexp(words) {
+    return new RegExp(&quot;^((&quot; + words.join(&quot;)|(&quot;) + &quot;))\\b&quot;);
+  }
+
+  var wordOperators = wordRegexp([&quot;and&quot;, &quot;or&quot;, &quot;not&quot;, &quot;is&quot;]);
+  var commonKeywords = [&quot;as&quot;, &quot;assert&quot;, &quot;break&quot;, &quot;class&quot;, &quot;continue&quot;,
+                        &quot;def&quot;, &quot;del&quot;, &quot;elif&quot;, &quot;else&quot;, &quot;except&quot;, &quot;finally&quot;,
+                        &quot;for&quot;, &quot;from&quot;, &quot;global&quot;, &quot;if&quot;, &quot;import&quot;,
+                        &quot;lambda&quot;, &quot;pass&quot;, &quot;raise&quot;, &quot;return&quot;,
+                        &quot;try&quot;, &quot;while&quot;, &quot;with&quot;, &quot;yield&quot;, &quot;in&quot;];
+  var commonBuiltins = [&quot;abs&quot;, &quot;all&quot;, &quot;any&quot;, &quot;bin&quot;, &quot;bool&quot;, &quot;bytearray&quot;, &quot;callable&quot;, &quot;chr&quot;,
+                        &quot;classmethod&quot;, &quot;compile&quot;, &quot;complex&quot;, &quot;delattr&quot;, &quot;dict&quot;, &quot;dir&quot;, &quot;divmod&quot;,
+                        &quot;enumerate&quot;, &quot;eval&quot;, &quot;filter&quot;, &quot;float&quot;, &quot;format&quot;, &quot;frozenset&quot;,
+                        &quot;getattr&quot;, &quot;globals&quot;, &quot;hasattr&quot;, &quot;hash&quot;, &quot;help&quot;, &quot;hex&quot;, &quot;id&quot;,
+                        &quot;input&quot;, &quot;int&quot;, &quot;isinstance&quot;, &quot;issubclass&quot;, &quot;iter&quot;, &quot;len&quot;,
+                        &quot;list&quot;, &quot;locals&quot;, &quot;map&quot;, &quot;max&quot;, &quot;memoryview&quot;, &quot;min&quot;, &quot;next&quot;,
+                        &quot;object&quot;, &quot;oct&quot;, &quot;open&quot;, &quot;ord&quot;, &quot;pow&quot;, &quot;property&quot;, &quot;range&quot;,
+                        &quot;repr&quot;, &quot;reversed&quot;, &quot;round&quot;, &quot;set&quot;, &quot;setattr&quot;, &quot;slice&quot;,
+                        &quot;sorted&quot;, &quot;staticmethod&quot;, &quot;str&quot;, &quot;sum&quot;, &quot;super&quot;, &quot;tuple&quot;,
+                        &quot;type&quot;, &quot;vars&quot;, &quot;zip&quot;, &quot;__import__&quot;, &quot;NotImplemented&quot;,
+                        &quot;Ellipsis&quot;, &quot;__debug__&quot;];
+  var py2 = {builtins: [&quot;apply&quot;, &quot;basestring&quot;, &quot;buffer&quot;, &quot;cmp&quot;, &quot;coerce&quot;, &quot;execfile&quot;,
+                        &quot;file&quot;, &quot;intern&quot;, &quot;long&quot;, &quot;raw_input&quot;, &quot;reduce&quot;, &quot;reload&quot;,
+                        &quot;unichr&quot;, &quot;unicode&quot;, &quot;xrange&quot;, &quot;False&quot;, &quot;True&quot;, &quot;None&quot;],
+             keywords: [&quot;exec&quot;, &quot;print&quot;]};
+  var py3 = {builtins: [&quot;ascii&quot;, &quot;bytes&quot;, &quot;exec&quot;, &quot;print&quot;],
+             keywords: [&quot;nonlocal&quot;, &quot;False&quot;, &quot;True&quot;, &quot;None&quot;]};
+
+  CodeMirror.registerHelper(&quot;hintWords&quot;, &quot;python&quot;, commonKeywords.concat(commonBuiltins));
+
+  function top(state) {
+    return state.scopes[state.scopes.length - 1];
+  }
+
+  CodeMirror.defineMode(&quot;python&quot;, function(conf, parserConf) {
+    var ERRORCLASS = &quot;error&quot;;
+
+    var singleDelimiters = parserConf.singleDelimiters || new RegExp(&quot;^[\\(\\)\\[\\]\\{\\}@,:`=;\\.]&quot;);
+    var doubleOperators = parserConf.doubleOperators || new RegExp(&quot;^((==)|(!=)|(&lt;=)|(&gt;=)|(&lt;&gt;)|(&lt;&lt;)|(&gt;&gt;)|(//)|(\\*\\*))&quot;);
+    var doubleDelimiters = parserConf.doubleDelimiters || new RegExp(&quot;^((\\+=)|(\\-=)|(\\*=)|(%=)|(/=)|(&amp;=)|(\\|=)|(\\^=))&quot;);
+    var tripleDelimiters = parserConf.tripleDelimiters || new RegExp(&quot;^((//=)|(&gt;&gt;=)|(&lt;&lt;=)|(\\*\\*=))&quot;);
+
+    if (parserConf.version &amp;&amp; parseInt(parserConf.version, 10) == 3){
+        // since http://legacy.python.org/dev/peps/pep-0465/ @ is also an operator
+        var singleOperators = parserConf.singleOperators || new RegExp(&quot;^[\\+\\-\\*/%&amp;|\\^~&lt;&gt;!@]&quot;);
+        var identifiers = parserConf.identifiers|| new RegExp(&quot;^[_A-Za-z\u00A1-\uFFFF][_A-Za-z0-9\u00A1-\uFFFF]*&quot;);
+    } else {
+        var singleOperators = parserConf.singleOperators || new RegExp(&quot;^[\\+\\-\\*/%&amp;|\\^~&lt;&gt;!]&quot;);
+        var identifiers = parserConf.identifiers|| new RegExp(&quot;^[_A-Za-z][_A-Za-z0-9]*&quot;);
+    }
+
+    var hangingIndent = parserConf.hangingIndent || conf.indentUnit;
+
+    var myKeywords = commonKeywords, myBuiltins = commonBuiltins;
+    if(parserConf.extra_keywords != undefined){
+      myKeywords = myKeywords.concat(parserConf.extra_keywords);
+    }
+    if(parserConf.extra_builtins != undefined){
+      myBuiltins = myBuiltins.concat(parserConf.extra_builtins);
+    }
+    if (parserConf.version &amp;&amp; parseInt(parserConf.version, 10) == 3) {
+      myKeywords = myKeywords.concat(py3.keywords);
+      myBuiltins = myBuiltins.concat(py3.builtins);
+      var stringPrefixes = new RegExp(&quot;^(([rb]|(br))?(&apos;{3}|\&quot;{3}|[&apos;\&quot;]))&quot;, &quot;i&quot;);
+    } else {
+      myKeywords = myKeywords.concat(py2.keywords);
+      myBuiltins = myBuiltins.concat(py2.builtins);
+      var stringPrefixes = new RegExp(&quot;^(([rub]|(ur)|(br))?(&apos;{3}|\&quot;{3}|[&apos;\&quot;]))&quot;, &quot;i&quot;);
+    }
+    var keywords = wordRegexp(myKeywords);
+    var builtins = wordRegexp(myBuiltins);
+
+    // tokenizers
+    function tokenBase(stream, state) {
+      // Handle scope changes
+      if (stream.sol() &amp;&amp; top(state).type == &quot;py&quot;) {
+        var scopeOffset = top(state).offset;
+        if (stream.eatSpace()) {
+          var lineOffset = stream.indentation();
+          if (lineOffset &gt; scopeOffset)
+            pushScope(stream, state, &quot;py&quot;);
+          else if (lineOffset &lt; scopeOffset &amp;&amp; dedent(stream, state))
+            state.errorToken = true;
+          return null;
+        } else {
+          var style = tokenBaseInner(stream, state);
+          if (scopeOffset &gt; 0 &amp;&amp; dedent(stream, state))
+            style += &quot; &quot; + ERRORCLASS;
+          return style;
+        }
+      }
+      return tokenBaseInner(stream, state);
+    }
+
+    function tokenBaseInner(stream, state) {
+      if (stream.eatSpace()) return null;
+
+      var ch = stream.peek();
+
+      // Handle Comments
+      if (ch == &quot;#&quot;) {
+        stream.skipToEnd();
+        return &quot;comment&quot;;
+      }
+
+      // Handle Number Literals
+      if (stream.match(/^[0-9\.]/, false)) {
+        var floatLiteral = false;
+        // Floats
+        if (stream.match(/^\d*\.\d+(e[\+\-]?\d+)?/i)) { floatLiteral = true; }
+        if (stream.match(/^\d+\.\d*/)) { floatLiteral = true; }
+        if (stream.match(/^\.\d+/)) { floatLiteral = true; }
+        if (floatLiteral) {
+          // Float literals may be &quot;imaginary&quot;
+          stream.eat(/J/i);
+          return &quot;number&quot;;
+        }
+        // Integers
+        var intLiteral = false;
+        // Hex
+        if (stream.match(/^0x[0-9a-f]+/i)) intLiteral = true;
+        // Binary
+        if (stream.match(/^0b[01]+/i)) intLiteral = true;
+        // Octal
+        if (stream.match(/^0o[0-7]+/i)) intLiteral = true;
+        // Decimal
+        if (stream.match(/^[1-9]\d*(e[\+\-]?\d+)?/)) {
+          // Decimal literals may be &quot;imaginary&quot;
+          stream.eat(/J/i);
+          // TODO - Can you have imaginary longs?
+          intLiteral = true;
+        }
+        // Zero by itself with no other piece of number.
+        if (stream.match(/^0(?![\dx])/i)) intLiteral = true;
+        if (intLiteral) {
+          // Integer literals may be &quot;long&quot;
+          stream.eat(/L/i);
+          return &quot;number&quot;;
+        }
+      }
+
+      // Handle Strings
+      if (stream.match(stringPrefixes)) {
+        state.tokenize = tokenStringFactory(stream.current());
+        return state.tokenize(stream, state);
+      }
+
+      // Handle operators and Delimiters
+      if (stream.match(tripleDelimiters) || stream.match(doubleDelimiters))
+        return null;
+
+      if (stream.match(doubleOperators)
+          || stream.match(singleOperators)
+          || stream.match(wordOperators))
+        return &quot;operator&quot;;
+
+      if (stream.match(singleDelimiters))
+        return null;
+
+      if (stream.match(keywords))
+        return &quot;keyword&quot;;
+
+      if (stream.match(builtins))
+        return &quot;builtin&quot;;
+
+      if (stream.match(/^(self|cls)\b/))
+        return &quot;variable-2&quot;;
+
+      if (stream.match(identifiers)) {
+        if (state.lastToken == &quot;def&quot; || state.lastToken == &quot;class&quot;)
+          return &quot;def&quot;;
+        return &quot;variable&quot;;
+      }
+
+      // Handle non-detected items
+      stream.next();
+      return ERRORCLASS;
+    }
+
+    function tokenStringFactory(delimiter) {
+      while (&quot;rub&quot;.indexOf(delimiter.charAt(0).toLowerCase()) &gt;= 0)
+        delimiter = delimiter.substr(1);
+
+      var singleline = delimiter.length == 1;
+      var OUTCLASS = &quot;string&quot;;
+
+      function tokenString(stream, state) {
+        while (!stream.eol()) {
+          stream.eatWhile(/[^&apos;&quot;\\]/);
+          if (stream.eat(&quot;\\&quot;)) {
+            stream.next();
+            if (singleline &amp;&amp; stream.eol())
+              return OUTCLASS;
+          } else if (stream.match(delimiter)) {
+            state.tokenize = tokenBase;
+            return OUTCLASS;
+          } else {
+            stream.eat(/[&apos;&quot;]/);
+          }
+        }
+        if (singleline) {
+          if (parserConf.singleLineStringErrors)
+            return ERRORCLASS;
+          else
+            state.tokenize = tokenBase;
+        }
+        return OUTCLASS;
+      }
+      tokenString.isString = true;
+      return tokenString;
+    }
+
+    function pushScope(stream, state, type) {
+      var offset = 0, align = null;
+      if (type == &quot;py&quot;) {
+        while (top(state).type != &quot;py&quot;)
+          state.scopes.pop();
+      }
+      offset = top(state).offset + (type == &quot;py&quot; ? conf.indentUnit : hangingIndent);
+      if (type != &quot;py&quot; &amp;&amp; !stream.match(/^(\s|#.*)*$/, false))
+        align = stream.column() + 1;
+      state.scopes.push({offset: offset, type: type, align: align});
+    }
+
+    function dedent(stream, state) {
+      var indented = stream.indentation();
+      while (top(state).offset &gt; indented) {
+        if (top(state).type != &quot;py&quot;) return true;
+        state.scopes.pop();
+      }
+      return top(state).offset != indented;
+    }
+
+    function tokenLexer(stream, state) {
+      var style = state.tokenize(stream, state);
+      var current = stream.current();
+
+      // Handle &apos;.&apos; connected identifiers
+      if (current == &quot;.&quot;) {
+        style = stream.match(identifiers, false) ? null : ERRORCLASS;
+        if (style == null &amp;&amp; state.lastStyle == &quot;meta&quot;) {
+          // Apply &apos;meta&apos; style to &apos;.&apos; connected identifiers when
+          // appropriate.
+          style = &quot;meta&quot;;
+        }
+        return style;
+      }
+
+      // Handle decorators
+      if (current == &quot;@&quot;){
+        if(parserConf.version &amp;&amp; parseInt(parserConf.version, 10) == 3){
+            return stream.match(identifiers, false) ? &quot;meta&quot; : &quot;operator&quot;;
+        } else {
+            return stream.match(identifiers, false) ? &quot;meta&quot; : ERRORCLASS;
+        }
+      }
+
+      if ((style == &quot;variable&quot; || style == &quot;builtin&quot;)
+          &amp;&amp; state.lastStyle == &quot;meta&quot;)
+        style = &quot;meta&quot;;
+
+      // Handle scope changes.
+      if (current == &quot;pass&quot; || current == &quot;return&quot;)
+        state.dedent += 1;
+
+      if (current == &quot;lambda&quot;) state.lambda = true;
+      if (current == &quot;:&quot; &amp;&amp; !state.lambda &amp;&amp; top(state).type == &quot;py&quot;)
+        pushScope(stream, state, &quot;py&quot;);
+
+      var delimiter_index = current.length == 1 ? &quot;[({&quot;.indexOf(current) : -1;
+      if (delimiter_index != -1)
+        pushScope(stream, state, &quot;])}&quot;.slice(delimiter_index, delimiter_index+1));
+
+      delimiter_index = &quot;])}&quot;.indexOf(current);
+      if (delimiter_index != -1) {
+        if (top(state).type == current) state.scopes.pop();
+        else return ERRORCLASS;
+      }
+      if (state.dedent &gt; 0 &amp;&amp; stream.eol() &amp;&amp; top(state).type == &quot;py&quot;) {
+        if (state.scopes.length &gt; 1) state.scopes.pop();
+        state.dedent -= 1;
+      }
+
+      return style;
+    }
+
+    var external = {
+      startState: function(basecolumn) {
+        return {
+          tokenize: tokenBase,
+          scopes: [{offset: basecolumn || 0, type: &quot;py&quot;, align: null}],
+          lastStyle: null,
+          lastToken: null,
+          lambda: false,
+          dedent: 0
+        };
+      },
+
+      token: function(stream, state) {
+        var addErr = state.errorToken;
+        if (addErr) state.errorToken = false;
+        var style = tokenLexer(stream, state);
+
+        state.lastStyle = style;
+
+        var current = stream.current();
+        if (current &amp;&amp; style)
+          state.lastToken = current;
+
+        if (stream.eol() &amp;&amp; state.lambda)
+          state.lambda = false;
+        return addErr ? style + &quot; &quot; + ERRORCLASS : style;
+      },
+
+      indent: function(state, textAfter) {
+        if (state.tokenize != tokenBase)
+          return state.tokenize.isString ? CodeMirror.Pass : 0;
+
+        var scope = top(state);
+        var closing = textAfter &amp;&amp; textAfter.charAt(0) == scope.type;
+        if (scope.align != null)
+          return scope.align - (closing ? 1 : 0);
+        else if (closing &amp;&amp; state.scopes.length &gt; 1)
+          return state.scopes[state.scopes.length - 2].offset;
+        else
+          return scope.offset;
+      },
+
+      lineComment: &quot;#&quot;,
+      fold: &quot;indent&quot;
+    };
+    return external;
+  });
+
+  CodeMirror.defineMIME(&quot;text/x-python&quot;, &quot;python&quot;);
+
+  var words = function(str) { return str.split(&quot; &quot;); };
+
+  CodeMirror.defineMIME(&quot;text/x-cython&quot;, {
+    name: &quot;python&quot;,
+    extra_keywords: words(&quot;by cdef cimport cpdef ctypedef enum except&quot;+
+                          &quot;extern gil include nogil property public&quot;+
+                          &quot;readonly struct union DEF IF ELIF ELSE&quot;)
+  });
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

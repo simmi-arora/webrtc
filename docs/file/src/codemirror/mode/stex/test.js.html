@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/stex/test.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/stex/test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function() {
+  var mode = CodeMirror.getMode({tabSize: 4}, &quot;stex&quot;);
+  function MT(name) { test.mode(name, mode, Array.prototype.slice.call(arguments, 1)); }
+
+  MT(&quot;word&quot;,
+     &quot;foo&quot;);
+
+  MT(&quot;twoWords&quot;,
+     &quot;foo bar&quot;);
+
+  MT(&quot;beginEndDocument&quot;,
+     &quot;[tag \\begin][bracket {][atom document][bracket }]&quot;,
+     &quot;[tag \\end][bracket {][atom document][bracket }]&quot;);
+
+  MT(&quot;beginEndEquation&quot;,
+     &quot;[tag \\begin][bracket {][atom equation][bracket }]&quot;,
+     &quot;  E=mc^2&quot;,
+     &quot;[tag \\end][bracket {][atom equation][bracket }]&quot;);
+
+  MT(&quot;beginModule&quot;,
+     &quot;[tag \\begin][bracket {][atom module][bracket }[[]]]&quot;);
+
+  MT(&quot;beginModuleId&quot;,
+     &quot;[tag \\begin][bracket {][atom module][bracket }[[]id=bbt-size[bracket ]]]&quot;);
+
+  MT(&quot;importModule&quot;,
+     &quot;[tag \\importmodule][bracket [[][string b-b-t][bracket ]]{][builtin b-b-t][bracket }]&quot;);
+
+  MT(&quot;importModulePath&quot;,
+     &quot;[tag \\importmodule][bracket [[][tag \\KWARCslides][bracket {][string dmath/en/cardinality][bracket }]]{][builtin card][bracket }]&quot;);
+
+  MT(&quot;psForPDF&quot;,
+     &quot;[tag \\PSforPDF][bracket [[][atom 1][bracket ]]{]#1[bracket }]&quot;);
+
+  MT(&quot;comment&quot;,
+     &quot;[comment % foo]&quot;);
+
+  MT(&quot;tagComment&quot;,
+     &quot;[tag \\item][comment % bar]&quot;);
+
+  MT(&quot;commentTag&quot;,
+     &quot; [comment % \\item]&quot;);
+
+  MT(&quot;commentLineBreak&quot;,
+     &quot;[comment %]&quot;,
+     &quot;foo&quot;);
+
+  MT(&quot;tagErrorCurly&quot;,
+     &quot;[tag \\begin][error }][bracket {]&quot;);
+
+  MT(&quot;tagErrorSquare&quot;,
+     &quot;[tag \\item][error ]]][bracket {]&quot;);
+
+  MT(&quot;commentCurly&quot;,
+     &quot;[comment % }]&quot;);
+
+  MT(&quot;tagHash&quot;,
+     &quot;the [tag \\#] key&quot;);
+
+  MT(&quot;tagNumber&quot;,
+     &quot;a [tag \\$][atom 5] stetson&quot;);
+
+  MT(&quot;tagPercent&quot;,
+     &quot;[atom 100][tag \\%] beef&quot;);
+
+  MT(&quot;tagAmpersand&quot;,
+     &quot;L [tag \\&amp;] N&quot;);
+
+  MT(&quot;tagUnderscore&quot;,
+     &quot;foo[tag \\_]bar&quot;);
+
+  MT(&quot;tagBracketOpen&quot;,
+     &quot;[tag \\emph][bracket {][tag \\{][bracket }]&quot;);
+
+  MT(&quot;tagBracketClose&quot;,
+     &quot;[tag \\emph][bracket {][tag \\}][bracket }]&quot;);
+
+  MT(&quot;tagLetterNumber&quot;,
+     &quot;section [tag \\S][atom 1]&quot;);
+
+  MT(&quot;textTagNumber&quot;,
+     &quot;para [tag \\P][atom 2]&quot;);
+
+  MT(&quot;thinspace&quot;,
+     &quot;x[tag \\,]y&quot;);
+
+  MT(&quot;thickspace&quot;,
+     &quot;x[tag \\;]y&quot;);
+
+  MT(&quot;negativeThinspace&quot;,
+     &quot;x[tag \\!]y&quot;);
+
+  MT(&quot;periodNotSentence&quot;,
+     &quot;J.\\ L.\\ is&quot;);
+
+  MT(&quot;periodSentence&quot;,
+     &quot;X[tag \\@]. The&quot;);
+
+  MT(&quot;italicCorrection&quot;,
+     &quot;[bracket {][tag \\em] If[tag \\/][bracket }] I&quot;);
+
+  MT(&quot;tagBracket&quot;,
+     &quot;[tag \\newcommand][bracket {][tag \\pop][bracket }]&quot;);
+
+  MT(&quot;inlineMathTagFollowedByNumber&quot;,
+     &quot;[keyword $][tag \\pi][number 2][keyword $]&quot;);
+
+  MT(&quot;inlineMath&quot;,
+     &quot;[keyword $][number 3][variable-2 x][tag ^][number 2.45]-[tag \\sqrt][bracket {][tag \\$\\alpha][bracket }] = [number 2][keyword $] other text&quot;);
+
+  MT(&quot;displayMath&quot;,
+     &quot;More [keyword $$]\t[variable-2 S][tag ^][variable-2 n][tag \\sum] [variable-2 i][keyword $$] other text&quot;);
+
+  MT(&quot;mathWithComment&quot;,
+     &quot;[keyword $][variable-2 x] [comment % $]&quot;,
+     &quot;[variable-2 y][keyword $] other text&quot;);
+
+  MT(&quot;lineBreakArgument&quot;,
+    &quot;[tag \\\\][bracket [[][atom 1cm][bracket ]]]&quot;);
+})();
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
