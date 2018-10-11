@@ -16781,44 +16781,48 @@ function createFileSharingBox(peerinfo, parent){
         var minButton = document.createElement("span");
         /*    minButton.className="btn btn-default glyphicon glyphicon-import closeButton";
         minButton.innerHTML="Minimize";*/
-        if (fileshareobj.fileshare.minicon) {
-            var img = document.createElement("img");
-            img.src = fileshareobj.fileshare.minicon;
-            minButton.appendChild(img);
-        } else {
-            minButton.innerHTML = '<i class="fa fa-minus-square" style="font-size: 25px;"></i>';
-        }
-        minButton.id = peerinfo.fileShare.minButton;
-        minButton.title = "Minimize";
-        minButton.style.float = "right";
-        minButton.style.display = "none";
-        minButton.setAttribute("lastClickedBy", '');
-        minButton.onclick = function () {
-            resizeFV(peerinfo.userid, minButton.id, peerinfo.fileShare.outerbox);
+        if(fileshareobj.fileshare.minicon !="none"){
+            if (fileshareobj.fileshare.minicon) {
+                var img = document.createElement("img");
+                img.src = fileshareobj.fileshare.minicon;
+                minButton.appendChild(img);
+            } else {
+                minButton.innerHTML = '<i class="fa fa-minus-square" style="font-size: 25px;"></i>';
+            }
+            minButton.id = peerinfo.fileShare.minButton;
+            minButton.title = "Minimize";
+            minButton.style.float = "right";
             minButton.style.display = "none";
-            maxButton.style.display = "block";
+            minButton.setAttribute("lastClickedBy", '');
+            minButton.onclick = function () {
+                resizeFV(peerinfo.userid, minButton.id, peerinfo.fileShare.outerbox);
+                minButton.style.display = "none";
+                maxButton.style.display = "block";
+            }
         }
 
         // Mximize the file viewer box
         var maxButton = document.createElement("span");
         /*    maxButton.className= "btn btn-default glyphicon glyphicon-export closeButton";
         maxButton.innerHTML="Maximize";*/
-        if (fileshareobj.fileshare.minicon) {
-            var img = document.createElement("img");
-            img.src = fileshareobj.fileshare.maxicon;
-            maxButton.appendChild(img);
-        } else {
-            maxButton.innerHTML = '<i class="fa fa-external-link-square" style="font-size: 25px;"></i>';
-        }
-        maxButton.id = peerinfo.fileShare.maxButton;
-        maxButton.title="Maximize";
-        maxButton.style.float = "right";
-        maxButton.style.display = "block";
-        maxButton.setAttribute("lastClickedBy", '');
-        maxButton.onclick = function () {
-            maxFV(peerinfo.userid, maxButton.id, peerinfo.fileShare.outerbox);
-            maxButton.style.display = "none";
-            minButton.style.display = "block";
+        if(fileshareobj.fileshare.maxButton !="none"){
+            if (fileshareobj.fileshare.maxButton) {
+                var img = document.createElement("img");
+                img.src = fileshareobj.fileshare.maxicon;
+                maxButton.appendChild(img);
+            } else {
+                maxButton.innerHTML = '<i class="fa fa-external-link-square" style="font-size: 25px;"></i>';
+            }
+            maxButton.id = peerinfo.fileShare.maxButton;
+            maxButton.title="Maximize";
+            maxButton.style.float = "right";
+            maxButton.style.display = "block";
+            maxButton.setAttribute("lastClickedBy", '');
+            maxButton.onclick = function () {
+                maxFV(peerinfo.userid, maxButton.id, peerinfo.fileShare.outerbox);
+                maxButton.style.display = "none";
+                minButton.style.display = "block";
+            }
         }
 
         // close the file viewer box
@@ -16869,7 +16873,7 @@ function createFileSharingBox(peerinfo, parent){
                         orientation = "portrait";
                     }
                     dom.setAttribute("orientation",  orientation);
-                
+                    dom.className = "col rotate" + angle + dom.getAttribute("orientation");
                 }else if (dom.nodeName == "IMG"){
                     if( dom.width > dom.height ){
                         orientation = "landscape";
@@ -16900,7 +16904,7 @@ function createFileSharingBox(peerinfo, parent){
                     }
                     
                     dom.setAttribute("orientation",  orientation);
-                
+                    dom.className = "col rotate" + angle + dom.getAttribute("orientation");
                 }else if (dom.nodeName == "IFRAME"){
                     dom.setAttribute("style","height:"+domparent.clientWidth +"px;width:100%");
                     dom.setAttribute("orientation",  "portrait");
@@ -16908,13 +16912,14 @@ function createFileSharingBox(peerinfo, parent){
                 // }else if (dom.nodeName == "VIDEO"){
                 //     dom.setAttribute("style","height:"+domparent.clientWidth +"px;margin-left: 0px");
                 //     dom.setAttribute("orientation",  "landscape");
+                    dom.className = "col rotate" + angle + dom.getAttribute("orientation")+"pdf";
                 }else{    
                     // do not allow rotate
                     dom.setAttribute("orientation",  "");
+                    dom.className = "col rotate" + angle + dom.getAttribute("orientation");
                 }
             }
 
-            dom.className = "col rotate" + angle + dom.getAttribute("orientation");
         }
 
         fileControlBar.appendChild(rotateButton);
