@@ -128,18 +128,18 @@ function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelpe
             stopuploadButton.style.float="right";
             stopuploadButton.innerHTML ='<i class="fa fa fa-remove" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
             stopuploadButton.onclick=function(event){
-                if(repeatFlagRemoveButton != filename){
+                if(repeatFlagStopuploadButton != filename){
                     hideFile( progressDiv.id , filename );
                     //var tobeHiddenElement = event.target.parentNode.id;
                     rtcConn.send({
-                        type:"shareFileRemove", 
+                        type:"shareFileStopUpload", 
                         _element: progressDiv.id,
                         _filename : filename
                     });  
                     removeFile(filename);
-                    repeatFlagRemoveButton = filename;
-                }else if(repeatFlagRemoveButton == filename){
-                    repeatFlagRemoveButton= "";
+                    repeatFlagStopuploadButton = filename;
+                }else if(repeatFlagStopuploadButton == filename){
+                    repeatFlagStopuploadButton= "";
                 }
                 //Once the button is clicked , remove the button 
                 stopuploadButton.parentNode.removeChild(stopuploadButton);
@@ -258,6 +258,8 @@ Display list and file list box button
 function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     try{
 
+        if(!fileshareobj.active) return;
+
         webrtcdev.log("[filesharing js] DisplayList peerinfo->", peerinfo, fileurl, filename, filetype);
         var showDownloadButton = true , showRemoveButton=true; 
 
@@ -276,6 +278,30 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
             filename = filename.videoname+"_"+filename.audioname;
             _filename = filename;
         }
+
+
+
+        var parentdom , filedom ;
+        if(document.getElementById(filename)){
+            // if the progress bar exist , remove the progress bar div and creae ul
+            let elem = document.getElementById(filename);
+            parentdom = elem.parentNode;
+            parentdom.removeChild(elem);
+        }else{
+            /* if the progress bar area does not exist */
+            if(document.getElementById(elementList)){
+                parentdom = document.getElementById(elementList);
+            }else{
+                parentdom = document.body;
+            }
+        }
+        filedom = document.createElement("ul") ;
+        filedom.id = filename;
+        filedom.type = peerinfo.type;  // local or remote ,
+        filedom.innerHTML="";
+        filedom.className="row";
+        filedom.setAttribute("style","float: left;");
+
 
         var name = document.createElement("li");
         /*name.innerHTML = listlength +"   " + filename ;*/
@@ -377,50 +403,29 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
                 //var tobeHiddenElement = event.target.parentNode.id;
                 var tobeHiddenElement = filename;
                 rtcConn.send({
-                    type:"shareFileRemove", 
-                    _element: tobeHiddenElement,
+                    type : "shareFileRemove", 
+                    _element : tobeHiddenElement,
                     _filename : filename
                 });  
                 removeFile(tobeHiddenElement);
-                repeatFlagRemoveButton=filename;
+                repeatFlagRemoveButton = filename;
+                console.log("filedom to be hidden : " , filedom);
+                // filedom.hidden = true;
+                filedom.setAttribute("style", "display:none!important");
             }else if(repeatFlagRemoveButton == filename){
-                repeatFlagRemoveButton= "";
+                repeatFlagRemoveButton = "";
             }  
         };
 
-        var parentdom , filedom ;
-        if(document.getElementById(filename)){
-            // if the progress bar exist , remove the progress bar div and creae ul
-            let elem = document.getElementById(filename);
-            parentdom = elem.parentNode;
-            parentdom.removeChild(elem);
-            filedom = document.createElement("ul") ;
-        }else{
-            /* if the progress bar area does not exist */
-            if(document.getElementById(elementList)){
-                parentdom = document.getElementById(elementList);
-                filedom = document.createElement("ul") ;
-            }else{
-                parentdom = document.body;
-                filedom = document.createElement("ul") ;
-            }
-        }
-
-        if(fileshareobj.active){
-            filedom.id = filename;
-            filedom.type = peerinfo.type;  // local or remote ,
-            filedom.innerHTML="";
-            filedom.className="row";
-            filedom.setAttribute("style","float: left;")
-            filedom.appendChild(name);
-            if(showDownloadButton) 
-                filedom.appendChild(downloadButton);
-            filedom.appendChild(showButton);
-            filedom.appendChild(saveButton);
-            //filedom.appendChild(hideButton);
-            if(showRemoveButton) 
-                filedom.appendChild(removeButton);
-        }
+        //Appenmd all of the above compoenets inot file list view 
+        filedom.appendChild(name);
+        if(showDownloadButton) 
+            filedom.appendChild(downloadButton);
+        filedom.appendChild(showButton);
+        filedom.appendChild(saveButton);
+        //filedom.appendChild(hideButton);
+        if(showRemoveButton) 
+            filedom.appendChild(removeButton);
 
         if(parentdom){
             parentdom.appendChild(filedom); 
@@ -812,16 +817,32 @@ function createFileSharingBox(peerinfo, parent){
                 }else if (dom.nodeName == "IMG"){
                     if( dom.width > dom.height ){
                         orientation = "landscape";
-                        if(angle =="180" || angle == "0"){
-                            dom.setAttribute("style","width:100%; height:100%");
+
+                        if(angle =="90" || angle == "270"){
+                            // old width/old height = new width / new height 
+                            // thus new width = old width / old height * new height
+                            newwidth =  (dom.width / dom.height) * domparent.clientWidth ; 
+                            dom.setAttribute("style","height:"+domparent.clientWidth+"px;");
                         }
+                        // if(angle =="180" || angle == "0"){
+                        //     dom.setAttribute("style","width:100%; height:100%");
+                        // }
+
                     } else{
-                        orientation = "portrait";
-                        
-                    } 
-                    if(angle =="90" || angle == "270"){
-                        dom.setAttribute("style","height:"+domparent.clientWidth+"px");
+                        orientation = "portrait"; 
+                    
+                        if(angle =="90" || angle == "270"){
+                            // old width/old height = new width / new height 
+                            // thus new width = old width / old height * new height
+                            newwidth =  (dom.width / dom.height) * domparent.clientWidth ; 
+                            dom.setAttribute("style","height:"+domparent.clientWidth+"px;max-width:"+newwidth+"px;");
+                        }
+                        // if(angle =="180" || angle == "0"){
+                        //     dom.setAttribute("style","width:100%; height:100%");
+                        // }
+
                     }
+                    
                     dom.setAttribute("orientation",  orientation);
                 
                 }else if (dom.nodeName == "IFRAME"){

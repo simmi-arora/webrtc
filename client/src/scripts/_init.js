@@ -11,7 +11,7 @@ var selfuserid=null , remoteUserId=null;
 var containerDiv;
 var webcallpeers=[];
 var sessions = {};
-var repeatFlagShowButton =null, repeatFlagHideButton =null, repeatFlagRemoveButton=null ;
+var repeatFlagShowButton =null, repeatFlagHideButton =null, repeatFlagRemoveButton=null, repeatFlagStopuploadButton=null ;
 
 /* DOM objects for single user video , user in conf and all other users*/
 var localVideo=null, selfVideo=null, remoteVideos=[];

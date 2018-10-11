@@ -1,8 +1,4 @@
-<<<<<<< HEAD:client/build/minScripts/webrtcdevelopment.css
-/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/
-=======
-/* Generated on:Mon Oct 01 2018 23:44:08 GMT+0530 (India Standard Time) || version: 2.0.4 - Altanai , License : MIT  */
->>>>>>> 29fb08aa745307408664f067a8e10c28fac36d4a:client/build/webrtcdevelopment.css
+/* Generated on:Mon Oct 08 2018 22:20:49 GMT+0530 (India Standard Time) || version: 2.0.4 - Altanai , License : MIT  */
 /*-------------------------------------------------------------*/
 textarea::::-webkit-scrollbar {
     width: 0;
@@ -289,11 +285,7 @@ input:focus {
 .additional-container select {
     width: 120px;
 }
-<<<<<<< HEAD:client/build/minScripts/webrtcdevelopment.css
-/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/.glyphicon {
-=======
-/* Generated on:Mon Oct 01 2018 23:44:08 GMT+0530 (India Standard Time) || version: 2.0.4 - Altanai , License : MIT  */.glyphicon {
->>>>>>> 29fb08aa745307408664f067a8e10c28fac36d4a:client/build/webrtcdevelopment.css
+/* Generated on:Mon Oct 08 2018 22:20:49 GMT+0530 (India Standard Time) || version: 2.0.4 - Altanai , License : MIT  */.glyphicon {
     cursor: pointer
 }
 .bodyWhole{
@@ -677,11 +669,7 @@ video::-webkit-media-controls-current-time-display {}*/
 .video-block::-webkit-media-controls-timeline {}
 
 .video-block::-webkit-media-controls-current-time-display {}
-<<<<<<< HEAD:client/build/minScripts/webrtcdevelopment.css
-/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/
-=======
-/* Generated on:Mon Oct 01 2018 23:44:08 GMT+0530 (India Standard Time) || version: 2.0.4 - Altanai , License : MIT  */
->>>>>>> 29fb08aa745307408664f067a8e10c28fac36d4a:client/build/webrtcdevelopment.css
+/* Generated on:Mon Oct 08 2018 22:20:49 GMT+0530 (India Standard Time) || version: 2.0.4 - Altanai , License : MIT  */
 .chatContainerClass{
 	background: #f5f5f5;
     border: 2px solid #ccc;
@@ -759,11 +747,7 @@ video::-webkit-media-controls-current-time-display {}*/
     font-stretch: expanded;
     font-style: italic
 }
-<<<<<<< HEAD:client/build/minScripts/webrtcdevelopment.css
-/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/.cursor1Class{
-=======
-/* Generated on:Mon Oct 01 2018 23:44:08 GMT+0530 (India Standard Time) || version: 2.0.4 - Altanai , License : MIT  */.cursor1Class{
->>>>>>> 29fb08aa745307408664f067a8e10c28fac36d4a:client/build/webrtcdevelopment.css
+/* Generated on:Mon Oct 08 2018 22:20:49 GMT+0530 (India Standard Time) || version: 2.0.4 - Altanai , License : MIT  */.cursor1Class{
     box-sizing: border-box; 
     -moz-box-sizing: border-box
     width: 0px !important;
@@ -780,11 +764,7 @@ video::-webkit-media-controls-current-time-display {}*/
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
 }
-<<<<<<< HEAD:client/build/minScripts/webrtcdevelopment.css
-/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/.drawContainerClass{
-=======
-/* Generated on:Mon Oct 01 2018 23:44:08 GMT+0530 (India Standard Time) || version: 2.0.4 - Altanai , License : MIT  */.drawContainerClass{
->>>>>>> 29fb08aa745307408664f067a8e10c28fac36d4a:client/build/webrtcdevelopment.css
+/* Generated on:Mon Oct 08 2018 22:20:49 GMT+0530 (India Standard Time) || version: 2.0.4 - Altanai , License : MIT  */.drawContainerClass{
     border: 5px solid #777;
 }
 
@@ -803,45 +783,7 @@ video::-webkit-media-controls-current-time-display {}*/
 .drawBoard{
     margin-top: 0px;
 }
-<<<<<<< HEAD:client/build/minScripts/webrtcdevelopment.css
-/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/#time{
-  color: #000;
-  background-color: #blue;
-}
-
-#timerli{
-    background-color: #55D1F5;
-    color: white;
-    size: 14;
-    font-size: 20;
-    font-weight: bold;
-}
-
-#countdownHours{
-  background-color: white;
-    color: #616150;
-    padding: 4px 4px 4px 4px;
-}
-
-#countdownMinutes{
-  background-color: white;
-    color: #616150;
-    padding: 4px 4px 4px 4px;
-}
-
-#countdownSeconds{
-  background-color: white;
-    color: #616150;
-    padding: 4px 4px 4px 4px;
-}
-
-.countdown{
-  color: #000
-}
-/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/
-=======
-/* Generated on:Mon Oct 01 2018 23:44:08 GMT+0530 (India Standard Time) || version: 2.0.4 - Altanai , License : MIT  *//*
->>>>>>> 29fb08aa745307408664f067a8e10c28fac36d4a:client/build/webrtcdevelopment.css
+/* Generated on:Mon Oct 08 2018 22:20:49 GMT+0530 (India Standard Time) || version: 2.0.4 - Altanai , License : MIT  *//*
 .filesharing1Box{
     background-color: #9999FF;
     color: #968787;
@@ -978,11 +920,7 @@ video::-webkit-media-controls-current-time-display {}*/
     margin-bottom: -100px;
     margin-left: -150px; */
 }
-<<<<<<< HEAD:client/build/minScripts/webrtcdevelopment.css
-/*Generated on:Thu Oct 04 2018 09:19:56 GMT+0530 (India Standard Time)*/.screenshareVideoClass{
-=======
-/* Generated on:Mon Oct 01 2018 23:44:08 GMT+0530 (India Standard Time) || version: 2.0.4 - Altanai , License : MIT  */.screenshareVideoClass{
->>>>>>> 29fb08aa745307408664f067a8e10c28fac36d4a:client/build/webrtcdevelopment.css
+/* Generated on:Mon Oct 08 2018 22:20:49 GMT+0530 (India Standard Time) || version: 2.0.4 - Altanai , License : MIT  */.screenshareVideoClass{
     transform: rotateY(180deg);
     -webkit-transform:rotateY(180deg); /* Safari and Chrome */
     -moz-transform:rotateY(180deg); /* Firefox */

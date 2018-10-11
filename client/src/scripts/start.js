@@ -709,8 +709,16 @@ var setRtcConn = function ( sessionid) {
                         var progressdiv = e.data._element;
                         var filename = e.data._filename;
                         removeFile(progressdiv);
-                        removeButton = "removeButton"+filename;
+                        let removeButton = "removeButton"+filename;
+                        document.getElementById(filename).setAttribute( "style", "display:none !important");
                         document.getElementById(removeButton).hidden = true;
+                        break;
+                    case "shareFileStopUpload":
+                        var progressdiv = e.data._element;
+                        var filename = e.data._filename;
+                        removeFile(progressdiv);
+                        let stopuploadButton = "stopuploadButton"+filename;
+                        document.getElementById(stopuploadButton).hidden = true;
                         break;
                     default:
                         webrtcdev.warn(" unrecognizable message from peer  ", e);
