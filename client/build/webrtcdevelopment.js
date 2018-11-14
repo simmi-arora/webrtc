@@ -16341,8 +16341,8 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         if(document.getElementById(filename)){
             // if the progress bar exist , remove the progress bar div and creae ul
             let elem = document.getElementById(filename);
-            parentdom = elem.parentNode;
-            parentdom.removeChild(elem);
+            parentdom = elem.parentNode.parentNode;
+            parentdom.removeChild(elem.parentNode);
         }else{
             /* if the progress bar area does not exist */
             if(document.getElementById(elementList)){
@@ -16351,6 +16351,8 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
                 parentdom = document.body;
             }
         }
+        console.log(" -------- parent dom ", parentdom);
+
         filedom = document.createElement("ul") ;
         filedom.id = filename;
         filedom.type = peerinfo.type;  // local or remote ,
@@ -16480,11 +16482,14 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         filedom.appendChild(showButton);
         filedom.appendChild(saveButton);
         //filedom.appendChild(hideButton);
-        if(showRemoveButton) 
+        if(showRemoveButton)
             filedom.appendChild(removeButton);
 
         if(parentdom){
-            parentdom.appendChild(filedom); 
+            parentDom2 = parentdom.parentNode;
+            console.log(" parentdom.parentNode  ", parentDom2);
+            console.log(" parentdom.parentNode first child " , parentDom2.firstChild );
+            parentDom2.insertBefore(filedom , parentDom2.firstChild); 
             fileListed(filedom);
         }
 
@@ -16777,11 +16782,13 @@ function createFileSharingBox(peerinfo, parent){
         fileControlBar.appendChild(document.createTextNode( peerinfo.name));
         //fileControlBar.appendChild(document.createTextNode("File Viewer " + peerinfo.name));
 
-        // Minimize the File viewer box 
-        var minButton = document.createElement("span");
-        /*    minButton.className="btn btn-default glyphicon glyphicon-import closeButton";
-        minButton.innerHTML="Minimize";*/
-        if(fileshareobj.fileshare.minicon !="none"){
+
+
+        if(fileshareobj.fileshare.minicon != "none"){
+            // Minimize the File viewer box 
+            var minButton = document.createElement("span");
+            /*    minButton.className="btn btn-default glyphicon glyphicon-import closeButton";
+            minButton.innerHTML="Minimize";*/
             if (fileshareobj.fileshare.minicon) {
                 var img = document.createElement("img");
                 img.src = fileshareobj.fileshare.minicon;
@@ -16799,19 +16806,27 @@ function createFileSharingBox(peerinfo, parent){
                 minButton.style.display = "none";
                 maxButton.style.display = "block";
             }
+
+            fileControlBar.appendChild(minButton);
         }
 
-        // Mximize the file viewer box
-        var maxButton = document.createElement("span");
-        /*    maxButton.className= "btn btn-default glyphicon glyphicon-export closeButton";
-        maxButton.innerHTML="Maximize";*/
-        if(fileshareobj.fileshare.maxButton !="none"){
-            if (fileshareobj.fileshare.maxButton) {
+
+
+        if(fileshareobj.fileshare.maxicon != "none"){
+            // Mximize the file viewer box
+            var maxButton = document.createElement("span");
+            /*    maxButton.className= "btn btn-default glyphicon glyphicon-export closeButton";
+            maxButton.innerHTML="Maximize";*/
+            if (fileshareobj.fileshare.maxicon) {
+                let maxicon = fileshareobj.fileshare.maxicon;
+                webrtcdev.log(" [fileShare JS ] creating custom maxicon" , maxicon);
                 var img = document.createElement("img");
-                img.src = fileshareobj.fileshare.maxicon;
+                img.src = maxicon;
                 maxButton.appendChild(img);
             } else {
-                maxButton.innerHTML = '<i class="fa fa-external-link-square" style="font-size: 25px;"></i>';
+                let maxicon = '<i class="fa fa-external-link-square" style="font-size: 25px;"></i>';
+                maxButton.innerHTML = maxicon;
+                webrtcdev.log(" [fileShare JS ] creating default maxicon" , maxicon);
             }
             maxButton.id = peerinfo.fileShare.maxButton;
             maxButton.title="Maximize";
@@ -16823,7 +16838,12 @@ function createFileSharingBox(peerinfo, parent){
                 maxButton.style.display = "none";
                 minButton.style.display = "block";
             }
+            fileControlBar.appendChild(maxButton);
+        }else{
+            webrtcdev.log(" [fileShare JS ] maxicon is none" );
         }
+
+
 
         // close the file viewer box
         var closeButton = document.createElement("span");
@@ -16843,6 +16863,9 @@ function createFileSharingBox(peerinfo, parent){
         closeButton.onclick = function () {
             closeFV(peerinfo.userid, closeButton.id, peerinfo.fileShare.container);
         }
+        fileControlBar.appendChild(closeButton);
+
+
 
         // rotate the content of file viewer box
         var angle = 0 , orientation = null;
@@ -16862,70 +16885,38 @@ function createFileSharingBox(peerinfo, parent){
             var dom = domparent.firstChild;
 
             webrtcdev.log(" [filehsraing ] rotateButton dom ", dom  , dom.nodeName, "dom parent ", domparent);
+            
             angle = (angle + 90) % 360;
-            if(dom && !dom.getAttribute("orientation")) {
+            dom.setAttribute("angle", angle);
+            
+            if(dom) {
                 //alert(" dom type " + dom.nodeName);
-                if( dom.nodeName == "VIDEO"){
-                    if( dom.videoWidth > dom.videoHeight ){
-                        dom.setAttribute("style","height:"+domparent.clientWidth+"px;margin-left: 0px");
-                        orientation = "landscape";
-                    }else {
-                        orientation = "portrait";
-                    }
-                    dom.setAttribute("orientation",  orientation);
-                    dom.className = "col rotate" + angle + dom.getAttribute("orientation");
-                }else if (dom.nodeName == "IMG"){
-                    if( dom.width > dom.height ){
-                        orientation = "landscape";
-
-                        if(angle =="90" || angle == "270"){
-                            // old width/old height = new width / new height 
-                            // thus new width = old width / old height * new height
-                            newwidth =  (dom.width / dom.height) * domparent.clientWidth ; 
-                            dom.setAttribute("style","height:"+domparent.clientWidth+"px;");
-                        }
-                        // if(angle =="180" || angle == "0"){
-                        //     dom.setAttribute("style","width:100%; height:100%");
-                        // }
-
-                    } else{
-                        orientation = "portrait"; 
-                    
-                        if(angle =="90" || angle == "270"){
-                            // old width/old height = new width / new height 
-                            // thus new width = old width / old height * new height
-                            newwidth =  (dom.width / dom.height) * domparent.clientWidth ; 
-                            dom.setAttribute("style","height:"+domparent.clientWidth+"px;max-width:"+newwidth+"px;");
-                        }
-                        // if(angle =="180" || angle == "0"){
-                        //     dom.setAttribute("style","width:100%; height:100%");
-                        // }
-
-                    }
-                    
-                    dom.setAttribute("orientation",  orientation);
-                    dom.className = "col rotate" + angle + dom.getAttribute("orientation");
-                }else if (dom.nodeName == "IFRAME"){
-                    dom.setAttribute("style","height:"+domparent.clientWidth +"px;width:100%");
-                    dom.setAttribute("orientation",  "portrait");
+                if(dom.nodeName == "VIDEO"){
                 
-                // }else if (dom.nodeName == "VIDEO"){
-                //     dom.setAttribute("style","height:"+domparent.clientWidth +"px;margin-left: 0px");
-                //     dom.setAttribute("orientation",  "landscape");
-                    dom.className = "col rotate" + angle + dom.getAttribute("orientation")+"pdf";
+                    rescaleVideo(dom, domparent);
+
+                }else if (dom.nodeName == "IMG"){
+
+                    rescaleImage(dom , domparent);
+
+                }else if (dom.nodeName == "IFRAME"){
+
+                    rescaleIFrame(dom , domparent);
+                    
                 }else{    
                     // do not allow rotate
                     dom.setAttribute("orientation",  "");
-                    dom.className = "col rotate" + angle + dom.getAttribute("orientation");
                 }
+            }else{
+                webrtcdev.error(" [filehsraing ] rotateButton  , dom doesnt exist" );
             }
-
+            // dom.className = "col rotate" + angle + dom.getAttribute("orientation");
         }
 
         fileControlBar.appendChild(rotateButton);
-        fileControlBar.appendChild(minButton);
-        fileControlBar.appendChild(maxButton);
-        fileControlBar.appendChild(closeButton);
+
+       
+
 
         /*--------------------------------add for File Share Container--------------------*/
         var fileShareContainer = document.createElement("div");
@@ -16953,6 +16944,77 @@ function createFileSharingBox(peerinfo, parent){
     } catch (e) {
         webrtcdev.error(" createFileSharingBox ", e);
     }
+}
+
+
+function rescaleVideo(dom , domparent){
+    var angle = dom.getAttribute("angle")||0;
+
+    if( dom.videoWidth > dom.videoHeight ){
+        dom.setAttribute("style","height:"+domparent.clientWidth+"px;margin-left: 0px");
+        orientation = "landscape";
+    }else {
+        orientation = "portrait";
+    }
+    dom.setAttribute("orientation",  orientation);
+    dom.className = "col rotate" + angle + dom.getAttribute("orientation");
+
+    return ;
+}
+
+
+function rescaleIFrame(dom , domparent){
+    var angle = dom.getAttribute("angle")||0;
+
+    dom.setAttribute("style","height:"+domparent.clientWidth +"px !important;width:100%");
+    dom.setAttribute("orientation",  "portrait");
+    // }else if (dom.nodeName == "VIDEO"){
+    //     dom.setAttribute("style","height:"+domparent.clientWidth +"px;margin-left: 0px");
+    //     dom.setAttribute("orientation",  "landscape");
+    dom.className = "col rotate" + angle + dom.getAttribute("orientation");
+
+    return ;
+}
+
+
+function rescaleImage(dom , domparent){
+
+    var orientation ;
+    var angle = dom.getAttribute("angle")||0;
+
+    if( dom.width > dom.height ){
+        orientation = "landscape";
+
+        if(angle =="90" || angle == "270"){
+            // new width / new height  = old width/old height 
+            // thus new width = old width / old height * new height
+            newwidth =  (dom.width / dom.height) * domparent.clientWidth ; 
+            dom.setAttribute("style","width:"+newwidth+"px; height:"+domparent.clientWidth+"px");
+        }
+        // if(angle =="180" || angle == "0"){
+        //     dom.setAttribute("style","width:100%; height:100%");
+        // }
+
+    } else{
+        orientation = "portrait"; 
+    
+        if(angle =="90" || angle == "270"){
+            // old width/old height = new width / new height 
+            // thus new width = old width / old height * new height
+            newwidth =  (dom.width / dom.height) * domparent.clientWidth ; 
+            dom.setAttribute("style","height:"+domparent.clientWidth+"px; max-width:"+newwidth+"px;");
+        }
+        // if(angle =="180" || angle == "0"){
+        //     dom.setAttribute("style","width:100%; height:100%");
+        // }
+
+    }
+    
+    dom.setAttribute("orientation",  orientation);
+    dom.className = "col rotate" + angle + dom.getAttribute("orientation");
+
+    return ;
+
 }
 
 /**

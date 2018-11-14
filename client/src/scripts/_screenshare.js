@@ -522,7 +522,7 @@ function createScreenInstallButton(extensionID){
     button.onclick = function(e) {    
         chrome.webstore.install("https://chrome.google.com/webstore/detail/"+extensionID,
         function(){
-            webrtcdev.log("Chrome extension inline installation - success . createOrAssignScreenshareButton with " , screenshareobj);
+            webrtcdev.log("Chrome extension inline installation - success. createOrAssignScreenshareButton with " , screenshareobj);
             button.hidden = true;
             getSourceId(function () { }, true);
             createOrAssignScreenshareButton(screenshareobj);
@@ -561,10 +561,16 @@ function hideScreenInstallButton(){
     button.setAttribute("style","display:none");
 }
 
+/**
+ * If button id are present then assign sreen share button or creatr a new one
+ * @method
+ * @name createOrAssignScreenshareButton
+ * @param {json} screenshareobject
+ */
 function createOrAssignScreenshareButton(screenshareobj){
     webrtcdev.log( "createOrAssignScreenshareButton " , screenshareobj);
     if(screenshareobj.button.shareButton.id && document.getElementById(screenshareobj.button.shareButton.id)) {
-        assignScreenShareButton();
+        assignScreenShareButton(screenshareobj.button.shareButton);
         hideScreenInstallButton();
         showScreenShareButton();
     }    
@@ -595,18 +601,28 @@ function createScreenshareButton(){
     return screenShareButton;
 }
 
-function assignScreenShareButton(){
+
+/**
+ * If button id are present then assign sreen share button or creatr a new one
+ * @method
+ * @name assignScreenShareButton
+ * @param {json} scrshareBtn
+ */
+function assignScreenShareButton(scrshareBtn){
     webrtcdev.log("assignScreenShareButton");
-    var button = document.getElementById(screenshareobj.button.shareButton.id);
+    var button = document.getElementById(scrshareBtn.id);
     button.onclick = function(event) {
-        if(button.className == screenshareobj.button.shareButton.class_off){
+        if(button.className == scrshareBtn.class_on){
             webrtcdevSharescreen();
-            button.className = screenshareobj.button.shareButton.class_on;
-            button.innerHTML = screenshareobj.button.shareButton.html_on;
-        }else{
-            button.className = screenshareobj.button.shareButton.class_off;
-            button.innerHTML = screenshareobj.button.shareButton.html_off;
+            button.className = scrshareBtn.class_off;
+            button.innerHTML = scrshareBtn.html_off;
+        }else if(button.className == scrshareBtn.class_off){
+            button.className = scrshareBtn.class_on;
+            button.innerHTML = scrshareBtn.html_on;
             webrtcdevStopShareScreen();
+        }else{
+            alert("Unmatched screen share scenaro");
+            webrtcdev.error(" scrshareBtn " , scrshareBtn);
         }
     }
     return button;

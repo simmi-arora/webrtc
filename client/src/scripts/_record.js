@@ -2,6 +2,15 @@
 Record
 *********************************************/
 
+/**
+ * Create Record Button to call start and stop recoriding functions 
+ * @method
+ * @name createRecordButton
+ * @param {string} controlBarName
+ * @param {json} peerinfo
+ * @param {string} streamid
+ * @param {blob} stream
+ */
 function createRecordButton(controlBarName, peerinfo, streamid, stream){
     var recordButton=document.createElement("div");
     recordButton.id=controlBarName+"recordButton";
@@ -29,6 +38,15 @@ function createRecordButton(controlBarName, peerinfo, streamid, stream){
 
 var listOfRecorders = {};
 
+
+/**
+ * start Recording the stream using recordRTC
+ * @method
+ * @name startRecord
+ * @param {json} peerinfo
+ * @param {string} streamid
+ * @param {blob} stream
+ */
 function startRecord(peerinfo , streamid, stream){
     var recorder = RecordRTC(stream, {
         type: 'video'  , 
@@ -38,6 +56,14 @@ function startRecord(peerinfo , streamid, stream){
     listOfRecorders[streamid] = recorder;
 }
 
+/**
+ * stop Recording the stream using recordRTC
+ * @method
+ * @name stopRecord
+ * @param {json} peerinfo
+ * @param {string} streamid
+ * @param {blob} stream
+ */
 function stopRecord(peerinfo , streamid , stream){
     /*var streamid = prompt('Enter stream-id');*/
 
@@ -73,7 +99,16 @@ function stopRecord(peerinfo , streamid , stream){
     });
 }
 
-
+/**
+ * stopping session Record 
+ * @method
+ * @name stopSessionRecord
+ * @param {json} peerinfo
+ * @param {string} scrrecordStreamid
+ * @param {blob} scrrecordStream
+  * @param {string} scrrecordAudioStreamid
+ * @param {blob} scrrecordAudioStream
+ */
 function stopSessionRecord(peerinfo , scrrecordStreamid, scrrecordStream , scrrecordAudioStreamid, scrrecordAudioStream){
     /*var streamid = prompt('Enter stream-id');*/
 

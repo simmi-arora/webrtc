@@ -381,6 +381,16 @@ function processInWebWorker() {
 var worker;
 var videoFile = !!navigator.mozGetUserMedia ? 'video.gif' : 'video.webm';
 
+/**
+ * merging the recorded audio and video stream
+ * @method
+ * @name stopSessionRecord
+ * @param {json} peerinfo
+ * @param {string} scrrecordStreamid
+ * @param {blob} scrrecordStream
+  * @param {string} scrrecordAudioStreamid
+ * @param {blob} scrrecordAudioStream
+ */
 function mergeStreams(videoBlob, audioBlob) {
     var peerinfo;
     if(selfuserid){

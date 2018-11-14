@@ -28,98 +28,104 @@ var localobj={}, remoteobj={};
     //   outgoingVideo = false;
     // }
 
-    /**
-     * Assigns ICE gateways and  widgets 
-     * @constructor
-          * @param {json} _localObj - local object.
-     * @param {json} _remoteObj - remote object.
-     * @param {json} incoming - incoming media stream.
-     * @param {json} outgoing - outgoing media stream.
-     * @param {json} session - session object.
-     * @param {json} widgets - widgets object.
-     */
-    var WebRTCdev= function(_localobj , _remoteobj , incoming, outgoing , session, widgets){
-        //try{
-            sessionid  = session.sessionid;
-            socketAddr = session.socketAddr;
-            localobj = _localobj;
-            remoteobj = _remoteobj;
-            webrtcdev.log("WebRTCdev --> Session " , session);
-        // }catch(e){
-        //     webrtcdev.error(e);
-        //     alert(" Session object doesnt have all parameters ");
-        // }
+/**
+ * Assigns ICE gateways and  widgets 
+ * @constructor
+ * @param {json} _localObj - local object.
+ * @param {json} _remoteObj - remote object.
+ * @param {json} incoming - incoming media stream.
+ * @param {json} outgoing - outgoing media stream.
+ * @param {json} session - session object.
+ * @param {json} widgets - widgets object.
+ */
+var WebRTCdev= function(_localobj , _remoteobj , incoming, outgoing , session, widgets){
+    //try{
+        sessionid  = session.sessionid;
+        socketAddr = session.socketAddr;
+        localobj = _localobj;
+        remoteobj = _remoteobj;
+        webrtcdev.log("WebRTCdev --> Session " , session);
+    // }catch(e){
+    //     webrtcdev.error(e);
+    //     alert(" Session object doesnt have all parameters ");
+    // }
 
-        turn    = (session.hasOwnProperty('turn')?session.turn:null);
-        webrtcdev.log("WebRTCdev --> TURN ", turn);
-        if(turn && turn !="none"){
-            if(turn.active && turn.iceServers){
-                webrtcdev.log("WebRTCdev --> Getting preset static ICE servers " , turn.iceServers);
-                webrtcdevIceServers = turn.iceServers;
-            }else{
-                webrtcdev.info("WebRTCdev --> Calling API to fetch dynamic ICE servers ");
-                getICEServer();  
-                // getICEServer( turn.username ,turn.secretkey , turn.domain,
-                //                 turn.application , turn.room , turn.secure);                
-            }
+    turn    = (session.hasOwnProperty('turn')?session.turn:null);
+    webrtcdev.log("WebRTCdev --> TURN ", turn);
+    if(turn && turn !="none"){
+        if(turn.active && turn.iceServers){
+            webrtcdev.log("WebRTCdev --> Getting preset static ICE servers " , turn.iceServers);
+            webrtcdevIceServers = turn.iceServers;
         }else{
-            webrtcdev.log("WebRTCdev --> TURN not applied ");
+            webrtcdev.info("WebRTCdev --> Calling API to fetch dynamic ICE servers ");
+            getICEServer();  
+            // getICEServer( turn.username ,turn.secretkey , turn.domain,
+            //                 turn.application , turn.room , turn.secure);                
         }
+    }else{
+        webrtcdev.log("WebRTCdev --> TURN not applied ");
+    }
 
-        if(widgets){
+    if(widgets){
 
-            webrtcdev.log( " WebRTCdev --> widgets  " , widgets);
+        webrtcdev.log( " WebRTCdev --> widgets  " , widgets);
 
-            if(widgets.debug)           debug           = widgets.debug || false;
+        if(widgets.debug)           debug           = widgets.debug || false;
 
-            if(widgets.chat)            chatobj         = widgets.chat || null;
+        if(widgets.chat)            chatobj         = widgets.chat || null;
 
-            if(widgets.fileShare)       fileshareobj    = widgets.fileShare || null;
+        if(widgets.fileShare)       fileshareobj    = widgets.fileShare || null;
 
-            if(widgets.screenrecord)    screenrecordobj = widgets.screenrecord || null;
+        if(widgets.screenrecord)    screenrecordobj = widgets.screenrecord || null;
 
-            if(widgets.screenshare)     screenshareobj  = widgets.screenshare || null;
+        if(widgets.screenshare)     screenshareobj  = widgets.screenshare || null;
 
-            if(widgets.snapshot)        snapshotobj     = widgets.snapshot || null;
+        if(widgets.snapshot)        snapshotobj     = widgets.snapshot || null;
 
-            if(widgets.videoRecord)     videoRecordobj  = widgets.videoRecord || null;
+        if(widgets.videoRecord)     videoRecordobj  = widgets.videoRecord || null;
 
-            if(widgets.reconnect)       reconnectobj    = widgets.reconnect || null;
+        if(widgets.reconnect)       reconnectobj    = widgets.reconnect || null;
 
-            if(widgets.drawCanvas)      drawCanvasobj   = widgets.drawCanvas || null;
+        if(widgets.drawCanvas)      drawCanvasobj   = widgets.drawCanvas || null;
 
-            if(widgets.texteditor)      texteditorobj   = widgets.texteditor || null;
+        if(widgets.texteditor)      texteditorobj   = widgets.texteditor || null;
 
-            if(widgets.codeeditor)      codeeditorobj   = widgets.codeeditor || null;
+        if(widgets.codeeditor)      codeeditorobj   = widgets.codeeditor || null;
 
-            if(widgets.mute)            muteobj         = widgets.mute || null;
+        if(widgets.mute)            muteobj         = widgets.mute || null;
 
-            if(widgets.timer)           timerobj        = widgets.timer || null;
+        if(widgets.timer)           timerobj        = widgets.timer || null;
 
-            if(widgets.listenin)        listeninobj     = widgets.listenin || null;
+        if(widgets.listenin)        listeninobj     = widgets.listenin || null;
 
-            if(widgets.cursor)          cursorobj       = widgets.cursor || null;
+        if(widgets.cursor)          cursorobj       = widgets.cursor || null;
 
-            if(widgets.minmax)          minmaxobj       = widgets.minmax || null;
+        if(widgets.minmax)          minmaxobj       = widgets.minmax || null;
 
-            if(widgets.help)            helpobj         = widgets.help || null;
+        if(widgets.help)            helpobj         = widgets.help || null;
 
-            if(widgets.statistics)      statisticsobj   = widgets.statistics || null;
-        }
+        if(widgets.statistics)      statisticsobj   = widgets.statistics || null;
+    }
 
-        return {
-            sessionid : sessionid,
-            socketAddr: socketAddr,
-            turn : turn,
-            widgets  : widgets,
-            startwebrtcdev: funcStartWebrtcdev,
-            rtcConn : rtcConn
-        };
+    return {
+        sessionid : sessionid,
+        socketAddr: socketAddr,
+        turn : turn,
+        widgets  : widgets,
+        startwebrtcdev: funcStartWebrtcdev,
+        rtcConn : rtcConn
     };
+};
 
+/**
+ * function to return chain of promises for webrtc session to start
+ * @method
+ * @name funcStartWebrtcdev
+ */
 function funcStartWebrtcdev(){
 
     webrtcdev.log(" startwebrtcdev ");
+
     return new Promise(function (resolve, reject) {
         detectRTC = DetectRTC;
 
@@ -241,7 +247,6 @@ function funcStartWebrtcdev(){
     ).catch((err) =>{
         webrtcdev.error(" Promise rejected " , err);
     });
-
 }
 
 /**
