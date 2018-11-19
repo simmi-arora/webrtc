@@ -189,7 +189,6 @@ function peerTimeZone(zone , userid){
 function startPeersTime(date,zone,userid){
     
     try{
-
         // Starting peer timer for all peers
         for(var x in webcallpeers){
             options = {

@@ -428,11 +428,13 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
                             event.data.extra.name = "REMOTE";
                             event.data.extra.color = remotecolor;
                         }
-                        updatePeerInfo(event.data.sender, event.data.extra.name, event.data.extra.color, event.data.extra.email, event.data.extra.role , "remote");
+                        // event.data.extra.color ,  not this color , it is local color 
+                        updatePeerInfo(event.data.sender, event.data.extra.name, "#a69afe", event.data.extra.email, event.data.extra.role , "remote");
                         shownotification( event.data.extra.role  + "  " +event.type);
                     }else {
                         // Peer was already present  , this is s rejoin 
-                        updatePeerInfo(event.data.sender, event.data.extra.name, event.data.extra.color, event.data.extra.email, event.data.extra.role , "remote");
+                        // event.data.extra.color ,  not this color , it is local color 
+                        updatePeerInfo(event.data.sender, event.data.extra.name, "#a69afe", event.data.extra.email, event.data.extra.role , "remote");
                         shownotification(event.data.extra.role  + "  " +event.type);
                     }
                 } else {

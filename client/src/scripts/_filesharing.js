@@ -163,7 +163,7 @@ function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelpe
 /**
  * REquest Old Files
  * @method
- * @name sendFile
+ * @name requestOldFiles
  * @param {json} files
  */
 function requestOldFiles(){
@@ -180,7 +180,7 @@ function requestOldFiles(){
 /**
  * Send Old Files
  * @method
- * @name sendFile
+ * @name sendOldFiles
  * @param {json} files
  */
 function sendOldFiles(){
@@ -278,8 +278,6 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
             filename = filename.videoname+"_"+filename.audioname;
             _filename = filename;
         }
-
-
 
         var parentdom , filedom ;
         if(document.getElementById(filename)){
