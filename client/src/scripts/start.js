@@ -783,11 +783,12 @@ var setRtcConn = function ( sessionid) {
 
         rtcConn.onFileStart = function (file) {
             webrtcdev.log("[start] on File start " + file.name);
-            webrtcdev.log("file description ", file);
+            webrtcdev.log("[start] file description ", file);
 
             var peerinfo = findPeerInfo(file.userid);
             if(peerinfo && peerinfo.role =="inspector") return;
             addProgressHelper(file.uuid, peerinfo, file.name, file.maxChunks, "fileBoxClass");
+            onFileShareStart(file);
         },
 
         rtcConn.onFileProgress = function (e) {
@@ -795,8 +796,8 @@ var setRtcConn = function ( sessionid) {
             try{
                 var r = progressHelper[e.uuid];
                 r && (r.progress.value = e.currentPosition || e.maxChunks || r.progress.max, updateLabel(r.progress, r.label));
-            }catch(e){
-                webrtcdev.error(" Prolem in progressHelper " , e);
+            }catch(err){
+                webrtcdev.error(" Prolem in progressHelper " , err);
             }
         },
 
@@ -804,10 +805,12 @@ var setRtcConn = function ( sessionid) {
             var filename = file.name
             webrtcdev.log("[start] On file End " + filename);
 
+            // Hide the stop upload button for this file 
             var stopuploadbutton = document.getElementById("stopuploadButton"+filename);
             webrtcdev.log(stopuploadbutton);
-            stopuploadbutton.hidden=true;
-            //find duplicate file
+            if(stopuploadbutton) stopuploadbutton.hidden=true;
+
+            // find duplicate file
             // for(x in webcallpeers){
             //     for (y in webcallpeers[x].filearray){
             //         webrtcdev.log(" Duplicate find , Files shared  so far " , webcallpeers[x].filearray[y].name);
@@ -819,15 +822,18 @@ var setRtcConn = function ( sessionid) {
             //     }
             // }
 
+            // push to peerinfo's file array
             var peerinfo = findPeerInfo(file.userid); 
-            //if (peerinfo != null)  peerinfo.filearray.push(file);
             if (peerinfo != null)  {
                 for( f in peerinfo.filearray)
                     if(peerinfo.filearray[f].name == filename)
                         peerinfo.filearray[f].status = "finished";
             }
+
+            // Display on File Viewer and List
             displayFile(file.uuid, peerinfo, file.url, filename, file.type);
             displayList(file.uuid, peerinfo, file.url, filename, file.type);
+            onFileShareEnded(file);
         },
 
         rtcConn.takeSnapshot = function (userid, callback) {

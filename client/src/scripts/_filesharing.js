@@ -94,10 +94,10 @@ function stopSendFile(file){
  * @name sendFile
  * @param {json} files
  */
-function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelperclassName ){
+function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelperclassName){
     try{
         if(!peerinfo){
-            webrtcdev.error(" [filehsraingJs]Progress helpler cannot be added for one peer as its absent")
+            webrtcdev.error(" [filehsraingJs] Progress helpler cannot be added for one peer as its absent")
             return;
         }else if(!peerinfo.fileList.container || !document.getElementById(peerinfo.fileList.container)){
             webrtcdev.error(" [filehsraingJs] Progress helpler cannot be added , missing fileListcontainer ")
@@ -300,7 +300,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         filedom.type = peerinfo.type;  // local or remote ,
         filedom.innerHTML="";
         filedom.className="row";
-        filedom.setAttribute("style","float: left;");
+        filedom.setAttribute("style","float: left; width: 98%; margin-left: 2%;");
 
 
         var name = document.createElement("li");
@@ -315,6 +315,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         var downloadButton = document.createElement("li");
         downloadButton.id = "downloadButton"+filename;
         downloadButton.title = "Download";
+        downloadButton.setAttribute("style","float: right");
         if (fileshareobj.filelist.saveicon) {
             var img = document.createElement("img");
             img.src = fileshareobj.filelist.downloadicon;
@@ -333,6 +334,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         saveButton.title = "Save";
         saveButton.setAttribute("data-toggle","modal");
         saveButton.setAttribute("data-target", "#saveModal");
+        saveButton.setAttribute("style","float: right");
         if (fileshareobj.filelist.saveicon) {
             var img = document.createElement("img");
             img.src = fileshareobj.filelist.saveicon;
@@ -349,6 +351,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         var showButton = document.createElement("li");
         showButton.id= "showButton"+filename;
         showButton.title="Show";
+        showButton.setAttribute("style","float: right");
         if (fileshareobj.filelist.saveicon) {
             var img = document.createElement("img");
             img.src = fileshareobj.filelist.showicon;
@@ -395,6 +398,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         var removeButton = document.createElement("li");
         removeButton.id= "removeButton"+filename;
         removeButton.title="Remove";
+        removeButton.setAttribute("style","float: right");
         // removeButton.style.float="right";
         removeButton.innerHTML ='<i class="fa fa-trash-o" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
         removeButton.onclick=function(event){

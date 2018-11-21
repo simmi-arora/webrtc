@@ -204,13 +204,15 @@ function webrtcdevPrepareScreenShare(callback){
             screenShareButton.innerHTML = screenshareobj.button.shareButton.html_off;
         }
         //removeScreenViewButton();
+
+        // event listener for Screen share stream ended 
+        onScreenShareSEnded();
     };
 
     webrtcdev.log("[screenshare JS] webrtcdevscreenshare calling callback for socket.io operations");
     //alert(" Preparing Screenshare "+ screenRoomid);
     setTimeout(callback(screenRoomid), 3000);
-    // event listener for Screen share stream ended 
-    onScreenShareSEnded();
+    
 }
 
 function webrtcdevSharescreen() {
@@ -579,6 +581,11 @@ function createOrAssignScreenshareButton(screenshareobj){
     }
 }
 
+/**
+ * create Screen share Button
+ * @method
+ * @name createScreenshareButton
+ */
 function createScreenshareButton(){
     screenShareButton= document.createElement("span");
     screenShareButton.className = screenshareobj.button.shareButton.class_off;
@@ -593,6 +600,8 @@ function createScreenshareButton(){
             screenShareButton.className=screenshareobj.button.shareButton.class_off;
             screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
             webrtcdevStopShareScreen();
+        }else{
+            webrtcdev.log( "[svreenshare js] createScreenshareButton ,classname neither on nor off" , creenShareButton.className);
         }
     };
     var li =document.createElement("li");
@@ -612,17 +621,16 @@ function assignScreenShareButton(scrshareBtn){
     webrtcdev.log("assignScreenShareButton");
     var button = document.getElementById(scrshareBtn.id);
     button.onclick = function(event) {
-        if(button.className == scrshareBtn.class_on){
+        if(button.className == scrshareBtn.class_off){
             webrtcdevSharescreen();
-            button.className = scrshareBtn.class_off;
-            button.innerHTML = scrshareBtn.html_off;
-        }else if(button.className == scrshareBtn.class_off){
             button.className = scrshareBtn.class_on;
             button.innerHTML = scrshareBtn.html_on;
+        }else if(button.className == scrshareBtn.class_on){
+            button.className = scrshareBtn.class_off;
+            button.innerHTML = scrshareBtn.html_off;
             webrtcdevStopShareScreen();
         }else{
-            alert("Unmatched screen share scenaro");
-            webrtcdev.error(" scrshareBtn " , scrshareBtn);
+            webrtcdev.log("[svreenshare js] createScreenshareButton ,classname neither on nor off" , creenShareButton.className);
         }
     }
     return button;
