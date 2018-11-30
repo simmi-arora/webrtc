@@ -14,7 +14,8 @@ if(document.getElementById("ListenInButton")){
   	var modalinnerBox=document.createElement("div");
   	modalinnerBox.className="modal-dialog";
 
-	var modal=document.createElement("div");
+	var modal=document
+	.createElement("div");
 	modal.className = "modal-content";
 
 	var modalheader= document.createElement("div");

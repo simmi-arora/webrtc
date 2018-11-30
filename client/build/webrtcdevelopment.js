@@ -16145,11 +16145,6 @@ function createFileShareButton(fileshareobj){
     button.onclick = function() {
         var fileSelector = new FileSelector();
         fileSelector.selectSingleFile(function(file) {
-            var peerinfo = findPeerInfo(selfuserid); 
-            peerinfo.filearray.push({
-                "name": file.name,
-                "status" : "progress"
-            });
             sendFile(file);
         });
     };
@@ -16169,18 +16164,10 @@ function assignFileShareButton(fileshareobj){
     button.onclick = function() {
         var fileSelector = new FileSelector();
         fileSelector.selectSingleFile(function(file) {
-
-            var peerinfo = findPeerInfo(selfuserid); 
-            peerinfo.filearray.push({
-                "name": file.name,
-                "status" : "progress"
-            });
             sendFile(file);
         });
     };
 }
-
-
 
 /**
  * Send File 
@@ -16219,7 +16206,7 @@ function stopSendFile(file){
  * @name sendFile
  * @param {json} files
  */
-function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelperclassName){
+addProgressHelper = function (uuid , peerinfo , filename , fileSize,  progressHelperclassName){
     try{
         if(!peerinfo){
             webrtcdev.error(" [filehsraingJs] Progress helpler cannot be added for one peer as its absent")
@@ -16229,8 +16216,8 @@ function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelpe
             return;
         }
 
-        if(!document.getElementById(filename)){
-            webrtcdev.log(" [filehsraingJs] progresshelper " , uuid , peerinfo , filename , fileSize,  progressHelperclassName );
+        //if(!document.getElementById(filename)){
+            webrtcdev.log(" [filehsraingJs] progress helper attributes :" , uuid , peerinfo , filename , fileSize,  progressHelperclassName );
 
             var progressul =  document.createElement("ul");
 
@@ -16238,6 +16225,7 @@ function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelpe
             progressDiv.id = filename,
             progressDiv.title = uuid + filename,
             progressDiv.setAttribute("class", progressHelperclassName),
+            progressDiv.setAttribute("type", "progressbar"),
             progressDiv.innerHTML = "<label>0%</label><progress></progress>", 
             progressul.appendChild(progressDiv),              
             progressHelper[uuid] = {
@@ -16246,7 +16234,7 @@ function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelpe
                 label: progressDiv.querySelector("label")
             }, 
             progressHelper[uuid].progress.max = fileSize;
-
+            //progressHelper[uuid].label = filename + " "+ fileSize;
 
             var stopuploadButton = document.createElement("li");
             stopuploadButton.id= "stopuploadButton"+filename;
@@ -16272,21 +16260,23 @@ function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelpe
                 //stopuploadButton.hide();
             },
             progressul.appendChild(stopuploadButton);
-            document.getElementById(peerinfo.fileList.container).appendChild(progressul);
 
+            console.log(" =======document.getElementById(peerinfo.fileList.container)============== " , document.getElementById(peerinfo.fileList.container));
+            document.getElementById(peerinfo.fileList.container).appendChild(progressul);
+            alert(" progress bar added");
             // document.getElementById(peerinfo.fileList.container).appendChild(stopuploadButton);
             // document.getElementById(peerinfo.fileList.container).appendChild(progressDiv),   
-        }else{
-            webrtcdev.log(" Not creating progress bar div as it already exists ");
-        }
+        // }else{
+        //     webrtcdev.log(" Not creating progress bar div as it already exists ");
+        // }
 
     }catch(e){
         webrtcdev.error(" [filehsraingJs] problem in progress helper " , e);
     }
-}
+};
 
 /**
- * REquest Old Files
+ * Request Old Files
  * @method
  * @name requestOldFiles
  * @param {json} files
@@ -16404,17 +16394,19 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
             _filename = filename;
         }
 
-        var parentdom , filedom ;
-        if(document.getElementById(filename)){
-            // if the progress bar exist , remove the progress bar div and creae ul
+        var parentdom, filedom ;
+        if(document.getElementById(filename) && document.getElementById(filename).getAttribute("type")=="progressbar"){
+            // if the progress bar exist , remove the progress bar div and create the ul
             let elem = document.getElementById(filename);
             parentdom = elem.parentNode.parentNode;
             parentdom.removeChild(elem.parentNode);
         }else{
-            /* if the progress bar area does not exist */
+            // if the progress bar area does not exist 
             if(document.getElementById(elementList)){
+                // directly append to the file list 
                 parentdom = document.getElementById(elementList);
             }else{
+                // append to top of the page
                 parentdom = document.body;
             }
         }
@@ -16427,14 +16419,12 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         filedom.className="row";
         filedom.setAttribute("style","float: left; width: 98%; margin-left: 2%;");
 
-
         var name = document.createElement("li");
         /*name.innerHTML = listlength +"   " + filename ;*/
         name.innerHTML = filename ;
         name.title = filetype +" shared by " +peerinfo.name ;  
         name.className = "filenameClass";
         name.id = "name"+filename;
-
 
         // Download Button 
         var downloadButton = document.createElement("li");
@@ -16451,7 +16441,6 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         downloadButton.onclick = function () {
             downloadFile(uuid , elementDisplay , fileurl , _filename , filetype);
         };
-
 
         //Save Button
         var saveButton = document.createElement("li");
@@ -17610,7 +17599,8 @@ if(document.getElementById("ListenInButton")){
   	var modalinnerBox=document.createElement("div");
   	modalinnerBox.className="modal-dialog";
 
-	var modal=document.createElement("div");
+	var modal=document
+	.createElement("div");
 	modal.className = "modal-content";
 
 	var modalheader= document.createElement("div");
@@ -19442,17 +19432,30 @@ var setRtcConn = function ( sessionid) {
 
             var peerinfo = findPeerInfo(file.userid);
             if(peerinfo && peerinfo.role =="inspector") return;
+
+            for( x in peerinfo.filearray){
+                if(peerinfo.filearray[x].status=="progress")
+                    alert(" A file is already in progress , add the new file "+file.name+" to queue");
+            }
+
+            // add to peerinfo file array
+            peerinfo.filearray.push({
+                "name": file.name,
+                "status" : "progress"
+            });
+
+            // create multiple instances           
             addProgressHelper(file.uuid, peerinfo, file.name, file.maxChunks, "fileBoxClass");
             onFileShareStart(file);
         },
 
-        rtcConn.onFileProgress = function (e) {
-            webrtcdev.log("[start] on File progress ", e);
+        rtcConn.onFileProgress = function (e) { 
+            webrtcdev.log("[start] on File progress ", e.name , " name ");
             try{
                 var r = progressHelper[e.uuid];
                 r && (r.progress.value = e.currentPosition || e.maxChunks || r.progress.max, updateLabel(r.progress, r.label));
             }catch(err){
-                webrtcdev.error(" Prolem in progressHelper " , err);
+                webrtcdev.error(" Problem in progressHelper " , err);
             }
         },
 

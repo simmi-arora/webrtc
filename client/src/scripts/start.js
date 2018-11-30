@@ -787,17 +787,30 @@ var setRtcConn = function ( sessionid) {
 
             var peerinfo = findPeerInfo(file.userid);
             if(peerinfo && peerinfo.role =="inspector") return;
+
+            for( x in peerinfo.filearray){
+                if(peerinfo.filearray[x].status=="progress")
+                    alert(" A file is already in progress , add the new file "+file.name+" to queue");
+            }
+
+            // add to peerinfo file array
+            peerinfo.filearray.push({
+                "name": file.name,
+                "status" : "progress"
+            });
+
+            // create multiple instances           
             addProgressHelper(file.uuid, peerinfo, file.name, file.maxChunks, "fileBoxClass");
             onFileShareStart(file);
         },
 
-        rtcConn.onFileProgress = function (e) {
-            webrtcdev.log("[start] on File progress ", e);
+        rtcConn.onFileProgress = function (e) { 
+            webrtcdev.log("[start] on File progress ", e.name , " name ");
             try{
                 var r = progressHelper[e.uuid];
                 r && (r.progress.value = e.currentPosition || e.maxChunks || r.progress.max, updateLabel(r.progress, r.label));
             }catch(err){
-                webrtcdev.error(" Prolem in progressHelper " , err);
+                webrtcdev.error(" Problem in progressHelper " , err);
             }
         },
 
