@@ -16177,6 +16177,15 @@ function assignFileShareButton(fileshareobj){
  */
 function sendFile(file){
     webrtcdev.log(" [filehsraing js] Send file - " , file );
+    var peerinfo = findPeerInfo(selfuserid);
+    for( x in peerinfo.filearray){
+        if(peerinfo.filearray[x].status=="progress"){
+            alert(" A file is already in progress , add the new file "+file.name+" to queue");
+            pendingFileTransfer.push(file);
+            addstaticProgressHelper(file.uuid, peerinfo, file.name, file.maxChunks, "fileBoxClass")
+            return;
+        }
+    }
     rtcConn.send(file);
 }
 
@@ -16198,6 +16207,73 @@ function stopSendFile(file){
         }
     }
 }
+
+
+/**
+ * Send Old Files
+ * @method
+ * @name sendFile
+ * @param {json} files
+ */
+addstaticProgressHelper = function (uuid , peerinfo , filename , fileSize,  progressHelperclassName){
+    try{
+        if(!peerinfo){
+            webrtcdev.error(" [filehsraingJs] Progress helpler cannot be added for one peer as its absent")
+            return;
+        }else if(!peerinfo.fileList.container || !document.getElementById(peerinfo.fileList.container)){
+            webrtcdev.error(" [filehsraingJs] Progress helpler cannot be added , missing fileListcontainer ")
+            return;
+        }
+
+        //if(!document.getElementById(filename)){
+            webrtcdev.log(" [filehsraingJs] progress helper attributes :" , uuid , peerinfo , filename , fileSize,  progressHelperclassName );
+
+            var progressul =  document.createElement("ul");
+
+            var progressDiv = document.createElement("li");
+            progressDiv.id = filename,
+            progressDiv.title = uuid + filename,
+            progressDiv.setAttribute("class", progressHelperclassName),
+            progressDiv.setAttribute("type", "progressbar"),
+            progressDiv.innerHTML = "<label>Paused</label><progress></progress>", 
+            progressul.appendChild(progressDiv),              
+            //progressHelper[uuid].label = filename + " "+ fileSize;
+
+            // var stopuploadButton = document.createElement("li");
+            // stopuploadButton.id= "stopuploadButton"+filename;
+            // stopuploadButton.style.float="right";
+            // stopuploadButton.innerHTML ='<i class="fa fa fa-remove" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
+            // stopuploadButton.onclick=function(event){
+            //     if(repeatFlagStopuploadButton != filename){
+            //         hideFile( progressDiv.id , filename );
+            //         //var tobeHiddenElement = event.target.parentNode.id;
+            //         rtcConn.send({
+            //             type:"shareFileStopUpload", 
+            //             _element: progressDiv.id,
+            //             _filename : filename
+            //         });  
+            //         removeFile(filename);
+            //         repeatFlagStopuploadButton = filename;
+            //     }else if(repeatFlagStopuploadButton == filename){
+            //         repeatFlagStopuploadButton= "";
+            //     }
+            //     //Once the button is clicked , remove the button 
+            //     stopuploadButton.parentNode.removeChild(stopuploadButton);
+            //     //stopuploadButton.hidden = true;
+            //     //stopuploadButton.hide();
+            // },
+            // progressul.appendChild(stopuploadButton);
+            document.getElementById(peerinfo.fileList.container).appendChild(progressul);
+            // document.getElementById(peerinfo.fileList.container).appendChild(stopuploadButton);
+            // document.getElementById(peerinfo.fileList.container).appendChild(progressDiv),   
+        // }else{
+        //     webrtcdev.log(" Not creating progress bar div as it already exists ");
+        // }
+
+    }catch(e){
+        webrtcdev.error(" [filehsraingJs] problem in progress helper " , e);
+    }
+};
 
 
 /**
@@ -16261,9 +16337,7 @@ addProgressHelper = function (uuid , peerinfo , filename , fileSize,  progressHe
             },
             progressul.appendChild(stopuploadButton);
 
-            console.log(" =======document.getElementById(peerinfo.fileList.container)============== " , document.getElementById(peerinfo.fileList.container));
             document.getElementById(peerinfo.fileList.container).appendChild(progressul);
-            alert(" progress bar added");
             // document.getElementById(peerinfo.fileList.container).appendChild(stopuploadButton);
             // document.getElementById(peerinfo.fileList.container).appendChild(progressDiv),   
         // }else{
@@ -18656,6 +18730,7 @@ var channelpresence= false;
 var localVideoStreaming= null;
 var turn="none";
 var localobj={}, remoteobj={};
+var pendingFileTransfer=[];
     //instantiates event emitter
     // EventEmitter.call(this);
 
@@ -19431,16 +19506,9 @@ var setRtcConn = function ( sessionid) {
             webrtcdev.log("[start] file description ", file);
 
             var peerinfo = findPeerInfo(file.userid);
-            if(peerinfo && peerinfo.role =="inspector") return;
-
-            for( x in peerinfo.filearray){
-                if(peerinfo.filearray[x].status=="progress")
-                    alert(" A file is already in progress , add the new file "+file.name+" to queue");
-            }
-
             // add to peerinfo file array
             peerinfo.filearray.push({
-                "name": file.name,
+                "name" : file.name,
                 "status" : "progress"
             });
 
@@ -19492,6 +19560,13 @@ var setRtcConn = function ( sessionid) {
             displayFile(file.uuid, peerinfo, file.url, filename, file.type);
             displayList(file.uuid, peerinfo, file.url, filename, file.type);
             onFileShareEnded(file);
+
+            //start the pending trabsfer frompendingFileTransfer.push(file);
+            if(pendingFileTransfer.length>=1){
+                sendFile(pendingFileTransfer[0]);
+                pendingFileTransfer.pop();
+            }
+
         },
 
         rtcConn.takeSnapshot = function (userid, callback) {

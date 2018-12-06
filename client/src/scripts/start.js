@@ -11,6 +11,7 @@ var channelpresence= false;
 var localVideoStreaming= null;
 var turn="none";
 var localobj={}, remoteobj={};
+var pendingFileTransfer=[];
     //instantiates event emitter
     // EventEmitter.call(this);
 
@@ -786,16 +787,9 @@ var setRtcConn = function ( sessionid) {
             webrtcdev.log("[start] file description ", file);
 
             var peerinfo = findPeerInfo(file.userid);
-            if(peerinfo && peerinfo.role =="inspector") return;
-
-            for( x in peerinfo.filearray){
-                if(peerinfo.filearray[x].status=="progress")
-                    alert(" A file is already in progress , add the new file "+file.name+" to queue");
-            }
-
             // add to peerinfo file array
             peerinfo.filearray.push({
-                "name": file.name,
+                "name" : file.name,
                 "status" : "progress"
             });
 
@@ -847,6 +841,13 @@ var setRtcConn = function ( sessionid) {
             displayFile(file.uuid, peerinfo, file.url, filename, file.type);
             displayList(file.uuid, peerinfo, file.url, filename, file.type);
             onFileShareEnded(file);
+
+            //start the pending trabsfer frompendingFileTransfer.push(file);
+            if(pendingFileTransfer.length>=1){
+                sendFile(pendingFileTransfer[0]);
+                pendingFileTransfer.pop();
+            }
+
         },
 
         rtcConn.takeSnapshot = function (userid, callback) {
