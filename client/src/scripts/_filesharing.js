@@ -52,13 +52,16 @@ function assignFileShareButton(fileshareobj){
  */
 function sendFile(file){
     webrtcdev.log(" [filehsraing js] Send file - " , file );
-    var peerinfo = findPeerInfo(selfuserid);
-    for( x in peerinfo.filearray){
-        if(peerinfo.filearray[x].status=="progress"){
-            alert(" A file is already in progress , add the new file "+file.name+" to queue");
-            pendingFileTransfer.push(file);
-            addstaticProgressHelper(file.uuid, peerinfo, file.name, file.maxChunks, "fileBoxClass")
-            return;
+    //var peerinfo = findPeerInfo(selfuserid);
+    for( x in webcallpeers){
+        for(y in webcallpeers[x].filearray){
+            if(webcallpeers[x].filearray[y].status=="progress"){
+                //alert(" A file is already in progress , add the new file "+file.name+" to queue");
+                //alert("Allow current file to complete uploading, before selecting the next file share upload");
+                pendingFileTransfer.push(file);
+                addstaticProgressHelper(file.uuid, findPeerInfo(selfuserid), file.name, file.maxChunks, file , "fileBoxClass")
+                return;
+            }
         }
     }
     rtcConn.send(file);
@@ -90,7 +93,7 @@ function stopSendFile(file){
  * @name sendFile
  * @param {json} files
  */
-addstaticProgressHelper = function (uuid , peerinfo , filename , fileSize,  progressHelperclassName){
+function addstaticProgressHelper(uuid , peerinfo , filename , fileSize,  file , progressHelperclassName){
     try{
         if(!peerinfo){
             webrtcdev.error(" [filehsraingJs] Progress helpler cannot be added for one peer as its absent")
@@ -101,46 +104,48 @@ addstaticProgressHelper = function (uuid , peerinfo , filename , fileSize,  prog
         }
 
         //if(!document.getElementById(filename)){
-            webrtcdev.log(" [filehsraingJs] progress helper attributes :" , uuid , peerinfo , filename , fileSize,  progressHelperclassName );
+            webrtcdev.log(" [filehsraingJs] static progress helper attributes :" , uuid , peerinfo , filename , fileSize,  progressHelperclassName );
 
             var progressul =  document.createElement("ul");
 
             var progressDiv = document.createElement("li");
             progressDiv.id = filename,
-            progressDiv.title = uuid + filename,
+            progressDiv.title = "paused " + filename+ " size - "+ file.size + " type - "+ file.type + " last modified on -" + file.lastModifiedDate,
             progressDiv.setAttribute("class", progressHelperclassName),
             progressDiv.setAttribute("type", "progressbar"),
-            progressDiv.innerHTML = "<label>Paused</label><progress></progress>", 
+            progressDiv.innerHTML = "<label>Paused</label><progress></progress>",
             progressul.appendChild(progressDiv),              
             //progressHelper[uuid].label = filename + " "+ fileSize;
 
-            // var stopuploadButton = document.createElement("li");
-            // stopuploadButton.id= "stopuploadButton"+filename;
-            // stopuploadButton.style.float="right";
-            // stopuploadButton.innerHTML ='<i class="fa fa fa-remove" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
-            // stopuploadButton.onclick=function(event){
-            //     if(repeatFlagStopuploadButton != filename){
-            //         hideFile( progressDiv.id , filename );
-            //         //var tobeHiddenElement = event.target.parentNode.id;
-            //         rtcConn.send({
-            //             type:"shareFileStopUpload", 
-            //             _element: progressDiv.id,
-            //             _filename : filename
-            //         });  
-            //         removeFile(filename);
-            //         repeatFlagStopuploadButton = filename;
-            //     }else if(repeatFlagStopuploadButton == filename){
-            //         repeatFlagStopuploadButton= "";
-            //     }
-            //     //Once the button is clicked , remove the button 
-            //     stopuploadButton.parentNode.removeChild(stopuploadButton);
-            //     //stopuploadButton.hidden = true;
-            //     //stopuploadButton.hide();
-            // },
-            // progressul.appendChild(stopuploadButton);
-            document.getElementById(peerinfo.fileList.container).appendChild(progressul);
-            // document.getElementById(peerinfo.fileList.container).appendChild(stopuploadButton);
-            // document.getElementById(peerinfo.fileList.container).appendChild(progressDiv),   
+            var stopuploadButton = document.createElement("li");
+            stopuploadButton.id= "stopuploadButton"+filename;
+            stopuploadButton.style.float="right";
+            stopuploadButton.innerHTML ='<i class="fa fa fa-remove" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
+            stopuploadButton.onclick=function(event){
+                if(repeatFlagStopuploadButton != filename){
+                    hideFile( progressDiv.id , filename );
+                    //var tobeHiddenElement = event.target.parentNode.id;
+                    rtcConn.send({
+                        type:"shareFileStopUpload", 
+                        _element: progressDiv.id,
+                        _filename : filename
+                    });  
+                    removeFile(filename);
+                    repeatFlagStopuploadButton = filename;
+                }else if(repeatFlagStopuploadButton == filename){
+                    repeatFlagStopuploadButton= "";
+                }
+                //Once the button is clicked , remove the button 
+                stopuploadButton.parentNode.removeChild(stopuploadButton);
+                //stopuploadButton.hidden = true;
+                //stopuploadButton.hide();
+            },
+            progressul.appendChild(stopuploadButton);
+            
+            //document.getElementById(peerinfo.fileList.container).appendChild(progressul);
+            parentDom = document.getElementById(peerinfo.fileList.container);
+            parentDom.insertBefore(progressul , parentDom.firstChild); 
+ 
         // }else{
         //     webrtcdev.log(" Not creating progress bar div as it already exists ");
         // }
@@ -148,16 +153,20 @@ addstaticProgressHelper = function (uuid , peerinfo , filename , fileSize,  prog
     }catch(e){
         webrtcdev.error(" [filehsraingJs] problem in progress helper " , e);
     }
-};
+}
 
 
 /**
- * Send Old Files
+ * Add progress bar for files sharing in progress
  * @method
- * @name sendFile
- * @param {json} files
+ * @name addProgressHelper
+ * @param {id} uuid
+  * @param {json} peerinfo
+   * @param {string} filename
+    * @param {int} fileSize
+     * @param {string} progressHelperclassName
  */
-addProgressHelper = function (uuid , peerinfo , filename , fileSize,  progressHelperclassName){
+function addProgressHelper(uuid , peerinfo , filename , fileSize,  file , progressHelperclassName){
     try{
         if(!peerinfo){
             webrtcdev.error(" [filehsraingJs] Progress helpler cannot be added for one peer as its absent")
@@ -174,11 +183,11 @@ addProgressHelper = function (uuid , peerinfo , filename , fileSize,  progressHe
 
             var progressDiv = document.createElement("li");
             progressDiv.id = filename,
-            progressDiv.title = uuid + filename,
+            progressDiv.title = filename+ " size - "+ file.size + " type - "+ file.type + " last modified on -" + file.lastModifiedDate,
             progressDiv.setAttribute("class", progressHelperclassName),
             progressDiv.setAttribute("type", "progressbar"),
             progressDiv.innerHTML = "<label>0%</label><progress></progress>", 
-            progressul.appendChild(progressDiv),              
+            progressul.appendChild(progressDiv),
             progressHelper[uuid] = {
                 div: progressDiv,
                 progress: progressDiv.querySelector("progress"),
@@ -212,9 +221,9 @@ addProgressHelper = function (uuid , peerinfo , filename , fileSize,  progressHe
             },
             progressul.appendChild(stopuploadButton);
 
-            document.getElementById(peerinfo.fileList.container).appendChild(progressul);
-            // document.getElementById(peerinfo.fileList.container).appendChild(stopuploadButton);
-            // document.getElementById(peerinfo.fileList.container).appendChild(progressDiv),   
+            parentDom = document.getElementById(peerinfo.fileList.container);
+            parentDom.insertBefore(progressul , parentDom.firstChild); 
+
         // }else{
         //     webrtcdev.log(" Not creating progress bar div as it already exists ");
         // }
@@ -222,7 +231,7 @@ addProgressHelper = function (uuid , peerinfo , filename , fileSize,  progressHe
     }catch(e){
         webrtcdev.error(" [filehsraingJs] problem in progress helper " , e);
     }
-};
+}
 
 /**
  * Request Old Files
@@ -347,8 +356,14 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         if(document.getElementById(filename) && document.getElementById(filename).getAttribute("type")=="progressbar"){
             // if the progress bar exist , remove the progress bar div and create the ul
             let elem = document.getElementById(filename);
-            parentdom = elem.parentNode.parentNode;
-            parentdom.removeChild(elem.parentNode);
+            if(peerinfo.fileList.container && document.getElementById(peerinfo.fileList.container)){
+                parentdom = document.getElementById(peerinfo.fileList.container);
+                parentdom.removeChild(elem.parentNode);
+            }else{
+                parentdom = elem.parentNode.parentNode;
+                parentdom.removeChild(elem.parentNode);
+            }
+
         }else{
             // if the progress bar area does not exist 
             if(document.getElementById(elementList)){
@@ -359,7 +374,6 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
                 parentdom = document.body;
             }
         }
-        console.log(" -------- parent dom ", parentdom);
 
         filedom = document.createElement("ul") ;
         filedom.id = filename;
@@ -496,8 +510,6 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
 
         if(parentdom){
             parentDom2 = parentdom.parentNode;
-            console.log(" parentdom.parentNode  ", parentDom2);
-            console.log(" parentdom.parentNode first child " , parentDom2.firstChild );
             parentDom2.insertBefore(filedom , parentDom2.firstChild); 
             fileListed(filedom);
         }
@@ -1094,6 +1106,7 @@ function createFileListingBox(peerinfo, parent){
         /*-------------------------------- add for File List Container--------------------*/
         var fileListContainer = document.createElement("div");
         fileListContainer.id = peerinfo.fileList.container;
+        fileListContainer.setAttribute("style","float:left");
 
         var fileProgress = document.createElement("div");
 

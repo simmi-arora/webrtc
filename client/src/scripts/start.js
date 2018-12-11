@@ -794,7 +794,7 @@ var setRtcConn = function ( sessionid) {
             });
 
             // create multiple instances           
-            addProgressHelper(file.uuid, peerinfo, file.name, file.maxChunks, "fileBoxClass");
+            addProgressHelper(file.uuid, peerinfo, file.name, file.maxChunks, file , "fileBoxClass");
             onFileShareStart(file);
         },
 
@@ -814,7 +814,6 @@ var setRtcConn = function ( sessionid) {
 
             // Hide the stop upload button for this file 
             var stopuploadbutton = document.getElementById("stopuploadButton"+filename);
-            webrtcdev.log(stopuploadbutton);
             if(stopuploadbutton) stopuploadbutton.hidden=true;
 
             // find duplicate file
@@ -844,6 +843,7 @@ var setRtcConn = function ( sessionid) {
 
             //start the pending trabsfer frompendingFileTransfer.push(file);
             if(pendingFileTransfer.length>=1){
+                document.getElementById(pendingFileTransfer[0].name).hidden = true;
                 sendFile(pendingFileTransfer[0]);
                 pendingFileTransfer.pop();
             }
