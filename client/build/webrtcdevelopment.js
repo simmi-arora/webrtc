@@ -16239,7 +16239,7 @@ function addstaticProgressHelper(uuid , peerinfo , filename , fileSize,  file , 
             progressDiv.setAttribute("class", progressHelperclassName),
             progressDiv.setAttribute("type", "progressbar"),
             progressDiv.innerHTML = "<label>Paused</label><progress></progress>",
-            progressul.appendChild(progressDiv),              
+            progressul.appendChild(progressDiv);           
             //progressHelper[uuid].label = filename + " "+ fileSize;
 
             var stopuploadButton = document.createElement("li");
