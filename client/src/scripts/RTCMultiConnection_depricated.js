@@ -71,50 +71,77 @@
         };
         var connection = this;
         connection.channel = connection.sessionid = (roomid || location.href.replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, "").split("\n").join("").split("\r").join("")) + "";
+        
         var mPeer = new MultiPeers(connection);
-        mPeer.onGettingLocalMedia = function(stream) {
+
+        var preventDuplicateOnStreamEvents = {};
+        mPeer.onGettingLocalMedia = function(stream, callback) {
+            callback = callback || function() {};
+            
             stream.type = "local",
+
             connection.setStreamEndHandler(stream),
+
             getRMCMediaElement(stream, function(mediaElement) {
-                mediaElement.id = stream.streamid,
-                mediaElement.muted = !0,
-                mediaElement.volume = 0,
-                -1 === connection.attachStreams.indexOf(stream) && connection.attachStreams.push(stream),
-                "undefined" != typeof StreamsHandler && StreamsHandler.setHandlers(stream, !0, connection),
+                mediaElement.id = stream.streamid;
+                mediaElement.muted = true;
+                mediaElement.volume = 0;
+
+                if (connection.attachStreams.indexOf(stream) === -1) {
+                    connection.attachStreams.push(stream);
+                }
+
+                if (typeof StreamsHandler !== 'undefined') {
+                    StreamsHandler.setHandlers(stream, true, connection);
+                }
+
                 connection.streamEvents[stream.streamid] = {
                     stream: stream,
-                    type: "local",
+                    type: 'local',
                     mediaElement: mediaElement,
                     userid: connection.userid,
                     extra: connection.extra,
                     streamid: stream.streamid,
-                    blobURL: mediaElement.src || URL.createObjectURL(stream),
-                    isAudioMuted: !0
-                },
-                setHarkEvents(connection, connection.streamEvents[stream.streamid]),
-                setMuteHandlers(connection, connection.streamEvents[stream.streamid]),
-                connection.onstream(connection.streamEvents[stream.streamid])
-            }, connection)
+                    isAudioMuted: true
+                };
+
+                try {
+                    setHarkEvents(connection, connection.streamEvents[stream.streamid]);
+                    setMuteHandlers(connection, connection.streamEvents[stream.streamid]);
+
+                    connection.onstream(connection.streamEvents[stream.streamid]);
+                } catch (e) {
+                    // TBD
+                }
+
+                callback();
+            }, connection);
         }
         ,
         mPeer.onGettingRemoteMedia = function(stream, remoteUserId) {
             stream.type = "remote",
             connection.setStreamEndHandler(stream, "remote-stream"),
+
             getRMCMediaElement(stream, function(mediaElement) {
-                mediaElement.id = stream.streamid,
-                "undefined" != typeof StreamsHandler && StreamsHandler.setHandlers(stream, !1, connection),
+                mediaElement.id = stream.streamid;
+
+                if (typeof StreamsHandler !== 'undefined') {
+                    StreamsHandler.setHandlers(stream, false, connection);
+                }
+
                 connection.streamEvents[stream.streamid] = {
                     stream: stream,
-                    type: "remote",
+                    type: 'remote',
                     userid: remoteUserId,
                     extra: connection.peers[remoteUserId] ? connection.peers[remoteUserId].extra : {},
                     mediaElement: mediaElement,
-                    streamid: stream.streamid,
-                    blobURL: mediaElement.src || URL.createObjectURL(stream)
-                },
-                setMuteHandlers(connection, connection.streamEvents[stream.streamid]),
-                connection.onstream(connection.streamEvents[stream.streamid])
-            }, connection)
+                    streamid: stream.streamid
+                };
+
+                setMuteHandlers(connection, connection.streamEvents[stream.streamid]);
+
+                connection.onstream(connection.streamEvents[stream.streamid]);
+            }, connection);
         }
         ,
         mPeer.onRemovingRemoteMedia = function(stream, remoteUserId) {
@@ -1762,37 +1789,115 @@
         }
         return (Math.random() * (new Date).getTime()).toString(36).replace(/\./g, "")
     }
+
+
+    // Get HTMLAudioElement/HTMLVideoElement accordingly
+    // todo: add API documentation for connection.autoCreateMediaElement
+
     function getRMCMediaElement(stream, callback, connection) {
-        var isAudioOnly = !1;
-        stream.getVideoTracks && !stream.getVideoTracks().length && (isAudioOnly = !0);
-        var mediaElement = document.createElement(isAudioOnly ? "audio" : "video");
-        return isPluginRTC && window.PluginRTC ? (connection.videosContainer.insertBefore(mediaElement, connection.videosContainer.firstChild),
-        void setTimeout(function() {
-            window.PluginRTC.attachMediaStream(mediaElement, stream),
-            callback(mediaElement)
-        }, 1e3)) : (mediaElement[isFirefox ? "mozSrcObject" : "src"] = isFirefox ? stream : window.URL.createObjectURL(stream),
-        mediaElement.controls = !0,
-        isFirefox && mediaElement.addEventListener("ended", function() {
-            if (currentUserMediaRequest.remove(stream.idInstance),
-            "local" === stream.type) {
-                StreamsHandler.onSyncNeeded(stream.streamid, "ended"),
-                connection.attachStreams.forEach(function(aStream, idx) {
-                    stream.streamid === aStream.streamid && delete connection.attachStreams[idx]
-                });
-                var newStreamsArray = [];
-                connection.attachStreams.forEach(function(aStream) {
-                    aStream && newStreamsArray.push(aStream)
-                }),
-                connection.attachStreams = newStreamsArray;
-                var streamEvent = connection.streamEvents[stream.streamid];
-                if (streamEvent)
-                    return void connection.onstreamended(streamEvent);
-                this.parentNode && this.parentNode.removeChild(this)
+        if (!connection.autoCreateMediaElement) {
+            callback({});
+            return;
+        }
+
+        var isAudioOnly = false;
+        if (!!stream.getVideoTracks && !stream.getVideoTracks().length && !stream.isVideo && !stream.isScreen) {
+            isAudioOnly = true;
+        }
+
+        if (DetectRTC.browser.name === 'Firefox') {
+            if (connection.session.video || connection.session.screen) {
+                isAudioOnly = false;
             }
-        }, !1),
-        //mediaElement.play(),
-        void callback(mediaElement))
+        }
+
+        var mediaElement = document.createElement(isAudioOnly ? 'audio' : 'video');
+
+        mediaElement.srcObject = stream;
+
+        try {
+            mediaElement.setAttributeNode(document.createAttribute('autoplay'));
+            mediaElement.setAttributeNode(document.createAttribute('playsinline'));
+            mediaElement.setAttributeNode(document.createAttribute('controls'));
+        } catch (e) {
+            mediaElement.setAttribute('autoplay', true);
+            mediaElement.setAttribute('playsinline', true);
+            mediaElement.setAttribute('controls', true);
+        }
+
+        // http://goo.gl/WZ5nFl
+        // Firefox don't yet support onended for any stream (remote/local)
+        if (DetectRTC.browser.name === 'Firefox') {
+            var streamEndedEvent = 'ended';
+
+            if ('oninactive' in mediaElement) {
+                streamEndedEvent = 'inactive';
+            }
+
+            mediaElement.addEventListener(streamEndedEvent, function() {
+                // fireEvent(stream, streamEndedEvent, stream);
+                currentUserMediaRequest.remove(stream.idInstance);
+
+                if (stream.type === 'local') {
+                    streamEndedEvent = 'ended';
+
+                    if ('oninactive' in stream) {
+                        streamEndedEvent = 'inactive';
+                    }
+
+                    StreamsHandler.onSyncNeeded(stream.streamid, streamEndedEvent);
+
+                    connection.attachStreams.forEach(function(aStream, idx) {
+                        if (stream.streamid === aStream.streamid) {
+                            delete connection.attachStreams[idx];
+                        }
+                    });
+
+                    var newStreamsArray = [];
+                    connection.attachStreams.forEach(function(aStream) {
+                        if (aStream) {
+                            newStreamsArray.push(aStream);
+                        }
+                    });
+                    connection.attachStreams = newStreamsArray;
+
+                    var streamEvent = connection.streamEvents[stream.streamid];
+
+                    if (streamEvent) {
+                        connection.onstreamended(streamEvent);
+                        return;
+                    }
+                    if (this.parentNode) {
+                        this.parentNode.removeChild(this);
+                    }
+                }
+            }, false);
+        }
+
+        var played = mediaElement.play();
+        if (typeof played !== 'undefined') {
+            var cbFired = false;
+            setTimeout(function() {
+                if (!cbFired) {
+                    cbFired = true;
+                    callback(mediaElement);
+                }
+            }, 1000);
+            played.then(function() {
+                if (cbFired) return;
+                cbFired = true;
+                callback(mediaElement);
+            }).catch(function(error) {
+                if (cbFired) return;
+                cbFired = true;
+                callback(mediaElement);
+            });
+        } else {
+            callback(mediaElement);
+        }
     }
+
+
     function listenEventHandler(eventName, eventHandler) {
         window.removeEventListener(eventName, eventHandler),
         window.addEventListener(eventName, eventHandler, !1)

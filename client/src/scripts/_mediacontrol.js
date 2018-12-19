@@ -264,13 +264,13 @@ function attachMediaStream(element, stream) {
         webrtcdev.log("[ Mediacontrol - attachMediaStream ] element.src", typeof element.src ,typeof element.srcObject , " || stream " + stream );
         
         if(stream){
-            if (typeof element.src == 'string') {
-                element.src = URL.createObjectURL(stream);
-            }else if (typeof element.srcObject == 'object') {
+            //if (typeof element.src == 'string') {
+            //    element.src = URL.createObjectURL(stream);
+            //}else if (typeof element.srcObject == 'object') {
                 element.srcObject = stream;
-            }else{
-                webrtcdev.log('Error attaching stream to element.' , element , stream);
-            }
+            //}else{
+            //    webrtcdev.log('Error attaching stream to element.' , element , stream);
+            //}
 
             //element.play();
             webrtcdev.log(" Media Stream attached to " , element , " succesfully");

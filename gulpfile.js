@@ -162,8 +162,10 @@ gulp.task('codecss',function() {
 var scriptList=[
     "client/src/scripts/_init.js",
     "client/src/scripts/_notify.js",
-    //"client/src/scripts/RTCMultiConnection_new.js",
-    "client/src/scripts/RTCMultiConnection.js",
+    "client/src/scripts/DetectRTC.js",
+    "client/src/scripts/RTCMultiConnection_depricated.js",
+    //"client/src/scripts/RTCMultiConnection_latest.js",
+    //"client/src/scripts/RTCMultiConnection_custom.js",
     "client/src/scripts/_screenshare.js",
     "client/src/scripts/_detectRTC.js",
     "client/src/scripts/_webrtcchecks.js",
@@ -190,7 +192,7 @@ var scriptList=[
     "client/src/scripts/_timer.js",
     "client/src/scripts/_stats.js",
     "client/src/scripts/_tracing.js",
-    "client/src/scripts/jszip.js"
+    // "client/src/scripts/jszip.js"
 ];
 
 

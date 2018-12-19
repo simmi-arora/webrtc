@@ -128,11 +128,11 @@ function funcStartWebrtcdev(){
     webrtcdev.log(" startwebrtcdev ");
 
     return new Promise(function (resolve, reject) {
-        detectRTC = DetectRTC;
+       // detectRTC = DetectRTC;
 
-        webrtcdev.log(" [ startJS webrtcdom ] : DetectRTC " , detectRTC);
+        //webrtcdev.log(" [ startJS webrtcdom ] : DetectRTC " , detectRTC);
 
-        if(!detectRTC) resolve("detectRTC not found");
+        //if(!detectRTC) resolve("detectRTC not found");
 
         // // Cases around webcam malfunctiojn or absense 
         // if(!detectRTC.hasWebcam){
@@ -331,22 +331,23 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
                 });
 
                 promise.then(
-                    rtcConn.open(event.channel, function () {
-                        if (selfuserid == null) {
-                            selfuserid = rtcConn.userid;
+                    // rtcConn.open(event.channel, function () {
+                    //     if (selfuserid == null) {
+                    //         selfuserid = rtcConn.userid;
 
-                            if (tempuserid != selfuserid)
-                                socket.emit("update-channel", {
-                                    type: "change-userid",
-                                    channel: rtcConn.channel,
-                                    sender: selfuserid,
-                                    extra: {
-                                        old: tempuserid,
-                                        new: selfuserid
-                                    }
-                                });
-                        }
-                    })
+                    //         if (tempuserid != selfuserid)
+                    //             socket.emit("update-channel", {
+                    //                 type: "change-userid",
+                    //                 channel: rtcConn.channel,
+                    //                 sender: selfuserid,
+                    //                 extra: {
+                    //                     old: tempuserid,
+                    //                     new: selfuserid
+                    //                 }
+                    //             });
+                    //     }
+                    // })
+                    rtcConn.openOrJoin(event.channel)
                 ).then(function(res){
                     updatePeerInfo(selfuserid || rtcConn.userid , selfusername, selfcolor, selfemail, role, "local");
                     webrtcdev.info(" Trying to open a channel on WebRTC SDP ");
@@ -395,7 +396,7 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
                 });
 
                 promise.then(
-                    rtcConn.connectionDescription = rtcConn.join(event.channel),
+                    rtcConn.connectionDescription = rtcConn.openOrJoin(event.channel),
                 ).then(
                     updatePeerInfo(rtcConn.userid, selfusername, selfcolor, selfemail, role, "local"),
                     webrtcdev.info(" Trying to join a channel on WebRTC SDP ")
