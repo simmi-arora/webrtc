@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/mllike/mllike.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/mllike/mllike.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+&quot;use strict&quot;;
+
+CodeMirror.defineMode(&apos;mllike&apos;, function(_config, parserConfig) {
+  var words = {
+    &apos;let&apos;: &apos;keyword&apos;,
+    &apos;rec&apos;: &apos;keyword&apos;,
+    &apos;in&apos;: &apos;keyword&apos;,
+    &apos;of&apos;: &apos;keyword&apos;,
+    &apos;and&apos;: &apos;keyword&apos;,
+    &apos;if&apos;: &apos;keyword&apos;,
+    &apos;then&apos;: &apos;keyword&apos;,
+    &apos;else&apos;: &apos;keyword&apos;,
+    &apos;for&apos;: &apos;keyword&apos;,
+    &apos;to&apos;: &apos;keyword&apos;,
+    &apos;while&apos;: &apos;keyword&apos;,
+    &apos;do&apos;: &apos;keyword&apos;,
+    &apos;done&apos;: &apos;keyword&apos;,
+    &apos;fun&apos;: &apos;keyword&apos;,
+    &apos;function&apos;: &apos;keyword&apos;,
+    &apos;val&apos;: &apos;keyword&apos;,
+    &apos;type&apos;: &apos;keyword&apos;,
+    &apos;mutable&apos;: &apos;keyword&apos;,
+    &apos;match&apos;: &apos;keyword&apos;,
+    &apos;with&apos;: &apos;keyword&apos;,
+    &apos;try&apos;: &apos;keyword&apos;,
+    &apos;open&apos;: &apos;builtin&apos;,
+    &apos;ignore&apos;: &apos;builtin&apos;,
+    &apos;begin&apos;: &apos;keyword&apos;,
+    &apos;end&apos;: &apos;keyword&apos;
+  };
+
+  var extraWords = parserConfig.extraWords || {};
+  for (var prop in extraWords) {
+    if (extraWords.hasOwnProperty(prop)) {
+      words[prop] = parserConfig.extraWords[prop];
+    }
+  }
+
+  function tokenBase(stream, state) {
+    var ch = stream.next();
+
+    if (ch === &apos;&quot;&apos;) {
+      state.tokenize = tokenString;
+      return state.tokenize(stream, state);
+    }
+    if (ch === &apos;(&apos;) {
+      if (stream.eat(&apos;*&apos;)) {
+        state.commentLevel++;
+        state.tokenize = tokenComment;
+        return state.tokenize(stream, state);
+      }
+    }
+    if (ch === &apos;~&apos;) {
+      stream.eatWhile(/\w/);
+      return &apos;variable-2&apos;;
+    }
+    if (ch === &apos;`&apos;) {
+      stream.eatWhile(/\w/);
+      return &apos;quote&apos;;
+    }
+    if (ch === &apos;/&apos; &amp;&amp; parserConfig.slashComments &amp;&amp; stream.eat(&apos;/&apos;)) {
+      stream.skipToEnd();
+      return &apos;comment&apos;;
+    }
+    if (/\d/.test(ch)) {
+      stream.eatWhile(/[\d]/);
+      if (stream.eat(&apos;.&apos;)) {
+        stream.eatWhile(/[\d]/);
+      }
+      return &apos;number&apos;;
+    }
+    if ( /[+\-*&amp;%=&lt;&gt;!?|]/.test(ch)) {
+      return &apos;operator&apos;;
+    }
+    stream.eatWhile(/\w/);
+    var cur = stream.current();
+    return words[cur] || &apos;variable&apos;;
+  }
+
+  function tokenString(stream, state) {
+    var next, end = false, escaped = false;
+    while ((next = stream.next()) != null) {
+      if (next === &apos;&quot;&apos; &amp;&amp; !escaped) {
+        end = true;
+        break;
+      }
+      escaped = !escaped &amp;&amp; next === &apos;\\&apos;;
+    }
+    if (end &amp;&amp; !escaped) {
+      state.tokenize = tokenBase;
+    }
+    return &apos;string&apos;;
+  };
+
+  function tokenComment(stream, state) {
+    var prev, next;
+    while(state.commentLevel &gt; 0 &amp;&amp; (next = stream.next()) != null) {
+      if (prev === &apos;(&apos; &amp;&amp; next === &apos;*&apos;) state.commentLevel++;
+      if (prev === &apos;*&apos; &amp;&amp; next === &apos;)&apos;) state.commentLevel--;
+      prev = next;
+    }
+    if (state.commentLevel &lt;= 0) {
+      state.tokenize = tokenBase;
+    }
+    return &apos;comment&apos;;
+  }
+
+  return {
+    startState: function() {return {tokenize: tokenBase, commentLevel: 0};},
+    token: function(stream, state) {
+      if (stream.eatSpace()) return null;
+      return state.tokenize(stream, state);
+    },
+
+    blockCommentStart: &quot;(*&quot;,
+    blockCommentEnd: &quot;*)&quot;,
+    lineComment: parserConfig.slashComments ? &quot;//&quot; : null
+  };
+});
+
+CodeMirror.defineMIME(&apos;text/x-ocaml&apos;, {
+  name: &apos;mllike&apos;,
+  extraWords: {
+    &apos;succ&apos;: &apos;keyword&apos;,
+    &apos;trace&apos;: &apos;builtin&apos;,
+    &apos;exit&apos;: &apos;builtin&apos;,
+    &apos;print_string&apos;: &apos;builtin&apos;,
+    &apos;print_endline&apos;: &apos;builtin&apos;,
+    &apos;true&apos;: &apos;atom&apos;,
+    &apos;false&apos;: &apos;atom&apos;,
+    &apos;raise&apos;: &apos;keyword&apos;
+  }
+});
+
+CodeMirror.defineMIME(&apos;text/x-fsharp&apos;, {
+  name: &apos;mllike&apos;,
+  extraWords: {
+    &apos;abstract&apos;: &apos;keyword&apos;,
+    &apos;as&apos;: &apos;keyword&apos;,
+    &apos;assert&apos;: &apos;keyword&apos;,
+    &apos;base&apos;: &apos;keyword&apos;,
+    &apos;class&apos;: &apos;keyword&apos;,
+    &apos;default&apos;: &apos;keyword&apos;,
+    &apos;delegate&apos;: &apos;keyword&apos;,
+    &apos;downcast&apos;: &apos;keyword&apos;,
+    &apos;downto&apos;: &apos;keyword&apos;,
+    &apos;elif&apos;: &apos;keyword&apos;,
+    &apos;exception&apos;: &apos;keyword&apos;,
+    &apos;extern&apos;: &apos;keyword&apos;,
+    &apos;finally&apos;: &apos;keyword&apos;,
+    &apos;global&apos;: &apos;keyword&apos;,
+    &apos;inherit&apos;: &apos;keyword&apos;,
+    &apos;inline&apos;: &apos;keyword&apos;,
+    &apos;interface&apos;: &apos;keyword&apos;,
+    &apos;internal&apos;: &apos;keyword&apos;,
+    &apos;lazy&apos;: &apos;keyword&apos;,
+    &apos;let!&apos;: &apos;keyword&apos;,
+    &apos;member&apos; : &apos;keyword&apos;,
+    &apos;module&apos;: &apos;keyword&apos;,
+    &apos;namespace&apos;: &apos;keyword&apos;,
+    &apos;new&apos;: &apos;keyword&apos;,
+    &apos;null&apos;: &apos;keyword&apos;,
+    &apos;override&apos;: &apos;keyword&apos;,
+    &apos;private&apos;: &apos;keyword&apos;,
+    &apos;public&apos;: &apos;keyword&apos;,
+    &apos;return&apos;: &apos;keyword&apos;,
+    &apos;return!&apos;: &apos;keyword&apos;,
+    &apos;select&apos;: &apos;keyword&apos;,
+    &apos;static&apos;: &apos;keyword&apos;,
+    &apos;struct&apos;: &apos;keyword&apos;,
+    &apos;upcast&apos;: &apos;keyword&apos;,
+    &apos;use&apos;: &apos;keyword&apos;,
+    &apos;use!&apos;: &apos;keyword&apos;,
+    &apos;val&apos;: &apos;keyword&apos;,
+    &apos;when&apos;: &apos;keyword&apos;,
+    &apos;yield&apos;: &apos;keyword&apos;,
+    &apos;yield!&apos;: &apos;keyword&apos;,
+
+    &apos;List&apos;: &apos;builtin&apos;,
+    &apos;Seq&apos;: &apos;builtin&apos;,
+    &apos;Map&apos;: &apos;builtin&apos;,
+    &apos;Set&apos;: &apos;builtin&apos;,
+    &apos;int&apos;: &apos;builtin&apos;,
+    &apos;string&apos;: &apos;builtin&apos;,
+    &apos;raise&apos;: &apos;builtin&apos;,
+    &apos;failwith&apos;: &apos;builtin&apos;,
+    &apos;not&apos;: &apos;builtin&apos;,
+    &apos;true&apos;: &apos;builtin&apos;,
+    &apos;false&apos;: &apos;builtin&apos;
+  },
+  slashComments: true
+});
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

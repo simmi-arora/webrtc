@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/addon/mode/multiplex.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/addon/mode/multiplex.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+&quot;use strict&quot;;
+
+CodeMirror.multiplexingMode = function(outer /*, others */) {
+  // Others should be {open, close, mode [, delimStyle] [, innerStyle]} objects
+  var others = Array.prototype.slice.call(arguments, 1);
+  var n_others = others.length;
+
+  function indexOf(string, pattern, from) {
+    if (typeof pattern == &quot;string&quot;) return string.indexOf(pattern, from);
+    var m = pattern.exec(from ? string.slice(from) : string);
+    return m ? m.index + from : -1;
+  }
+
+  return {
+    startState: function() {
+      return {
+        outer: CodeMirror.startState(outer),
+        innerActive: null,
+        inner: null
+      };
+    },
+
+    copyState: function(state) {
+      return {
+        outer: CodeMirror.copyState(outer, state.outer),
+        innerActive: state.innerActive,
+        inner: state.innerActive &amp;&amp; CodeMirror.copyState(state.innerActive.mode, state.inner)
+      };
+    },
+
+    token: function(stream, state) {
+      if (!state.innerActive) {
+        var cutOff = Infinity, oldContent = stream.string;
+        for (var i = 0; i &lt; n_others; ++i) {
+          var other = others[i];
+          var found = indexOf(oldContent, other.open, stream.pos);
+          if (found == stream.pos) {
+            stream.match(other.open);
+            state.innerActive = other;
+            state.inner = CodeMirror.startState(other.mode, outer.indent ? outer.indent(state.outer, &quot;&quot;) : 0);
+            return other.delimStyle;
+          } else if (found != -1 &amp;&amp; found &lt; cutOff) {
+            cutOff = found;
+          }
+        }
+        if (cutOff != Infinity) stream.string = oldContent.slice(0, cutOff);
+        var outerToken = outer.token(stream, state.outer);
+        if (cutOff != Infinity) stream.string = oldContent;
+        return outerToken;
+      } else {
+        var curInner = state.innerActive, oldContent = stream.string;
+        if (!curInner.close &amp;&amp; stream.sol()) {
+          state.innerActive = state.inner = null;
+          return this.token(stream, state);
+        }
+        var found = curInner.close ? indexOf(oldContent, curInner.close, stream.pos) : -1;
+        if (found == stream.pos) {
+          stream.match(curInner.close);
+          state.innerActive = state.inner = null;
+          return curInner.delimStyle;
+        }
+        if (found &gt; -1) stream.string = oldContent.slice(0, found);
+        var innerToken = curInner.mode.token(stream, state.inner);
+        if (found &gt; -1) stream.string = oldContent;
+
+        if (curInner.innerStyle) {
+          if (innerToken) innerToken = innerToken + &apos; &apos; + curInner.innerStyle;
+          else innerToken = curInner.innerStyle;
+        }
+
+        return innerToken;
+      }
+    },
+
+    indent: function(state, textAfter) {
+      var mode = state.innerActive ? state.innerActive.mode : outer;
+      if (!mode.indent) return CodeMirror.Pass;
+      return mode.indent(state.innerActive ? state.inner : state.outer, textAfter);
+    },
+
+    blankLine: function(state) {
+      var mode = state.innerActive ? state.innerActive.mode : outer;
+      if (mode.blankLine) {
+        mode.blankLine(state.innerActive ? state.inner : state.outer);
+      }
+      if (!state.innerActive) {
+        for (var i = 0; i &lt; n_others; ++i) {
+          var other = others[i];
+          if (other.open === &quot;\n&quot;) {
+            state.innerActive = other;
+            state.inner = CodeMirror.startState(other.mode, mode.indent ? mode.indent(state.outer, &quot;&quot;) : 0);
+          }
+        }
+      } else if (state.innerActive.close === &quot;\n&quot;) {
+        state.innerActive = state.inner = null;
+      }
+    },
+
+    electricChars: outer.electricChars,
+
+    innerMode: function(state) {
+      return state.inner ? {state: state.inner, mode: state.innerActive.mode} : {state: state.outer, mode: outer};
+    }
+  };
+};
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

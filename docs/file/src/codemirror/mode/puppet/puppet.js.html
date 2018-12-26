@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/puppet/puppet.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/puppet/puppet.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+&quot;use strict&quot;;
+
+CodeMirror.defineMode(&quot;puppet&quot;, function () {
+  // Stores the words from the define method
+  var words = {};
+  // Taken, mostly, from the Puppet official variable standards regex
+  var variable_regex = /({)?([a-z][a-z0-9_]*)?((::[a-z][a-z0-9_]*)*::)?[a-zA-Z0-9_]+(})?/;
+
+  // Takes a string of words separated by spaces and adds them as
+  // keys with the value of the first argument &apos;style&apos;
+  function define(style, string) {
+    var split = string.split(&apos; &apos;);
+    for (var i = 0; i &lt; split.length; i++) {
+      words[split[i]] = style;
+    }
+  }
+
+  // Takes commonly known puppet types/words and classifies them to a style
+  define(&apos;keyword&apos;, &apos;class define site node include import inherits&apos;);
+  define(&apos;keyword&apos;, &apos;case if else in and elsif default or&apos;);
+  define(&apos;atom&apos;, &apos;false true running present absent file directory undef&apos;);
+  define(&apos;builtin&apos;, &apos;action augeas burst chain computer cron destination dport exec &apos; +
+    &apos;file filebucket group host icmp iniface interface jump k5login limit log_level &apos; +
+    &apos;log_prefix macauthorization mailalias maillist mcx mount nagios_command &apos; +
+    &apos;nagios_contact nagios_contactgroup nagios_host nagios_hostdependency &apos; +
+    &apos;nagios_hostescalation nagios_hostextinfo nagios_hostgroup nagios_service &apos; +
+    &apos;nagios_servicedependency nagios_serviceescalation nagios_serviceextinfo &apos; +
+    &apos;nagios_servicegroup nagios_timeperiod name notify outiface package proto reject &apos; +
+    &apos;resources router schedule scheduled_task selboolean selmodule service source &apos; +
+    &apos;sport ssh_authorized_key sshkey stage state table tidy todest toports tosource &apos; +
+    &apos;user vlan yumrepo zfs zone zpool&apos;);
+
+  // After finding a start of a string (&apos;|&quot;) this function attempts to find the end;
+  // If a variable is encountered along the way, we display it differently when it
+  // is encapsulated in a double-quoted string.
+  function tokenString(stream, state) {
+    var current, prev, found_var = false;
+    while (!stream.eol() &amp;&amp; (current = stream.next()) != state.pending) {
+      if (current === &apos;$&apos; &amp;&amp; prev != &apos;\\&apos; &amp;&amp; state.pending == &apos;&quot;&apos;) {
+        found_var = true;
+        break;
+      }
+      prev = current;
+    }
+    if (found_var) {
+      stream.backUp(1);
+    }
+    if (current == state.pending) {
+      state.continueString = false;
+    } else {
+      state.continueString = true;
+    }
+    return &quot;string&quot;;
+  }
+
+  // Main function
+  function tokenize(stream, state) {
+    // Matches one whole word
+    var word = stream.match(/[\w]+/, false);
+    // Matches attributes (i.e. ensure =&gt; present ; &apos;ensure&apos; would be matched)
+    var attribute = stream.match(/(\s+)?\w+\s+=&gt;.*/, false);
+    // Matches non-builtin resource declarations
+    // (i.e. &quot;apache::vhost {&quot; or &quot;mycustomclasss {&quot; would be matched)
+    var resource = stream.match(/(\s+)?[\w:_]+(\s+)?{/, false);
+    // Matches virtual and exported resources (i.e. @@user { ; and the like)
+    var special_resource = stream.match(/(\s+)?[@]{1,2}[\w:_]+(\s+)?{/, false);
+
+    // Finally advance the stream
+    var ch = stream.next();
+
+    // Have we found a variable?
+    if (ch === &apos;$&apos;) {
+      if (stream.match(variable_regex)) {
+        // If so, and its in a string, assign it a different color
+        return state.continueString ? &apos;variable-2&apos; : &apos;variable&apos;;
+      }
+      // Otherwise return an invalid variable
+      return &quot;error&quot;;
+    }
+    // Should we still be looking for the end of a string?
+    if (state.continueString) {
+      // If so, go through the loop again
+      stream.backUp(1);
+      return tokenString(stream, state);
+    }
+    // Are we in a definition (class, node, define)?
+    if (state.inDefinition) {
+      // If so, return def (i.e. for &apos;class myclass {&apos; ; &apos;myclass&apos; would be matched)
+      if (stream.match(/(\s+)?[\w:_]+(\s+)?/)) {
+        return &apos;def&apos;;
+      }
+      // Match the rest it the next time around
+      stream.match(/\s+{/);
+      state.inDefinition = false;
+    }
+    // Are we in an &apos;include&apos; statement?
+    if (state.inInclude) {
+      // Match and return the included class
+      stream.match(/(\s+)?\S+(\s+)?/);
+      state.inInclude = false;
+      return &apos;def&apos;;
+    }
+    // Do we just have a function on our hands?
+    // In &apos;ensure_resource(&quot;myclass&quot;)&apos;, &apos;ensure_resource&apos; is matched
+    if (stream.match(/(\s+)?\w+\(/)) {
+      stream.backUp(1);
+      return &apos;def&apos;;
+    }
+    // Have we matched the prior attribute regex?
+    if (attribute) {
+      stream.match(/(\s+)?\w+/);
+      return &apos;tag&apos;;
+    }
+    // Do we have Puppet specific words?
+    if (word &amp;&amp; words.hasOwnProperty(word)) {
+      // Negates the initial next()
+      stream.backUp(1);
+      // Acutally move the stream
+      stream.match(/[\w]+/);
+      // We want to process these words differently
+      // do to the importance they have in Puppet
+      if (stream.match(/\s+\S+\s+{/, false)) {
+        state.inDefinition = true;
+      }
+      if (word == &apos;include&apos;) {
+        state.inInclude = true;
+      }
+      // Returns their value as state in the prior define methods
+      return words[word];
+    }
+    // Is there a match on a reference?
+    if (/(\s+)?[A-Z]/.test(word)) {
+      // Negate the next()
+      stream.backUp(1);
+      // Match the full reference
+      stream.match(/(\s+)?[A-Z][\w:_]+/);
+      return &apos;def&apos;;
+    }
+    // Have we matched the prior resource regex?
+    if (resource) {
+      stream.match(/(\s+)?[\w:_]+/);
+      return &apos;def&apos;;
+    }
+    // Have we matched the prior special_resource regex?
+    if (special_resource) {
+      stream.match(/(\s+)?[@]{1,2}/);
+      return &apos;special&apos;;
+    }
+    // Match all the comments. All of them.
+    if (ch == &quot;#&quot;) {
+      stream.skipToEnd();
+      return &quot;comment&quot;;
+    }
+    // Have we found a string?
+    if (ch == &quot;&apos;&quot; || ch == &apos;&quot;&apos;) {
+      // Store the type (single or double)
+      state.pending = ch;
+      // Perform the looping function to find the end
+      return tokenString(stream, state);
+    }
+    // Match all the brackets
+    if (ch == &apos;{&apos; || ch == &apos;}&apos;) {
+      return &apos;bracket&apos;;
+    }
+    // Match characters that we are going to assume
+    // are trying to be regex
+    if (ch == &apos;/&apos;) {
+      stream.match(/.*?\//);
+      return &apos;variable-3&apos;;
+    }
+    // Match all the numbers
+    if (ch.match(/[0-9]/)) {
+      stream.eatWhile(/[0-9]+/);
+      return &apos;number&apos;;
+    }
+    // Match the &apos;=&apos; and &apos;=&gt;&apos; operators
+    if (ch == &apos;=&apos;) {
+      if (stream.peek() == &apos;&gt;&apos;) {
+          stream.next();
+      }
+      return &quot;operator&quot;;
+    }
+    // Keep advancing through all the rest
+    stream.eatWhile(/[\w-]/);
+    // Return a blank line for everything else
+    return null;
+  }
+  // Start it all
+  return {
+    startState: function () {
+      var state = {};
+      state.inDefinition = false;
+      state.inInclude = false;
+      state.continueString = false;
+      state.pending = false;
+      return state;
+    },
+    token: function (stream, state) {
+      // Strip the spaces, but regex will account for them eitherway
+      if (stream.eatSpace()) return null;
+      // Go through the main process
+      return tokenize(stream, state);
+    }
+  };
+});
+
+CodeMirror.defineMIME(&quot;text/x-puppet&quot;, &quot;puppet&quot;);
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/markdown/markdown.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/markdown/markdown.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;, require(&quot;../xml/xml&quot;)));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;, &quot;../xml/xml&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+&quot;use strict&quot;;
+
+CodeMirror.defineMode(&quot;markdown&quot;, function(cmCfg, modeCfg) {
+
+  var htmlFound = CodeMirror.modes.hasOwnProperty(&quot;xml&quot;);
+  var htmlMode = CodeMirror.getMode(cmCfg, htmlFound ? {name: &quot;xml&quot;, htmlMode: true} : &quot;text/plain&quot;);
+  var aliases = {
+    html: &quot;htmlmixed&quot;,
+    js: &quot;javascript&quot;,
+    json: &quot;application/json&quot;,
+    c: &quot;text/x-csrc&quot;,
+    &quot;c++&quot;: &quot;text/x-c++src&quot;,
+    java: &quot;text/x-java&quot;,
+    csharp: &quot;text/x-csharp&quot;,
+    &quot;c#&quot;: &quot;text/x-csharp&quot;,
+    scala: &quot;text/x-scala&quot;
+  };
+
+  var getMode = (function () {
+    var i, modes = {}, mimes = {}, mime;
+
+    var list = [];
+    for (var m in CodeMirror.modes)
+      if (CodeMirror.modes.propertyIsEnumerable(m)) list.push(m);
+    for (i = 0; i &lt; list.length; i++) {
+      modes[list[i]] = list[i];
+    }
+    var mimesList = [];
+    for (var m in CodeMirror.mimeModes)
+      if (CodeMirror.mimeModes.propertyIsEnumerable(m))
+        mimesList.push({mime: m, mode: CodeMirror.mimeModes[m]});
+    for (i = 0; i &lt; mimesList.length; i++) {
+      mime = mimesList[i].mime;
+      mimes[mime] = mimesList[i].mime;
+    }
+
+    for (var a in aliases) {
+      if (aliases[a] in modes || aliases[a] in mimes)
+        modes[a] = aliases[a];
+    }
+
+    return function (lang) {
+      return modes[lang] ? CodeMirror.getMode(cmCfg, modes[lang]) : null;
+    };
+  }());
+
+  // Should characters that affect highlighting be highlighted separate?
+  // Does not include characters that will be output (such as `1.` and `-` for lists)
+  if (modeCfg.highlightFormatting === undefined)
+    modeCfg.highlightFormatting = false;
+
+  // Maximum number of nested blockquotes. Set to 0 for infinite nesting.
+  // Excess `&gt;` will emit `error` token.
+  if (modeCfg.maxBlockquoteDepth === undefined)
+    modeCfg.maxBlockquoteDepth = 0;
+
+  // Should underscores in words open/close em/strong?
+  if (modeCfg.underscoresBreakWords === undefined)
+    modeCfg.underscoresBreakWords = true;
+
+  // Turn on fenced code blocks? (&quot;```&quot; to start/end)
+  if (modeCfg.fencedCodeBlocks === undefined) modeCfg.fencedCodeBlocks = false;
+
+  // Turn on task lists? (&quot;- [ ] &quot; and &quot;- [x] &quot;)
+  if (modeCfg.taskLists === undefined) modeCfg.taskLists = false;
+
+  var codeDepth = 0;
+
+  var header   = &apos;header&apos;
+  ,   code     = &apos;comment&apos;
+  ,   quote    = &apos;quote&apos;
+  ,   list1    = &apos;variable-2&apos;
+  ,   list2    = &apos;variable-3&apos;
+  ,   list3    = &apos;keyword&apos;
+  ,   hr       = &apos;hr&apos;
+  ,   image    = &apos;tag&apos;
+  ,   formatting = &apos;formatting&apos;
+  ,   linkinline = &apos;link&apos;
+  ,   linkemail = &apos;link&apos;
+  ,   linktext = &apos;link&apos;
+  ,   linkhref = &apos;string&apos;
+  ,   em       = &apos;em&apos;
+  ,   strong   = &apos;strong&apos;;
+
+  var hrRE = /^([*\-=_])(?:\s*\1){2,}\s*$/
+  ,   ulRE = /^[*\-+]\s+/
+  ,   olRE = /^[0-9]+\.\s+/
+  ,   taskListRE = /^\[(x| )\](?=\s)/ // Must follow ulRE or olRE
+  ,   atxHeaderRE = /^#+/
+  ,   setextHeaderRE = /^(?:\={1,}|-{1,})$/
+  ,   textRE = /^[^#!\[\]*_\\&lt;&gt;` &quot;&apos;(]+/;
+
+  function switchInline(stream, state, f) {
+    state.f = state.inline = f;
+    return f(stream, state);
+  }
+
+  function switchBlock(stream, state, f) {
+    state.f = state.block = f;
+    return f(stream, state);
+  }
+
+
+  // Blocks
+
+  function blankLine(state) {
+    // Reset linkTitle state
+    state.linkTitle = false;
+    // Reset EM state
+    state.em = false;
+    // Reset STRONG state
+    state.strong = false;
+    // Reset state.quote
+    state.quote = 0;
+    if (!htmlFound &amp;&amp; state.f == htmlBlock) {
+      state.f = inlineNormal;
+      state.block = blockNormal;
+    }
+    // Reset state.trailingSpace
+    state.trailingSpace = 0;
+    state.trailingSpaceNewLine = false;
+    // Mark this line as blank
+    state.thisLineHasContent = false;
+    return null;
+  }
+
+  function blockNormal(stream, state) {
+
+    var sol = stream.sol();
+
+    var prevLineIsList = (state.list !== false);
+    if (state.list !== false &amp;&amp; state.indentationDiff &gt;= 0) { // Continued list
+      if (state.indentationDiff &lt; 4) { // Only adjust indentation if *not* a code block
+        state.indentation -= state.indentationDiff;
+      }
+      state.list = null;
+    } else if (state.list !== false &amp;&amp; state.indentation &gt; 0) {
+      state.list = null;
+      state.listDepth = Math.floor(state.indentation / 4);
+    } else if (state.list !== false) { // No longer a list
+      state.list = false;
+      state.listDepth = 0;
+    }
+
+    var match = null;
+    if (state.indentationDiff &gt;= 4) {
+      state.indentation -= 4;
+      stream.skipToEnd();
+      return code;
+    } else if (stream.eatSpace()) {
+      return null;
+    } else if (match = stream.match(atxHeaderRE)) {
+      state.header = match[0].length &lt;= 6 ? match[0].length : 6;
+      if (modeCfg.highlightFormatting) state.formatting = &quot;header&quot;;
+      state.f = state.inline;
+      return getType(state);
+    } else if (state.prevLineHasContent &amp;&amp; (match = stream.match(setextHeaderRE))) {
+      state.header = match[0].charAt(0) == &apos;=&apos; ? 1 : 2;
+      if (modeCfg.highlightFormatting) state.formatting = &quot;header&quot;;
+      state.f = state.inline;
+      return getType(state);
+    } else if (stream.eat(&apos;&gt;&apos;)) {
+      state.indentation++;
+      state.quote = sol ? 1 : state.quote + 1;
+      if (modeCfg.highlightFormatting) state.formatting = &quot;quote&quot;;
+      stream.eatSpace();
+      return getType(state);
+    } else if (stream.peek() === &apos;[&apos;) {
+      return switchInline(stream, state, footnoteLink);
+    } else if (stream.match(hrRE, true)) {
+      return hr;
+    } else if ((!state.prevLineHasContent || prevLineIsList) &amp;&amp; (stream.match(ulRE, false) || stream.match(olRE, false))) {
+      var listType = null;
+      if (stream.match(ulRE, true)) {
+        listType = &apos;ul&apos;;
+      } else {
+        stream.match(olRE, true);
+        listType = &apos;ol&apos;;
+      }
+      state.indentation += 4;
+      state.list = true;
+      state.listDepth++;
+      if (modeCfg.taskLists &amp;&amp; stream.match(taskListRE, false)) {
+        state.taskList = true;
+      }
+      state.f = state.inline;
+      if (modeCfg.highlightFormatting) state.formatting = [&quot;list&quot;, &quot;list-&quot; + listType];
+      return getType(state);
+    } else if (modeCfg.fencedCodeBlocks &amp;&amp; stream.match(/^```([\w+#]*)/, true)) {
+      // try switching mode
+      state.localMode = getMode(RegExp.$1);
+      if (state.localMode) state.localState = state.localMode.startState();
+      switchBlock(stream, state, local);
+      if (modeCfg.highlightFormatting) state.formatting = &quot;code-block&quot;;
+      state.code = true;
+      return getType(state);
+    }
+
+    return switchInline(stream, state, state.inline);
+  }
+
+  function htmlBlock(stream, state) {
+    var style = htmlMode.token(stream, state.htmlState);
+    if ((htmlFound &amp;&amp; state.htmlState.tagStart === null &amp;&amp; !state.htmlState.context) ||
+        (state.md_inside &amp;&amp; stream.current().indexOf(&quot;&gt;&quot;) &gt; -1)) {
+      state.f = inlineNormal;
+      state.block = blockNormal;
+      state.htmlState = null;
+    }
+    return style;
+  }
+
+  function local(stream, state) {
+    if (stream.sol() &amp;&amp; stream.match(/^```/, true)) {
+      state.localMode = state.localState = null;
+      state.f = inlineNormal;
+      state.block = blockNormal;
+      if (modeCfg.highlightFormatting) state.formatting = &quot;code-block&quot;;
+      state.code = true;
+      var returnType = getType(state);
+      state.code = false;
+      return returnType;
+    } else if (state.localMode) {
+      return state.localMode.token(stream, state.localState);
+    } else {
+      stream.skipToEnd();
+      return code;
+    }
+  }
+
+  // Inline
+  function getType(state) {
+    var styles = [];
+
+    if (state.formatting) {
+      styles.push(formatting);
+
+      if (typeof state.formatting === &quot;string&quot;) state.formatting = [state.formatting];
+
+      for (var i = 0; i &lt; state.formatting.length; i++) {
+        styles.push(formatting + &quot;-&quot; + state.formatting[i]);
+
+        if (state.formatting[i] === &quot;header&quot;) {
+          styles.push(formatting + &quot;-&quot; + state.formatting[i] + &quot;-&quot; + state.header);
+        }
+
+        // Add `formatting-quote` and `formatting-quote-#` for blockquotes
+        // Add `error` instead if the maximum blockquote nesting depth is passed
+        if (state.formatting[i] === &quot;quote&quot;) {
+          if (!modeCfg.maxBlockquoteDepth || modeCfg.maxBlockquoteDepth &gt;= state.quote) {
+            styles.push(formatting + &quot;-&quot; + state.formatting[i] + &quot;-&quot; + state.quote);
+          } else {
+            styles.push(&quot;error&quot;);
+          }
+        }
+      }
+    }
+
+    if (state.taskOpen) {
+      styles.push(&quot;meta&quot;);
+      return styles.length ? styles.join(&apos; &apos;) : null;
+    }
+    if (state.taskClosed) {
+      styles.push(&quot;property&quot;);
+      return styles.length ? styles.join(&apos; &apos;) : null;
+    }
+
+    if (state.linkHref) {
+      styles.push(linkhref);
+      return styles.length ? styles.join(&apos; &apos;) : null;
+    }
+
+    if (state.strong) { styles.push(strong); }
+    if (state.em) { styles.push(em); }
+
+    if (state.linkText) { styles.push(linktext); }
+
+    if (state.code) { styles.push(code); }
+
+    if (state.header) { styles.push(header); styles.push(header + &quot;-&quot; + state.header); }
+
+    if (state.quote) {
+      styles.push(quote);
+
+      // Add `quote-#` where the maximum for `#` is modeCfg.maxBlockquoteDepth
+      if (!modeCfg.maxBlockquoteDepth || modeCfg.maxBlockquoteDepth &gt;= state.quote) {
+        styles.push(quote + &quot;-&quot; + state.quote);
+      } else {
+        styles.push(quote + &quot;-&quot; + modeCfg.maxBlockquoteDepth);
+      }
+    }
+
+    if (state.list !== false) {
+      var listMod = (state.listDepth - 1) % 3;
+      if (!listMod) {
+        styles.push(list1);
+      } else if (listMod === 1) {
+        styles.push(list2);
+      } else {
+        styles.push(list3);
+      }
+    }
+
+    if (state.trailingSpaceNewLine) {
+      styles.push(&quot;trailing-space-new-line&quot;);
+    } else if (state.trailingSpace) {
+      styles.push(&quot;trailing-space-&quot; + (state.trailingSpace % 2 ? &quot;a&quot; : &quot;b&quot;));
+    }
+
+    return styles.length ? styles.join(&apos; &apos;) : null;
+  }
+
+  function handleText(stream, state) {
+    if (stream.match(textRE, true)) {
+      return getType(state);
+    }
+    return undefined;
+  }
+
+  function inlineNormal(stream, state) {
+    var style = state.text(stream, state);
+    if (typeof style !== &apos;undefined&apos;)
+      return style;
+
+    if (state.list) { // List marker (*, +, -, 1., etc)
+      state.list = null;
+      return getType(state);
+    }
+
+    if (state.taskList) {
+      var taskOpen = stream.match(taskListRE, true)[1] !== &quot;x&quot;;
+      if (taskOpen) state.taskOpen = true;
+      else state.taskClosed = true;
+      if (modeCfg.highlightFormatting) state.formatting = &quot;task&quot;;
+      state.taskList = false;
+      return getType(state);
+    }
+
+    state.taskOpen = false;
+    state.taskClosed = false;
+
+    if (state.header &amp;&amp; stream.match(/^#+$/, true)) {
+      if (modeCfg.highlightFormatting) state.formatting = &quot;header&quot;;
+      return getType(state);
+    }
+
+    // Get sol() value now, before character is consumed
+    var sol = stream.sol();
+
+    var ch = stream.next();
+
+    if (ch === &apos;\\&apos;) {
+      stream.next();
+      if (modeCfg.highlightFormatting) {
+        var type = getType(state);
+        return type ? type + &quot; formatting-escape&quot; : &quot;formatting-escape&quot;;
+      }
+    }
+
+    // Matches link titles present on next line
+    if (state.linkTitle) {
+      state.linkTitle = false;
+      var matchCh = ch;
+      if (ch === &apos;(&apos;) {
+        matchCh = &apos;)&apos;;
+      }
+      matchCh = (matchCh+&apos;&apos;).replace(/([.?*+^$[\]\\(){}|-])/g, &quot;\\$1&quot;);
+      var regex = &apos;^\\s*(?:[^&apos; + matchCh + &apos;\\\\]+|\\\\\\\\|\\\\.)&apos; + matchCh;
+      if (stream.match(new RegExp(regex), true)) {
+        return linkhref;
+      }
+    }
+
+    // If this block is changed, it may need to be updated in GFM mode
+    if (ch === &apos;`&apos;) {
+      var previousFormatting = state.formatting;
+      if (modeCfg.highlightFormatting) state.formatting = &quot;code&quot;;
+      var t = getType(state);
+      var before = stream.pos;
+      stream.eatWhile(&apos;`&apos;);
+      var difference = 1 + stream.pos - before;
+      if (!state.code) {
+        codeDepth = difference;
+        state.code = true;
+        return getType(state);
+      } else {
+        if (difference === codeDepth) { // Must be exact
+          state.code = false;
+          return t;
+        }
+        state.formatting = previousFormatting;
+        return getType(state);
+      }
+    } else if (state.code) {
+      return getType(state);
+    }
+
+    if (ch === &apos;!&apos; &amp;&amp; stream.match(/\[[^\]]*\] ?(?:\(|\[)/, false)) {
+      stream.match(/\[[^\]]*\]/);
+      state.inline = state.f = linkHref;
+      return image;
+    }
+
+    if (ch === &apos;[&apos; &amp;&amp; stream.match(/.*\](\(| ?\[)/, false)) {
+      state.linkText = true;
+      if (modeCfg.highlightFormatting) state.formatting = &quot;link&quot;;
+      return getType(state);
+    }
+
+    if (ch === &apos;]&apos; &amp;&amp; state.linkText) {
+      if (modeCfg.highlightFormatting) state.formatting = &quot;link&quot;;
+      var type = getType(state);
+      state.linkText = false;
+      state.inline = state.f = linkHref;
+      return type;
+    }
+
+    if (ch === &apos;&lt;&apos; &amp;&amp; stream.match(/^(https?|ftps?):\/\/(?:[^\\&gt;]|\\.)+&gt;/, false)) {
+      state.f = state.inline = linkInline;
+      if (modeCfg.highlightFormatting) state.formatting = &quot;link&quot;;
+      var type = getType(state);
+      if (type){
+        type += &quot; &quot;;
+      } else {
+        type = &quot;&quot;;
+      }
+      return type + linkinline;
+    }
+
+    if (ch === &apos;&lt;&apos; &amp;&amp; stream.match(/^[^&gt; \\]+@(?:[^\\&gt;]|\\.)+&gt;/, false)) {
+      state.f = state.inline = linkInline;
+      if (modeCfg.highlightFormatting) state.formatting = &quot;link&quot;;
+      var type = getType(state);
+      if (type){
+        type += &quot; &quot;;
+      } else {
+        type = &quot;&quot;;
+      }
+      return type + linkemail;
+    }
+
+    if (ch === &apos;&lt;&apos; &amp;&amp; stream.match(/^\w/, false)) {
+      if (stream.string.indexOf(&quot;&gt;&quot;) != -1) {
+        var atts = stream.string.substring(1,stream.string.indexOf(&quot;&gt;&quot;));
+        if (/markdown\s*=\s*(&apos;|&quot;){0,1}1(&apos;|&quot;){0,1}/.test(atts)) {
+          state.md_inside = true;
+        }
+      }
+      stream.backUp(1);
+      state.htmlState = CodeMirror.startState(htmlMode);
+      return switchBlock(stream, state, htmlBlock);
+    }
+
+    if (ch === &apos;&lt;&apos; &amp;&amp; stream.match(/^\/\w*?&gt;/)) {
+      state.md_inside = false;
+      return &quot;tag&quot;;
+    }
+
+    var ignoreUnderscore = false;
+    if (!modeCfg.underscoresBreakWords) {
+      if (ch === &apos;_&apos; &amp;&amp; stream.peek() !== &apos;_&apos; &amp;&amp; stream.match(/(\w)/, false)) {
+        var prevPos = stream.pos - 2;
+        if (prevPos &gt;= 0) {
+          var prevCh = stream.string.charAt(prevPos);
+          if (prevCh !== &apos;_&apos; &amp;&amp; prevCh.match(/(\w)/, false)) {
+            ignoreUnderscore = true;
+          }
+        }
+      }
+    }
+    if (ch === &apos;*&apos; || (ch === &apos;_&apos; &amp;&amp; !ignoreUnderscore)) {
+      if (sol &amp;&amp; stream.peek() === &apos; &apos;) {
+        // Do nothing, surrounded by newline and space
+      } else if (state.strong === ch &amp;&amp; stream.eat(ch)) { // Remove STRONG
+        if (modeCfg.highlightFormatting) state.formatting = &quot;strong&quot;;
+        var t = getType(state);
+        state.strong = false;
+        return t;
+      } else if (!state.strong &amp;&amp; stream.eat(ch)) { // Add STRONG
+        state.strong = ch;
+        if (modeCfg.highlightFormatting) state.formatting = &quot;strong&quot;;
+        return getType(state);
+      } else if (state.em === ch) { // Remove EM
+        if (modeCfg.highlightFormatting) state.formatting = &quot;em&quot;;
+        var t = getType(state);
+        state.em = false;
+        return t;
+      } else if (!state.em) { // Add EM
+        state.em = ch;
+        if (modeCfg.highlightFormatting) state.formatting = &quot;em&quot;;
+        return getType(state);
+      }
+    } else if (ch === &apos; &apos;) {
+      if (stream.eat(&apos;*&apos;) || stream.eat(&apos;_&apos;)) { // Probably surrounded by spaces
+        if (stream.peek() === &apos; &apos;) { // Surrounded by spaces, ignore
+          return getType(state);
+        } else { // Not surrounded by spaces, back up pointer
+          stream.backUp(1);
+        }
+      }
+    }
+
+    if (ch === &apos; &apos;) {
+      if (stream.match(/ +$/, false)) {
+        state.trailingSpace++;
+      } else if (state.trailingSpace) {
+        state.trailingSpaceNewLine = true;
+      }
+    }
+
+    return getType(state);
+  }
+
+  function linkInline(stream, state) {
+    var ch = stream.next();
+
+    if (ch === &quot;&gt;&quot;) {
+      state.f = state.inline = inlineNormal;
+      if (modeCfg.highlightFormatting) state.formatting = &quot;link&quot;;
+      var type = getType(state);
+      if (type){
+        type += &quot; &quot;;
+      } else {
+        type = &quot;&quot;;
+      }
+      return type + linkinline;
+    }
+
+    stream.match(/^[^&gt;]+/, true);
+
+    return linkinline;
+  }
+
+  function linkHref(stream, state) {
+    // Check if space, and return NULL if so (to avoid marking the space)
+    if(stream.eatSpace()){
+      return null;
+    }
+    var ch = stream.next();
+    if (ch === &apos;(&apos; || ch === &apos;[&apos;) {
+      state.f = state.inline = getLinkHrefInside(ch === &quot;(&quot; ? &quot;)&quot; : &quot;]&quot;);
+      if (modeCfg.highlightFormatting) state.formatting = &quot;link-string&quot;;
+      state.linkHref = true;
+      return getType(state);
+    }
+    return &apos;error&apos;;
+  }
+
+  function getLinkHrefInside(endChar) {
+    return function(stream, state) {
+      var ch = stream.next();
+
+      if (ch === endChar) {
+        state.f = state.inline = inlineNormal;
+        if (modeCfg.highlightFormatting) state.formatting = &quot;link-string&quot;;
+        var returnState = getType(state);
+        state.linkHref = false;
+        return returnState;
+      }
+
+      if (stream.match(inlineRE(endChar), true)) {
+        stream.backUp(1);
+      }
+
+      state.linkHref = true;
+      return getType(state);
+    };
+  }
+
+  function footnoteLink(stream, state) {
+    if (stream.match(/^[^\]]*\]:/, false)) {
+      state.f = footnoteLinkInside;
+      stream.next(); // Consume [
+      if (modeCfg.highlightFormatting) state.formatting = &quot;link&quot;;
+      state.linkText = true;
+      return getType(state);
+    }
+    return switchInline(stream, state, inlineNormal);
+  }
+
+  function footnoteLinkInside(stream, state) {
+    if (stream.match(/^\]:/, true)) {
+      state.f = state.inline = footnoteUrl;
+      if (modeCfg.highlightFormatting) state.formatting = &quot;link&quot;;
+      var returnType = getType(state);
+      state.linkText = false;
+      return returnType;
+    }
+
+    stream.match(/^[^\]]+/, true);
+
+    return linktext;
+  }
+
+  function footnoteUrl(stream, state) {
+    // Check if space, and return NULL if so (to avoid marking the space)
+    if(stream.eatSpace()){
+      return null;
+    }
+    // Match URL
+    stream.match(/^[^\s]+/, true);
+    // Check for link title
+    if (stream.peek() === undefined) { // End of line, set flag to check next line
+      state.linkTitle = true;
+    } else { // More content on line, check if link title
+      stream.match(/^(?:\s+(?:&quot;(?:[^&quot;\\]|\\\\|\\.)+&quot;|&apos;(?:[^&apos;\\]|\\\\|\\.)+&apos;|\((?:[^)\\]|\\\\|\\.)+\)))?/, true);
+    }
+    state.f = state.inline = inlineNormal;
+    return linkhref;
+  }
+
+  var savedInlineRE = [];
+  function inlineRE(endChar) {
+    if (!savedInlineRE[endChar]) {
+      // Escape endChar for RegExp (taken from http://stackoverflow.com/a/494122/526741)
+      endChar = (endChar+&apos;&apos;).replace(/([.?*+^$[\]\\(){}|-])/g, &quot;\\$1&quot;);
+      // Match any non-endChar, escaped character, as well as the closing
+      // endChar.
+      savedInlineRE[endChar] = new RegExp(&apos;^(?:[^\\\\]|\\\\.)*?(&apos; + endChar + &apos;)&apos;);
+    }
+    return savedInlineRE[endChar];
+  }
+
+  var mode = {
+    startState: function() {
+      return {
+        f: blockNormal,
+
+        prevLineHasContent: false,
+        thisLineHasContent: false,
+
+        block: blockNormal,
+        htmlState: null,
+        indentation: 0,
+
+        inline: inlineNormal,
+        text: handleText,
+
+        formatting: false,
+        linkText: false,
+        linkHref: false,
+        linkTitle: false,
+        em: false,
+        strong: false,
+        header: 0,
+        taskList: false,
+        list: false,
+        listDepth: 0,
+        quote: 0,
+        trailingSpace: 0,
+        trailingSpaceNewLine: false
+      };
+    },
+
+    copyState: function(s) {
+      return {
+        f: s.f,
+
+        prevLineHasContent: s.prevLineHasContent,
+        thisLineHasContent: s.thisLineHasContent,
+
+        block: s.block,
+        htmlState: s.htmlState &amp;&amp; CodeMirror.copyState(htmlMode, s.htmlState),
+        indentation: s.indentation,
+
+        localMode: s.localMode,
+        localState: s.localMode ? CodeMirror.copyState(s.localMode, s.localState) : null,
+
+        inline: s.inline,
+        text: s.text,
+        formatting: false,
+        linkTitle: s.linkTitle,
+        em: s.em,
+        strong: s.strong,
+        header: s.header,
+        taskList: s.taskList,
+        list: s.list,
+        listDepth: s.listDepth,
+        quote: s.quote,
+        trailingSpace: s.trailingSpace,
+        trailingSpaceNewLine: s.trailingSpaceNewLine,
+        md_inside: s.md_inside
+      };
+    },
+
+    token: function(stream, state) {
+
+      // Reset state.formatting
+      state.formatting = false;
+
+      if (stream.sol()) {
+        var forceBlankLine = !!state.header;
+
+        // Reset state.header
+        state.header = 0;
+
+        if (stream.match(/^\s*$/, true) || forceBlankLine) {
+          state.prevLineHasContent = false;
+          blankLine(state);
+          return forceBlankLine ? this.token(stream, state) : null;
+        } else {
+          state.prevLineHasContent = state.thisLineHasContent;
+          state.thisLineHasContent = true;
+        }
+
+        // Reset state.taskList
+        state.taskList = false;
+
+        // Reset state.code
+        state.code = false;
+
+        // Reset state.trailingSpace
+        state.trailingSpace = 0;
+        state.trailingSpaceNewLine = false;
+
+        state.f = state.block;
+        var indentation = stream.match(/^\s*/, true)[0].replace(/\t/g, &apos;    &apos;).length;
+        var difference = Math.floor((indentation - state.indentation) / 4) * 4;
+        if (difference &gt; 4) difference = 4;
+        var adjustedIndentation = state.indentation + difference;
+        state.indentationDiff = adjustedIndentation - state.indentation;
+        state.indentation = adjustedIndentation;
+        if (indentation &gt; 0) return null;
+      }
+      var result = state.f(stream, state);
+      if (stream.start == stream.pos) return this.token(stream, state);
+      else return result;
+    },
+
+    innerMode: function(state) {
+      if (state.block == htmlBlock) return {state: state.htmlState, mode: htmlMode};
+      if (state.localState) return {state: state.localState, mode: state.localMode};
+      return {state: state, mode: mode};
+    },
+
+    blankLine: blankLine,
+
+    getType: getType,
+
+    fold: &quot;markdown&quot;
+  };
+  return mode;
+}, &quot;xml&quot;);
+
+CodeMirror.defineMIME(&quot;text/x-markdown&quot;, &quot;markdown&quot;);
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

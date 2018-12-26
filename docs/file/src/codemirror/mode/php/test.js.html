@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/php/test.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/php/test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function() {
+  var mode = CodeMirror.getMode({indentUnit: 2}, &quot;php&quot;);
+  function MT(name) { test.mode(name, mode, Array.prototype.slice.call(arguments, 1)); }
+
+  MT(&apos;simple_test&apos;,
+     &apos;[meta &lt;?php] &apos; +
+     &apos;[keyword echo] [string &quot;aaa&quot;]; &apos; +
+     &apos;[meta ?&gt;]&apos;);
+
+  MT(&apos;variable_interpolation_non_alphanumeric&apos;,
+     &apos;[meta &lt;?php]&apos;,
+     &apos;[keyword echo] [string &quot;aaa$~$!$@$#$$$%$^$&amp;$*$($)$.$&lt;$&gt;$/$\\$}$\\\&quot;$:$;$?$|$[[$]]$+$=aaa&quot;]&apos;,
+     &apos;[meta ?&gt;]&apos;);
+
+  MT(&apos;variable_interpolation_digits&apos;,
+     &apos;[meta &lt;?php]&apos;,
+     &apos;[keyword echo] [string &quot;aaa$1$2$3$4$5$6$7$8$9$0aaa&quot;]&apos;,
+     &apos;[meta ?&gt;]&apos;);
+
+  MT(&apos;variable_interpolation_simple_syntax_1&apos;,
+     &apos;[meta &lt;?php]&apos;,
+     &apos;[keyword echo] [string &quot;aaa][variable-2 $aaa][string .aaa&quot;];&apos;,
+     &apos;[meta ?&gt;]&apos;);
+
+  MT(&apos;variable_interpolation_simple_syntax_2&apos;,
+     &apos;[meta &lt;?php]&apos;,
+     &apos;[keyword echo] [string &quot;][variable-2 $aaaa][[&apos;,&apos;[number 2]&apos;,         &apos;]][string aa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;][variable-2 $aaaa][[&apos;,&apos;[number 2345]&apos;,      &apos;]][string aa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;][variable-2 $aaaa][[&apos;,&apos;[number 2.3]&apos;,       &apos;]][string aa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;][variable-2 $aaaa][[&apos;,&apos;[variable aaaaa]&apos;,   &apos;]][string aa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;][variable-2 $aaaa][[&apos;,&apos;[variable-2 $aaaaa]&apos;,&apos;]][string aa&quot;];&apos;,
+
+     &apos;[keyword echo] [string &quot;1aaa][variable-2 $aaaa][[&apos;,&apos;[number 2]&apos;,         &apos;]][string aa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;aaa][variable-2 $aaaa][[&apos;,&apos;[number 2345]&apos;,      &apos;]][string aa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;aaa][variable-2 $aaaa][[&apos;,&apos;[number 2.3]&apos;,       &apos;]][string aa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;aaa][variable-2 $aaaa][[&apos;,&apos;[variable aaaaa]&apos;,   &apos;]][string aa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;aaa][variable-2 $aaaa][[&apos;,&apos;[variable-2 $aaaaa]&apos;,&apos;]][string aa&quot;];&apos;,
+     &apos;[meta ?&gt;]&apos;);
+
+  MT(&apos;variable_interpolation_simple_syntax_3&apos;,
+     &apos;[meta &lt;?php]&apos;,
+     &apos;[keyword echo] [string &quot;aaa][variable-2 $aaaa]-&gt;[variable aaaaa][string .aaaaaa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;aaa][variable-2 $aaaa][string -&gt;][variable-2 $aaaaa][string .aaaaaa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;aaa][variable-2 $aaaa]-&gt;[variable aaaaa][string [[2]].aaaaaa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;aaa][variable-2 $aaaa]-&gt;[variable aaaaa][string -&gt;aaaa2.aaaaaa&quot;];&apos;,
+     &apos;[meta ?&gt;]&apos;);
+
+  MT(&apos;variable_interpolation_escaping&apos;,
+     &apos;[meta &lt;?php] [comment /* Escaping */]&apos;,
+     &apos;[keyword echo] [string &quot;aaa\\$aaaa-&gt;aaa.aaa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;aaa\\$aaaa[[2]]aaa.aaa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;aaa\\$aaaa[[asd]]aaa.aaa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;aaa{\\$aaaa-&gt;aaa.aaa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;aaa{\\$aaaa[[2]]aaa.aaa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;aaa{\\aaaaa[[asd]]aaa.aaa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;aaa\\${aaaa-&gt;aaa.aaa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;aaa\\${aaaa[[2]]aaa.aaa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;aaa\\${aaaa[[asd]]aaa.aaa&quot;];&apos;,
+     &apos;[meta ?&gt;]&apos;);
+
+  MT(&apos;variable_interpolation_complex_syntax_1&apos;,
+     &apos;[meta &lt;?php]&apos;,
+     &apos;[keyword echo] [string &quot;aaa][variable-2 $]{[variable aaaa]}[string -&gt;aaa.aaa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;aaa][variable-2 $]{[variable-2 $aaaa]}[string -&gt;aaa.aaa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;aaa][variable-2 $]{[variable-2 $aaaa][[&apos;,&apos;  [number 42]&apos;,&apos;]]}[string -&gt;aaa.aaa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;aaa][variable-2 $]{[variable aaaa][meta ?&gt;]aaaaaa&apos;);
+
+  MT(&apos;variable_interpolation_complex_syntax_2&apos;,
+     &apos;[meta &lt;?php] [comment /* Monsters */]&apos;,
+     &apos;[keyword echo] [string &quot;][variable-2 $]{[variable aaa][comment /*}?&gt;} $aaa&lt;?php } */]}[string -&gt;aaa.aaa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;][variable-2 $]{[variable aaa][comment /*}?&gt;*/][[&apos;,&apos;  [string &quot;aaa][variable-2 $aaa][string {}][variable-2 $]{[variable aaa]}[string &quot;]&apos;,&apos;]]}[string -&gt;aaa.aaa&quot;];&apos;,
+     &apos;[keyword echo] [string &quot;][variable-2 $]{[variable aaa][comment /*} } $aaa } */]}[string -&gt;aaa.aaa&quot;];&apos;);
+
+
+  function build_recursive_monsters(nt, t, n){
+    var monsters = [t];
+    for (var i = 1; i &lt;= n; ++i)
+      monsters[i] = nt.join(monsters[i - 1]);
+    return monsters;
+  }
+
+  var m1 = build_recursive_monsters(
+    [&apos;[string &quot;][variable-2 $]{[variable aaa] [operator +] &apos;, &apos;}[string &quot;]&apos;],
+    &apos;[comment /* }?&gt;} */] [string &quot;aaa][variable-2 $aaa][string .aaa&quot;]&apos;,
+    10
+  );
+
+  MT(&apos;variable_interpolation_complex_syntax_3_1&apos;,
+     &apos;[meta &lt;?php] [comment /* Recursive monsters */]&apos;,
+     &apos;[keyword echo] &apos; + m1[4] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m1[7] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m1[8] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m1[5] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m1[1] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m1[6] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m1[9] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m1[0] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m1[10] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m1[2] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m1[3] + &apos;;&apos;,
+     &apos;[keyword echo] [string &quot;end&quot;];&apos;,
+     &apos;[meta ?&gt;]&apos;);
+
+  var m2 = build_recursive_monsters(
+    [&apos;[string &quot;a][variable-2 $]{[variable aaa] [operator +] &apos;, &apos; [operator +] &apos;, &apos;}[string .a&quot;]&apos;],
+    &apos;[comment /* }?&gt;{{ */] [string &quot;a?&gt;}{{aa][variable-2 $aaa][string .a}a?&gt;a&quot;]&apos;,
+    5
+  );
+
+  MT(&apos;variable_interpolation_complex_syntax_3_2&apos;,
+     &apos;[meta &lt;?php] [comment /* Recursive monsters 2 */]&apos;,
+     &apos;[keyword echo] &apos; + m2[0] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m2[1] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m2[5] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m2[4] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m2[2] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m2[3] + &apos;;&apos;,
+     &apos;[keyword echo] [string &quot;end&quot;];&apos;,
+     &apos;[meta ?&gt;]&apos;);
+
+  function build_recursive_monsters_2(mf1, mf2, nt, t, n){
+    var monsters = [t];
+    for (var i = 1; i &lt;= n; ++i)
+      monsters[i] = nt[0] + mf1[i - 1] + nt[1] + mf2[i - 1] + nt[2] + monsters[i - 1] + nt[3];
+    return monsters;
+  }
+
+  var m3 = build_recursive_monsters_2(
+    m1,
+    m2,
+    [&apos;[string &quot;a][variable-2 $]{[variable aaa] [operator +] &apos;, &apos; [operator +] &apos;, &apos; [operator +] &apos;, &apos;}[string .a&quot;]&apos;],
+    &apos;[comment /* }?&gt;{{ */] [string &quot;a?&gt;}{{aa][variable-2 $aaa][string .a}a?&gt;a&quot;]&apos;,
+    4
+  );
+
+  MT(&apos;variable_interpolation_complex_syntax_3_3&apos;,
+     &apos;[meta &lt;?php] [comment /* Recursive monsters 2 */]&apos;,
+     &apos;[keyword echo] &apos; + m3[4] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m3[0] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m3[3] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m3[1] + &apos;;&apos;,
+     &apos;[keyword echo] &apos; + m3[2] + &apos;;&apos;,
+     &apos;[keyword echo] [string &quot;end&quot;];&apos;,
+     &apos;[meta ?&gt;]&apos;);
+
+  MT(&quot;variable_interpolation_heredoc&quot;,
+     &quot;[meta &lt;?php]&quot;,
+     &quot;[string &lt;&lt;&lt;here]&quot;,
+     &quot;[string doc ][variable-2 $]{[variable yay]}[string more]&quot;,
+     &quot;[string here]; [comment // normal]&quot;);
+})();
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

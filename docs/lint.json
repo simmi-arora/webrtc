@@ -1,0 +1,692 @@
+[
+  {
+    "name": "addProgressHelper",
+    "filePath": "src/scripts/_filesharing.js",
+    "lines": [
+      {
+        "lineNumber": 90,
+        "line": "/**\r"
+      },
+      {
+        "lineNumber": 91,
+        "line": " * Send Old Files\r"
+      },
+      {
+        "lineNumber": 92,
+        "line": " * @method\r"
+      },
+      {
+        "lineNumber": 93,
+        "line": " * @name sendFile\r"
+      },
+      {
+        "lineNumber": 94,
+        "line": " * @param {json} files\r"
+      },
+      {
+        "lineNumber": 95,
+        "line": " */\r"
+      },
+      {
+        "lineNumber": 96,
+        "line": "function addProgressHelper(uuid , peerinfo , filename , fileSize,  progressHelperclassName ){\r"
+      }
+    ],
+    "codeParams": [
+      "uuid",
+      "peerinfo",
+      "filename",
+      "fileSize",
+      "progressHelperclassName"
+    ],
+    "docParams": [
+      "files"
+    ]
+  },
+  {
+    "name": "requestOldFiles",
+    "filePath": "src/scripts/_filesharing.js",
+    "lines": [
+      {
+        "lineNumber": 154,
+        "line": "/**\r"
+      },
+      {
+        "lineNumber": 155,
+        "line": " * REquest Old Files\r"
+      },
+      {
+        "lineNumber": 156,
+        "line": " * @method\r"
+      },
+      {
+        "lineNumber": 157,
+        "line": " * @name sendFile\r"
+      },
+      {
+        "lineNumber": 158,
+        "line": " * @param {json} files\r"
+      },
+      {
+        "lineNumber": 159,
+        "line": " */\r"
+      },
+      {
+        "lineNumber": 160,
+        "line": "function requestOldFiles(){\r"
+      }
+    ],
+    "codeParams": [],
+    "docParams": [
+      "files"
+    ]
+  },
+  {
+    "name": "sendOldFiles",
+    "filePath": "src/scripts/_filesharing.js",
+    "lines": [
+      {
+        "lineNumber": 171,
+        "line": "/**\r"
+      },
+      {
+        "lineNumber": 172,
+        "line": " * Send Old Files\r"
+      },
+      {
+        "lineNumber": 173,
+        "line": " * @method\r"
+      },
+      {
+        "lineNumber": 174,
+        "line": " * @name sendFile\r"
+      },
+      {
+        "lineNumber": 175,
+        "line": " * @param {json} files\r"
+      },
+      {
+        "lineNumber": 176,
+        "line": " */\r"
+      },
+      {
+        "lineNumber": 177,
+        "line": "function sendOldFiles(){\r"
+      }
+    ],
+    "codeParams": [],
+    "docParams": [
+      "files"
+    ]
+  },
+  {
+    "name": "addNewFileLocal",
+    "filePath": "src/scripts/_filesharing.js",
+    "lines": [
+      {
+        "lineNumber": 207,
+        "line": "/**\r"
+      },
+      {
+        "lineNumber": 208,
+        "line": " * add New File Local\r"
+      },
+      {
+        "lineNumber": 209,
+        "line": " * @method\r"
+      },
+      {
+        "lineNumber": 210,
+        "line": " * @name addNewFileLocal\r"
+      },
+      {
+        "lineNumber": 211,
+        "line": " * @param {json} files\r"
+      },
+      {
+        "lineNumber": 212,
+        "line": " */\r"
+      },
+      {
+        "lineNumber": 213,
+        "line": "function addNewFileLocal(e) {\r"
+      }
+    ],
+    "codeParams": [
+      "e"
+    ],
+    "docParams": [
+      "files"
+    ]
+  },
+  {
+    "name": "addNewFileRemote",
+    "filePath": "src/scripts/_filesharing.js",
+    "lines": [
+      {
+        "lineNumber": 220,
+        "line": "/**\r"
+      },
+      {
+        "lineNumber": 221,
+        "line": " * add New File Remote\r"
+      },
+      {
+        "lineNumber": 222,
+        "line": " * @method\r"
+      },
+      {
+        "lineNumber": 223,
+        "line": " * @name addNewFileRemote\r"
+      },
+      {
+        "lineNumber": 224,
+        "line": " * @param {json} files\r"
+      },
+      {
+        "lineNumber": 225,
+        "line": " */\r"
+      },
+      {
+        "lineNumber": 226,
+        "line": "function addNewFileRemote(e) {\r"
+      }
+    ],
+    "codeParams": [
+      "e"
+    ],
+    "docParams": [
+      "files"
+    ]
+  },
+  {
+    "name": "showHideFile",
+    "filePath": "src/scripts/_filesharing.js",
+    "lines": [
+      {
+        "lineNumber": 557,
+        "line": "/**\r"
+      },
+      {
+        "lineNumber": 558,
+        "line": "* Shows or hides file and sync activity with peers \r"
+      },
+      {
+        "lineNumber": 559,
+        "line": "* @method\r"
+      },
+      {
+        "lineNumber": 560,
+        "line": "* @name showHideFile\r"
+      },
+      {
+        "lineNumber": 561,
+        "line": "* @param {id} uuid - unique universal id for the file \r"
+      },
+      {
+        "lineNumber": 562,
+        "line": "* @param {dom} element - name of dom element\r"
+      },
+      {
+        "lineNumber": 563,
+        "line": "* @param {bloburl} fileurl - blob of the file \r"
+      },
+      {
+        "lineNumber": 564,
+        "line": "* @param {string} filename - name for file \r"
+      },
+      {
+        "lineNumber": 565,
+        "line": "* @param {string} filetype - type of  file \r"
+      },
+      {
+        "lineNumber": 566,
+        "line": "*/\r"
+      },
+      {
+        "lineNumber": 567,
+        "line": "function showHideFile(uuid , elementDisplay , fileurl , filename , filetype , showHideButton ,countClicks ){\r"
+      }
+    ],
+    "codeParams": [
+      "uuid",
+      "elementDisplay",
+      "fileurl",
+      "filename",
+      "filetype",
+      "showHideButton",
+      "countClicks"
+    ],
+    "docParams": [
+      "uuid",
+      "element",
+      "fileurl",
+      "filename",
+      "filetype"
+    ]
+  },
+  {
+    "name": "getChromeExtensionStatus",
+    "filePath": "src/scripts/_screenshare.js",
+    "lines": [
+      {
+        "lineNumber": 34,
+        "line": "/**\r"
+      },
+      {
+        "lineNumber": 35,
+        "line": " * function to get the sourceID from chorme extension \r"
+      },
+      {
+        "lineNumber": 36,
+        "line": " * @method\r"
+      },
+      {
+        "lineNumber": 37,
+        "line": " * @name getSourceId\r"
+      },
+      {
+        "lineNumber": 38,
+        "line": " * @param {function} callback\r"
+      },
+      {
+        "lineNumber": 39,
+        "line": " * @param {string} audioPlusTab\r"
+      },
+      {
+        "lineNumber": 40,
+        "line": " */\r"
+      },
+      {
+        "lineNumber": 41,
+        "line": "function getChromeExtensionStatus(extensionid, callback) {\r"
+      }
+    ],
+    "codeParams": [
+      "extensionid",
+      "callback"
+    ],
+    "docParams": [
+      "callback",
+      "audioPlusTab"
+    ]
+  },
+  {
+    "name": "sendCallTraces",
+    "filePath": "src/scripts/_tracing.js",
+    "lines": [
+      {
+        "lineNumber": 3,
+        "line": "/**\r"
+      },
+      {
+        "lineNumber": 4,
+        "line": " * collect all webrtcStats and stream to Server to be stored in a file with seesion id as the file name \r"
+      },
+      {
+        "lineNumber": 5,
+        "line": " * @method\r"
+      },
+      {
+        "lineNumber": 6,
+        "line": " * @name sendCallTraces\r"
+      },
+      {
+        "lineNumber": 7,
+        "line": " * @param {string} traces\r"
+      },
+      {
+        "lineNumber": 8,
+        "line": " */\r"
+      },
+      {
+        "lineNumber": 9,
+        "line": "function sendCallTraces(){\r"
+      }
+    ],
+    "codeParams": [],
+    "docParams": [
+      "traces"
+    ]
+  },
+  {
+    "name": "sendwebrtcdevLogs",
+    "filePath": "src/scripts/_tracing.js",
+    "lines": [
+      {
+        "lineNumber": 13,
+        "line": "/**\r"
+      },
+      {
+        "lineNumber": 14,
+        "line": " * collect all webrtcdev.log and stream to Server to be stored in a file with seesion id as the file name \r"
+      },
+      {
+        "lineNumber": 15,
+        "line": " * @method\r"
+      },
+      {
+        "lineNumber": 16,
+        "line": " * @name sendwebrtcdevLogs\r"
+      },
+      {
+        "lineNumber": 17,
+        "line": " * @param {string} logs\r"
+      },
+      {
+        "lineNumber": 18,
+        "line": " */\r"
+      },
+      {
+        "lineNumber": 19,
+        "line": "function sendwebrtcdevLogs(url , key){\r"
+      }
+    ],
+    "codeParams": [
+      "url",
+      "key"
+    ],
+    "docParams": [
+      "logs"
+    ]
+  },
+  {
+    "name": "checkDevices",
+    "filePath": "src/scripts/_webrtcchecks.js",
+    "lines": [
+      {
+        "lineNumber": 0,
+        "line": "/**"
+      },
+      {
+        "lineNumber": 1,
+        "line": " * function to check devices like speakers , webcam ,  microphone etc"
+      },
+      {
+        "lineNumber": 2,
+        "line": " * @method"
+      },
+      {
+        "lineNumber": 3,
+        "line": " * @name checkDevices"
+      },
+      {
+        "lineNumber": 4,
+        "line": " * @param {object} connection"
+      },
+      {
+        "lineNumber": 5,
+        "line": " */"
+      },
+      {
+        "lineNumber": 6,
+        "line": "function checkDevices(obj){"
+      }
+    ],
+    "codeParams": [
+      "obj"
+    ],
+    "docParams": [
+      "connection"
+    ]
+  },
+  {
+    "name": "checkWebRTCSupport",
+    "filePath": "src/scripts/_webrtcchecks.js",
+    "lines": [
+      {
+        "lineNumber": 54,
+        "line": "/**"
+      },
+      {
+        "lineNumber": 55,
+        "line": " * function to check browser support for webrtc apis"
+      },
+      {
+        "lineNumber": 56,
+        "line": " * @name checkWebRTCSupport"
+      },
+      {
+        "lineNumber": 57,
+        "line": " * @param {object} connection"
+      },
+      {
+        "lineNumber": 58,
+        "line": " */"
+      },
+      {
+        "lineNumber": 59,
+        "line": "function checkWebRTCSupport(obj){"
+      }
+    ],
+    "codeParams": [
+      "obj"
+    ],
+    "docParams": [
+      "connection"
+    ]
+  },
+  {
+    "name": "WebRTCdev",
+    "filePath": "src/scripts/start.js",
+    "lines": [
+      {
+        "lineNumber": 30,
+        "line": "    /**\r"
+      },
+      {
+        "lineNumber": 31,
+        "line": "     * Assigns ICE gateways and  widgets \r"
+      },
+      {
+        "lineNumber": 32,
+        "line": "     * @constructor\r"
+      },
+      {
+        "lineNumber": 33,
+        "line": "          * @param {json} _localObj - local object.\r"
+      },
+      {
+        "lineNumber": 34,
+        "line": "     * @param {json} _remoteObj - remote object.\r"
+      },
+      {
+        "lineNumber": 35,
+        "line": "     * @param {json} incoming - incoming media stream.\r"
+      },
+      {
+        "lineNumber": 36,
+        "line": "     * @param {json} outgoing - outgoing media stream.\r"
+      },
+      {
+        "lineNumber": 37,
+        "line": "     * @param {json} session - session object.\r"
+      },
+      {
+        "lineNumber": 38,
+        "line": "     * @param {json} widgets - widgets object.\r"
+      },
+      {
+        "lineNumber": 39,
+        "line": "     */\r"
+      },
+      {
+        "lineNumber": 40,
+        "line": "    var WebRTCdev= function(_localobj , _remoteobj , incoming, outgoing , session, widgets){\r"
+      }
+    ],
+    "codeParams": [
+      "_localobj",
+      "_remoteobj",
+      "incoming",
+      "outgoing",
+      "session",
+      "widgets"
+    ],
+    "docParams": [
+      "_localObj",
+      "_remoteObj",
+      "incoming",
+      "outgoing",
+      "session",
+      "widgets"
+    ]
+  },
+  {
+    "name": "startSocketSession",
+    "filePath": "src/scripts/start.js",
+    "lines": [
+      {
+        "lineNumber": 239,
+        "line": "/**\r"
+      },
+      {
+        "lineNumber": 240,
+        "line": " * function to start session with socket\r"
+      },
+      {
+        "lineNumber": 241,
+        "line": " * @method\r"
+      },
+      {
+        "lineNumber": 242,
+        "line": " * @name startSession\r"
+      },
+      {
+        "lineNumber": 243,
+        "line": " * @param {object} connection\r"
+      },
+      {
+        "lineNumber": 244,
+        "line": " */\r"
+      },
+      {
+        "lineNumber": 245,
+        "line": "function startSocketSession(rtcConn , socketAddr , sessionid){\r"
+      }
+    ],
+    "codeParams": [
+      "rtcConn",
+      "socketAddr",
+      "sessionid"
+    ],
+    "docParams": [
+      "connection"
+    ]
+  },
+  {
+    "name": "updatePeerInfo",
+    "filePath": "src/scripts/start.js",
+    "lines": [
+      {
+        "lineNumber": 1375,
+        "line": "    /**\r"
+      },
+      {
+        "lineNumber": 1376,
+        "line": "     * update info about a peer in list of peers (webcallpeers)\r"
+      },
+      {
+        "lineNumber": 1377,
+        "line": "     * @method\r"
+      },
+      {
+        "lineNumber": 1378,
+        "line": "     * @name updatePeerInfo\r"
+      },
+      {
+        "lineNumber": 1379,
+        "line": "     * @param {string} userid\r"
+      },
+      {
+        "lineNumber": 1380,
+        "line": "     * @param {string} username\r"
+      },
+      {
+        "lineNumber": 1381,
+        "line": "     * @param {string} usercolor\r"
+      },
+      {
+        "lineNumber": 1382,
+        "line": "     * @param {string} type\r"
+      },
+      {
+        "lineNumber": 1383,
+        "line": "     */\r"
+      },
+      {
+        "lineNumber": 1384,
+        "line": "    function updatePeerInfo(userid , username , usecolor , useremail, userrole ,  type ){\r"
+      }
+    ],
+    "codeParams": [
+      "userid",
+      "username",
+      "usecolor",
+      "useremail",
+      "userrole",
+      "type"
+    ],
+    "docParams": [
+      "userid",
+      "username",
+      "usercolor",
+      "type"
+    ]
+  },
+  {
+    "name": "removePeerInfo",
+    "filePath": "src/scripts/start.js",
+    "lines": [
+      {
+        "lineNumber": 1447,
+        "line": "    /**\r"
+      },
+      {
+        "lineNumber": 1448,
+        "line": "     * update info about a peer in list of peers (webcallpeers)\r"
+      },
+      {
+        "lineNumber": 1449,
+        "line": "     * @method\r"
+      },
+      {
+        "lineNumber": 1450,
+        "line": "     * @name removePeerInfo\r"
+      },
+      {
+        "lineNumber": 1451,
+        "line": "     * @param {string} userid\r"
+      },
+      {
+        "lineNumber": 1452,
+        "line": "     * @param {string} usernamess\r"
+      },
+      {
+        "lineNumber": 1453,
+        "line": "     * @param {string} usercolor\r"
+      },
+      {
+        "lineNumber": 1454,
+        "line": "     * @param {string} type\r"
+      },
+      {
+        "lineNumber": 1455,
+        "line": "     */\r"
+      },
+      {
+        "lineNumber": 1456,
+        "line": "    function removePeerInfo(userid){\r"
+      }
+    ],
+    "codeParams": [
+      "userid"
+    ],
+    "docParams": [
+      "userid",
+      "usernamess",
+      "usercolor",
+      "type"
+    ]
+  }
+]

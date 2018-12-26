@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/xquery/test.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/xquery/test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+// Don&apos;t take these too seriously -- the expected results appear to be
+// based on the results of actual runs without any serious manual
+// verification. If a change you made causes them to fail, the test is
+// as likely to wrong as the code.
+
+(function() {
+  var mode = CodeMirror.getMode({tabSize: 4}, &quot;xquery&quot;);
+  function MT(name) { test.mode(name, mode, Array.prototype.slice.call(arguments, 1)); }
+
+  MT(&quot;eviltest&quot;,
+     &quot;[keyword xquery] [keyword version] [variable &amp;quot;1][keyword .][atom 0][keyword -][variable ml&amp;quot;][def&amp;variable ;]      [comment (: this is       : a          \&quot;comment\&quot; :)]&quot;,
+     &quot;      [keyword let] [variable $let] [keyword :=] [variable &amp;lt;x] [variable attr][keyword =][variable &amp;quot;value&amp;quot;&amp;gt;&amp;quot;test&amp;quot;&amp;lt;func&amp;gt][def&amp;variable ;function]() [variable $var] {[keyword function]()} {[variable $var]}[variable &amp;lt;][keyword /][variable func&amp;gt;&amp;lt;][keyword /][variable x&amp;gt;]&quot;,
+     &quot;      [keyword let] [variable $joe][keyword :=][atom 1]&quot;,
+     &quot;      [keyword return] [keyword element] [variable element] {&quot;,
+     &quot;          [keyword attribute] [variable attribute] { [atom 1] },&quot;,
+     &quot;          [keyword element] [variable test] { [variable &amp;#39;a&amp;#39;] },           [keyword attribute] [variable foo] { [variable &amp;quot;bar&amp;quot;] },&quot;,
+     &quot;          [def&amp;variable fn:doc]()[[ [variable foo][keyword /][variable @bar] [keyword eq] [variable $let] ]],&quot;,
+     &quot;          [keyword //][variable x] }                 [comment (: a more &apos;evil&apos; test :)]&quot;,
+     &quot;      [comment (: Modified Blakeley example (: with nested comment :) ... :)]&quot;,
+     &quot;      [keyword declare] [keyword private] [keyword function] [def&amp;variable local:declare]() {()}[variable ;]&quot;,
+     &quot;      [keyword declare] [keyword private] [keyword function] [def&amp;variable local:private]() {()}[variable ;]&quot;,
+     &quot;      [keyword declare] [keyword private] [keyword function] [def&amp;variable local:function]() {()}[variable ;]&quot;,
+     &quot;      [keyword declare] [keyword private] [keyword function] [def&amp;variable local:local]() {()}[variable ;]&quot;,
+     &quot;      [keyword let] [variable $let] [keyword :=] [variable &amp;lt;let&amp;gt;let] [variable $let] [keyword :=] [variable &amp;quot;let&amp;quot;&amp;lt;][keyword /let][variable &amp;gt;]&quot;,
+     &quot;      [keyword return] [keyword element] [variable element] {&quot;,
+     &quot;          [keyword attribute] [variable attribute] { [keyword try] { [def&amp;variable xdmp:version]() } [keyword catch]([variable $e]) { [def&amp;variable xdmp:log]([variable $e]) } },&quot;,
+     &quot;          [keyword attribute] [variable fn:doc] { [variable &amp;quot;bar&amp;quot;] [variable castable] [keyword as] [atom xs:string] },&quot;,
+     &quot;          [keyword element] [variable text] { [keyword text] { [variable &amp;quot;text&amp;quot;] } },&quot;,
+     &quot;          [def&amp;variable fn:doc]()[[ [qualifier child::][variable eq][keyword /]([variable @bar] [keyword |] [qualifier attribute::][variable attribute]) [keyword eq] [variable $let] ]],&quot;,
+     &quot;          [keyword //][variable fn:doc]&quot;,
+     &quot;      }&quot;);
+
+  MT(&quot;testEmptySequenceKeyword&quot;,
+     &quot;[string \&quot;foo\&quot;] [keyword instance] [keyword of] [keyword empty-sequence]()&quot;);
+
+  MT(&quot;testMultiAttr&quot;,
+     &quot;[tag &lt;p ][attribute a1]=[string \&quot;foo\&quot;] [attribute a2]=[string \&quot;bar\&quot;][tag &gt;][variable hello] [variable world][tag &lt;/p&gt;]&quot;);
+
+  MT(&quot;test namespaced variable&quot;,
+     &quot;[keyword declare] [keyword namespace] [variable e] [keyword =] [string \&quot;http://example.com/ANamespace\&quot;][variable ;declare] [keyword variable] [variable $e:exampleComThisVarIsNotRecognized] [keyword as] [keyword element]([keyword *]) [variable external;]&quot;);
+
+  MT(&quot;test EQName variable&quot;,
+     &quot;[keyword declare] [keyword variable] [variable $\&quot;http://www.example.com/ns/my\&quot;:var] [keyword :=] [atom 12][variable ;]&quot;,
+     &quot;[tag &lt;out&gt;]{[variable $\&quot;http://www.example.com/ns/my\&quot;:var]}[tag &lt;/out&gt;]&quot;);
+
+  MT(&quot;test EQName function&quot;,
+     &quot;[keyword declare] [keyword function] [def&amp;variable \&quot;http://www.example.com/ns/my\&quot;:fn] ([variable $a] [keyword as] [atom xs:integer]) [keyword as] [atom xs:integer] {&quot;,
+     &quot;   [variable $a] [keyword +] [atom 2]&quot;,
+     &quot;}[variable ;]&quot;,
+     &quot;[tag &lt;out&gt;]{[def&amp;variable \&quot;http://www.example.com/ns/my\&quot;:fn]([atom 12])}[tag &lt;/out&gt;]&quot;);
+
+  MT(&quot;test EQName function with single quotes&quot;,
+     &quot;[keyword declare] [keyword function] [def&amp;variable &apos;http://www.example.com/ns/my&apos;:fn] ([variable $a] [keyword as] [atom xs:integer]) [keyword as] [atom xs:integer] {&quot;,
+     &quot;   [variable $a] [keyword +] [atom 2]&quot;,
+     &quot;}[variable ;]&quot;,
+     &quot;[tag &lt;out&gt;]{[def&amp;variable &apos;http://www.example.com/ns/my&apos;:fn]([atom 12])}[tag &lt;/out&gt;]&quot;);
+
+  MT(&quot;testProcessingInstructions&quot;,
+     &quot;[def&amp;variable data]([comment&amp;meta &lt;?target content?&gt;]) [keyword instance] [keyword of] [atom xs:string]&quot;);
+
+  MT(&quot;testQuoteEscapeDouble&quot;,
+     &quot;[keyword let] [variable $rootfolder] [keyword :=] [string \&quot;c:\\builds\\winnt\\HEAD\\qa\\scripts\\\&quot;]&quot;,
+     &quot;[keyword let] [variable $keysfolder] [keyword :=] [def&amp;variable concat]([variable $rootfolder], [string \&quot;keys\\\&quot;])&quot;);
+})();
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

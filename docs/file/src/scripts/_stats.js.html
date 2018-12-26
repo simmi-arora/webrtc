@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/scripts/_stats.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/scripts/_stats.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// ___________
+// getStats.js
+// an abstraction layer runs top over RTCPeerConnection.getStats API
+// cross-browser compatible solution
+// http://dev.w3.org/2011/webrtc/editor/webrtc.html#dom-peerconnection-getstats
+/*
+getStats(rtcPeerConnection, function(result) {
+    result.connectionType.remote.ipAddress
+    result.connectionType.remote.candidateType
+    result.connectionType.transport
+});
+*/
+
+function getStats(mediaStreamTrack, callback, interval) {
+    var peer = this;
+    //webrtcdev.log(&quot;----getStats-----&quot;, arguments[0] , arguments[1] ,arguments[2] , arguments[3])
+    if (arguments[0] instanceof RTCMultiConnection) {
+        peer = arguments[0];
+        
+        if(!!navigator.mozGetUserMedia) {
+            mediaStreamTrack = arguments[1];
+            callback = arguments[2];
+            interval = arguments[3];
+        }
+
+        if (!(mediaStreamTrack instanceof MediaStreamTrack) &amp;&amp; !!navigator.mozGetUserMedia) {
+            throw &apos;2nd argument is not instance of MediaStreamTrack.&apos;;
+        }
+    } else if (!(mediaStreamTrack instanceof MediaStreamTrack) &amp;&amp; !!navigator.mozGetUserMedia) {
+        throw &apos;1st argument is not instance of MediaStreamTrack.&apos;;
+    }
+
+    var globalObject = {
+        audio: {},
+        video: {}
+    };
+
+    var nomore = false;
+
+    (function getPrivateStats() {
+        _getStats(function(results) {
+            var result = {
+                audio: {},
+                video: {},
+                results: results,
+                nomore: function() {
+                    nomore = true;
+                }
+            };
+
+            for (var i = 0; i &lt; results.length; ++i) {
+                var res = results[i];
+
+                if(res.datachannelid &amp;&amp; res.type === &apos;datachannel&apos;) {
+                    result.datachannel = {
+                        state: res.state // open or connecting
+                    }
+                }
+
+                if(res.type === &apos;googLibjingleSession&apos;) {
+                    result.isOfferer = res.googInitiator;
+                }
+
+                if(res.type == &apos;googCertificate&apos;) {
+                    result.encryption = res.googFingerprintAlgorithm;
+                }
+
+                if (res.googCodecName == &apos;opus&apos; &amp;&amp; res.bytesSent) {
+                    var kilobytes = 0;
+                    if(!!res.bytesSent) {
+                        if (!globalObject.audio.prevBytesSent) {
+                            globalObject.audio.prevBytesSent = res.bytesSent;
+                        }
+
+                        var bytes = res.bytesSent - globalObject.audio.prevBytesSent;
+                        globalObject.audio.prevBytesSent = res.bytesSent;
+
+                        kilobytes = bytes / 1024;
+                    }
+
+                    if(!result.audio) {
+                        result.audio = res;
+                    }
+                    
+                    result.audio.availableBandwidth = kilobytes.toFixed(1);
+                }
+
+                if (res.googCodecName == &apos;VP8&apos;) {
+                    // if(!globalObject.)
+                    // bytesReceived
+                    // packetsReceived
+                    // timestamp
+                    var kilobytes = 0;
+                    if(!!res.bytesSent) {
+                        if (!globalObject.video.prevBytesSent) {
+                            globalObject.video.prevBytesSent = res.bytesSent;
+                        }
+
+                        var bytes = res.bytesSent - globalObject.video.prevBytesSent;
+                        globalObject.video.prevBytesSent = res.bytesSent;
+
+                        kilobytes = bytes / 1024;
+                    }
+
+                    if(!result.video) {
+                        result.video = res;
+                    }
+
+                    result.video.availableBandwidth = kilobytes.toFixed(1);
+
+                    if(res.googFrameHeightReceived &amp;&amp; res.googFrameWidthReceived) {
+                        result.resolutions = {
+                            width: res.googFrameWidthReceived,
+                            height: res.googFrameHeightReceived
+                        };
+                    }
+                }
+
+                if (res.type == &apos;VideoBwe&apos;) {
+                    result.video.bandwidth = {
+                        googActualEncBitrate: res.googActualEncBitrate,
+                        googAvailableSendBandwidth: res.googAvailableSendBandwidth,
+                        googAvailableReceiveBandwidth: res.googAvailableReceiveBandwidth,
+                        googRetransmitBitrate: res.googRetransmitBitrate,
+                        googTargetEncBitrate: res.googTargetEncBitrate,
+                        googBucketDelay: res.googBucketDelay,
+                        googTransmitBitrate: res.googTransmitBitrate
+                    };
+                }
+
+                // res.googActiveConnection means either STUN or TURN is used.
+
+                if (res.type == &apos;googCandidatePair&apos; &amp;&amp; res.googActiveConnection == &apos;true&apos;) {
+                    result.connectionType = {
+                        local: {
+                            candidateType: res.googLocalCandidateType,
+                            ipAddress: res.googLocalAddress
+                        },
+                        remote: {
+                            candidateType: res.googRemoteCandidateType,
+                            ipAddress: res.googRemoteAddress
+                        },
+                        transport: res.googTransportType
+                    };
+                }
+
+                var systemNetworkType = ((navigator.connection || {}).type || &apos;unknown&apos;).toString().toLowerCase();
+
+                if(res.type === &apos;localcandidate&apos;) {
+                    if(!result.connectionType) {
+                        result.connectionType = {};
+                    }
+
+                    result.connectionType.local = {
+                        candidateType: res.candidateType,
+                        ipAddress: res.ipAddress + &apos;:&apos; + res.portNumber,
+                        networkType: res.networkType/* || systemNetworkType */ || &apos;unknown&apos;,
+                        transport: res.transport
+                    }
+                }
+
+                if(res.type === &apos;remotecandidate&apos;) {
+                    if(!result.connectionType) {
+                        result.connectionType = {};
+                    }
+                    
+                    result.connectionType.local = {
+                        candidateType: res.candidateType,
+                        ipAddress: res.ipAddress + &apos;:&apos; + res.portNumber,
+                        networkType: res.networkType || systemNetworkType,
+                        transport: res.transport
+                    }
+                }
+            }
+
+            try {
+                if(peer.iceConnectionState.search(/failed|closed/gi) !== -1) {
+                    nomore = true;
+                }
+            }
+            catch(e) {
+                nomore = true;
+            }
+
+            if(nomore === true) {
+                if(result.datachannel) {
+                    result.datachannel.state = &apos;close&apos;;
+                }
+                result.ended = true;
+            }
+
+            callback(result);
+
+            // second argument checks to see, if target-user is still connected.
+            if (!nomore) {
+                typeof interval != undefined &amp;&amp; interval &amp;&amp; setTimeout(getPrivateStats, interval || 1000);
+            }
+        });
+    })();
+
+// a wrapper around getStats which hides the differences (where possible)
+// following code-snippet is taken from somewhere on the github
+function _getStats(cb) {
+    // if !peer or peer.signalingState == &apos;closed&apos; then return;
+    webrtcdev.log( &quot;peer &quot; , peer);
+    if(!peer.getStats()) return;
+
+    if (!!navigator.mozGetUserMedia) {
+        peer.getStats(
+            mediaStreamTrack,
+            function(res) {
+                var items = [];
+                res.forEach(function(result) {
+                    items.push(result);
+                });
+                cb(items);
+            },
+            cb
+        );
+    } else {
+        peer.getStats(function(res) {
+            var items = [];
+            res.result().forEach(function(result) {
+                var item = {};
+                result.names().forEach(function(name) {
+                    item[name] = result.stat(name);
+                });
+                item.id = result.id;
+                item.type = result.type;
+                item.timestamp = result.timestamp;
+                items.push(item);
+            });
+            cb(items);
+        });
+    }
+};
+}
+
+function merge(mergein, mergeto) {
+    if (!mergein) mergein = {};
+    if (!mergeto) return mergein;
+
+    for (var item in mergeto) {
+        mergein[item] = mergeto[item];
+    }
+    return mergein;
+}
+
+if (typeof module !== &apos;undefined&apos;/* &amp;&amp; !!module.exports*/) {
+    module.exports = getStats;
+}
+
+if(typeof window !== &apos;undefined&apos;) {
+    window.getStats = getStats;
+}
+
+
+
+function activateBandwidthButtons(timerobj){
+    if(document.getElementById(&quot;minimizeBandwidthButton&quot;)){
+        var button= document.getElementById(&quot;minimizeBandwidthButton&quot;);
+        button.onclick=function(e){
+            if(document.getElementById(&quot;bandwidthContainer&quot;).hidden)
+                document.getElementById(&quot;bandwidthContainer&quot;).hidden=false;
+            else
+                document.getElementById(&quot;bandwidthContainer&quot;).hidden=true;
+        }  
+    }
+}
+
+/**
+ * shows status of ongoing webrtc call
+ * @method
+ * @name showStatus
+ * @param {obj} conn
+ */
+function showStatus(conn){
+    getStats(rtcConn, function(result) {
+        alert(&quot;getstats Result&quot;);
+        webrtcdev.log(result.connectionType.remote.ipAddress);
+        webrtcdev.log(result.connectionType.remote.candidateType);
+        webrtcdev.log(result.connectionType.transport);
+    });
+    alert( &quot;got stats &quot; , result.connectionType.transport);
+    webrtcdev.log(&quot;WebcallPeers &quot; , webcallpeers);
+}
+
+
+function rtpstats(){
+    try{
+        for( x=0; x&lt;rtcConn.peers.getLength(); x++){
+            var pid =  rtcConn.peers.getAllParticipants()[x];
+            var arg = JSON.stringify( rtcConn.peers[pid] , undefined, 2);
+            document.getElementById(statisticsobj.statsConainer).innerHTML += &quot;&lt;pre &gt;&quot;+ arg + &quot;&lt;/pre&gt;&quot;;        
+        }
+    }catch(e){
+        webrtcdev.error(&quot;rtpstats&quot; , e);
+    }
+
+}
+
+function showRtcConn(){
+    webrtcdev.log(&quot; rtcConn : &quot;  , rtcConn);
+    webrtcdev.log(&quot; rtcConn.peers.getAllParticipants() : &quot; , rtcConn.peers.getAllParticipants());
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

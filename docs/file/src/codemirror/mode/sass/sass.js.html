@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/mode/sass/sass.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/mode/sass/sass.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+&quot;use strict&quot;;
+
+CodeMirror.defineMode(&quot;sass&quot;, function(config) {
+  function tokenRegexp(words) {
+    return new RegExp(&quot;^&quot; + words.join(&quot;|&quot;));
+  }
+
+  var keywords = [&quot;true&quot;, &quot;false&quot;, &quot;null&quot;, &quot;auto&quot;];
+  var keywordsRegexp = new RegExp(&quot;^&quot; + keywords.join(&quot;|&quot;));
+
+  var operators = [&quot;\\(&quot;, &quot;\\)&quot;, &quot;=&quot;, &quot;&gt;&quot;, &quot;&lt;&quot;, &quot;==&quot;, &quot;&gt;=&quot;, &quot;&lt;=&quot;, &quot;\\+&quot;, &quot;-&quot;, &quot;\\!=&quot;, &quot;/&quot;, &quot;\\*&quot;, &quot;%&quot;, &quot;and&quot;, &quot;or&quot;, &quot;not&quot;];
+  var opRegexp = tokenRegexp(operators);
+
+  var pseudoElementsRegexp = /^::?[\w\-]+/;
+
+  function urlTokens(stream, state) {
+    var ch = stream.peek();
+
+    if (ch === &quot;)&quot;) {
+      stream.next();
+      state.tokenizer = tokenBase;
+      return &quot;operator&quot;;
+    } else if (ch === &quot;(&quot;) {
+      stream.next();
+      stream.eatSpace();
+
+      return &quot;operator&quot;;
+    } else if (ch === &quot;&apos;&quot; || ch === &apos;&quot;&apos;) {
+      state.tokenizer = buildStringTokenizer(stream.next());
+      return &quot;string&quot;;
+    } else {
+      state.tokenizer = buildStringTokenizer(&quot;)&quot;, false);
+      return &quot;string&quot;;
+    }
+  }
+  function comment(indentation, multiLine) {
+    return function(stream, state) {
+      if (stream.sol() &amp;&amp; stream.indentation() &lt;= indentation) {
+        state.tokenizer = tokenBase;
+        return tokenBase(stream, state);
+      }
+
+      if (multiLine &amp;&amp; stream.skipTo(&quot;*/&quot;)) {
+        stream.next();
+        stream.next();
+        state.tokenizer = tokenBase;
+      } else {
+        stream.next();
+      }
+
+      return &quot;comment&quot;;
+    };
+  }
+
+  function buildStringTokenizer(quote, greedy) {
+    if(greedy == null) { greedy = true; }
+
+    function stringTokenizer(stream, state) {
+      var nextChar = stream.next();
+      var peekChar = stream.peek();
+      var previousChar = stream.string.charAt(stream.pos-2);
+
+      var endingString = ((nextChar !== &quot;\\&quot; &amp;&amp; peekChar === quote) || (nextChar === quote &amp;&amp; previousChar !== &quot;\\&quot;));
+
+      if (endingString) {
+        if (nextChar !== quote &amp;&amp; greedy) { stream.next(); }
+        state.tokenizer = tokenBase;
+        return &quot;string&quot;;
+      } else if (nextChar === &quot;#&quot; &amp;&amp; peekChar === &quot;{&quot;) {
+        state.tokenizer = buildInterpolationTokenizer(stringTokenizer);
+        stream.next();
+        return &quot;operator&quot;;
+      } else {
+        return &quot;string&quot;;
+      }
+    }
+
+    return stringTokenizer;
+  }
+
+  function buildInterpolationTokenizer(currentTokenizer) {
+    return function(stream, state) {
+      if (stream.peek() === &quot;}&quot;) {
+        stream.next();
+        state.tokenizer = currentTokenizer;
+        return &quot;operator&quot;;
+      } else {
+        return tokenBase(stream, state);
+      }
+    };
+  }
+
+  function indent(state) {
+    if (state.indentCount == 0) {
+      state.indentCount++;
+      var lastScopeOffset = state.scopes[0].offset;
+      var currentOffset = lastScopeOffset + config.indentUnit;
+      state.scopes.unshift({ offset:currentOffset });
+    }
+  }
+
+  function dedent(state) {
+    if (state.scopes.length == 1) return;
+
+    state.scopes.shift();
+  }
+
+  function tokenBase(stream, state) {
+    var ch = stream.peek();
+
+    // Comment
+    if (stream.match(&quot;/*&quot;)) {
+      state.tokenizer = comment(stream.indentation(), true);
+      return state.tokenizer(stream, state);
+    }
+    if (stream.match(&quot;//&quot;)) {
+      state.tokenizer = comment(stream.indentation(), false);
+      return state.tokenizer(stream, state);
+    }
+
+    // Interpolation
+    if (stream.match(&quot;#{&quot;)) {
+      state.tokenizer = buildInterpolationTokenizer(tokenBase);
+      return &quot;operator&quot;;
+    }
+
+    if (ch === &quot;.&quot;) {
+      stream.next();
+
+      // Match class selectors
+      if (stream.match(/^[\w-]+/)) {
+        indent(state);
+        return &quot;atom&quot;;
+      } else if (stream.peek() === &quot;#&quot;) {
+        indent(state);
+        return &quot;atom&quot;;
+      } else {
+        return &quot;operator&quot;;
+      }
+    }
+
+    if (ch === &quot;#&quot;) {
+      stream.next();
+
+      // Hex numbers
+      if (stream.match(/[0-9a-fA-F]{6}|[0-9a-fA-F]{3}/))
+        return &quot;number&quot;;
+
+      // ID selectors
+      if (stream.match(/^[\w-]+/)) {
+        indent(state);
+        return &quot;atom&quot;;
+      }
+
+      if (stream.peek() === &quot;#&quot;) {
+        indent(state);
+        return &quot;atom&quot;;
+      }
+    }
+
+    // Numbers
+    if (stream.match(/^-?[0-9\.]+/))
+      return &quot;number&quot;;
+
+    // Units
+    if (stream.match(/^(px|em|in)\b/))
+      return &quot;unit&quot;;
+
+    if (stream.match(keywordsRegexp))
+      return &quot;keyword&quot;;
+
+    if (stream.match(/^url/) &amp;&amp; stream.peek() === &quot;(&quot;) {
+      state.tokenizer = urlTokens;
+      return &quot;atom&quot;;
+    }
+
+    // Variables
+    if (ch === &quot;$&quot;) {
+      stream.next();
+      stream.eatWhile(/[\w-]/);
+
+      if (stream.peek() === &quot;:&quot;) {
+        stream.next();
+        return &quot;variable-2&quot;;
+      } else {
+        return &quot;variable-3&quot;;
+      }
+    }
+
+    if (ch === &quot;!&quot;) {
+      stream.next();
+      return stream.match(/^[\w]+/) ? &quot;keyword&quot;: &quot;operator&quot;;
+    }
+
+    if (ch === &quot;=&quot;) {
+      stream.next();
+
+      // Match shortcut mixin definition
+      if (stream.match(/^[\w-]+/)) {
+        indent(state);
+        return &quot;meta&quot;;
+      } else {
+        return &quot;operator&quot;;
+      }
+    }
+
+    if (ch === &quot;+&quot;) {
+      stream.next();
+
+      // Match shortcut mixin definition
+      if (stream.match(/^[\w-]+/))
+        return &quot;variable-3&quot;;
+      else
+        return &quot;operator&quot;;
+    }
+
+    // Indent Directives
+    if (stream.match(/^@(else if|if|media|else|for|each|while|mixin|function)/)) {
+      indent(state);
+      return &quot;meta&quot;;
+    }
+
+    // Other Directives
+    if (ch === &quot;@&quot;) {
+      stream.next();
+      stream.eatWhile(/[\w-]/);
+      return &quot;meta&quot;;
+    }
+
+    // Strings
+    if (ch === &apos;&quot;&apos; || ch === &quot;&apos;&quot;) {
+      stream.next();
+      state.tokenizer = buildStringTokenizer(ch);
+      return &quot;string&quot;;
+    }
+
+    // Pseudo element selectors
+    if (ch == &quot;:&quot; &amp;&amp; stream.match(pseudoElementsRegexp))
+      return &quot;keyword&quot;;
+
+    // atoms
+    if (stream.eatWhile(/[\w-&amp;]/)) {
+      // matches a property definition
+      if (stream.peek() === &quot;:&quot; &amp;&amp; !stream.match(pseudoElementsRegexp, false))
+        return &quot;property&quot;;
+      else
+        return &quot;atom&quot;;
+    }
+
+    if (stream.match(opRegexp))
+      return &quot;operator&quot;;
+
+    // If we haven&apos;t returned by now, we move 1 character
+    // and return an error
+    stream.next();
+    return null;
+  }
+
+  function tokenLexer(stream, state) {
+    if (stream.sol()) state.indentCount = 0;
+    var style = state.tokenizer(stream, state);
+    var current = stream.current();
+
+    if (current === &quot;@return&quot;)
+      dedent(state);
+
+    if (style === &quot;atom&quot;)
+      indent(state);
+
+    if (style !== null) {
+      var startOfToken = stream.pos - current.length;
+      var withCurrentIndent = startOfToken + (config.indentUnit * state.indentCount);
+
+      var newScopes = [];
+
+      for (var i = 0; i &lt; state.scopes.length; i++) {
+        var scope = state.scopes[i];
+
+        if (scope.offset &lt;= withCurrentIndent)
+          newScopes.push(scope);
+      }
+
+      state.scopes = newScopes;
+    }
+
+
+    return style;
+  }
+
+  return {
+    startState: function() {
+      return {
+        tokenizer: tokenBase,
+        scopes: [{offset: 0, type: &quot;sass&quot;}],
+        indentCount: 0,
+        definedVars: [],
+        definedMixins: []
+      };
+    },
+    token: function(stream, state) {
+      var style = tokenLexer(stream, state);
+
+      state.lastToken = { style: style, content: stream.current() };
+
+      return style;
+    },
+
+    indent: function(state) {
+      return state.scopes[0].offset;
+    }
+  };
+});
+
+CodeMirror.defineMIME(&quot;text/x-sass&quot;, &quot;sass&quot;);
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

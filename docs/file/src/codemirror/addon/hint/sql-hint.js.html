@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/addon/hint/sql-hint.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/addon/hint/sql-hint.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;), require(&quot;../../mode/sql/sql&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;, &quot;../../mode/sql/sql&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+  &quot;use strict&quot;;
+
+  var tables;
+  var defaultTable;
+  var keywords;
+  var CONS = {
+    QUERY_DIV: &quot;;&quot;,
+    ALIAS_KEYWORD: &quot;AS&quot;
+  };
+  var Pos = CodeMirror.Pos;
+
+  function getKeywords(editor) {
+    var mode = editor.doc.modeOption;
+    if (mode === &quot;sql&quot;) mode = &quot;text/x-sql&quot;;
+    return CodeMirror.resolveMode(mode).keywords;
+  }
+
+  function match(string, word) {
+    var len = string.length;
+    var sub = word.substr(0, len);
+    return string.toUpperCase() === sub.toUpperCase();
+  }
+
+  function addMatches(result, search, wordlist, formatter) {
+    for (var word in wordlist) {
+      if (!wordlist.hasOwnProperty(word)) continue;
+      if (Array.isArray(wordlist)) {
+        word = wordlist[word];
+      }
+      if (match(search, word)) {
+        result.push(formatter(word));
+      }
+    }
+  }
+
+  function nameCompletion(result, editor) {
+    var cur = editor.getCursor();
+    var token = editor.getTokenAt(cur);
+    var useBacktick = (token.string.charAt(0) == &quot;`&quot;);
+    var string = token.string.substr(1);
+    var prevToken = editor.getTokenAt(Pos(cur.line, token.start));
+    if (token.string.charAt(0) == &quot;.&quot; || prevToken.string == &quot;.&quot;){
+      //Suggest colunm names
+      if (prevToken.string == &quot;.&quot;) {
+        var prevToken = editor.getTokenAt(Pos(cur.line, token.start - 1));
+      }
+      var table = prevToken.string;
+      //Check if backtick is used in table name. If yes, use it for columns too.
+      var useBacktickTable = false;
+      if (table.match(/`/g)) {
+        useBacktickTable = true;
+        table = table.replace(/`/g, &quot;&quot;);
+      }
+      //Check if table is available. If not, find table by Alias
+      if (!tables.hasOwnProperty(table))
+        table = findTableByAlias(table, editor);
+      var columns = tables[table];
+      if (!columns) return;
+
+      if (useBacktick) {
+        addMatches(result, string, columns, function(w) {return &quot;`&quot; + w + &quot;`&quot;;});
+      }
+      else if(useBacktickTable) {
+        addMatches(result, string, columns, function(w) {return &quot;.`&quot; + w + &quot;`&quot;;});
+      }
+      else {
+        addMatches(result, string, columns, function(w) {return &quot;.&quot; + w;});
+      }
+    }
+    else {
+      //Suggest table names or colums in defaultTable
+      while (token.start &amp;&amp; string.charAt(0) == &quot;.&quot;) {
+        token = editor.getTokenAt(Pos(cur.line, token.start - 1));
+        string = token.string + string;
+      }
+      if (useBacktick) {
+        addMatches(result, string, tables, function(w) {return &quot;`&quot; + w + &quot;`&quot;;});
+        addMatches(result, string, defaultTable, function(w) {return &quot;`&quot; + w + &quot;`&quot;;});
+      }
+      else {
+        addMatches(result, string, tables, function(w) {return w;});
+        addMatches(result, string, defaultTable, function(w) {return w;});
+      }
+    }
+  }
+
+  function eachWord(lineText, f) {
+    if (!lineText) return;
+    var excepted = /[,;]/g;
+    var words = lineText.split(&quot; &quot;);
+    for (var i = 0; i &lt; words.length; i++) {
+      f(words[i]?words[i].replace(excepted, &apos;&apos;) : &apos;&apos;);
+    }
+  }
+
+  function convertCurToNumber(cur) {
+    // max characters of a line is 999,999.
+    return cur.line + cur.ch / Math.pow(10, 6);
+  }
+
+  function convertNumberToCur(num) {
+    return Pos(Math.floor(num), +num.toString().split(&apos;.&apos;).pop());
+  }
+
+  function findTableByAlias(alias, editor) {
+    var doc = editor.doc;
+    var fullQuery = doc.getValue();
+    var aliasUpperCase = alias.toUpperCase();
+    var previousWord = &quot;&quot;;
+    var table = &quot;&quot;;
+    var separator = [];
+    var validRange = {
+      start: Pos(0, 0),
+      end: Pos(editor.lastLine(), editor.getLineHandle(editor.lastLine()).length)
+    };
+
+    //add separator
+    var indexOfSeparator = fullQuery.indexOf(CONS.QUERY_DIV);
+    while(indexOfSeparator != -1) {
+      separator.push(doc.posFromIndex(indexOfSeparator));
+      indexOfSeparator = fullQuery.indexOf(CONS.QUERY_DIV, indexOfSeparator+1);
+    }
+    separator.unshift(Pos(0, 0));
+    separator.push(Pos(editor.lastLine(), editor.getLineHandle(editor.lastLine()).text.length));
+
+    //find valid range
+    var prevItem = 0;
+    var current = convertCurToNumber(editor.getCursor());
+    for (var i=0; i&lt; separator.length; i++) {
+      var _v = convertCurToNumber(separator[i]);
+      if (current &gt; prevItem &amp;&amp; current &lt;= _v) {
+        validRange = { start: convertNumberToCur(prevItem), end: convertNumberToCur(_v) };
+        break;
+      }
+      prevItem = _v;
+    }
+
+    var query = doc.getRange(validRange.start, validRange.end, false);
+
+    for (var i = 0; i &lt; query.length; i++) {
+      var lineText = query[i];
+      eachWord(lineText, function(word) {
+        var wordUpperCase = word.toUpperCase();
+        if (wordUpperCase === aliasUpperCase &amp;&amp; tables.hasOwnProperty(previousWord)) {
+            table = previousWord;
+        }
+        if (wordUpperCase !== CONS.ALIAS_KEYWORD) {
+          previousWord = word;
+        }
+      });
+      if (table) break;
+    }
+    return table;
+  }
+
+  CodeMirror.registerHelper(&quot;hint&quot;, &quot;sql&quot;, function(editor, options) {
+    tables = (options &amp;&amp; options.tables) || {};
+    var defaultTableName = options &amp;&amp; options.defaultTable;
+    defaultTable = (defaultTableName &amp;&amp; tables[defaultTableName] || []);
+    keywords = keywords || getKeywords(editor);
+
+    var cur = editor.getCursor();
+    var result = [];
+    var token = editor.getTokenAt(cur), start, end, search;
+    if (token.string.match(/^[.`\w@]\w*$/)) {
+      search = token.string;
+      start = token.start;
+      end = token.end;
+    } else {
+      start = end = cur.ch;
+      search = &quot;&quot;;
+    }
+    if (search.charAt(0) == &quot;.&quot; || search.charAt(0) == &quot;`&quot;) {
+      nameCompletion(result, editor);
+    } else {
+      addMatches(result, search, tables, function(w) {return w;});
+      addMatches(result, search, defaultTable, function(w) {return w;});
+      addMatches(result, search, keywords, function(w) {return w.toUpperCase();});
+    }
+
+    return {list: result, from: Pos(cur.line, start), to: Pos(cur.line, end)};
+  });
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

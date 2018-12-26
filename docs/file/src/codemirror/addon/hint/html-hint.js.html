@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/codemirror/addon/hint/html-hint.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/codemirror/addon/hint/html-hint.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function(mod) {
+  if (typeof exports == &quot;object&quot; &amp;&amp; typeof module == &quot;object&quot;) // CommonJS
+    mod(require(&quot;../../lib/codemirror&quot;, &quot;./xml-hint&quot;));
+  else if (typeof define == &quot;function&quot; &amp;&amp; define.amd) // AMD
+    define([&quot;../../lib/codemirror&quot;, &quot;./xml-hint&quot;], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+  &quot;use strict&quot;;
+
+  var langs = &quot;ab aa af ak sq am ar an hy as av ae ay az bm ba eu be bn bh bi bs br bg my ca ch ce ny zh cv kw co cr hr cs da dv nl dz en eo et ee fo fj fi fr ff gl ka de el gn gu ht ha he hz hi ho hu ia id ie ga ig ik io is it iu ja jv kl kn kr ks kk km ki rw ky kv kg ko ku kj la lb lg li ln lo lt lu lv gv mk mg ms ml mt mi mr mh mn na nv nb nd ne ng nn no ii nr oc oj cu om or os pa pi fa pl ps pt qu rm rn ro ru sa sc sd se sm sg sr gd sn si sk sl so st es su sw ss sv ta te tg th ti bo tk tl tn to tr ts tt tw ty ug uk ur uz ve vi vo wa cy wo fy xh yi yo za zu&quot;.split(&quot; &quot;);
+  var targets = [&quot;_blank&quot;, &quot;_self&quot;, &quot;_top&quot;, &quot;_parent&quot;];
+  var charsets = [&quot;ascii&quot;, &quot;utf-8&quot;, &quot;utf-16&quot;, &quot;latin1&quot;, &quot;latin1&quot;];
+  var methods = [&quot;get&quot;, &quot;post&quot;, &quot;put&quot;, &quot;delete&quot;];
+  var encs = [&quot;application/x-www-form-urlencoded&quot;, &quot;multipart/form-data&quot;, &quot;text/plain&quot;];
+  var media = [&quot;all&quot;, &quot;screen&quot;, &quot;print&quot;, &quot;embossed&quot;, &quot;braille&quot;, &quot;handheld&quot;, &quot;print&quot;, &quot;projection&quot;, &quot;screen&quot;, &quot;tty&quot;, &quot;tv&quot;, &quot;speech&quot;,
+               &quot;3d-glasses&quot;, &quot;resolution [&gt;][&lt;][=] [X]&quot;, &quot;device-aspect-ratio: X/Y&quot;, &quot;orientation:portrait&quot;,
+               &quot;orientation:landscape&quot;, &quot;device-height: [X]&quot;, &quot;device-width: [X]&quot;];
+  var s = { attrs: {} }; // Simple tag, reused for a whole lot of tags
+
+  var data = {
+    a: {
+      attrs: {
+        href: null, ping: null, type: null,
+        media: media,
+        target: targets,
+        hreflang: langs
+      }
+    },
+    abbr: s,
+    acronym: s,
+    address: s,
+    applet: s,
+    area: {
+      attrs: {
+        alt: null, coords: null, href: null, target: null, ping: null,
+        media: media, hreflang: langs, type: null,
+        shape: [&quot;default&quot;, &quot;rect&quot;, &quot;circle&quot;, &quot;poly&quot;]
+      }
+    },
+    article: s,
+    aside: s,
+    audio: {
+      attrs: {
+        src: null, mediagroup: null,
+        crossorigin: [&quot;anonymous&quot;, &quot;use-credentials&quot;],
+        preload: [&quot;none&quot;, &quot;metadata&quot;, &quot;auto&quot;],
+        autoplay: [&quot;&quot;, &quot;autoplay&quot;],
+        loop: [&quot;&quot;, &quot;loop&quot;],
+        controls: [&quot;&quot;, &quot;controls&quot;]
+      }
+    },
+    b: s,
+    base: { attrs: { href: null, target: targets } },
+    basefont: s,
+    bdi: s,
+    bdo: s,
+    big: s,
+    blockquote: { attrs: { cite: null } },
+    body: s,
+    br: s,
+    button: {
+      attrs: {
+        form: null, formaction: null, name: null, value: null,
+        autofocus: [&quot;&quot;, &quot;autofocus&quot;],
+        disabled: [&quot;&quot;, &quot;autofocus&quot;],
+        formenctype: encs,
+        formmethod: methods,
+        formnovalidate: [&quot;&quot;, &quot;novalidate&quot;],
+        formtarget: targets,
+        type: [&quot;submit&quot;, &quot;reset&quot;, &quot;button&quot;]
+      }
+    },
+    canvas: { attrs: { width: null, height: null } },
+    caption: s,
+    center: s,
+    cite: s,
+    code: s,
+    col: { attrs: { span: null } },
+    colgroup: { attrs: { span: null } },
+    command: {
+      attrs: {
+        type: [&quot;command&quot;, &quot;checkbox&quot;, &quot;radio&quot;],
+        label: null, icon: null, radiogroup: null, command: null, title: null,
+        disabled: [&quot;&quot;, &quot;disabled&quot;],
+        checked: [&quot;&quot;, &quot;checked&quot;]
+      }
+    },
+    data: { attrs: { value: null } },
+    datagrid: { attrs: { disabled: [&quot;&quot;, &quot;disabled&quot;], multiple: [&quot;&quot;, &quot;multiple&quot;] } },
+    datalist: { attrs: { data: null } },
+    dd: s,
+    del: { attrs: { cite: null, datetime: null } },
+    details: { attrs: { open: [&quot;&quot;, &quot;open&quot;] } },
+    dfn: s,
+    dir: s,
+    div: s,
+    dl: s,
+    dt: s,
+    em: s,
+    embed: { attrs: { src: null, type: null, width: null, height: null } },
+    eventsource: { attrs: { src: null } },
+    fieldset: { attrs: { disabled: [&quot;&quot;, &quot;disabled&quot;], form: null, name: null } },
+    figcaption: s,
+    figure: s,
+    font: s,
+    footer: s,
+    form: {
+      attrs: {
+        action: null, name: null,
+        &quot;accept-charset&quot;: charsets,
+        autocomplete: [&quot;on&quot;, &quot;off&quot;],
+        enctype: encs,
+        method: methods,
+        novalidate: [&quot;&quot;, &quot;novalidate&quot;],
+        target: targets
+      }
+    },
+    frame: s,
+    frameset: s,
+    h1: s, h2: s, h3: s, h4: s, h5: s, h6: s,
+    head: {
+      attrs: {},
+      children: [&quot;title&quot;, &quot;base&quot;, &quot;link&quot;, &quot;style&quot;, &quot;meta&quot;, &quot;script&quot;, &quot;noscript&quot;, &quot;command&quot;]
+    },
+    header: s,
+    hgroup: s,
+    hr: s,
+    html: {
+      attrs: { manifest: null },
+      children: [&quot;head&quot;, &quot;body&quot;]
+    },
+    i: s,
+    iframe: {
+      attrs: {
+        src: null, srcdoc: null, name: null, width: null, height: null,
+        sandbox: [&quot;allow-top-navigation&quot;, &quot;allow-same-origin&quot;, &quot;allow-forms&quot;, &quot;allow-scripts&quot;],
+        seamless: [&quot;&quot;, &quot;seamless&quot;]
+      }
+    },
+    img: {
+      attrs: {
+        alt: null, src: null, ismap: null, usemap: null, width: null, height: null,
+        crossorigin: [&quot;anonymous&quot;, &quot;use-credentials&quot;]
+      }
+    },
+    input: {
+      attrs: {
+        alt: null, dirname: null, form: null, formaction: null,
+        height: null, list: null, max: null, maxlength: null, min: null,
+        name: null, pattern: null, placeholder: null, size: null, src: null,
+        step: null, value: null, width: null,
+        accept: [&quot;audio/*&quot;, &quot;video/*&quot;, &quot;image/*&quot;],
+        autocomplete: [&quot;on&quot;, &quot;off&quot;],
+        autofocus: [&quot;&quot;, &quot;autofocus&quot;],
+        checked: [&quot;&quot;, &quot;checked&quot;],
+        disabled: [&quot;&quot;, &quot;disabled&quot;],
+        formenctype: encs,
+        formmethod: methods,
+        formnovalidate: [&quot;&quot;, &quot;novalidate&quot;],
+        formtarget: targets,
+        multiple: [&quot;&quot;, &quot;multiple&quot;],
+        readonly: [&quot;&quot;, &quot;readonly&quot;],
+        required: [&quot;&quot;, &quot;required&quot;],
+        type: [&quot;hidden&quot;, &quot;text&quot;, &quot;search&quot;, &quot;tel&quot;, &quot;url&quot;, &quot;email&quot;, &quot;password&quot;, &quot;datetime&quot;, &quot;date&quot;, &quot;month&quot;,
+               &quot;week&quot;, &quot;time&quot;, &quot;datetime-local&quot;, &quot;number&quot;, &quot;range&quot;, &quot;color&quot;, &quot;checkbox&quot;, &quot;radio&quot;,
+               &quot;file&quot;, &quot;submit&quot;, &quot;image&quot;, &quot;reset&quot;, &quot;button&quot;]
+      }
+    },
+    ins: { attrs: { cite: null, datetime: null } },
+    kbd: s,
+    keygen: {
+      attrs: {
+        challenge: null, form: null, name: null,
+        autofocus: [&quot;&quot;, &quot;autofocus&quot;],
+        disabled: [&quot;&quot;, &quot;disabled&quot;],
+        keytype: [&quot;RSA&quot;]
+      }
+    },
+    label: { attrs: { &quot;for&quot;: null, form: null } },
+    legend: s,
+    li: { attrs: { value: null } },
+    link: {
+      attrs: {
+        href: null, type: null,
+        hreflang: langs,
+        media: media,
+        sizes: [&quot;all&quot;, &quot;16x16&quot;, &quot;16x16 32x32&quot;, &quot;16x16 32x32 64x64&quot;]
+      }
+    },
+    map: { attrs: { name: null } },
+    mark: s,
+    menu: { attrs: { label: null, type: [&quot;list&quot;, &quot;context&quot;, &quot;toolbar&quot;] } },
+    meta: {
+      attrs: {
+        content: null,
+        charset: charsets,
+        name: [&quot;viewport&quot;, &quot;application-name&quot;, &quot;author&quot;, &quot;description&quot;, &quot;generator&quot;, &quot;keywords&quot;],
+        &quot;http-equiv&quot;: [&quot;content-language&quot;, &quot;content-type&quot;, &quot;default-style&quot;, &quot;refresh&quot;]
+      }
+    },
+    meter: { attrs: { value: null, min: null, low: null, high: null, max: null, optimum: null } },
+    nav: s,
+    noframes: s,
+    noscript: s,
+    object: {
+      attrs: {
+        data: null, type: null, name: null, usemap: null, form: null, width: null, height: null,
+        typemustmatch: [&quot;&quot;, &quot;typemustmatch&quot;]
+      }
+    },
+    ol: { attrs: { reversed: [&quot;&quot;, &quot;reversed&quot;], start: null, type: [&quot;1&quot;, &quot;a&quot;, &quot;A&quot;, &quot;i&quot;, &quot;I&quot;] } },
+    optgroup: { attrs: { disabled: [&quot;&quot;, &quot;disabled&quot;], label: null } },
+    option: { attrs: { disabled: [&quot;&quot;, &quot;disabled&quot;], label: null, selected: [&quot;&quot;, &quot;selected&quot;], value: null } },
+    output: { attrs: { &quot;for&quot;: null, form: null, name: null } },
+    p: s,
+    param: { attrs: { name: null, value: null } },
+    pre: s,
+    progress: { attrs: { value: null, max: null } },
+    q: { attrs: { cite: null } },
+    rp: s,
+    rt: s,
+    ruby: s,
+    s: s,
+    samp: s,
+    script: {
+      attrs: {
+        type: [&quot;text/javascript&quot;],
+        src: null,
+        async: [&quot;&quot;, &quot;async&quot;],
+        defer: [&quot;&quot;, &quot;defer&quot;],
+        charset: charsets
+      }
+    },
+    section: s,
+    select: {
+      attrs: {
+        form: null, name: null, size: null,
+        autofocus: [&quot;&quot;, &quot;autofocus&quot;],
+        disabled: [&quot;&quot;, &quot;disabled&quot;],
+        multiple: [&quot;&quot;, &quot;multiple&quot;]
+      }
+    },
+    small: s,
+    source: { attrs: { src: null, type: null, media: null } },
+    span: s,
+    strike: s,
+    strong: s,
+    style: {
+      attrs: {
+        type: [&quot;text/css&quot;],
+        media: media,
+        scoped: null
+      }
+    },
+    sub: s,
+    summary: s,
+    sup: s,
+    table: s,
+    tbody: s,
+    td: { attrs: { colspan: null, rowspan: null, headers: null } },
+    textarea: {
+      attrs: {
+        dirname: null, form: null, maxlength: null, name: null, placeholder: null,
+        rows: null, cols: null,
+        autofocus: [&quot;&quot;, &quot;autofocus&quot;],
+        disabled: [&quot;&quot;, &quot;disabled&quot;],
+        readonly: [&quot;&quot;, &quot;readonly&quot;],
+        required: [&quot;&quot;, &quot;required&quot;],
+        wrap: [&quot;soft&quot;, &quot;hard&quot;]
+      }
+    },
+    tfoot: s,
+    th: { attrs: { colspan: null, rowspan: null, headers: null, scope: [&quot;row&quot;, &quot;col&quot;, &quot;rowgroup&quot;, &quot;colgroup&quot;] } },
+    thead: s,
+    time: { attrs: { datetime: null } },
+    title: s,
+    tr: s,
+    track: {
+      attrs: {
+        src: null, label: null, &quot;default&quot;: null,
+        kind: [&quot;subtitles&quot;, &quot;captions&quot;, &quot;descriptions&quot;, &quot;chapters&quot;, &quot;metadata&quot;],
+        srclang: langs
+      }
+    },
+    tt: s,
+    u: s,
+    ul: s,
+    &quot;var&quot;: s,
+    video: {
+      attrs: {
+        src: null, poster: null, width: null, height: null,
+        crossorigin: [&quot;anonymous&quot;, &quot;use-credentials&quot;],
+        preload: [&quot;auto&quot;, &quot;metadata&quot;, &quot;none&quot;],
+        autoplay: [&quot;&quot;, &quot;autoplay&quot;],
+        mediagroup: [&quot;movie&quot;],
+        muted: [&quot;&quot;, &quot;muted&quot;],
+        controls: [&quot;&quot;, &quot;controls&quot;]
+      }
+    },
+    wbr: s
+  };
+
+  var globalAttrs = {
+    accesskey: [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;, &quot;f&quot;, &quot;g&quot;, &quot;h&quot;, &quot;i&quot;, &quot;j&quot;, &quot;k&quot;, &quot;l&quot;, &quot;m&quot;, &quot;n&quot;, &quot;o&quot;, &quot;p&quot;, &quot;q&quot;, &quot;r&quot;, &quot;s&quot;, &quot;t&quot;, &quot;u&quot;, &quot;v&quot;, &quot;w&quot;, &quot;x&quot;, &quot;y&quot;, &quot;z&quot;, &quot;0&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;6&quot;, &quot;7&quot;, &quot;8&quot;, &quot;9&quot;],
+    &quot;class&quot;: null,
+    contenteditable: [&quot;true&quot;, &quot;false&quot;],
+    contextmenu: null,
+    dir: [&quot;ltr&quot;, &quot;rtl&quot;, &quot;auto&quot;],
+    draggable: [&quot;true&quot;, &quot;false&quot;, &quot;auto&quot;],
+    dropzone: [&quot;copy&quot;, &quot;move&quot;, &quot;link&quot;, &quot;string:&quot;, &quot;file:&quot;],
+    hidden: [&quot;hidden&quot;],
+    id: null,
+    inert: [&quot;inert&quot;],
+    itemid: null,
+    itemprop: null,
+    itemref: null,
+    itemscope: [&quot;itemscope&quot;],
+    itemtype: null,
+    lang: [&quot;en&quot;, &quot;es&quot;],
+    spellcheck: [&quot;true&quot;, &quot;false&quot;],
+    style: null,
+    tabindex: [&quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;6&quot;, &quot;7&quot;, &quot;8&quot;, &quot;9&quot;],
+    title: null,
+    translate: [&quot;yes&quot;, &quot;no&quot;],
+    onclick: null,
+    rel: [&quot;stylesheet&quot;, &quot;alternate&quot;, &quot;author&quot;, &quot;bookmark&quot;, &quot;help&quot;, &quot;license&quot;, &quot;next&quot;, &quot;nofollow&quot;, &quot;noreferrer&quot;, &quot;prefetch&quot;, &quot;prev&quot;, &quot;search&quot;, &quot;tag&quot;]
+  };
+  function populate(obj) {
+    for (var attr in globalAttrs) if (globalAttrs.hasOwnProperty(attr))
+      obj.attrs[attr] = globalAttrs[attr];
+  }
+
+  populate(s);
+  for (var tag in data) if (data.hasOwnProperty(tag) &amp;&amp; data[tag] != s)
+    populate(data[tag]);
+
+  CodeMirror.htmlSchema = data;
+  function htmlHint(cm, options) {
+    var local = {schemaInfo: data};
+    if (options) for (var opt in options) local[opt] = options[opt];
+    return CodeMirror.hint.xml(cm, local);
+  }
+  CodeMirror.registerHelper(&quot;hint&quot;, &quot;html&quot;, htmlHint);
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/scripts/_timer.js | webrtcdevelopment</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "><meta property="twitter:card" content="summary"><meta property="twitter:title" content="webrtcdevelopment"><meta property="twitter:description" content="webrtc based communication and collaboration client. Contains lot of experiments modules "></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/altanai/webrtc"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts">scripts</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CanvasRecorder">CanvasRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetRecorderType">GetRecorderType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GifRecorder">GifRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MRecordRTC">MRecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MediaStreamRecorder">MediaStreamRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTC">RecordRTC</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-RecordRTCConfiguration">RecordRTCConfiguration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-StereoAudioRecorder">StereoAudioRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-WhammyRecorder">WhammyRecorder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-createFileSharingDiv">createFileSharingDiv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-_turn.js">_turn.js</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#scripts-rtcconn">scripts/rtcconn</a><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Whammy">Whammy</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/scripts/_timer.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/**************************************************8
+Timer 
+***************************************************/
+var hours,mins,secs;
+var today = new Date();
+var zone=&quot;&quot;;
+
+function startsessionTimer(timerobj){
+
+    if(timerobj.counter.hours &amp;&amp; timerobj.counter.minutes &amp;&amp; timerobj.counter.seconds ){
+        hours = document.getElementById(timerobj.counter.hours);
+        mins = document.getElementById(timerobj.counter.minutes);
+        secs = document.getElementById(timerobj.counter.seconds);
+
+        if(timerobj.type==&quot;forward&quot;){
+            startForwardTimer();
+            hours.innerHTML=0;
+            mins.innerHTML=0;
+            secs.innerHTML=0;
+
+        }else if (timerobj.type==&quot;backward&quot;){
+            hours.innerHTML=0;
+            mins.innerHTML=3;
+            secs.innerHTML=0;
+            startBackwardTimer();
+        }
+    }else{
+        webrtcdev.error(&quot; timerobj.counter DOM elemnts not found &quot;);
+    }
+
+}
+
+function startBackwardTimer(){
+    webrtcdev.log(&quot;startBackwardTimer&quot;, hours ,mins , secs);
+    var cd = secs;
+    var cdm = mins;
+    var c = parseInt(cd.innerHTML,10);
+    var m =  parseInt(cdm.innerHTML,10);
+    //alert(&quot; Time for session validy is &quot;+m +&quot; minutes :&quot;+ c+ &quot; seconds&quot;);
+    btimer(cd , c , cdm ,  m);  
+}
+
+function startForwardTimer(){
+    webrtcdev.log(&quot;forward vtime started &quot;);
+    var cd = secs;
+    var cdm = mins;
+    var c = parseInt(cd.innerHTML,10);
+    var m =  parseInt(cdm.innerHTML,10);
+    //alert(&quot; Time for session validy is &quot;+m +&quot; minutes :&quot;+ c+ &quot; seconds&quot;);
+    ftimer(cd , c , cdm ,  m); 
+}
+
+function ftimer(cd , c , cdm , m ){
+    var interv = setInterval(function() {
+        c++;
+        secs.innerHTML= c;
+
+        if (c == 60) {
+            c = 0;
+            m++;  
+            mins.innerHTML = m;                    
+        }
+    }, 1000);
+}
+
+function btimer(cd , c , cdm , m ){
+    var interv = setInterval(function() {
+        c--;
+        secs.innerHTML= c;
+
+        if (c == 0) {
+            c = 60;
+            m--;  
+            mins.innerHTML=m;
+            if(m&lt;0)  {
+                clearInterval(interv); 
+                //alert(&quot;time over&quot;);
+            }                     
+        }
+    }, 1000);
+}
+
+function getDate(){
+    var now = new Date();
+    return now;
+}
+
+function prepareTime(){
+
+}
+
+function startTime() {
+    try{
+
+        if(timerobj.span.currentTime_id &amp;&amp; document.getElementById(timerobj.span.currentTime_id)){
+            var timerspanlocal = document.getElementById(timerobj.span.currentTime_id);
+            timerspanlocal.innerHTML = new Date().toLocaleTimeString();
+            var t = setTimeout(startTime, 1000);
+        }else{
+            webrtcdev.error(&quot; No place for timerobj.span.currentTime_id&quot;);
+        }
+    }catch(e){
+        webrtcdev.error(e);
+    }
+    //webrtcdev.log(&quot; localdate :&quot; , today);
+}
+
+function timeZone(){
+    try{
+        if(timerobj.span.currentTimeZone_id &amp;&amp; document.getElementById(timerobj.span.currentTimeZone_id)){
+            zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            var timerzonelocal = document.getElementById(timerobj.span.currentTimeZone_id);
+            timerzonelocal.innerHTML = zone;
+        }else{
+            webrtcdev.error(&quot; timerobj.span.currentTimeZone_id DOM doesnt exist &quot;);
+        }
+    }catch(e){
+        webrtcdev.error(e);
+    }
+}
+
+function shareTimePeer(){
+    try{
+        var msg={
+            type:&quot;timer&quot;, 
+            time: (today).toJSON() , 
+            zone: zone
+        };
+        rtcConn.send(msg);
+    }catch(e){
+        webrtcdev.error(e);   
+    }
+
+}
+
+function startPeersTime(date,zone){
+    
+    try{
+        webrtcdev.log(&quot; [timerjs] startPeersTime &quot; , date , zone);
+
+        if(timerobj.span.remoteTimeZone_id &amp;&amp; document.getElementById(timerobj.span.remoteTimeZone_id)){
+            var timerzonepeer = document.getElementById(timerobj.span.remoteTimeZone_id);
+            timerzonepeer.innerHTML = zone;
+        }else{
+            webrtcdev.error(&quot;timerobj.span.remoteTimeZone_id DOM doesnt exist &quot;);
+        }
+        
+        if(timerobj.span.remoteTime_id &amp;&amp; document.getElementById(timerobj.span.remoteTime_id)){
+            var timerspanpeer = document.getElementById(timerobj.span.remoteTime_id);
+            timerspanpeer.innerHTML = new Date().toLocaleString(&apos;en-US&apos;, { timeZone: zone})
+            var t = setTimeout(startPeersTime, 1000);
+        }else{
+            webrtcdev.error(&quot; timerobj.span.remoteTime_id DOM does not exist&quot;);
+        }
+    }catch(e){
+        webrtcdev.error(e);   
+    }
+}
+
+function activateBttons(timerobj){
+    if(timerobj.container.minbutton_id &amp;&amp; document.getElementById(timerobj.container.minbutton_id)){
+        var button= document.getElementById(timerobj.container.minbutton_id);
+        button.onclick=function(e){
+            if(document.getElementById(timerobj.container.id).hidden)
+                document.getElementById(timerobj.container.id).hidden=false;
+            else
+                document.getElementById(timerobj.container.id).hidden=true;
+        }  
+    }
+}
+
+function checkTime(i) {
+    if (i &lt; 10) {i = &quot;0&quot; + i};  // add zero in front of numbers &lt; 10
+    return i;
+}</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
