@@ -304,6 +304,9 @@ var webrtcdevlogs=[];
 //    console.error(arguments);
 // };
 
+
+
+
 webrtcdev.log = console.log;
 webrtcdev.info = console.info;
 webrtcdev.debug = console.debug;

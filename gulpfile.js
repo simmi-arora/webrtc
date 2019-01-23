@@ -189,7 +189,7 @@ var scriptList=[
     "client/src/scripts/FileBufferReader.js",
     "client/src/scripts/MediaStreamRecorder.js",
     "client/src/scripts/RecordRTC.js",
-    "client/src/scripts/screenshot.js",
+    "client/src/scripts/html2canvas.js",
     "client/src/scripts/_snapshot.js",
     "client/src/scripts/_geolocation.js",
     "client/src/scripts/_chat.js",

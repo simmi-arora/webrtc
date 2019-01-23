@@ -54,7 +54,7 @@ function attachControlButtons( vid ,  peerinfo){
     //Preventing multple control bars 
     var c = vid.parentNode.childNodes;
     for (i = 0; i < c.length; i++) {
-        webrtcdev.log("ChildNode of video Parent " , c[i]);
+        //webrtcdev.log("ChildNode of video Parent " , c[i]);
         if(c[i].nodeName=="DIV" && c[i].id!=undefined){
             if( c[i].id.indexOf("control")>-1 ){
                 webrtcdev.log("control bar exists already  , delete the previous one before adding new one");
@@ -261,7 +261,7 @@ function transitionToWaiting() {
 
 function attachMediaStream(element, stream) {
     try{
-        webrtcdev.log("[ Mediacontrol - attachMediaStream ] element.src", typeof element.src ,typeof element.srcObject , " || stream " + stream );
+        webrtcdev.log("[ Mediacontrol - attachMediaStream ] element.srcObject", typeof element.src ,typeof element.srcObject , " || stream " + stream );
         
         if(stream){
             //if (typeof element.src == 'string') {
@@ -272,7 +272,7 @@ function attachMediaStream(element, stream) {
             //    webrtcdev.log('Error attaching stream to element.' , element , stream);
             //}
 
-            //element.play();
+            element.play();
             webrtcdev.log(" Media Stream attached to " , element , " succesfully");
         }else{
             //element.src = "";

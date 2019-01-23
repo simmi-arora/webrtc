@@ -38,10 +38,10 @@ if(document.getElementById("ListenInButton")){
 	modalbody.className="modal-body";
 
 	var link = document.createElement("div");
-	link.innerHTML = window.location+'?appname=webrtcwebcall&role=inspector&audio=0&video=0';
+	link.innerHTML = window.location+'?appname=webrtcwebcall&role=inspector&audio=1&video=0';
 
-	var mail=document.createElement("div");
-	mail.innerHTML='<a href="mailto:?Subject=Hello%20again" target="_top">Send Mail</a>';
+	var mail = document.createElement("div");
+	mail.innerHTML ='<a href="mailto:?Subject=Hello%20again" target="_top">Send Mail</a>';
 
 	modalbody.appendChild(link);
 	modalbody.appendChild(mail);
@@ -52,7 +52,7 @@ if(document.getElementById("ListenInButton")){
 	modalinnerBox.appendChild(modal);
 	modalBox.appendChild(modalinnerBox);
 
-	var mainDiv= document.getElementById("mainDiv");
+	var mainDiv = document.getElementById("mainDiv");
 	mainDiv.appendChild(modalBox);
 
 	webrtcdev.log(" -----------------sppenedd modal dialog ListenIn" , modalBox);
@@ -68,7 +68,7 @@ if(document.getElementById('listenInLink')){
 		var currSession =  window.location.href;
 		webrtcdev.log(" Current Session ", currSession);
 	
-		var listeninSession = currSession+'?appname=webrtcwebcall&role=inspector&audio=0&video=0';
+		var listeninSession = currSession+'?appname=webrtcwebcall&role=inspector&audio=1&video=0';
 		webrtcdev.log(" Inspector Link " , listeninSession);
 
 		document.getElementById("listenInLink").value = listeninSession;
