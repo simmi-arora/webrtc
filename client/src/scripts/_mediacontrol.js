@@ -261,7 +261,9 @@ function transitionToWaiting() {
 
 function attachMediaStream(element, stream) {
     try{
-        webrtcdev.log("[ Mediacontrol - attachMediaStream ] element.srcObject", typeof element.src ,typeof element.srcObject , " || stream " + stream );
+        webrtcdev.log("[ Mediacontrol - attachMediaStream ] ",
+            "element.srcObject", typeof element.src ,typeof element.srcObject ,
+             " || stream " + stream );
         
         if(stream){
             //if (typeof element.src == 'string') {

@@ -7,20 +7,17 @@
     "node": "5.*"
   },
   "dependencies": {
-
     "babel-core": "^6.26.3",
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
     "gulp-babel": "^7.0.1",
     "gulp-replace": "^1.0.0",
-
     "log": "^1.4.0",
     "node-static": "^0.7.10",
     "restify": "^7.2.0",
     "socket.io": "^2.1.1"
   },
   "devDependencies": {
-
     "babel-preset-es2015": "^6.24.1",
     "grunt": "^0.4.1",
     "grunt-apidoc": "^0.11.0",
@@ -30,7 +27,7 @@
     "grunt-contrib-concat": "0.5.1",
     "grunt-contrib-copy": "0.8.2",
     "grunt-contrib-jshint": "^1.1.0",
-    "grunt-contrib-nodeunit": "^1.0.0",
+    "grunt-contrib-nodeunit": "^2.0.0",
     "grunt-contrib-uglify": "^3.3.0",
     "grunt-contrib-uglify-es": "github:gruntjs/grunt-contrib-uglify#harmony",
     "grunt-contrib-watch": "^1.0.0",
@@ -39,14 +36,12 @@
     "grunt-jsbeautifier": "0.2.10",
     "grunt-release": "^0.14.0",
     "grunt-replace": "0.11.0",
-
     "grunt-rsync": "^2.0.1",
     "gulp": "^3.9.1",
     "gulp-add-src": "^0.2.0",
     "gulp-base64": "^0.1.3",
     "gulp-cat": "^0.3.3",
     "gulp-concat": "^2.6.1",
-
     "gulp-header": "^2.0.5",
     "gulp-minify-css": "^1.2.4",
     "gulp-remote-src": "^0.4.3",
@@ -66,7 +61,6 @@
   },
   "scripts": {
     "build": "webpack-dev-server --env.WEBRTC_ENV=development",
-
     "test": "./node_modules/mocha/bin/mocha client/tests",
     "run": "gulp & node webrtcserver.js",
     "prestart": "gulp production & apidoc -v -i /home/altanai/webrtcWSwksppace/webrtcdevelopment/ -e node_modules/  -o client/build/api/doc",

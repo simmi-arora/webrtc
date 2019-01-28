@@ -67,7 +67,6 @@ if(document.getElementById('listenInLink')){
 	try{
 		var currSession =  window.location.href;
 		webrtcdev.log(" Current Session ", currSession);
-	
 		var listeninSession = currSession+'?appname=webrtcwebcall&role=inspector&audio=1&video=0';
 		webrtcdev.log(" Inspector Link " , listeninSession);
 
@@ -78,23 +77,23 @@ if(document.getElementById('listenInLink')){
 }
 
 function mailListenInLink(){
-			fetch(url, {
-			  method		: 'post',
-			  crossDomain	: true,
-			  ContentEncoding: 'base64',
-			  headers		: {
-			    'Accept': 'application/zip, text/plain, */*',
-			    'Content-Type': 'application/json',
-			    'Authorization' : key
-			  },
-			  body: { 
-		            apikey 		: key ,
-		            useremail	: selfemail, 
-		            sessionid	: sessionid,
-		            webrtcZip 	: content , //Zip file (Max File Size 2MB)
-		            webrtcTxt 	: 'traceswebrtcdev'
-		        }
-			})
-			.then(res => res.json())
-			.then(res => console.log(res));
+	fetch(url, {
+	  method		: 'post',
+	  crossDomain	: true,
+	  ContentEncoding: 'base64',
+	  headers		: {
+	    'Accept': 'application/zip, text/plain, */*',
+	    'Content-Type': 'application/json',
+	    'Authorization' : key
+	  },
+	  body: { 
+            apikey 		: key ,
+            useremail	: selfemail, 
+            sessionid	: sessionid,
+            webrtcZip 	: content , //Zip file (Max File Size 2MB)
+            webrtcTxt 	: 'traceswebrtcdev'
+        }
+	})
+	.then(res => res.json())
+	.then(res => console.log(res));
 }

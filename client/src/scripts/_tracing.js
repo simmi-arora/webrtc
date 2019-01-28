@@ -68,6 +68,7 @@ function sendwebrtcdevLogs(url, key , msg) {
 	data.append("sesionid", "15247878");
 	data.append("message", msg);
 	data.append("logfileContent", "WEBRTC LOG");
+
 	var helpstatus = document.getElementById("listeninStatus");
 
 	return fetch(url, {
@@ -75,6 +76,7 @@ function sendwebrtcdevLogs(url, key , msg) {
 			body: data
 		})
 		.then(res => res.text())
+
 		.then(text => console.log(text),
 	        helpstatus.innerHTML="Email sent for help",
 	        helpstatus.setAttribute("style","color:green")
@@ -91,12 +93,13 @@ function getscreenshot(){
 	// 	console.log(" ----------- data img" , data);
 	//     $("#help-screenshot-body").attr("src", "data:image/png;base64,"+data);
 	// });
-// html2canvas($('#mainDiv'), {
-//   onrendered: function(canvas) {
-//     var img = canvas.toDataURL()
-//     $("#help-screenshot-body").attr("src", "data:image/png;base64,"+img);
-//   }
-// });
+	
+	// html2canvas($('#mainDiv'), {
+	//   onrendered: function(canvas) {
+	//     var img = canvas.toDataURL()
+	//     $("#help-screenshot-body").attr("src", "data:image/png;base64,"+img);
+	//   }
+	// });
 
 	html2canvas(document.querySelector("#mainDiv")).then(canvas => {
 	    document.getElementById("help-screenshot-body").src = canvas.toDataURL();
