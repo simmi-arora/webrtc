@@ -61,15 +61,15 @@ Track Call Record
 function sendwebrtcdevLogs(url, key , msg) {
 	const data = new FormData();
 	const fileField = webrtcdevlogs;
-	data.append('name', selfemail);
-	data.append('scimage', "");
+	data.append('name', username||"no name");
+	data.append('scimage', document.getElementById("help-screenshot-body").src);
 	data.append("apikey", "dnE5aGpkUE03U1k4K3V5V0FUU3A4aGpGV2JHbkVsanhUVVBGU0NiaTZKcz0=");
 	data.append("useremail", selfemail);
-	data.append("sesionid", "15247878");
+	data.append("sesionid", sesionid);
 	data.append("message", msg);
-	data.append("logfileContent", "WEBRTC LOG");
+	data.append("logfileContent", webrtcdevlogs);
 
-	var helpstatus = document.getElementById("listeninStatus");
+	var helpstatus = document.getElementById("helpStatus");
 
 	return fetch(url, {
 			method: 'POST',
@@ -101,10 +101,9 @@ function getscreenshot(){
 	//   }
 	// });
 
-	html2canvas(document.querySelector("#mainDiv")).then(canvas => {
+	html2canvas(document.querySelector("#bodyDiv")).then(canvas => {
 	    document.getElementById("help-screenshot-body").src = canvas.toDataURL();
 	});
-
 }
 
 

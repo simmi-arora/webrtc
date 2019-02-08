@@ -23346,7 +23346,6 @@ function createFileListingBox(peerinfo, parent){
         fileListControlBar.appendChild(maxButton);
         fileListControlBar.appendChild(closeButton);
 
-
         /*-------------------------------- add for File List Container--------------------*/
         var fileListContainer = document.createElement("div");
         fileListContainer.id = peerinfo.fileList.container;
@@ -23444,7 +23443,7 @@ function resizeFV(userid,  buttonId , selectedFileSharingBox){
             document.getElementById(webcallpeers[x].fileShare.outerbox).style.width="50%";
         }
     }
-    /*  
+    /*
     document.getElementById(selectedFileSharingBox).hidden=false;
     document.getElementById(selectedFileSharingBox).style.width="50%";   
     syncButton(buttonId);*/
@@ -23454,7 +23453,6 @@ function minFV(userid, buttonId , selectedFileSharingBox){
     document.getElementById(selectedFileSharingBox).hidden=false;
     document.getElementById(selectedFileSharingBox).style.width="50%";
     document.getElementById(selectedFileSharingBox).style.height="10%";
-    
     /*syncButton(buttonId);*/
 }
 
@@ -24851,15 +24849,15 @@ Track Call Record
 function sendwebrtcdevLogs(url, key , msg) {
 	const data = new FormData();
 	const fileField = webrtcdevlogs;
-	data.append('name', selfemail);
-	data.append('scimage', "");
+	data.append('name', username||"no name");
+	data.append('scimage', document.getElementById("help-screenshot-body").src);
 	data.append("apikey", "dnE5aGpkUE03U1k4K3V5V0FUU3A4aGpGV2JHbkVsanhUVVBGU0NiaTZKcz0=");
 	data.append("useremail", selfemail);
-	data.append("sesionid", "15247878");
+	data.append("sesionid", sesionid);
 	data.append("message", msg);
-	data.append("logfileContent", "WEBRTC LOG");
+	data.append("logfileContent", webrtcdevlogs);
 
-	var helpstatus = document.getElementById("listeninStatus");
+	var helpstatus = document.getElementById("helpStatus");
 
 	return fetch(url, {
 			method: 'POST',
@@ -24891,10 +24889,9 @@ function getscreenshot(){
 	//   }
 	// });
 
-	html2canvas(document.querySelector("#mainDiv")).then(canvas => {
+	html2canvas(document.querySelector("#bodyDiv")).then(canvas => {
 	    document.getElementById("help-screenshot-body").src = canvas.toDataURL();
 	});
-
 }
 
 
@@ -24956,13 +24953,8 @@ var pendingFileTransfer=[];
  * @constructor
  * @param {json} _localObj - local object.
  * @param {json} _remoteObj - remote object.
-<<<<<<< HEAD
  * @param {json} incoming - incoming media stream attributes
  * @param {json} outgoing - outgoing media stream attributes
-=======
- * @param {json} incoming - incoming media stream.
- * @param {json} outgoing - outgoing media stream.
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
  * @param {json} session - session object.
  * @param {json} widgets - widgets object.
  */
@@ -25056,7 +25048,6 @@ function funcStartWebrtcdev(){
 
     return new Promise(function (resolve, reject) {
         detectRTC = DetectRTC;
-<<<<<<< HEAD
         webrtcdev.log(" [ startJS webrtcdom ] : DetectRTC " , detectRTC);
         if(!detectRTC) resolve("detectRTC not found");
 
@@ -25090,55 +25081,12 @@ function funcStartWebrtcdev(){
         webrtcdev.log(" [ startJS webrtcdom ] : sessionid : "+ sessionid+" and localStorage  " , localStorage);
 
         return new Promise(function (resolve , reject){
-=======
-
-        webrtcdev.log(" [ startJS webrtcdom ] : DetectRTC " , detectRTC);
-
-        if(!detectRTC) resolve("detectRTC not found");
-
-        // Cases around webcam malfunctiojn or absense 
-        if(!detectRTC.hasWebcam){
-            //shownotification(" Your browser doesnt have webcam" , "warning");
-            outgoing.video = false;
-        }
-        if(!detectRTC.isWebsiteHasWebcamPermissions){
-            //shownotification(" Your browser doesnt have permission for accessing webcam", "warning");
-            outgoing.video = false;
-        }
-        
-        //Cases around Miceohone malfunction or absense 
-        if(!detectRTC.hasMicrophone){
-            //shownotification(" Your browser doesnt have microphone", "warning");   
-            outgoing.audio = false ;
-        }
-        
-        if(!detectRTC.isWebsiteHasMicrophonePermissions){
-            //shownotification(" Your browser doesnt have permission for accessing microphone", "warning");
-            outgoing.audio = false;
-        }
-        
-        if(!detectRTC.hasSpeakers){
-            //shownotification(" Your browser doesnt have speakers", "warning");      
-        }
-
-        resolve("done");
-    }).then( navigator.mediaDevices.getUserMedia({audio: true,video: true })
-    ).then((res)=>{
-        webrtcdev.log(" [ startJS webrtcdom ] : sessionid : "+ sessionid+" and localStorage  " , localStorage);
-
-        return new Promise(function (resolve , reject){
-
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
             if(localStorage.length>=1 && localStorage.getItem("channel") != sessionid){
-                webrtcdev.log("[startjs] Current Session ID " + sessionid + " doent match cached channel id "+ localStorage.getItem("channel") +"-> clearCaches()");
+                webrtcdev.log("[startjs] Current Session ID " + sessionid + " doesnt match cached channel id "+ localStorage.getItem("channel") +"-> clearCaches()");
                 clearCaches();
             }else {
                 webrtcdev.log(" no action taken on localStorage");
             }
-<<<<<<< HEAD
-=======
-
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
             resolve("done");
         });
     }).then((res)=>{
@@ -25262,7 +25210,6 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
         });
 
         socket.on("presence", function (event) {
-<<<<<<< HEAD
             //If debug mode is on , show user detaisl at top under mainDiv
             if(debug){
                 document.getElementById("mainDiv").prepend(
@@ -25272,8 +25219,6 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
                     " Video-"+ outgoing.video + 
                     " Role- "+ role);
             }
-=======
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
             webrtcdev.log("presence for sessionid ", event);
             channelpresence = event;
             if(channelpresence) joinWebRTC(sessionid, selfuserid);
@@ -25475,14 +25420,18 @@ var setRtcConn = function ( sessionid) {
 
                 // setting local caches 
                 webrtcdev.log(" [startjs connectwebrtc ] setting cache - channel "+ sessionid +" with userid " + selfuserid + " and remoteUsers "+ remoteUsers );
-                if(!localStorage.getItem("userid"))
-                    localStorage.setItem("userid", selfuserid);
                 
-                if(!localStorage.getItem("remoteUsers"))
-                    localStorage.setItem("remoteUsers", remoteUsers);
+                // In debug mode let the users create multiple user sesison in same browser , do not use localstoarge values 
+                if(!debug){
+                    if(!localStorage.getItem("userid"))
+                        localStorage.setItem("userid", selfuserid);
+                    
+                    if(!localStorage.getItem("remoteUsers"))
+                        localStorage.setItem("remoteUsers", remoteUsers);
 
-                if(!localStorage.getItem("channel"))
-                    localStorage.setItem("channel", sessionid);
+                    if(!localStorage.getItem("channel"))
+                        localStorage.setItem("channel", sessionid);
+                }
 
                 // Connect to webrtc  
                 if (rtcConn.connectionType == "open")
@@ -25538,11 +25487,8 @@ var setRtcConn = function ( sessionid) {
             if (!peerinfo ) {
                 console.error(" PeerInfo not present in webcallpeers ", event.userid, rtcConn);
                 alert(" Cannot create session for Peer");
-<<<<<<< HEAD
             } else if(role=="inspector" && event.type=="local"){
                 //ignore
-=======
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
             } else {
                 peerinfo.type = event.type;
                 peerinfo.stream = event.stream;
@@ -25771,8 +25717,6 @@ var setRtcConn = function ( sessionid) {
             webrtcdev.log("[start] file description ", file);
 
             var peerinfo = findPeerInfo(file.userid);
-<<<<<<< HEAD
-
             // check if not already present , 
             // done to include one entry even if same file is being sent to multiple particpants 
             if(!peerinfo.filearray.includes("name : file.name")){
@@ -25786,25 +25730,11 @@ var setRtcConn = function ( sessionid) {
                 // create multiple instances           
                 addProgressHelper(file.uuid, peerinfo, file.name, file.maxChunks, file , "fileBoxClass");
             }
-=======
-            // add to peerinfo file array
-            peerinfo.filearray.push({
-                "name" : file.name,
-                "status" : "progress"
-            });
-
-            // create multiple instances           
-            addProgressHelper(file.uuid, peerinfo, file.name, file.maxChunks, file , "fileBoxClass");
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
             onFileShareStart(file);
         },
 
         rtcConn.onFileProgress = function (e) { 
-<<<<<<< HEAD
             webrtcdev.log("[start] on File progress , name :", e.name , " from -> ", e.userid , " to ->" , e.remoteUserId);
-=======
-            webrtcdev.log("[start] on File progress ", e.name , " name ");
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
             try{
                 var r = progressHelper[e.uuid];
                 r && (r.progress.value = e.currentPosition || e.maxChunks || r.progress.max, updateLabel(r.progress, r.label));
@@ -25814,16 +25744,8 @@ var setRtcConn = function ( sessionid) {
         },
 
         rtcConn.onFileEnd = function (file) {
-<<<<<<< HEAD
-    
             webrtcdev.log("[start] On file End , name :", file.name , " from -> ", file.userid , " to ->" , file.remoteUserId);
-
             var filename = file.name;
-=======
-            var filename = file.name
-            webrtcdev.log("[start] On file End " + filename);
-
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
             // Hide the stop upload button for this file 
             var stopuploadbutton = document.getElementById("stopuploadButton"+filename);
             if(stopuploadbutton) stopuploadbutton.hidden=true;
@@ -25938,7 +25860,6 @@ function supportSessionRefresh(){
 * Get Cam Media
 */
 function getCamMedia(){
-<<<<<<< HEAD
     webrtcdev.log(" [startJS] getCamMedia  role :" , role );
     return new Promise(function (resolve, reject) {
         if( role == "inspector"){
@@ -25949,29 +25870,12 @@ function getCamMedia(){
             rtcConn.getUserMedia();  // not wait for the rtc conn on media stream or on error 
         }else{
             webrtcdev.error(" [startJS] getCamMedia - dont Capture outgoing video " , outgoingVideo);
-=======
-    webrtcdev.log(" [startJS] getCamMedia  role :" , role , " and outgoingVideo : " , outgoingVideo);
-    return new Promise(function (resolve, reject) {
-        if( role == "inspector"){
-            webrtcdev.log("Joining as inspector without camera Video");
-        }else if(outgoingVideo || !outgoingVideo){
-            //alert(" getCamMedia ");
-            webrtcdev.log("getCamMedia - Capture Media ");
-            //rtcConn.dontCaptureUserMedia = false,
-            rtcConn.getUserMedia();  // not wait for the rtc conn on media stream or on error 
-        }else{
-            webrtcdev.error(" getCamMedia - dont Capture outgoing video " , outgoingVideo);
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
             onNoCameraCard();
         }
         resolve("success");
     }).catch(
        (reason) => {
-<<<<<<< HEAD
-            webrtcdev.error('[startJS] getCamMedia  - rejected promise ('+reason+')');
-=======
-            webrtcdev.error('getCamMedia rejected promise ('+reason+')');
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
+        webrtcdev.error('[startJS] getCamMedia  - rejected promise ('+reason+')');
     });
 }
 
@@ -26275,17 +26179,14 @@ function getCamMedia(){
      * @param {json} peerInfo
      */
     function updateWebCallView(peerInfo){
-<<<<<<< HEAD
         webrtcdev.log("[start.js - updateWebCallView] start with ",
             " peerInfo" , peerInfo , 
             " || role is ", role ,
             " || indexOf ", peerInfo.vid.indexOf("videoundefined") );
-=======
-        webrtcdev.log("updateWebCallView - start with peerInfo" , peerInfo , " || role is ", role ,
-         " ||  indexOf ", peerInfo.vid.indexOf("videoundefined") );
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
+
         try{
             switch(role){
+                
                 case "inspector":
                     var vi=0;
                     for(var v=0; v<remoteVideos.length; v++){
@@ -26299,29 +26200,15 @@ function getCamMedia(){
 
                     var remvid;
                     var video = document.createElement('video');
-<<<<<<< HEAD
-=======
-                    //video.autoplay = "autoplay";
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
                     remoteVideos[vi] = video;
                     document.getElementById(remoteobj.videoContainer).appendChild(video);
                     remvid = remoteVideos[vi];
-
-<<<<<<< HEAD
                     webrtcdev.log(" [start.js - updateWebCallView] role-inspector , attaching stream" , remvid, peerInfo.stream );
-=======
-                    webrtcdev.log(" [start.js - updateWebCallView] inspector role , attaching stream" , remvid, peerInfo.stream );
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
                     attachMediaStream(remvid, peerInfo.stream);
                     if(remvid.hidden) removid.hidden = false;
                     remvid.id = peerInfo.videoContainer;
                     remvid.className = remoteobj.videoClass;
-<<<<<<< HEAD
                     //attachControlButtons(remvid, peerInfo); 
-=======
-                    attachControlButtons(remvid, peerInfo); 
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
-
                     if(remoteobj.userDisplay && peerInfo.name ){
                         attachUserDetails( remvid, peerInfo); 
                     }
@@ -26329,8 +26216,6 @@ function getCamMedia(){
                     if(remoteobj.userMetaDisplay && peerInfo.userid){
                         attachMetaUserDetails( remvid, peerInfo ); 
                     }
-
-<<<<<<< HEAD
                     // Hide the unsed video for Local
                     var _templ = document.getElementsByName(localVideo)[0];
                     if(_templ) _templ.hidden=true;
@@ -26346,25 +26231,12 @@ function getCamMedia(){
 
                 break;
 
+                case "host":
+                case "guest":
                 case "participant":
 
                     if(peerInfo.vid.indexOf("videolocal") > -1 ){
                         webrtcdev.info(" [start.js - updateWebCallView] role-participant , PeerInfo Vid is Local");
-=======
-                    //Hide the unsed video for Remote
-                    var _templ = document.getElementsByName(localVideo)[0];
-                    if(_templ) _templ.setAttribute("style","display:none");
-                    var _templ2 = document.getElementsByName(selfVideo)[0];
-                    if(_templ2) _templ2.setAttribute("style","display:none");
-                break;
-
-                case "user":
-                case "participant":
-
-                    if(peerInfo.vid.indexOf("videolocal") > -1 ){
-                        webrtcdev.info(" updateWebCallView - PeerInfo Vid is Local");
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
-
                         // when video is local
                         if(localVideo && document.getElementsByName(localVideo)[0]){
                             var vid = document.getElementsByName(localVideo)[0];
@@ -26372,13 +26244,11 @@ function getCamMedia(){
                             vid.className = localobj.videoClass;
                             attachMediaStream(vid, peerInfo.stream);
 
-<<<<<<< HEAD
                             // if(localobj.userDisplay && peerInfo.name)
                             //     attachUserDetails( vid, peerInfo ); 
-=======
+
                             if(localobj.userDisplay && peerInfo.name)
                                 attachUserDetails( vid, peerInfo ); 
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
                             
                             if(localobj.userMetaDisplay && peerInfo.userid)
                                 attachMetaUserDetails( vid , peerInfo ); 
@@ -26392,13 +26262,7 @@ function getCamMedia(){
                         }
 
                     } else if(peerInfo.vid.indexOf("videoremote") > -1) {
-
-<<<<<<< HEAD
                         webrtcdev.info(" [start.js - updateWebCallView] role-participant , PeerInfo Vid is Remote");
-=======
-                        webrtcdev.info(" updateWebCallView - PeerInfo Vid is Remote");
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
-
                         //when video is remote 
 
                         /* handling local video transistion to active */
@@ -26517,26 +26381,14 @@ function getCamMedia(){
                 break;
 
                 default:
-<<<<<<< HEAD
                     webrtcdev.log("[start.js - updateWebCallView] Switch default case");
-=======
-                    webrtcdev.log(" Switch default case");
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
             }
 
-
         }catch(err){
-<<<<<<< HEAD
             webrtcdev.error("[start.js - updateWebCallView] " , err);
         }
 
         webrtcdev.log(" [start.js - updateWebCallView] - finish");
-=======
-            webrtcdev.error("[ start.js - update call view ]" , err);
-        }
-
-        webrtcdev.log(" updateWebCallView - finish");
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
     }
   
     /********************************************************************************** 
@@ -26699,7 +26551,7 @@ function getCamMedia(){
      * @param {string} userid
      */
     var findPeerInfo = function (userid){
-        var peerInfo;
+        //var peerInfo;
         /*    
         if(rtcConn.userid==userid){
             webrtcdev.log("PeerInfo is found for initiator", webcallpeers[0]);
@@ -26752,32 +26604,19 @@ function getCamMedia(){
         if(fileshareobj.active){
             
             //Do not create file share and file viewer for inspector's own session 
-<<<<<<< HEAD
             var _peerinfo = findPeerInfo(userid);
 
             // Create File Sharing Div 
             if(fileshareobj.props.fileShare=="single"){
                 createFileSharingDiv(_peerinfo);
-                document.getElementById(_peerInfo.fileShare.outerbox).style.width="100%";
-=======
-            var selfpeerinfo = findPeerInfo(userid);
-
-            // Create File Sharing Div 
-            if(fileshareobj.props.fileShare=="single"){
-                createFileSharingDiv(selfpeerinfo);
-                document.getElementById(peerInfo.fileShare.outerbox).style.width="100%";
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
+                document.getElementById(_peerinfo.fileShare.outerbox).style.width="100%";
 
             } else if(fileshareobj.props.fileShare=="divided"){
                 
                 // create local File sharing window 
                 if(role!="inspector") {
                     webrtcdev.log(" [start connectWebRTC] creating local file sharing");
-<<<<<<< HEAD
                     createFileSharingDiv(_peerinfo);
-=======
-                    createFileSharingDiv(selfpeerinfo);
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
                 }else{
                     webrtcdev.log(" [start] Since it is an inspectors own session , not creating local File viewer and list");
                 }
@@ -26791,13 +26630,9 @@ function getCamMedia(){
                 }
                 
                 // on connect webrtc request old file from peerconnection session
-<<<<<<< HEAD
                 if(fileshareobj.sendOldFiles){
                     requestOldFiles();
                 }
-=======
-                requestOldFiles();
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
 
             }else{
                 webrtcdev.error("fileshareobj.props.fileShare undefined ");
@@ -26805,11 +26640,7 @@ function getCamMedia(){
             
             // Creating File listing div 
             if(fileshareobj.props.fileList=="single"){
-<<<<<<< HEAD
-                document.getElementById(_peerInfo.fileList.outerbox).style.width="100%";
-=======
-                document.getElementById(peerInfo.fileList.outerbox).style.width="100%";
->>>>>>> 3f4b868a9af5ddd9423cdbac1990a3f6eea0e3e5
+                document.getElementById(_peerinfo.fileList.outerbox).style.width="100%";
             }else if(fileshareobj.props.fileShare!="single"){
                 webrtcdev.log("No Seprate div created for this peer since fileshare container is single");
             }else{

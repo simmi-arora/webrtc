@@ -1102,7 +1102,6 @@ function createFileListingBox(peerinfo, parent){
         fileListControlBar.appendChild(maxButton);
         fileListControlBar.appendChild(closeButton);
 
-
         /*-------------------------------- add for File List Container--------------------*/
         var fileListContainer = document.createElement("div");
         fileListContainer.id = peerinfo.fileList.container;
@@ -1200,7 +1199,7 @@ function resizeFV(userid,  buttonId , selectedFileSharingBox){
             document.getElementById(webcallpeers[x].fileShare.outerbox).style.width="50%";
         }
     }
-    /*  
+    /*
     document.getElementById(selectedFileSharingBox).hidden=false;
     document.getElementById(selectedFileSharingBox).style.width="50%";   
     syncButton(buttonId);*/
@@ -1210,7 +1209,6 @@ function minFV(userid, buttonId , selectedFileSharingBox){
     document.getElementById(selectedFileSharingBox).hidden=false;
     document.getElementById(selectedFileSharingBox).style.width="50%";
     document.getElementById(selectedFileSharingBox).style.height="10%";
-    
     /*syncButton(buttonId);*/
 }
 
