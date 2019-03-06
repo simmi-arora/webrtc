@@ -72,6 +72,12 @@ function attachControlButtons( vid ,  peerinfo){
     else
         controlBar.className= "remoteVideoControlBarClass";
 
+    if(debug){
+        var nameBox=document.createElement("div");
+        nameBox.innerHTML=vid.id;
+        controlBar.appendChild(nameBox);  
+    }
+
     if(muteobj.active){
         if(muteobj.audio.active){
             controlBar.appendChild(createAudioMuteButton(controlBarName , peerinfo));
@@ -97,12 +103,6 @@ function attachControlButtons( vid ,  peerinfo){
     if(minmaxobj.active){
         controlBar.appendChild(createFullScreenButton(controlBarName, peerinfo, streamid, stream ));
         controlBar.appendChild(createMinimizeVideoButton(controlBarName, peerinfo, streamid, stream ));
-    }
-
-    if(debug){
-        var nameBox=document.createElement("span");
-        nameBox.innerHTML=vid.id;
-        controlBar.appendChild(nameBox);  
     }
 
     vid.parentNode.appendChild(controlBar);        

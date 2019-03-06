@@ -12,7 +12,8 @@ Timer
 var hours,mins,secs;
 var today = new Date();
 var zone="";
-
+var t ;
+var worker = new Worker('js/timekeeper.js');
 /**
  * function to start session timer with timerobj
  * @method
@@ -164,7 +165,7 @@ function peerTimeZone(zone , userid){
 
             let timerzonepeer = document.createElement("li");
             timerzonepeer.id= "remoteTimeZone_"+userid;
-            timerzonepeer.innerHTML = zone;
+            timerzonepeer.innerHTML = zone + " , ";
 
             var remotetimecontainer;
             if(!document.getElementById("remoteTimerArea_"+userid)){
@@ -173,37 +174,53 @@ function peerTimeZone(zone , userid){
                 remotetimecontainer = document.getElementById("remoteTimerArea_"+userid);
             }
             remotetimecontainer.appendChild(timerzonepeer);
-
-
         }
     }catch(e){
         webrtcdev.error(e);
     }
 }
 
+
+
 /**
  * function to fetch and show Peers peers time based on onmesaage val
  * @name startPeersTime
  */
 
-function startPeersTime(date,zone,userid){
+var startPeersTime = function (date,zone,userid){
     
     try{
+        var tobj=[];
+        
         // Starting peer timer for all peers
         for(var x in webcallpeers){
-            options = {
-              //year: 'numeric', month: 'numeric', day: 'numeric',
-              hour: 'numeric', minute: 'numeric', second: 'numeric',
-              hour12: false,
-              timeZone: webcallpeers[x].zone
-            };
-            //webrtcdev.log(" [timerjs] startPeersTime " , remotetime , remotezone);
 
-            if(timerobj.span.remoteTime_id && document.getElementById(timerobj.span.remoteTime_id)){
+            webrtcdev.debug(" [timerjs] startPeersTime for " , userid);
+
+            if( window.location.href.indexOf("conference") > -1 && document.getElementById("remoteTimeDate_"+webcallpeers[x].userid)){
+                //if its conference , send to webworkers 
+                webrtcdev.info(" timerobj.span.remoteTime_id exist for local and remotes, appending to tobj to send to worker cumulatively");
+                tobj.push({
+                    zone: webcallpeers[x].zone, 
+                    userid :webcallpeers[x].userid,
+                    remotetimeid : "remoteTimeDate_"+webcallpeers[x].userid
+                });
+
+            } else if(timerobj.span.remoteTime_id && document.getElementById(timerobj.span.remoteTime_id)){
+                // update the time for p2p
+                webrtcdev.info(" timerobj.span.remoteTime_id exists and its a p2p session , hence updating it");
+                options = {
+                  //year: 'numeric', month: 'numeric', day: 'numeric',
+                  hour: 'numeric', minute: 'numeric', second: 'numeric',
+                  hour12: false,
+                  timeZone: webcallpeers[x].zone
+                };
                 let timerspanpeer = document.getElementById(timerobj.span.remoteTime_id);
                 timerspanpeer.innerHTML = new Date().toLocaleString('en-US', options );
-            }else{
-                webrtcdev.info(" timerobj.span.remoteTime_id DOM does not exist , creating it");
+            } else {
+                // create the timer for p2p and conferences
+                webrtcdev.info(" timerobj.span.remoteTime_id DOM does not exist , creating it" ,
+                    timerobj.span.remoteTime_id , document.getElementById(timerobj.span.remoteTime_id)  );
 
                 if(document.getElementById("remoteTimeDate_"+userid))
                 return ;
@@ -220,16 +237,31 @@ function startPeersTime(date,zone,userid){
                 }
                 remotetimecontainer.appendChild(timerspanpeer);
 
+                if(window.location.href.indexOf("conference") <= -1){
+                    // if its not conf then loop for p2p
+                    var t = setTimeout(startPeersTime, 5000);
+                }
             }
             peerTimerStarted = true;
         }
-
-        var t = setTimeout(startPeersTime, 1000);
+        
+        webrtcdev.info("================== tobj " , tobj);
+        if(tobj.length > 0){
+            worker.postMessage(tobj);
+        }
 
     }catch(e){
         webrtcdev.error(e);   
     }
 }
+
+worker.addEventListener('message', function(e) {
+    if(e.data.time){
+        let timerspanpeer = document.getElementById(e.data.remotetimeid);
+        timerspanpeer.innerHTML = e.data.time;
+    }
+
+}, false);
 
 
 /**

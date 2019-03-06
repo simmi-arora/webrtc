@@ -257,52 +257,52 @@ web dev Logger
 var webrtcdev = {};
 var webrtcdevlogs=[];
 
-// webrtcdev.log = function(){
-//   // var arg = getArgsJson(arguments);
-//   // document.getElementById("help-view-body").innerHTML += '[-]' + arg + "<br/>";
-//   if(isJSON(arguments)){
-//     let arg = JSON.stringify(arguments, undefined, 2);
-//     webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
-//   }else{
-//     let arg = getArgsJson(arguments);
-//     webrtcdevlogs.push("<p style='color:grey'>[-]" + arg + "</p>");
-//   }
-//   console.log(arguments);
-// };
+webrtcdev.log = function(){
+  // var arg = getArgsJson(arguments);
+  // document.getElementById("help-view-body").innerHTML += '[-]' + arg + "<br/>";
+  if(isJSON(arguments)){
+    let arg = JSON.stringify(arguments, undefined, 2);
+    webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
+  }else{
+    let arg = getArgsJson(arguments);
+    webrtcdevlogs.push("<p style='color:grey'>[-]" + arg + "</p>");
+  }
+  console.log(arguments);
+};
 
-// webrtcdev.info= function(){
-//   let arg = getArgsJson(arguments);
-//   webrtcdevlogs.push("<p style='color:blue'>[INFO]" + arg + "</p>");
-//   console.info(arguments);
-// };
+webrtcdev.info= function(){
+  let arg = getArgsJson(arguments);
+  webrtcdevlogs.push("<p style='color:blue'>[INFO]" + arg + "</p>");
+  console.info(arguments);
+};
 
-//  webrtcdev.debug= function(){
-//   if(isJSON(arguments)){
-//     let arg = JSON.stringify(arguments, undefined, 2);
-//     webrtcdevlogs.push( "<pre style='color:green'>[DEBUG]" + arg + "</pre>");
-//   }else{
-//     let arg = getArgsJson(arguments);
-//     webrtcdevlogs.push("<p style='color:green'>[DEBUG]" + arg + "</p>");
-//   }
-//   console.debug(arguments);
-// };
+ webrtcdev.debug= function(){
+  if(isJSON(arguments)){
+    let arg = JSON.stringify(arguments, undefined, 2);
+    webrtcdevlogs.push( "<pre style='color:green'>[DEBUG]" + arg + "</pre>");
+  }else{
+    let arg = getArgsJson(arguments);
+    webrtcdevlogs.push("<p style='color:green'>[DEBUG]" + arg + "</p>");
+  }
+  console.debug(arguments);
+};
 
-// webrtcdev.warn= function(){
-//   let arg = getArgsJson(arguments);
-//   webrtcdevlogs.push("<p style='color:yellow'>[WARN]" + arg + "</p>");
-//   console.warn(arguments);
-// };
+webrtcdev.warn= function(){
+  let arg = getArgsJson(arguments);
+  webrtcdevlogs.push("<p style='color:yellow'>[WARN]" + arg + "</p>");
+  console.warn(arguments);
+};
 
-// webrtcdev.error= function(){
-//   if(isJSON(arguments)){
-//     let arg = JSON.stringify(arguments, undefined, 2);
-//     webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
-//   }else{
-//     let arg = getArgsJson(arguments);
-//     webrtcdevlogs.push("<p style='color:red'>[ERROR]"+ arg + "</p>");
-//   }
-//    console.error(arguments);
-// };
+webrtcdev.error= function(){
+  if(isJSON(arguments)){
+    let arg = JSON.stringify(arguments, undefined, 2);
+    webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
+  }else{
+    let arg = getArgsJson(arguments);
+    webrtcdevlogs.push("<p style='color:red'>[ERROR]"+ arg + "</p>");
+  }
+   console.error(arguments);
+};
 
 
 
@@ -21302,6 +21302,12 @@ function attachControlButtons( vid ,  peerinfo){
     else
         controlBar.className= "remoteVideoControlBarClass";
 
+    if(debug){
+        var nameBox=document.createElement("div");
+        nameBox.innerHTML=vid.id;
+        controlBar.appendChild(nameBox);  
+    }
+
     if(muteobj.active){
         if(muteobj.audio.active){
             controlBar.appendChild(createAudioMuteButton(controlBarName , peerinfo));
@@ -21327,12 +21333,6 @@ function attachControlButtons( vid ,  peerinfo){
     if(minmaxobj.active){
         controlBar.appendChild(createFullScreenButton(controlBarName, peerinfo, streamid, stream ));
         controlBar.appendChild(createMinimizeVideoButton(controlBarName, peerinfo, streamid, stream ));
-    }
-
-    if(debug){
-        var nameBox=document.createElement("span");
-        nameBox.innerHTML=vid.id;
-        controlBar.appendChild(nameBox);  
     }
 
     vid.parentNode.appendChild(controlBar);        
@@ -22601,9 +22601,11 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
             // if the progress bar exist , remove the progress bar div and create the ul
             let elem = document.getElementById(filename);
             if(peerinfo.fileList.container && document.getElementById(peerinfo.fileList.container)){
+                console.log("displayList ------------ remove progress bar " , elem);
                 parentdom = document.getElementById(peerinfo.fileList.container);
                 parentdom.removeChild(elem.parentNode);
             }else{
+                console.log("displayList ------------ Not sure what does this do " , elem);
                 parentdom = elem.parentNode.parentNode;
                 parentdom.removeChild(elem.parentNode);
             }
@@ -22666,7 +22668,6 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         saveButton.onclick=function(){ 
             createModalPopup(filetype);
         };
-
 
         // Show Button
         var showButton = document.createElement("li");
@@ -24208,7 +24209,8 @@ Timer
 var hours,mins,secs;
 var today = new Date();
 var zone="";
-
+var t ;
+var worker = new Worker('js/timekeeper.js');
 /**
  * function to start session timer with timerobj
  * @method
@@ -24360,7 +24362,7 @@ function peerTimeZone(zone , userid){
 
             let timerzonepeer = document.createElement("li");
             timerzonepeer.id= "remoteTimeZone_"+userid;
-            timerzonepeer.innerHTML = zone;
+            timerzonepeer.innerHTML = zone + " , ";
 
             var remotetimecontainer;
             if(!document.getElementById("remoteTimerArea_"+userid)){
@@ -24369,37 +24371,53 @@ function peerTimeZone(zone , userid){
                 remotetimecontainer = document.getElementById("remoteTimerArea_"+userid);
             }
             remotetimecontainer.appendChild(timerzonepeer);
-
-
         }
     }catch(e){
         webrtcdev.error(e);
     }
 }
 
+
+
 /**
  * function to fetch and show Peers peers time based on onmesaage val
  * @name startPeersTime
  */
 
-function startPeersTime(date,zone,userid){
+var startPeersTime = function (date,zone,userid){
     
     try{
+        var tobj=[];
+        
         // Starting peer timer for all peers
         for(var x in webcallpeers){
-            options = {
-              //year: 'numeric', month: 'numeric', day: 'numeric',
-              hour: 'numeric', minute: 'numeric', second: 'numeric',
-              hour12: false,
-              timeZone: webcallpeers[x].zone
-            };
-            //webrtcdev.log(" [timerjs] startPeersTime " , remotetime , remotezone);
 
-            if(timerobj.span.remoteTime_id && document.getElementById(timerobj.span.remoteTime_id)){
+            webrtcdev.debug(" [timerjs] startPeersTime for " , userid);
+
+            if( window.location.href.indexOf("conference") > -1 && document.getElementById("remoteTimeDate_"+webcallpeers[x].userid)){
+                //if its conference , send to webworkers 
+                webrtcdev.info(" timerobj.span.remoteTime_id exist for local and remotes, appending to tobj to send to worker cumulatively");
+                tobj.push({
+                    zone: webcallpeers[x].zone, 
+                    userid :webcallpeers[x].userid,
+                    remotetimeid : "remoteTimeDate_"+webcallpeers[x].userid
+                });
+
+            } else if(timerobj.span.remoteTime_id && document.getElementById(timerobj.span.remoteTime_id)){
+                // update the time for p2p
+                webrtcdev.info(" timerobj.span.remoteTime_id exists and its a p2p session , hence updating it");
+                options = {
+                  //year: 'numeric', month: 'numeric', day: 'numeric',
+                  hour: 'numeric', minute: 'numeric', second: 'numeric',
+                  hour12: false,
+                  timeZone: webcallpeers[x].zone
+                };
                 let timerspanpeer = document.getElementById(timerobj.span.remoteTime_id);
                 timerspanpeer.innerHTML = new Date().toLocaleString('en-US', options );
-            }else{
-                webrtcdev.info(" timerobj.span.remoteTime_id DOM does not exist , creating it");
+            } else {
+                // create the timer for p2p and conferences
+                webrtcdev.info(" timerobj.span.remoteTime_id DOM does not exist , creating it" ,
+                    timerobj.span.remoteTime_id , document.getElementById(timerobj.span.remoteTime_id)  );
 
                 if(document.getElementById("remoteTimeDate_"+userid))
                 return ;
@@ -24416,16 +24434,31 @@ function startPeersTime(date,zone,userid){
                 }
                 remotetimecontainer.appendChild(timerspanpeer);
 
+                if(window.location.href.indexOf("conference") <= -1){
+                    // if its not conf then loop for p2p
+                    var t = setTimeout(startPeersTime, 5000);
+                }
             }
             peerTimerStarted = true;
         }
-
-        var t = setTimeout(startPeersTime, 1000);
+        
+        webrtcdev.info("================== tobj " , tobj);
+        if(tobj.length > 0){
+            worker.postMessage(tobj);
+        }
 
     }catch(e){
         webrtcdev.error(e);   
     }
 }
+
+worker.addEventListener('message', function(e) {
+    if(e.data.time){
+        let timerspanpeer = document.getElementById(e.data.remotetimeid);
+        timerspanpeer.innerHTML = e.data.time;
+    }
+
+}, false);
 
 
 /**
@@ -25627,10 +25660,12 @@ var setRtcConn = function ( sessionid) {
                             webrtcdev.log("webcallpeers appended with zone and datetime " , msgpeerinfo);
                         }
 
-                        //if(!peerTimerStarted){
-                            webrtcdev.log(" [startjs] peerTimerStarted , start peerTimeZone and startPeersTime");
+                        webrtcdev.log(" [startjs] peerTimerStarted , start peerTimeZone and startPeersTime");
+                        
                             peerTimeZone(e.data.zone, e.userid);
                             startPeersTime(e.data.time, e.data.zone , e.userid);
+
+                        //if(!peerTimerStarted){
                         //}
                         break;
                     case "buttonclick":

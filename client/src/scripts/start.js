@@ -708,10 +708,12 @@ var setRtcConn = function ( sessionid) {
                             webrtcdev.log("webcallpeers appended with zone and datetime " , msgpeerinfo);
                         }
 
-                        //if(!peerTimerStarted){
-                            webrtcdev.log(" [startjs] peerTimerStarted , start peerTimeZone and startPeersTime");
+                        webrtcdev.log(" [startjs] peerTimerStarted , start peerTimeZone and startPeersTime");
+                        
                             peerTimeZone(e.data.zone, e.userid);
                             startPeersTime(e.data.time, e.data.zone , e.userid);
+
+                        //if(!peerTimerStarted){
                         //}
                         break;
                     case "buttonclick":

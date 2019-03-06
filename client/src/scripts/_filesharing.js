@@ -353,15 +353,21 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         }
 
         var parentdom, filedom ;
-        if(document.getElementById(filename) && document.getElementById(filename).getAttribute("type")=="progressbar"){
-            // if the progress bar exist , remove the progress bar div and create the ul
-            let elem = document.getElementById(filename);
-            if(peerinfo.fileList.container && document.getElementById(peerinfo.fileList.container)){
-                parentdom = document.getElementById(peerinfo.fileList.container);
-                parentdom.removeChild(elem.parentNode);
-            }else{
-                parentdom = elem.parentNode.parentNode;
-                parentdom.removeChild(elem.parentNode);
+        var fileprogressbar = document.querySelectorAll('li[id^='+filename+']');
+        if(fileprogressbar.length >0 ){
+            for ( x in fileprogressbar){
+                if(fileprogressbar[x].getAttribute("type")=="progressbar"){
+                    // if the progress bar exist , remove the progress bar div and create the ul
+                    if(peerinfo.fileList.container && document.getElementById(peerinfo.fileList.container)){
+                        console.log("displayList ------------ remove progress bar " , fileprogressbar[x]);
+                        parentdom = document.getElementById(peerinfo.fileList.container);
+                        parentdom.removeChild(fileprogressbar[x].parentNode);
+                    }else{
+                        console.log("displayList ------------ Not sure what does this do " , fileprogressbar[x]);
+                        parentdom = fileprogressbar[x].parentNode.parentNode;
+                        parentdom.removeChild(fileprogressbar[x].parentNode);
+                    }
+                }
             }
 
         }else{
@@ -422,7 +428,6 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         saveButton.onclick=function(){ 
             createModalPopup(filetype);
         };
-
 
         // Show Button
         var showButton = document.createElement("li");
