@@ -211,6 +211,17 @@ function isJSON(text){
     }
 }
 
+function isHTML(str) {
+  var a = document.createElement('div');
+  a.innerHTML = str;
+
+  for (var c = a.childNodes, i = c.length; i--; ) {
+    if (c[i].nodeType == 1) return true; 
+  }
+
+  return false;
+}
+
 function getElement(e) {
     return document.querySelector(e)
 }
@@ -305,10 +316,8 @@ webrtcdev.error= function(){
 };
 
 
-
-
-webrtcdev.log = console.log;
-webrtcdev.info = console.info;
-webrtcdev.debug = console.debug;
-webrtcdev.warn = console.warn;
-webrtcdev.error = console.error;
+// webrtcdev.log = console.log;
+// webrtcdev.info = console.info;
+// webrtcdev.debug = console.debug;
+// webrtcdev.warn = console.warn;
+// webrtcdev.error = console.error;

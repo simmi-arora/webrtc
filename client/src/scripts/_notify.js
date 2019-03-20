@@ -34,6 +34,10 @@ function shownotification(message , type){
 
 function shownotificationWarning(message){
 
+  if(!message || message =="undefined") return ;
+
+  if(!debug) return ;
+
   if(document.getElementById("alertBox")){
     var alertDiv =document.createElement("div");
     alertDiv.className="alert alert-warning fade in";

@@ -292,14 +292,7 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
 
         socket.on("presence", function (event) {
             //If debug mode is on , show user detaisl at top under mainDiv
-            if(debug){
-                document.getElementById("mainDiv").prepend(
-                    " userid-"+selfuserid+ 
-                    " Email-"+ selfemail+ 
-                    " Audio-"+ outgoing.audio + 
-                    " Video-"+ outgoing.video + 
-                    " Role- "+ role);
-            }
+            if(debug) showUserStats();
             webrtcdev.log("presence for sessionid ", event);
             channelpresence = event;
             if(channelpresence) joinWebRTC(sessionid, selfuserid);
@@ -859,11 +852,11 @@ var setRtcConn = function ( sessionid) {
             onFileShareEnded(file);
 
             //start the pending trabsfer frompendingFileTransfer.push(file);
-            if(pendingFileTransfer.length>=1){
-                document.getElementById(pendingFileTransfer[0].name).hidden = true;
-                sendFile(pendingFileTransfer[0]);
-                pendingFileTransfer.pop();
-            }
+            // if(pendingFileTransfer.length>=1){
+            //     document.getElementById(pendingFileTransfer[0].name).hidden = true;
+            //     sendFile(pendingFileTransfer[0]);
+            //     pendingFileTransfer.pop();
+            // }
 
         },
 
@@ -1683,6 +1676,8 @@ function getCamMedia(){
         webrtcdev.info(" [start ConnectWebRTC ] type : " , type , " , Channel :" , channel , 
                                         " , Userid : " ,  userid , " , remote users : " , remoteUsers);
 
+        if(debug) showUserStats();
+
         /*void(document.title = channel);*/
         if(fileshareobj.active){
             
@@ -1745,6 +1740,8 @@ function getCamMedia(){
     var joinWebRTC = function(channel , userid){
         shownotification("Joining an existing session " + channel);
         webrtcdev.info(" [joinWebRTC] channel: " , channel);
+        
+        if(debug) showUserStats();
         
         if (selfuserid == null)
             selfuserid = tempuserid;

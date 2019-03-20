@@ -58,6 +58,12 @@ Track Call Record
 // }
 
 
+/**
+ * collect all webrtcStats and stream to Server to be stored in a file with seesion id as the file name 
+ * @method
+ * @name sendCallTraces
+ * @param {string} traces
+ */
 function sendwebrtcdevLogs(url, key , msg) {
 	const data = new FormData();
 	const fileField = webrtcdevlogs;
@@ -88,6 +94,29 @@ function sendwebrtcdevLogs(url, key , msg) {
 }
 
 
+/**
+ * add user id and email and status to page header area in debug mode 
+ * @method
+ * @name showUserStats
+ */
+function showUserStats(){
+	var data = " userid-"+selfuserid+ 
+        " Email-"+ selfemail+ 
+        " Audio-"+ outgoing.audio + 
+        " Video-"+ outgoing.video + 
+        " Role- "+ role;
+	if(document.getElementById("userstatus")){
+		document.getElementById("userstatus").innerHTML=data;
+	}else{
+		document.getElementById("mainDiv").prepend(data);
+	}
+}
+
+/**
+ * get screenshost to send along with dbeug logs
+ * @method
+ * @name getscreenshot
+ */
 function getscreenshot(){
 	// return getScreenshotOfElement($("#mainDiv").get(0), 0, 0, 100, 100, function(data) {
 	// 	console.log(" ----------- data img" , data);
@@ -106,7 +135,11 @@ function getscreenshot(){
 	});
 }
 
-
+/**
+ * get screenshost to send along with dbeug logs
+ * @method
+ * @name getScreenshotOfElement
+ */
 function getScreenshotOfElement(element, posX, posY, width, height, callback) {
     html2canvas(element, {
         onrendered: function (canvas) {
