@@ -846,8 +846,6 @@ function createFileSharingBox(peerinfo, parent){
             fileControlBar.appendChild(minButton);
         }
 
-
-
         if(fileshareobj.fileshare.maxicon != "none"){
             // Mximize the file viewer box
             var maxButton = document.createElement("span");
