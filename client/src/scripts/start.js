@@ -789,8 +789,10 @@ var setRtcConn = function ( sessionid) {
         },
 
         rtcConn.onFileStart = function (file) {
-            webrtcdev.log("[start] on File start " + file.name);
-            webrtcdev.log("[start] file description ", file);
+            webrtcdev.log("[start] on File start " + file);
+            webrtcdev.log("[start] on File start description  , name :", file.name , " from -> ", file.userid , " to ->" , file.remoteUserId);
+            
+            alert ( "send fille to " + file.remoteUserId , findPeerInfo(file.remoteUserId).name);
 
             var peerinfo = findPeerInfo(file.userid);
             // check if not already present , 
@@ -800,27 +802,40 @@ var setRtcConn = function ( sessionid) {
                 peerinfo.filearray.push({
                     "name" : file.name,
                     "status" : "progress",
-                    "from" : file.userid
+                    "from" : file.userid ,
+                    "to"   : file.remoteUserId
                 });
 
-                // create multiple instances           
-                addProgressHelper(file.uuid, peerinfo, file.name, file.maxChunks, file , "fileBoxClass");
+                // create multiple instances  , also pass file from and file to for the progress bars           
+                addProgressHelper(file.uuid, peerinfo, file.name, file.maxChunks, file , "fileBoxClass" , file.userid , file.remoteUserId );
             }
             onFileShareStart(file);
         },
 
         rtcConn.onFileProgress = function (e) { 
-            webrtcdev.log("[start] on File progress , name :", e.name , " from -> ", e.userid , " to ->" , e.remoteUserId);
+            webrtcdev.log("[start] on File progress uuid : ", e.uuid , " , name :", e.name , 
+                " from -> ", e.userid , " to ->" , e.remoteUserId);
+
             try{
-                var r = progressHelper[e.uuid];
+                var progressid = e.uuid+"_"+e.userid+"_"+e.remoteUserId;
+                var r = progressHelper[progressid];
+                webrtcdev.log("[start] on File progress ",
+                    " progresshelper id - " , progressid , 
+                    "currentPosition - " , e.currentPosition ,
+                    "maxchunks - ", e.maxChunks , 
+                    "progress.max - " , r.progress.max);
+
                 r && (r.progress.value = e.currentPosition || e.maxChunks || r.progress.max, updateLabel(r.progress, r.label));
             }catch(err){
-                webrtcdev.error(" Problem in progressHelper " , err);
+                webrtcdev.error("[startjs] Problem in onFileProgress " , err);
             }
         },
 
         rtcConn.onFileEnd = function (file) {
-            webrtcdev.log("[start] On file End , name :", file.name , " from -> ", file.userid , " to ->" , file.remoteUserId);
+            webrtcdev.log("[start] On file End description , name :", file.name , " from -> ", file.userid , " to ->" , file.remoteUserId);
+            
+            alert ( "end file to " + file.remoteUserId , findPeerInfo(file.remoteUserId).name);
+
             var filename = file.name;
             // Hide the stop upload button for this file 
             var stopuploadbutton = document.getElementById("stopuploadButton"+filename);
