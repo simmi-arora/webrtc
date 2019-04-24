@@ -87,7 +87,7 @@ var FileProgressBarHandler = (function() {
                 return;
             }
 
-            var position = +progress.position.toFixed(2).split('.')[1] || 100;
+            var position = +progress.position.toFixed(2).split('.')[1] || 0;
             label.innerHTML = position + '%';
         }
     }

@@ -720,19 +720,35 @@ var setRtcConn = function ( sessionid) {
                         sendOldFiles();
                         break;
                     case "shareFileRemove":
+                        webrtcdev.log(" [startjs] shareFileRemove - remove file : " , e.data._filename , " and elem : " ,  document.getElementById("display"+filename));
                         var progressdiv = e.data._element;
                         var filename = e.data._filename;
                         removeFile(progressdiv);
                         let removeButton = "removeButton"+filename;
-                        document.getElementById(filename).setAttribute( "style", "display:none !important");
+                        document.getElementById("display"+filename).setAttribute( "style", "display:none !important");
                         document.getElementById(removeButton).hidden = true;
                         break;
                     case "shareFileStopUpload":
-                        var progressdiv = e.data._element;
-                        var filename = e.data._filename;
-                        removeFile(progressdiv);
-                        let stopuploadButton = "stopuploadButton"+filename;
-                        document.getElementById(stopuploadButton).hidden = true;
+                        var progressid = e.data._element;
+                        webrtcdev.log(" [startjs] shareFileStopUpload" ,progressid);
+                        // var filename = e.data._filename;
+
+                        //console.log(" here 1 ");
+                        for(x in webcallpeers){
+                            //console.log("here 2 ")
+                            for( y in webcallpeers[x].filearray){
+                                //console.log ("here ------------- " , webcallpeers[x].filearray[y]);
+                                if(webcallpeers[x].filearray[y].pid == progressid ) {
+                                    console.log("[ startjs ] shareFileStopUpload -  filepid " , webcallpeers[x].filearray[y].pid , " | status " , webcallpeers[x].filearray[y].status);
+                                    webcallpeers[x].filearray[y].status="stopped";
+                                    hideFile( progressid);
+                                    removeFile( progressid);
+                                    return;
+                                }
+                            }
+                        }
+                        //  let stopuploadButton = "stopuploadButton"+filename;
+                        // document.getElementById(stopuploadButton).hidden = true;
                         break;
                     default:
                         webrtcdev.warn(" unrecognizable message from peer  ", e);
@@ -789,17 +805,19 @@ var setRtcConn = function ( sessionid) {
         },
 
         rtcConn.onFileStart = function (file) {
-            webrtcdev.log("[start] on File start " + file);
+            webrtcdev.log("[start] on File start " , file);
             webrtcdev.log("[start] on File start description  , name :", file.name , " from -> ", file.userid , " to ->" , file.remoteUserId);
             
-            alert ( "send fille to " + file.remoteUserId , findPeerInfo(file.remoteUserId).name);
+            //alert ( "send fille to " + file.remoteUserId , findPeerInfo(file.remoteUserId).name);
 
+            var progressid = file.uuid+"_"+file.userid+"_"+file.remoteUserId;
             var peerinfo = findPeerInfo(file.userid);
             // check if not already present , 
             // done to include one entry even if same file is being sent to multiple particpants 
             if(!peerinfo.filearray.includes("name : file.name")){
                 // add to peerinfo file array
                 peerinfo.filearray.push({
+                    "pid"  : progressid,
                     "name" : file.name,
                     "status" : "progress",
                     "from" : file.userid ,
@@ -813,17 +831,20 @@ var setRtcConn = function ( sessionid) {
         },
 
         rtcConn.onFileProgress = function (e) { 
-            webrtcdev.log("[start] on File progress uuid : ", e.uuid , " , name :", e.name , 
-                " from -> ", e.userid , " to ->" , e.remoteUserId);
+            //.log("[start] on File progress uuid : ", e.uuid , " , name :", e.name , 
+             //   " from -> ", e.userid , " to ->" , e.remoteUserId);
 
             try{
+                // if the file has already recahed max chunks then exit 
+                if( e.currentPosition > e.maxChunks ) return;
+
                 var progressid = e.uuid+"_"+e.userid+"_"+e.remoteUserId;
                 var r = progressHelper[progressid];
-                webrtcdev.log("[start] on File progress ",
-                    " progresshelper id - " , progressid , 
-                    "currentPosition - " , e.currentPosition ,
-                    "maxchunks - ", e.maxChunks , 
-                    "progress.max - " , r.progress.max);
+                // webrtcdev.log("[start] on File progress ",
+                //     " progresshelper id - " , progressid , 
+                //     "currentPosition - " , e.currentPosition ,
+                //     "maxchunks - ", e.maxChunks , 
+                //     "progress.max - " , r.progress.max);
 
                 r && (r.progress.value = e.currentPosition || e.maxChunks || r.progress.max, updateLabel(r.progress, r.label));
             }catch(err){
@@ -832,14 +853,12 @@ var setRtcConn = function ( sessionid) {
         },
 
         rtcConn.onFileEnd = function (file) {
-            webrtcdev.log("[start] On file End description , name :", file.name , " from -> ", file.userid , " to ->" , file.remoteUserId);
+            webrtcdev.log("[start] On file End description , file :", file , " from -> ", file.userid , " to ->" , file.remoteUserId);
             
-            alert ( "end file to " + file.remoteUserId , findPeerInfo(file.remoteUserId).name);
+            //alert ( "end file to " + file.remoteUserId , findPeerInfo(file.remoteUserId).name);
 
+            var progressid = file.uuid+"_"+file.userid+"_"+file.remoteUserId;
             var filename = file.name;
-            // Hide the stop upload button for this file 
-            var stopuploadbutton = document.getElementById("stopuploadButton"+filename);
-            if(stopuploadbutton) stopuploadbutton.hidden=true;
 
             // find duplicate file
             // for(x in webcallpeers){
@@ -856,22 +875,32 @@ var setRtcConn = function ( sessionid) {
             // push to peerinfo's file array
             var peerinfo = findPeerInfo(file.userid); 
             if (peerinfo != null)  {
-                for( f in peerinfo.filearray)
-                    if(peerinfo.filearray[f].name == filename)
-                        peerinfo.filearray[f].status = "finished";
+                for( x in peerinfo.filearray)
+                    if(peerinfo.filearray[x].name == filename && peerinfo.filearray[x].pid == progressid ){
+                        //update filearray status to finished
+                        peerinfo.filearray[x].status = "finished";
+
+                        // Hide the stop upload button for this file 
+                        var stopuploadbutton = document.getElementById("stopuploadButton"+progressid);
+                        if(stopuploadbutton) stopuploadbutton.hidden = true;
+                    }
             }
 
+            // if all file progress bars with the name are finsihed 
+            //- tbd
+
             // Display on File Viewer and List
+            webrtcdev.log("[start] onFileEnd - Display on File Viewer and List -",file.url, filename, file.type);
             displayFile(file.uuid, peerinfo, file.url, filename, file.type);
             displayList(file.uuid, peerinfo, file.url, filename, file.type);
             onFileShareEnded(file);
 
-            //start the pending trabsfer frompendingFileTransfer.push(file);
-            // if(pendingFileTransfer.length>=1){
-            //     document.getElementById(pendingFileTransfer[0].name).hidden = true;
-            //     sendFile(pendingFileTransfer[0]);
-            //     pendingFileTransfer.pop();
-            // }
+            //start the pending transfer frompendingFileTransfer.push(file);
+            if(pendingFileTransfer.length>=1){
+                document.getElementById(pendingFileTransfer[0].name).hidden = true;
+                sendFile(pendingFileTransfer[0]);
+                pendingFileTransfer.pop();
+            }
 
         },
 

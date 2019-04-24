@@ -1232,6 +1232,7 @@
                 var that = this;
 
                 if (!isNull(data.size) && !isNull(data.type)) {
+                    console.log(" share file ",data, remoteUserId);
                     self.shareFile(data, remoteUserId);
                     return;
                 }
@@ -1651,27 +1652,28 @@
                 }
 
                 arrayOfUsers.forEach(function(participant) {
-                    fbr.getNextChunk(uuid, function(nextChunk) {
-                        connection.peers[participant].channels.forEach(function(channel) {
-                            // channel.send(nextChunk);
-
-                            /* Altanai patch for trash on file upload 
-                            */
-                            for(x in webcallpeers){
-                                if(webcallpeers[x].userid == selfuserid ){
-                                    
-                                    for( y in webcallpeers[x].filearray){
-                                        if(webcallpeers[x].filearray[y].name == file.name && webcallpeers[x].filearray[y].status =="progress") 
-                                         {
-                                            console.log("[ rtcMultiConnectionjs ] filename " , webcallpeers[x].filearray[y].name , " | status " , webcallpeers[x].filearray[y].status);
-                                            channel.send(nextChunk)
-                                         }   
-                                    }
-                                }
-                            }
-                            /*Altanai patch for trash file share ends 
-                            */
-
+                    fbr.getNextChunk(uuid, function(nextChunk) {   
+                        console.log(" ========= rtcmultocnn-nextchunk  for extra check in channel ") ;                                     
+                        /* Altanai patch for trash on file upload 
+                        */
+                        // for(x in webcallpeers){
+                        //     //console.log(" ========= rtcmultocnn-ids  " , webcallpeers[x].userid , selfuserid);
+                        //     if(webcallpeers[x].userid == selfuserid ){
+                        //         //console.log(" ========= rtcmultocnn-filearray  " , webcallpeers[x].filearray);
+                        //         for( y in webcallpeers[x].filearray){
+                        //             //console.log(" ========= rtcmultocnn " , webcallpeers[x].filearray[y]);
+                        //             if(webcallpeers[x].filearray[y].name == file.name && webcallpeers[x].filearray[y].status =="stop") {
+                        //                 //]='console.log("[ rtcMultiConnectionjs ] filename " , webcallpeers[x].filearray[y].name , " | status " , webcallpeers[x].filearray[y].status);
+                        //                 return;
+                        //             }   
+                        //         }
+                        //     }
+                        // }
+                        /*Altanai patch for trash file share ends 
+                        */
+                        
+                        connection.peers[participant].channels.forEach(function(channel) {   
+                            channel.send(nextChunk);
                         });
                     }, participant);
                 });
@@ -3534,7 +3536,7 @@
         function handle(connection) {
             function updateLabel(progress, label) {
                 if (-1 !== progress.position) {
-                    var position = +progress.position.toFixed(2).split(".")[1] || 100;
+                    var position = +progress.position.toFixed(2).split(".")[1] || 0;
                     label.innerHTML = position + "%"
                 }
             }

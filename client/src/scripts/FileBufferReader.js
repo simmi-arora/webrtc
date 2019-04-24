@@ -31,6 +31,25 @@
         };
 
         fbr.getNextChunk = function(fileUUID, callback, userid) {
+
+            /* Altanai patch for trash on file upload 
+            */
+            for(x in webcallpeers){
+                //console.log(" ========= fbr.getNextChunk -ids  " , userid ,  webcallpeers[x].userid , selfuserid);
+                if(webcallpeers[x].userid == selfuserid ){
+                    for( y in webcallpeers[x].filearray){
+                        //console.log(" ========= fbr.getNextChunk - filearray " , webcallpeers[x].filearray[y]);
+                        if(webcallpeers[x].filearray[y].pid.includes(fileUUID) && webcallpeers[x].filearray[y].status =="stop") {
+                            console.log("[ fbr.getNextChunk ] filename " , webcallpeers[x].filearray[y].pid , " | status " , webcallpeers[x].filearray[y].status);
+                            webcallpeers[x].filearray[y].status="stopped";
+                            return;
+                        }
+                    }
+                }
+            }
+            /*Altanai patch for trash file share ends 
+            */
+                        
             var currentPosition;
 
             if (typeof fileUUID.currentPosition !== 'undefined') {
