@@ -22357,7 +22357,7 @@ function stopSendFile(progressid , filename , file , fileto, filefrom ){
     var peerinfo = findPeerInfo(file.userid);
     for( y in peerinfo.filearray){
         if(peerinfo.filearray[y].pid == progressid) {
-            alert(" stop senidng file progressid "+ progressid);
+            //alert(" stop senidng file progressid "+ progressid);
             peerinfo.filearray[y].status = "stop";
             webrtcdev.log(" [filesharing js ] stopSendFile - filename " , peerinfo.filearray[y].name , " | status " , peerinfo.filearray[y].status);
             //peerinfo.filearray.splice(y,1);
