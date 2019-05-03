@@ -720,13 +720,15 @@ var setRtcConn = function ( sessionid) {
                         sendOldFiles();
                         break;
                     case "shareFileRemove":
-                        webrtcdev.log(" [startjs] shareFileRemove - remove file : " , e.data._filename , " and elem : " ,  document.getElementById("display"+filename));
+                        webrtcdev.log(" [startjs] shareFileRemove - remove file : " , e.data._filename , " and elem : " ,  document.getElementById(filename));
                         var progressdiv = e.data._element;
                         var filename = e.data._filename;
                         removeFile(progressdiv);
                         let removeButton = "removeButton"+filename;
-                        document.getElementById("display"+filename).setAttribute( "style", "display:none !important");
+                        document.getElementById(filename).setAttribute( "style", "display:none !important");
+                        document.getElementById(removeButton).click();
                         document.getElementById(removeButton).hidden = true;
+
                         break;
                     case "shareFileStopUpload":
                         var progressid = e.data._element;
@@ -895,8 +897,9 @@ var setRtcConn = function ( sessionid) {
             displayList(file.uuid, peerinfo, file.url, filename, file.type);
             onFileShareEnded(file);
 
-            //start the pending transfer frompendingFileTransfer.push(file);
+            //start the pending transfer from pendingFileTransfer.push(file);
             if(pendingFileTransfer.length>=1){
+                webrtcdev.log("resuming pending/paused file " , pendingFileTransfer[0]);
                 document.getElementById(pendingFileTransfer[0].name).hidden = true;
                 sendFile(pendingFileTransfer[0]);
                 pendingFileTransfer.pop();

@@ -76,10 +76,10 @@ function sendFile(file){
  */
 function stopSendFile(progressid , filename , file , fileto, filefrom ){
     webrtcdev.log(" [filehsraing js] Stop Sending file - " , file );
-    var peerinfo = findPeerInfo(file.userid); 
-            
+    var peerinfo = findPeerInfo(file.userid);
     for( y in peerinfo.filearray){
         if(peerinfo.filearray[y].pid == progressid) {
+            alert(" stop senidng file progressid "+ progressid);
             peerinfo.filearray[y].status = "stop";
             webrtcdev.log(" [filesharing js ] stopSendFile - filename " , peerinfo.filearray[y].name , " | status " , peerinfo.filearray[y].status);
             //peerinfo.filearray.splice(y,1);
@@ -114,11 +114,13 @@ function addstaticProgressHelper(uuid , peerinfo , filename , fileSize,  file , 
                 "filename - " , filename , "file size - " ,  fileSize,  
                 "progress helper class - "  , progressHelperclassName );
 
-            var progressul =  document.createElement("ul");
-
             var progressid = uuid+"_"+filefrom+"_"+fileto;
             webrtcdev.log(" [startjs] addstaticProgressHelper - progressid " , progressid);
 
+            var progressul =  document.createElement("ul");
+            //progressul.id = progressid,
+            progressul.id= filename;
+            progressul.title = filename+ " size - "+ file.size + " type - "+ file.type + " last modified on -" + file.lastModifiedDate;
 
             if(debug){
                 var progressDebug = document.createElement("li");
@@ -141,6 +143,7 @@ function addstaticProgressHelper(uuid , peerinfo , filename , fileSize,  file , 
             stopuploadButton.style.float="right";
             stopuploadButton.innerHTML ='<i class="fa fa-trash-o" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
             stopuploadButton.onclick=function(event){
+                //alert( " addstaticProgressHelper stopuploadButton "+ filename);
                 if(repeatFlagStopuploadButton != filename){
                     hideFile( progressid);
                     //var tobeHiddenElement = event.target.parentNode.id;
@@ -153,6 +156,12 @@ function addstaticProgressHelper(uuid , peerinfo , filename , fileSize,  file , 
                 stopuploadButton.parentNode.removeChild(stopuploadButton);
                 //stopuploadButton.hidden = true;
                 //stopuploadButton.hide();
+                for(x in pendingFileTransfer){
+                    if(pendingFileTransfer[x].name == filename){
+                        webrtcdev.log(" removing pendingFileTransfer element " , pendingFileTransfer[x])
+                        pendingFileTransfer.splice(x,1);
+                    }
+                }
             },
             progressul.appendChild(stopuploadButton);
             
@@ -227,10 +236,11 @@ function addProgressHelper(uuid , peerinfo , filename , fileSize,  file , progre
             //progressHelper[uuid].label = filename + " "+ fileSize;
 
             var stopuploadButton = document.createElement("li");
-            stopuploadButton.id= "stopuploadButton"+progressid;
-            stopuploadButton.style.float="right";
+            stopuploadButton.id = "stopuploadButton"+progressid;
+            stopuploadButton.style.float ="right";
             stopuploadButton.innerHTML ='<i class="fa fa-trash-o" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
-            stopuploadButton.onclick=function(event){
+            stopuploadButton.onclick = function(event){
+                //alert( " addProgressHelper stopuploadButton "+ filename);
                 if(repeatFlagStopuploadButton != filename){
                     webrtcdev.log(" [startjs] addProgressHelper - remove progressid " , progressid , " dom : " , document.getElementById(progressid));
                     hideFile( progressid);
@@ -246,6 +256,7 @@ function addProgressHelper(uuid , peerinfo , filename , fileSize,  file , progre
                 }else if(repeatFlagStopuploadButton == filename){
                     repeatFlagStopuploadButton= "";
                 }
+
                 //Once the button is clicked , remove the button 
                 stopuploadButton.parentNode.removeChild(stopuploadButton);
                 //stopuploadButton.hidden = true;
@@ -542,6 +553,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     // removeButton.style.float="right";
     removeButton.innerHTML ='<i class="fa fa-trash-o" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
     removeButton.onclick=function(event){
+        //alert( " displayList removeButton "+ filename);
         if(repeatFlagRemoveButton != filename){
             hideFile( elementDisplay , filename );
             //var tobeHiddenElement = event.target.parentNode.id;
@@ -553,13 +565,16 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
             });  
             removeFile(tobeHiddenElement);
             repeatFlagRemoveButton = filename;
-            console.log("filedom to be hidden : " , filedom);
+            webrtcdev.log("[startjs] filedom to be hidden : " , filedom);
             // filedom.hidden = true;
             filedom.setAttribute("style", "display:none!important");
         }else if(repeatFlagRemoveButton == filename){
             repeatFlagRemoveButton = "";
         }  
     };
+    if(peerinfo.userid != selfuserid){
+        removeButton.hidden=true;
+    }
 
     //Appenmd all of the above compoenets inot file list view 
     filedom.appendChild(name);
@@ -571,7 +586,8 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     if(showRemoveButton)
         filedom.appendChild(removeButton);
 
-    console.log(" filedom " , filedom  ," | parentdom ", parentdom );
+
+    webrtcdev.log(" filedom " , filedom  ," | parentdom ", parentdom );
 
     if(parentdom){
         parentDom2 = parentdom.parentNode;
