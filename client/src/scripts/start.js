@@ -724,8 +724,8 @@ var setRtcConn = function ( sessionid) {
                         var progressdiv = e.data._element;
                         var filename = e.data._filename;
                         removeFile(progressdiv);
-                        let removeButton = "removeButton"+filename;
-                        document.getElementById(filename).setAttribute( "style", "display:none !important");
+                        let removeButton = "removeButton"+progressdiv;
+                        document.getElementById(progressdiv).setAttribute( "style", "display:none !important");
                         document.getElementById(removeButton).click();
                         document.getElementById(removeButton).hidden = true;
 

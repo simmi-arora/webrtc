@@ -1,7 +1,7 @@
 'use strict';
 var Client = require('./start');
 
-function Plivo(options) {
+function WebRTCDev(options) {
   var client  = new Client(options);
 
   Object.defineProperties(this, {
@@ -12,4 +12,4 @@ function Plivo(options) {
   });
 }
 
-module.exports = Plivo;
+module.exports = WebRTCDev;

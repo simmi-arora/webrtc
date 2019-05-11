@@ -262,65 +262,81 @@ function bytesToSize(e) {
     return Math.round(e / Math.pow(1024, n), 2) + " " + t[n]
 }
 
+
+/* ********************************************************
+Remove DOM
+****************************************************** */
+
+Element.prototype.remove = function() {
+    this.parentElement.removeChild(this);
+}
+NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
+    for(var i = this.length - 1; i >= 0; i--) {
+        if(this[i] && this[i].parentElement) {
+            this[i].parentElement.removeChild(this[i]);
+        }
+    }
+}
+
 /* ********************************************************
 web dev Logger 
 ****************************************************** */
 var webrtcdev = {};
 var webrtcdevlogs=[];
 
-webrtcdev.log = function(){
-  // var arg = getArgsJson(arguments);
-  // document.getElementById("help-view-body").innerHTML += '[-]' + arg + "<br/>";
-  if(isJSON(arguments)){
-    let arg = JSON.stringify(arguments, undefined, 2);
-    webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
-  }else{
-    let arg = getArgsJson(arguments);
-    webrtcdevlogs.push("<p style='color:grey'>[-]" + arg + "</p>");
-  }
-  console.log(arguments);
-};
+// webrtcdev.log = function(){
+//   // var arg = getArgsJson(arguments);
+//   // document.getElementById("help-view-body").innerHTML += '[-]' + arg + "<br/>";
+//   if(isJSON(arguments)){
+//     let arg = JSON.stringify(arguments, undefined, 2);
+//     webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
+//   }else{
+//     let arg = getArgsJson(arguments);
+//     webrtcdevlogs.push("<p style='color:grey'>[-]" + arg + "</p>");
+//   }
+//   console.log(arguments);
+// };
 
-webrtcdev.info= function(){
-  let arg = getArgsJson(arguments);
-  webrtcdevlogs.push("<p style='color:blue'>[INFO]" + arg + "</p>");
-  console.info(arguments);
-};
+// webrtcdev.info= function(){
+//   let arg = getArgsJson(arguments);
+//   webrtcdevlogs.push("<p style='color:blue'>[INFO]" + arg + "</p>");
+//   console.info(arguments);
+// };
 
- webrtcdev.debug= function(){
-  if(isJSON(arguments)){
-    let arg = JSON.stringify(arguments, undefined, 2);
-    webrtcdevlogs.push( "<pre style='color:green'>[DEBUG]" + arg + "</pre>");
-  }else{
-    let arg = getArgsJson(arguments);
-    webrtcdevlogs.push("<p style='color:green'>[DEBUG]" + arg + "</p>");
-  }
-  console.debug(arguments);
-};
+//  webrtcdev.debug= function(){
+//   if(isJSON(arguments)){
+//     let arg = JSON.stringify(arguments, undefined, 2);
+//     webrtcdevlogs.push( "<pre style='color:green'>[DEBUG]" + arg + "</pre>");
+//   }else{
+//     let arg = getArgsJson(arguments);
+//     webrtcdevlogs.push("<p style='color:green'>[DEBUG]" + arg + "</p>");
+//   }
+//   console.debug(arguments);
+// };
 
-webrtcdev.warn= function(){
-  let arg = getArgsJson(arguments);
-  webrtcdevlogs.push("<p style='color:yellow'>[WARN]" + arg + "</p>");
-  console.warn(arguments);
-};
+// webrtcdev.warn= function(){
+//   let arg = getArgsJson(arguments);
+//   webrtcdevlogs.push("<p style='color:yellow'>[WARN]" + arg + "</p>");
+//   console.warn(arguments);
+// };
 
-webrtcdev.error= function(){
-  if(isJSON(arguments)){
-    let arg = JSON.stringify(arguments, undefined, 2);
-    webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
-  }else{
-    let arg = getArgsJson(arguments);
-    webrtcdevlogs.push("<p style='color:red'>[ERROR]"+ arg + "</p>");
-  }
-   console.error(arguments);
-};
+// webrtcdev.error= function(){
+//   if(isJSON(arguments)){
+//     let arg = JSON.stringify(arguments, undefined, 2);
+//     webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
+//   }else{
+//     let arg = getArgsJson(arguments);
+//     webrtcdevlogs.push("<p style='color:red'>[ERROR]"+ arg + "</p>");
+//   }
+//    console.error(arguments);
+// };
 
 
-// webrtcdev.log = console.log;
-// webrtcdev.info = console.info;
-// webrtcdev.debug = console.debug;
-// webrtcdev.warn = console.warn;
-// webrtcdev.error = console.error;
+webrtcdev.log = console.log;
+webrtcdev.info = console.info;
+webrtcdev.debug = console.debug;
+webrtcdev.warn = console.warn;
+webrtcdev.error = console.error;
 
 /**
  * function to show bootstrap based notification to client
@@ -22650,7 +22666,7 @@ function simulateClick(buttonName){
  * Display list and file list box button 
  * @method
  * @name displayList
- * @param {id} uuid
+ * @param {id} file uuid
  * @param {json} peerinfo
  * @param {string} fileurl
  * @param {string} filename
@@ -22695,7 +22711,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
 
                 if (fileprogressbar[x].type=="progressbar" || fileprogressbar[x].indexOf("progressbar") >-1){
                     // if the progress bar exist , remove the progress bar div and create the ul
-                    //fileprogressbar[x].getAttribute("type")=="progressbar" /removed due to not a function error 
+                    // fileprogressbar[x].getAttribute("type")=="progressbar" /removed due to not a function error 
                     if(peerinfo.fileList.container && document.getElementById(peerinfo.fileList.container)){
                         parentdom = document.getElementById(peerinfo.fileList.container);
                         webrtcdev.log("[ filesharing js ] displayList , set up parent dom " , parentdom);
@@ -22729,7 +22745,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     webrtcdev.log(" [filesharing js] displayList set up parent dom  " , parentdom);
 
     filedom = document.createElement("ul") ;
-    filedom.id = filename;
+    filedom.id = filename+uuid;
     filedom.type = peerinfo.type;  // local or remote ,
     filedom.innerHTML="";
     filedom.className="row";
@@ -22740,11 +22756,11 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     name.innerHTML = filename ;
     name.title = filetype +" shared by " +peerinfo.name ;  
     name.className = "filenameClass";
-    name.id = "name"+filename;
+    name.id = "name"+filename+uuid;
 
     // Download Button 
     var downloadButton = document.createElement("li");
-    downloadButton.id = "downloadButton"+filename;
+    downloadButton.id = "downloadButton"+filename+uuid;
     downloadButton.title = "Download";
     downloadButton.setAttribute("style","float: right");
     if (fileshareobj.filelist.saveicon) {
@@ -22760,7 +22776,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
 
     //Save Button
     var saveButton = document.createElement("li");
-    saveButton.id= "saveButton"+filename;
+    saveButton.id= "saveButton"+filename+uuid;
     saveButton.title = "Save";
     saveButton.setAttribute("data-toggle","modal");
     saveButton.setAttribute("data-target", "#saveModal");
@@ -22778,7 +22794,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
 
     // Show Button
     var showButton = document.createElement("li");
-    showButton.id= "showButton"+filename;
+    showButton.id= "showButton"+filename+uuid;
     showButton.title="Show";
     showButton.setAttribute("style","float: right");
     if (fileshareobj.filelist.saveicon) {
@@ -22825,17 +22841,16 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
 
     //Remove Button
     var removeButton = document.createElement("li");
-    removeButton.id= "removeButton"+filename;
+    removeButton.id= "removeButton"+filename+uuid;
     removeButton.title="Remove";
     removeButton.setAttribute("style","float: right");
     // removeButton.style.float="right";
     removeButton.innerHTML ='<i class="fa fa-trash-o" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
     removeButton.onclick=function(event){
-        //alert( " displayList removeButton "+ filename);
         if(repeatFlagRemoveButton != filename){
-            hideFile( elementDisplay , filename );
             //var tobeHiddenElement = event.target.parentNode.id;
-            var tobeHiddenElement = filename;
+            var tobeHiddenElement = filename+uuid;
+            hideFile( elementDisplay , filename );
             rtcConn.send({
                 type : "shareFileRemove", 
                 _element : tobeHiddenElement,
@@ -22852,6 +22867,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     };
     if(peerinfo.userid != selfuserid){
         removeButton.hidden=true;
+        removeButton.setAttribute("style","display:none!important");
     }
 
     //Appenmd all of the above compoenets inot file list view 
@@ -22865,20 +22881,26 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         filedom.appendChild(removeButton);
 
 
-    webrtcdev.log(" filedom " , filedom  ," | parentdom ", parentdom );
+    webrtcdev.log("[filesharing JS ] filedom " , filedom  ," | parentdom ", parentdom );
 
     if(parentdom){
         parentDom2 = parentdom.parentNode;
         parentDom2.insertBefore(filedom , parentDom2.firstChild); 
         fileListed(filedom);
     }else{
-
+        webrtcdev.error("[filesharing JS ] filedom's parent doem not found ");
     }
-
-
 }
 
 
+/* 
+ * Display file by type
+ * @method
+ * @name getFileElementDisplayByType
+ * @param {string} fileurl
+ * @param {string} filename
+ * @param {string} filetype
+ */
 function getFileElementDisplayByType(filetype , fileurl , filename){
 
     webrtcdev.log(" [filehsaring js]  - getFileElementDisplayByType ",
@@ -23087,7 +23109,9 @@ function hideFile( element ){
      webrtcdev.log("[filehsaring js]  hidefile " , element);
     //if(document.getElementById(element) && $("#"+element).has("#display"+filename)){
     if(document.getElementById(element)){
-        document.getElementById(element).innerHTML="";
+        document.getElementById(element).innerHTML = "";
+        document.getElementById(element).hidden=true;
+        document.getElementById(element).setAttribute("style","display:none!important");
         webrtcdev.log("[filehsaring js] hidefile done" );
     }else{
         webrtcdev.warn(" [filehsaring js]  file is not displayed to hide  ");
@@ -23096,7 +23120,7 @@ function hideFile( element ){
 
 function removeFile(element){
     webrtcdev.log("[filehsaring js]  removeFile " , element);
-    document.getElementById(element).hidden=true;
+    document.getElementById(element).remove();
 }
 
 
@@ -25832,8 +25856,8 @@ var setRtcConn = function ( sessionid) {
                         var progressdiv = e.data._element;
                         var filename = e.data._filename;
                         removeFile(progressdiv);
-                        let removeButton = "removeButton"+filename;
-                        document.getElementById(filename).setAttribute( "style", "display:none !important");
+                        let removeButton = "removeButton"+progressdiv;
+                        document.getElementById(progressdiv).setAttribute( "style", "display:none !important");
                         document.getElementById(removeButton).click();
                         document.getElementById(removeButton).hidden = true;
 
