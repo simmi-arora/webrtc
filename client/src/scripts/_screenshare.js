@@ -752,7 +752,7 @@ function createExtensionInstallWindow (){
         modalinnerBox.className = "modal-dialog";
 
         var modal = document.createElement("div");
-        modal.className = "modal-content";
+        modal.className = "modal-content";cs
 
         var modalheader = document.createElement("div");
         modalheader.className = "modal-header";
@@ -764,7 +764,7 @@ function createExtensionInstallWindow (){
 
         var title = document.createElement("h4");
         title.className = "modal-title";
-        title.innerHTML = "Install extension";
+        title.innerHTML = "Install Ample Chat chrome extension";
 
         modalheader.appendChild(title);
         modalheader.appendChild(closeButton);
@@ -774,7 +774,9 @@ function createExtensionInstallWindow (){
         modalbody.className = "modal-body";
 
         var div = document.createElement("div");
-        div.innerHTML = "install screen share extension ";
+        div.innerHTML = "Click this link to install " +
+                        "<a href='https://chrome.google.com/webstore/detail/jpcjjkpbiepbmhklnjoahacppaemhmpd'> Ample Chat Extension </a> "+
+                        "which enbles share and record screen features ";
 
         var button = document.createElement("button");
         button.innerHTML = " Install ";

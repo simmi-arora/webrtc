@@ -720,12 +720,23 @@ var setRtcConn = function ( sessionid) {
                         sendOldFiles();
                         break;
                     case "shareFileRemove":
-                        webrtcdev.log(" [startjs] shareFileRemove - remove file : " , e.data._filename , " and elem : " ,  document.getElementById(filename));
+                        webrtcdev.log(" [startjs] shareFileRemove - remove file : " , e.data._filename);
                         var progressdiv = e.data._element;
                         var filename = e.data._filename;
-                        removeFile(progressdiv);
                         let removeButton = "removeButton"+progressdiv;
-                        document.getElementById(progressdiv).setAttribute( "style", "display:none !important");
+
+                        if(document.getElementById("display"+filename))
+                            document.getElementById("display"+filename).setAttribute( "style", "display:none !important");
+
+                        if(document.getElementById(progressdiv)){
+                            document.getElementById(progressdiv).setAttribute( "style", "display:none !important");
+                            removeFile(progressdiv);
+                            webrtcdev.log(" [startjs] shareFileRemove done");
+                        }else{
+                             webrtcdev.log(" [startjs] shareFileRemove already done since " ,  progressdiv , "element doesnt exist ");
+                            // already removed
+                            return; 
+                        }
                         document.getElementById(removeButton).click();
                         document.getElementById(removeButton).hidden = true;
 
@@ -892,13 +903,19 @@ var setRtcConn = function ( sessionid) {
             //- tbd
 
             // Display on File Viewer and List
-            webrtcdev.log("[start] onFileEnd - Display on File Viewer and List -",file.url, filename, file.type);
+            webrtcdev.log("[start] onFileEnd - Display on File Viewer and List -" , file.url, filename, file.type);
             displayFile(file.uuid, peerinfo, file.url, filename, file.type);
+
+            webrtcdev.log("[startjs] onFileEnd - Display List -" , filename+file.uuid , document.getElementById(filename+file.uuid) );
+            // if the file is from me ( orignal share ) then diaply listing in viewbox just one
+            if(selfuserid == file.userid && document.getElementById(filename+file.uuid)){
+                return;
+            }
             displayList(file.uuid, peerinfo, file.url, filename, file.type);
             onFileShareEnded(file);
 
             //start the pending transfer from pendingFileTransfer.push(file);
-            if(pendingFileTransfer.length>=1){
+            if(pendingFileTransfer.length >= pendingFileTransferlimit){
                 webrtcdev.log("resuming pending/paused file " , pendingFileTransfer[0]);
                 document.getElementById(pendingFileTransfer[0].name).hidden = true;
                 sendFile(pendingFileTransfer[0]);

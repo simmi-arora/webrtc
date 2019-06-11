@@ -153,7 +153,7 @@ function addstaticProgressHelper(uuid , peerinfo , filename , fileSize,  file , 
                     repeatFlagStopuploadButton= "";
                 }
                 //Once the button is clicked , remove the button 
-                stopuploadButton.parentNode.removeChild(stopuploadButton);
+                stopuploadButton.remove();
                 //stopuploadButton.hidden = true;
                 //stopuploadButton.hide();
                 for(x in pendingFileTransfer){
@@ -240,25 +240,27 @@ function addProgressHelper(uuid , peerinfo , filename , fileSize,  file , progre
             stopuploadButton.style.float ="right";
             stopuploadButton.innerHTML ='<i class="fa fa-trash-o" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
             stopuploadButton.onclick = function(event){
-                //alert( " addProgressHelper stopuploadButton "+ filename);
+                webrtcdev.log(" [startjs] addProgressHelper - remove progressid " , progressid , 
+                                  " dom : " , document.getElementById(progressid));
+                hideFile(progressid);
+                stopSendFile( progressid , filename , file , fileto, filefrom );
+                removeFile(progressid);
+
+                // If file has been hidden already then stop senidng the message shareFileStopUpload
                 if(repeatFlagStopuploadButton != filename){
-                    webrtcdev.log(" [startjs] addProgressHelper - remove progressid " , progressid , " dom : " , document.getElementById(progressid));
-                    hideFile( progressid);
-                    stopSendFile( progressid , filename , file , fileto, filefrom );
                     //var tobeHiddenElement = event.target.parentNode.id;
                     rtcConn.send({
                         type:"shareFileStopUpload", 
                         _element: progressid,
                         _filename : filename
                     });  
-                    removeFile( progressid);
+
                     repeatFlagStopuploadButton = filename;
                 }else if(repeatFlagStopuploadButton == filename){
-                    repeatFlagStopuploadButton= "";
+                    repeatFlagStopuploadButton = "";
                 }
-
                 //Once the button is clicked , remove the button 
-                stopuploadButton.parentNode.removeChild(stopuploadButton);
+                stopuploadButton.remove();
                 //stopuploadButton.hidden = true;
                 //stopuploadButton.hide();
             },
@@ -717,15 +719,19 @@ function displayFile( uuid , peerinfo , fileurl , filename , filetype ){
         var filedom = getFileElementDisplayByType(filetype , fileurl , filename);
         
         if(parentdom){
-            parentdom.innerHTML="";
-            parentdom.appendChild(filedom);
+            //parentdom.innerHTML="";
+            //parentdom.appendChild(filedom);
+            showFile( peerinfo.fileShare.container , fileurl , filename , filetype );
+
         }else if(role=="inspector"){
             for( r in webcallpeers){
                 var i = ++r;
-                if(document.getElementById(webcallpeers[i].fileShare.container)){
-                    parentdom =  document.getElementById(webcallpeers[i].fileShare.container);
-                    parentdom.innerHTML="";
-                    parentdom.appendChild(filedom);
+                var parentdominspector = document.getElementById(webcallpeers[i].fileShare.container);
+                if(parentdominspector){
+                    //parentdom =  document.getElementById(webcallpeers[i].fileShare.container);
+                    //parentdom.innerHTML="";
+                    //parentdom.appendChild(filedom);
+                    showFile( webcallpeers[i].fileShare.container , fileurl , filename , filetype );
                     break;
                 }
             }
@@ -777,7 +783,7 @@ function syncButton(buttonId){
 function showHideFile(uuid , elementDisplay , fileurl , filename , filetype , showHideButton ,countClicks ){
     webrtcdev.log(" [filehsaring js]  - show/hide elementDisplay ", elementDisplay);
     webrtcdev.log(" [filehsaring js]  - show/hide button ",  filename , " || ", countClicks);
-    if (countClicks%2==1 ){
+    if (countClicks%2 == 1 ){
         showFile( elementDisplay , fileurl , filename , filetype );
         /*rtcConn.send({
             type:"shareFileShow", 
@@ -789,7 +795,7 @@ function showHideFile(uuid , elementDisplay , fileurl , filename , filetype , sh
         }); */
         showHideButton.innerHTML = '<i class="fa fa-eye-slash" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
         webrtcdev.log(" [filehsaring js]  Executed script to show the file");
-    } else if (countClicks%2==0 ){
+    } else if (countClicks%2 == 0 ){
         hideFile( elementDisplay, filename );
         /*rtcConn.send({
             type: "shareFileHide",
@@ -805,10 +811,17 @@ function showHideFile(uuid , elementDisplay , fileurl , filename , filetype , sh
 }
 
 function showFile( element , fileurl , filename , filetype ){
-    webrtcdev.log("[filehsaring js]  showFile " , element);
+    webrtcdev.log("[filehsaring js]  showFile container - " , element , document.getElementById(element));
     var filedom = getFileElementDisplayByType(filetype , fileurl , filename);
-    webrtcdev.log("[filehsaring js]  showFile  filedom" , filedom);
-    document.getElementById(element).appendChild(filedom);
+    webrtcdev.log("[filehsaring js]  showFile  filedom - " , filedom);
+    if(document.getElementById(element)){
+        document.getElementById(element).innerHTML = "";
+        document.getElementById(element).removeAttribute("hidden");
+        document.getElementById(element).setAttribute("style","display:block!important");
+        document.getElementById(element).appendChild(filedom);
+    }else{
+        webrtcdev.warn(" [filehsaring js] cant show file as parent DOM fir fileDiaply container doesnt exist ");
+    }
 }
 
 function hideFile( element ){
@@ -816,7 +829,7 @@ function hideFile( element ){
     //if(document.getElementById(element) && $("#"+element).has("#display"+filename)){
     if(document.getElementById(element)){
         document.getElementById(element).innerHTML = "";
-        document.getElementById(element).hidden=true;
+        document.getElementById(element).hidden = true;
         document.getElementById(element).setAttribute("style","display:none!important");
         webrtcdev.log("[filehsaring js] hidefile done" );
     }else{
