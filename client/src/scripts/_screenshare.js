@@ -752,7 +752,7 @@ function createExtensionInstallWindow (){
         modalinnerBox.className = "modal-dialog";
 
         var modal = document.createElement("div");
-        modal.className = "modal-content";cs
+        modal.className = "modal-content";
 
         var modalheader = document.createElement("div");
         modalheader.className = "modal-header";
@@ -775,25 +775,11 @@ function createExtensionInstallWindow (){
 
         var div = document.createElement("div");
         div.innerHTML = "Click this link to install " +
-                        "<a href='https://chrome.google.com/webstore/detail/jpcjjkpbiepbmhklnjoahacppaemhmpd'> Ample Chat Extension </a> "+
-                        "which enbles share and record screen features ";
-
-        var button = document.createElement("button");
-        button.innerHTML = " Install ";
-        button.onclick = function (e) {
-            chrome.webstore.install("https://chrome.google.com/webstore/detail/" + screenshareobj.extensionID,
-                function () {
-                    webrtcdev.log("Chrome extension inline installation - success from assignScreenInstallButton . Now  createOrAssignScreenshareButton with ", screenshareobj);
-                    window.location.reload();
-                }, function (e) {
-                    webrtcdev.error("Chrome extension inline installation - fail ", e);
-                });
-            // Prevent the opening of the Web Store page
-            e.preventDefault();
-        };
+                        "<a href='https://chrome.google.com/webstore/detail/jpcjjkpbiepbmhklnjoahacppaemhmpd' target='_blank'> Ample Chat Extension </a> "+
+                        "which enbles screen share and session record features. "+
+                        "<br/> Please reload this session after extension installation ";
 
         modalbody.appendChild(div);
-        modalbody.appendChild(button);
 
         modal.appendChild(modalheader);
         modal.appendChild(modalbody);

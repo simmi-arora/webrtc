@@ -997,7 +997,28 @@ function supportSessionRefresh(){
 }
 
 /*
-* Get Cam Media
+* Check Microphone and Camera Devices
+*/
+function checkDevices(){
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+      webrtcdev.warn("enumerateDevices() not supported.");
+      return;
+    }
+
+    // List cameras and microphones.
+    navigator.mediaDevices.enumerateDevices()
+    .then(function(devices) {
+      devices.forEach(function(device) {
+         webrtcdev.log("[startJS] checkDevices ",device.kind ,  ": " , device.label ," id = " , device.deviceId);
+      });
+    })
+    .catch(function(err) {
+      webrtcdev.error('[startJS] checkDevices ', err.name , ": " , err.message);
+    });
+}
+
+/*
+* Get Audio and Video Stream Media
 */
 function getCamMedia(){
     webrtcdev.log(" [startJS] getCamMedia  role :" , role );
@@ -1019,517 +1040,517 @@ function getCamMedia(){
     });
 }
 
-    /**
-     * set Widgets.
-     */
-    var setWidgets = function (rtcConn) {
+/**
+ * set Widgets.
+ */
+var setWidgets = function (rtcConn) {
 
-        return new Promise (function(resolve, reject){
-            if (chatobj.active) {
+    return new Promise (function(resolve, reject){
+        if (chatobj.active) {
 
-                if (chatobj.inputBox && chatobj.inputBox.text_id && document.getElementById(chatobj.inputBox.text_id)) {
-                    webrtcdev.log("Assign chat Box ");
-                    assignChatBox(chatobj);
-                } else {
-                    webrtcdev.log("Create chat Box ");
-                    createChatBox(chatobj);
-                }
-                webrtcdev.log("chat widget loaded ");
+            if (chatobj.inputBox && chatobj.inputBox.text_id && document.getElementById(chatobj.inputBox.text_id)) {
+                webrtcdev.log("Assign chat Box ");
+                assignChatBox(chatobj);
             } else {
-                webrtcdev.log("chat widget not loaded ");
+                webrtcdev.log("Create chat Box ");
+                createChatBox(chatobj);
             }
+            webrtcdev.log("chat widget loaded ");
+        } else {
+            webrtcdev.log("chat widget not loaded ");
+        }
 
-            if (screenrecordobj && screenrecordobj.active && role !="inspector") {
+        if (screenrecordobj && screenrecordobj.active && role !="inspector") {
 
-                detectExtension(screenshareobj.extensionID, function (status) {
-                    extensioninstalled = status;
-                    webrtcdev.log("is screenshareobj extension installed  ? ", status);
+            detectExtension(screenshareobj.extensionID, function (status) {
+                extensioninstalled = status;
+                webrtcdev.log("is screenshareobj extension installed  ? ", status);
 
-                    if (status == 'not-installed') {
-                        shownotification(" Sessions recoridng cannot start as there is not extension installed ", "warning");
-                        createExtensionInstallWindow();
-                    } else if (status == 'installed-enabled') {
-                        if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
-                            webrtcdev.log("Assign Record Button ");
-                            assignScreenRecordButton(screenrecordobj);
-                        } else {
-                            webrtcdev.log("Create Record Button ");
-                            createScreenRecordButton(screenrecordobj);
-                        }
-                    } else if (extensioninstalled == 'installed-disabled') {
-                        shownotification("chrome extension is installed but disabled." , "warning");
-                        if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
-                            assignScreenRecordButton(screenrecordobj);
-                            webrtcdev.log("Assign Record Button ");
-                        } else {
-                            webrtcdev.log("Create Record Button ");
-                            createScreenRecordButton(screenrecordobj);
-                        }
-                    } else if (extensioninstalled == 'not-chrome') {
-                        // using non-chrome browser
-                    } else{
-                         webrtcdev.error(" screen record extension's state is undefined ");
+                if (status == 'not-installed') {
+                    shownotification(" Sessions recoridng cannot start as there is not extension installed ", "warning");
+                    createExtensionInstallWindow();
+                } else if (status == 'installed-enabled') {
+                    if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
+                        webrtcdev.log("Assign Record Button ");
+                        assignScreenRecordButton(screenrecordobj);
+                    } else {
+                        webrtcdev.log("Create Record Button ");
+                        createScreenRecordButton(screenrecordobj);
                     }
-
-                });
-
-                webrtcdev.log(" screen record widget loaded ");
-            } else if (screenrecordobj && !screenrecordobj.active) {
-                if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
-                    document.getElementById(screenrecordobj.button.id).className = "inactiveButton";
+                } else if (extensioninstalled == 'installed-disabled') {
+                    shownotification("chrome extension is installed but disabled." , "warning");
+                    if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
+                        assignScreenRecordButton(screenrecordobj);
+                        webrtcdev.log("Assign Record Button ");
+                    } else {
+                        webrtcdev.log("Create Record Button ");
+                        createScreenRecordButton(screenrecordobj);
+                    }
+                } else if (extensioninstalled == 'not-chrome') {
+                    // using non-chrome browser
+                } else{
+                     webrtcdev.error(" screen record extension's state is undefined ");
                 }
-                webrtcdev.log(" screen record widget not loaded ");
+
+            });
+
+            webrtcdev.log(" screen record widget loaded ");
+        } else if (screenrecordobj && !screenrecordobj.active) {
+            if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
+                document.getElementById(screenrecordobj.button.id).className = "inactiveButton";
             }
+            webrtcdev.log(" screen record widget not loaded ");
+        }
 
-            if (screenshareobj.active) {
+        if (screenshareobj.active) {
 
-                detectExtension(screenshareobj.extensionID, function (status) {
-                    webrtcdev.log("is screenshareobj extension installed  ? ", status);
-                    if (status == 'installed-enabled') {
-                        var screenShareButton = createOrAssignScreenshareButton(screenshareobj);
-                        hideScreenInstallButton();
-                    } else if (status == 'installed-disabled') {
-                        shownotification("chrome extension is installed but disabled.");
-                        var screenShareButton = createOrAssignScreenshareButton(screenshareobj);
-                        hideScreenInstallButton();
-                    } else if (status == 'not-installed') {
+            detectExtension(screenshareobj.extensionID, function (status) {
+                webrtcdev.log("is screenshareobj extension installed  ? ", status);
+                if (status == 'installed-enabled') {
+                    var screenShareButton = createOrAssignScreenshareButton(screenshareobj);
+                    hideScreenInstallButton();
+                } else if (status == 'installed-disabled') {
+                    shownotification("chrome extension is installed but disabled.");
+                    var screenShareButton = createOrAssignScreenshareButton(screenshareobj);
+                    hideScreenInstallButton();
+                } else if (status == 'not-installed') {
 
-                        //document.getElementById("screensharedialog").showModal();
-                        $("#screensharedialog").modal("show");
-                        hideScreenShareButton();
+                    //document.getElementById("screensharedialog").showModal();
+                    $("#screensharedialog").modal("show");
+                    hideScreenShareButton();
 
-                        if (screenshareobj.button.installButton.id && document.getElementById(screenshareobj.button.installButton.id)) {
-                            assignScreenInstallButton(screenshareobj.extensionID);
-                        } else {
-                            createScreenInstallButton(screenshareobj.extensionID);
-                        }
-                    } else if (status == 'not-chrome') {
-                        // using non-chrome browser
-                        alert(" Screen share extension only works in Chrome for now ");
-                    } else{
-                        webrtcdev.error(" screen share extension's state is undefined ");
+                    if (screenshareobj.button.installButton.id && document.getElementById(screenshareobj.button.installButton.id)) {
+                        assignScreenInstallButton(screenshareobj.extensionID);
+                    } else {
+                        createScreenInstallButton(screenshareobj.extensionID);
                     }
-                });
+                } else if (status == 'not-chrome') {
+                    // using non-chrome browser
+                    alert(" Screen share extension only works in Chrome for now ");
+                } else{
+                    webrtcdev.error(" screen share extension's state is undefined ");
+                }
+            });
 
-                webrtcdev.log(" screen share widget loaded ");
+            webrtcdev.log(" screen share widget loaded ");
+        } else {
+            webrtcdev.log(" screen share widget not loaded ");
+        }
+
+        if (reconnectobj && reconnectobj.active) {
+            if (reconnectobj.button.id && document.getElementById(reconnectobj.button.id)) {
+                webrtcdev.log("Rconnect Button Assigned");
+                assignButtonRedial(reconnectobj.button.id);
             } else {
-                webrtcdev.log(" screen share widget not loaded ");
+                webrtcdev.log("Rconnect Button created");
+                createButtonRedial(reconnectobj);
             }
-
-            if (reconnectobj && reconnectobj.active) {
-                if (reconnectobj.button.id && document.getElementById(reconnectobj.button.id)) {
-                    webrtcdev.log("Rconnect Button Assigned");
-                    assignButtonRedial(reconnectobj.button.id);
-                } else {
-                    webrtcdev.log("Rconnect Button created");
-                    createButtonRedial(reconnectobj);
-                }
-                webrtcdev.log(" reconnect widget loacded ");
-            } else if (reconnectobj && !reconnectobj.active) {
-                if (reconnectobj.button.id && document.getElementById(reconnectobj.button.id)) {
-                    document.getElementById(reconnectobj.button.id).className = "inactiveButton";
-                }
-                webrtcdev.log(" reconnect widget not loaded ");
+            webrtcdev.log(" reconnect widget loacded ");
+        } else if (reconnectobj && !reconnectobj.active) {
+            if (reconnectobj.button.id && document.getElementById(reconnectobj.button.id)) {
+                document.getElementById(reconnectobj.button.id).className = "inactiveButton";
             }
+            webrtcdev.log(" reconnect widget not loaded ");
+        }
 
-            if (cursorobj.active) {
-                document.getElementById("cursor1").setAttribute("style", "display:none");
-                document.getElementById("cursor2").setAttribute("style", "display:none");
-            }
+        if (cursorobj.active) {
+            document.getElementById("cursor1").setAttribute("style", "display:none");
+            document.getElementById("cursor2").setAttribute("style", "display:none");
+        }
 
-            if (listeninobj && listeninobj.active) {
-                if (listeninobj.button.id && document.getElementById(listeninobj.button.id)) {
-                    //assignButtonRedial(reconnectobj.button.id);
-                } else {
-                    //createButtonRedial();
-                }
-                webrtcdev.log(" listen in widget loaded ");
-            } else if (listeninobj && !listeninobj.active) {
-                if (listeninobj.button.id && document.getElementById(listeninobj.button.id)) {
-                    document.getElementById(listeninobj.button.id).className = "inactiveButton";
-                }
-                webrtcdev.log(" listenein widget not loaded ");
-            }
-
-            if (timerobj && timerobj.active) {
-                startTime();
-                timeZone();
-                activateBttons(timerobj);
-                document.getElementById(timerobj.container.id).hidden = true;
-            } else if (timerobj && !timerobj.active) {
-                if (timerobj.button.id && document.getElementById(timerobj.button.id)) {
-                    document.getElementById(timerobj.button.id).className = "inactiveButton";
-                }
-            }
-
-            if (drawCanvasobj && drawCanvasobj.active) {
-                if (drawCanvasobj.container && drawCanvasobj.container.id && document.getElementById(drawCanvasobj.container.id)) {
-                    document.getElementById(drawCanvasobj.container.id).hidden = true;
-                }
-                if (drawCanvasobj.button.id && document.getElementById(drawCanvasobj.button.id)) {
-                    assigndrawButton(drawCanvasobj);
-                } else {
-                    createdrawButton(drawCanvasobj);
-                }
-
-                CanvasDesigner = (function () {
-                    var iframe;
-                    var tools = {
-                        line: true,
-                        pencil: true,
-                        dragSingle: true,
-                        dragMultiple: true,
-                        eraser: true,
-                        rectangle: true,
-                        arc: true,
-                        bezier: true,
-                        quadratic: true,
-                        text: true
-                    };
-
-                    var selectedIcon = 'pencil';
-
-                    function syncData(data) {
-                        if (!iframe) return;
-
-                        iframe.contentWindow.postMessage({
-                            canvasDesignerSyncData: data
-                        }, '*');
-                    }
-
-                    var syncDataListener = function (data) {
-                        webrtcdev.log("syncDataListener", data);
-                    };
-
-                    function onMessage() {
-                        if (!event.data || !event.data.canvasDesignerSyncData) return;
-                        syncDataListener(event.data.canvasDesignerSyncData);
-                    }
-
-                    /*window.addEventListener('message', onMessage, false);*/
-
-                    var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
-                    var eventer = window[eventMethod];
-                    var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
-
-                    // Listen to message from child window
-                    eventer(messageEvent, function (e) {
-                        webrtcdev.log("CanvasDesigner parent received message : ", e.data);
-
-                        if (e.data.modalpopup) {
-                            saveButtonCanvas.click();
-                            //return;
-                        } else if (e.data || e.data.canvasDesignerSyncData) {
-                            syncDataListener(e.data.canvasDesignerSyncData);
-                        } else if (!e.data || !e.data.canvasDesignerSyncData) {
-                            webrtcdev.log("parent received unexpected message");
-                            //return;
-                        }
-
-                    }, false);
-
-                    return {
-                        appendTo: function (parentNode) {
-                            iframe = document.createElement('iframe');
-                            iframe.id = "drawboard";
-                            iframe.src = 'widget.html?tools=' + JSON.stringify(tools) + '&selectedIcon=' + selectedIcon;
-                            iframe.style.width = "100%";
-                            iframe.style.height = "100%";
-                            iframe.style.border = 0;
-                            parentNode.appendChild(iframe);
-                        },
-                        destroy: function () {
-                            if (iframe) {
-                                iframe.parentNode.removeChild(iframe);
-                            }
-                            window.removeEventListener('message', onMessage);
-                        },
-                        addSyncListener: function (callback) {
-                            syncDataListener = callback;
-                        },
-                        syncData: syncData,
-                        setTools: function (_tools) {
-                            tools = _tools;
-                        },
-                        setSelected: function (icon) {
-                            if (typeof tools[icon] !== 'undefined') {
-                                selectedIcon = icon;
-                            }
-                        }
-                    };
-                })();
-                webrtcdev.log(" draw widget loaded ");
-            } else if (drawCanvasobj && !drawCanvasobj.active) {
-                if (drawCanvasobj.button.id && document.getElementById(drawCanvasobj.button.id)) {
-                    document.getElementById(drawCanvasobj.button.id).className = "inactiveButton";
-                }
-                webrtcdev.log(" draw widget not loaded ");
-            }
-
-            if (texteditorobj.active) {
-                createTextEditorButton();
-            }
-
-            if (codeeditorobj.active) {
-                createCodeEditorButton();
-            }
-
-            if (fileshareobj.active) {
-
-                webrtcdev.log(" fileshareobj - rtcConn ", rtcConn),
-
-                rtcConn.enableFileSharing = true;
-                // //rtcConn.filesContainer = document.body || document.documentElement;
-                // /*setFileProgressBarHandlers(rtcConn);*/
-                rtcConn.filesContainer = document.getElementById(fileshareobj.fileShareContainer);
-                if (fileshareobj.button.id && document.getElementById(fileshareobj.button.id)) {
-                    assignFileShareButton(fileshareobj);
-                } else {
-                    createFileShareButton(fileshareobj);
-                }
-                webrtcdev.log(" File sharing widget loaded ");
+        if (listeninobj && listeninobj.active) {
+            if (listeninobj.button.id && document.getElementById(listeninobj.button.id)) {
+                //assignButtonRedial(reconnectobj.button.id);
             } else {
-                webrtcdev.log(" File sharing widget not loaded ");
+                //createButtonRedial();
+            }
+            webrtcdev.log(" listen in widget loaded ");
+        } else if (listeninobj && !listeninobj.active) {
+            if (listeninobj.button.id && document.getElementById(listeninobj.button.id)) {
+                document.getElementById(listeninobj.button.id).className = "inactiveButton";
+            }
+            webrtcdev.log(" listenein widget not loaded ");
+        }
+
+        if (timerobj && timerobj.active) {
+            startTime();
+            timeZone();
+            activateBttons(timerobj);
+            document.getElementById(timerobj.container.id).hidden = true;
+        } else if (timerobj && !timerobj.active) {
+            if (timerobj.button.id && document.getElementById(timerobj.button.id)) {
+                document.getElementById(timerobj.button.id).className = "inactiveButton";
+            }
+        }
+
+        if (drawCanvasobj && drawCanvasobj.active) {
+            if (drawCanvasobj.container && drawCanvasobj.container.id && document.getElementById(drawCanvasobj.container.id)) {
+                document.getElementById(drawCanvasobj.container.id).hidden = true;
+            }
+            if (drawCanvasobj.button.id && document.getElementById(drawCanvasobj.button.id)) {
+                assigndrawButton(drawCanvasobj);
+            } else {
+                createdrawButton(drawCanvasobj);
             }
 
-            if(statisticsobj && statisticsobj.active){
-                try{
-                    document.getElementById(statisticsobj.statsConainer).innerHTML="";
-                }catch(e){
-                    webrtcdev.error(" statisticsobj statsConainer not found" , e );
+            CanvasDesigner = (function () {
+                var iframe;
+                var tools = {
+                    line: true,
+                    pencil: true,
+                    dragSingle: true,
+                    dragMultiple: true,
+                    eraser: true,
+                    rectangle: true,
+                    arc: true,
+                    bezier: true,
+                    quadratic: true,
+                    text: true
+                };
+
+                var selectedIcon = 'pencil';
+
+                function syncData(data) {
+                    if (!iframe) return;
+
+                    iframe.contentWindow.postMessage({
+                        canvasDesignerSyncData: data
+                    }, '*');
                 }
-            }
 
-            if(helpobj && helpobj.active){
-                try{
-                    document.getElementById(helpobj.helpContainer).innerHTML="";
-                }catch(e){
-                    webrtcdev.error(" helpobj helpContainer not found" , e );
+                var syncDataListener = function (data) {
+                    webrtcdev.log("syncDataListener", data);
+                };
+
+                function onMessage() {
+                    if (!event.data || !event.data.canvasDesignerSyncData) return;
+                    syncDataListener(event.data.canvasDesignerSyncData);
                 }
+
+                /*window.addEventListener('message', onMessage, false);*/
+
+                var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+                var eventer = window[eventMethod];
+                var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+
+                // Listen to message from child window
+                eventer(messageEvent, function (e) {
+                    webrtcdev.log("CanvasDesigner parent received message : ", e.data);
+
+                    if (e.data.modalpopup) {
+                        saveButtonCanvas.click();
+                        //return;
+                    } else if (e.data || e.data.canvasDesignerSyncData) {
+                        syncDataListener(e.data.canvasDesignerSyncData);
+                    } else if (!e.data || !e.data.canvasDesignerSyncData) {
+                        webrtcdev.log("parent received unexpected message");
+                        //return;
+                    }
+
+                }, false);
+
+                return {
+                    appendTo: function (parentNode) {
+                        iframe = document.createElement('iframe');
+                        iframe.id = "drawboard";
+                        iframe.src = 'widget.html?tools=' + JSON.stringify(tools) + '&selectedIcon=' + selectedIcon;
+                        iframe.style.width = "100%";
+                        iframe.style.height = "100%";
+                        iframe.style.border = 0;
+                        parentNode.appendChild(iframe);
+                    },
+                    destroy: function () {
+                        if (iframe) {
+                            iframe.parentNode.removeChild(iframe);
+                        }
+                        window.removeEventListener('message', onMessage);
+                    },
+                    addSyncListener: function (callback) {
+                        syncDataListener = callback;
+                    },
+                    syncData: syncData,
+                    setTools: function (_tools) {
+                        tools = _tools;
+                    },
+                    setSelected: function (icon) {
+                        if (typeof tools[icon] !== 'undefined') {
+                            selectedIcon = icon;
+                        }
+                    }
+                };
+            })();
+            webrtcdev.log(" draw widget loaded ");
+        } else if (drawCanvasobj && !drawCanvasobj.active) {
+            if (drawCanvasobj.button.id && document.getElementById(drawCanvasobj.button.id)) {
+                document.getElementById(drawCanvasobj.button.id).className = "inactiveButton";
             }
-            resolve("success");
-        });
-    };
+            webrtcdev.log(" draw widget not loaded ");
+        }
+
+        if (texteditorobj.active) {
+            createTextEditorButton();
+        }
+
+        if (codeeditorobj.active) {
+            createCodeEditorButton();
+        }
+
+        if (fileshareobj.active) {
+
+            webrtcdev.log(" fileshareobj - rtcConn ", rtcConn),
+
+            rtcConn.enableFileSharing = true;
+            // //rtcConn.filesContainer = document.body || document.documentElement;
+            // /*setFileProgressBarHandlers(rtcConn);*/
+            rtcConn.filesContainer = document.getElementById(fileshareobj.fileShareContainer);
+            if (fileshareobj.button.id && document.getElementById(fileshareobj.button.id)) {
+                assignFileShareButton(fileshareobj);
+            } else {
+                createFileShareButton(fileshareobj);
+            }
+            webrtcdev.log(" File sharing widget loaded ");
+        } else {
+            webrtcdev.log(" File sharing widget not loaded ");
+        }
+
+        if(statisticsobj && statisticsobj.active){
+            try{
+                document.getElementById(statisticsobj.statsConainer).innerHTML="";
+            }catch(e){
+                webrtcdev.error(" statisticsobj statsConainer not found" , e );
+            }
+        }
+
+        if(helpobj && helpobj.active){
+            try{
+                document.getElementById(helpobj.helpContainer).innerHTML="";
+            }catch(e){
+                webrtcdev.error(" helpobj helpContainer not found" , e );
+            }
+        }
+        resolve("success");
+    });
+};
 
 
-    /**
-     * Update local cache of user sesssion based object called peerinfo
-     * @method
-     * @name updateWebCallView
-     * @param {json} peerInfo
-     */
-    function updateWebCallView(peerInfo){
-        webrtcdev.log("[start.js - updateWebCallView] start with ",
-            " peerInfo" , peerInfo , 
-            " || role is ", role ,
-            " || indexOf ", peerInfo.vid.indexOf("videoundefined") );
+/**
+ * Update local cache of user sesssion based object called peerinfo
+ * @method
+ * @name updateWebCallView
+ * @param {json} peerInfo
+ */
+function updateWebCallView(peerInfo){
+    webrtcdev.log("[start.js - updateWebCallView] start with ",
+        " peerInfo" , peerInfo , 
+        " || role is ", role ,
+        " || indexOf ", peerInfo.vid.indexOf("videoundefined") );
 
-        try{
-            switch(role){
+    try{
+        switch(role){
+            
+            case "inspector":
+                var vi=0;
+                for(var v=0; v<remoteVideos.length; v++){
+                    webrtcdev.log("Remote Video index array " , v , " || ", remoteVideos[v] , 
+                        document.getElementsByName(remoteVideos[v])  , 
+                        document.getElementsByName(remoteVideos[v]).src);
+                    if(remoteVideos[v].src){
+                        vi++;
+                    }
+                }
+
+                var remvid;
+                var video = document.createElement('video');
+                remoteVideos[vi] = video;
+                document.getElementById(remoteobj.videoContainer).appendChild(video);
+                remvid = remoteVideos[vi];
+                webrtcdev.log(" [start.js - updateWebCallView] role-inspector , attaching stream" , remvid, peerInfo.stream );
+                attachMediaStream(remvid, peerInfo.stream);
+                if(remvid.hidden) removid.hidden = false;
+                remvid.id = peerInfo.videoContainer;
+                remvid.className = remoteobj.videoClass;
+                //attachControlButtons(remvid, peerInfo); 
+                if(remoteobj.userDisplay && peerInfo.name ){
+                    attachUserDetails( remvid, peerInfo); 
+                }
                 
-                case "inspector":
-                    var vi=0;
-                    for(var v=0; v<remoteVideos.length; v++){
-                        webrtcdev.log("Remote Video index array " , v , " || ", remoteVideos[v] , 
-                            document.getElementsByName(remoteVideos[v])  , 
-                            document.getElementsByName(remoteVideos[v]).src);
-                        if(remoteVideos[v].src){
-                            vi++;
-                        }
+                if(remoteobj.userMetaDisplay && peerInfo.userid){
+                    attachMetaUserDetails( remvid, peerInfo ); 
+                }
+                // Hide the unsed video for Local
+                var _templ = document.getElementsByName(localVideo)[0];
+                if(_templ) _templ.hidden=true;
+
+                for(v in remoteobj.videoarr){
+                    var _templ2 = document.getElementsByName(remoteobj.videoarr[v])[0];
+                    if(_templ2) _templ2.setAttribute("style","display:none");
+                }
+
+                for(t in document.getElementsByClassName("timeBox")){
+                    document.getElementsByClassName("timeBox")[t].hidden=true;
+                }
+
+            break;
+
+            case "host":
+            case "guest":
+            case "participant":
+
+                if(peerInfo.vid.indexOf("videolocal") > -1 ){
+                    webrtcdev.info(" [start.js - updateWebCallView] role-participant , PeerInfo Vid is Local");
+                    // when video is local
+                    if(localVideo && document.getElementsByName(localVideo)[0]){
+                        var vid = document.getElementsByName(localVideo)[0];
+                        vid.muted = true;
+                        vid.className = localobj.videoClass;
+                        attachMediaStream(vid, peerInfo.stream);
+
+                        // if(localobj.userDisplay && peerInfo.name)
+                        //     attachUserDetails( vid, peerInfo ); 
+
+                        if(localobj.userDisplay && peerInfo.name)
+                            attachUserDetails( vid, peerInfo ); 
+                        
+                        if(localobj.userMetaDisplay && peerInfo.userid)
+                            attachMetaUserDetails( vid , peerInfo ); 
+
+                        webrtcdev.info(" User is alone in the session  , hiding remote video container" , 
+                        "showing users single video conrainer and attaching attachMediaStream and attachUserDetails ");
+
+                    }else{
+                        //alert(" Please Add a video container in config for single");
+                        webrtcdev.error(" No local video conatainer in localobj -> " , localobj);
                     }
 
-                    var remvid;
-                    var video = document.createElement('video');
-                    remoteVideos[vi] = video;
-                    document.getElementById(remoteobj.videoContainer).appendChild(video);
-                    remvid = remoteVideos[vi];
-                    webrtcdev.log(" [start.js - updateWebCallView] role-inspector , attaching stream" , remvid, peerInfo.stream );
-                    attachMediaStream(remvid, peerInfo.stream);
-                    if(remvid.hidden) removid.hidden = false;
-                    remvid.id = peerInfo.videoContainer;
-                    remvid.className = remoteobj.videoClass;
-                    //attachControlButtons(remvid, peerInfo); 
-                    if(remoteobj.userDisplay && peerInfo.name ){
-                        attachUserDetails( remvid, peerInfo); 
-                    }
-                    
-                    if(remoteobj.userMetaDisplay && peerInfo.userid){
-                        attachMetaUserDetails( remvid, peerInfo ); 
-                    }
-                    // Hide the unsed video for Local
-                    var _templ = document.getElementsByName(localVideo)[0];
-                    if(_templ) _templ.hidden=true;
+                } else if(peerInfo.vid.indexOf("videoremote") > -1) {
+                    webrtcdev.info(" [start.js - updateWebCallView] role-participant , PeerInfo Vid is Remote");
+                    //when video is remote 
 
-                    for(v in remoteobj.videoarr){
-                        var _templ2 = document.getElementsByName(remoteobj.videoarr[v])[0];
-                        if(_templ2) _templ2.setAttribute("style","display:none");
-                    }
-
-                    for(t in document.getElementsByClassName("timeBox")){
-                        document.getElementsByClassName("timeBox")[t].hidden=true;
-                    }
-
-                break;
-
-                case "host":
-                case "guest":
-                case "participant":
-
-                    if(peerInfo.vid.indexOf("videolocal") > -1 ){
-                        webrtcdev.info(" [start.js - updateWebCallView] role-participant , PeerInfo Vid is Local");
-                        // when video is local
-                        if(localVideo && document.getElementsByName(localVideo)[0]){
-                            var vid = document.getElementsByName(localVideo)[0];
-                            vid.muted = true;
-                            vid.className = localobj.videoClass;
-                            attachMediaStream(vid, peerInfo.stream);
-
-                            // if(localobj.userDisplay && peerInfo.name)
-                            //     attachUserDetails( vid, peerInfo ); 
-
-                            if(localobj.userDisplay && peerInfo.name)
-                                attachUserDetails( vid, peerInfo ); 
-                            
-                            if(localobj.userMetaDisplay && peerInfo.userid)
-                                attachMetaUserDetails( vid , peerInfo ); 
-
-                            webrtcdev.info(" User is alone in the session  , hiding remote video container" , 
-                            "showing users single video conrainer and attaching attachMediaStream and attachUserDetails ");
-
-                        }else{
-                            //alert(" Please Add a video container in config for single");
-                            webrtcdev.error(" No local video conatainer in localobj -> " , localobj);
-                        }
-
-                    } else if(peerInfo.vid.indexOf("videoremote") > -1) {
-                        webrtcdev.info(" [start.js - updateWebCallView] role-participant , PeerInfo Vid is Remote");
-                        //when video is remote 
-
-                        /* handling local video transistion to active */
-                        if( outgoingVideo && localVideo && selfVideo ){
-                            /*chk if local video is added to conf , else adding local video to index 0 */
-                            //localvid : video container before p2p session 
-                            var localvid = document.getElementsByName(localVideo)[0];
-                            // selfvid : local video in a p2p session
-                            var selfvid = document.getElementsByName(selfVideo)[0];
-                            
-                            if(selfvid.played.length==0){
-                                if(localvid.played.lebth>0){
-                                    reattachMediaStream(selfvid, localvid);
-                                }else{
-                                    attachMediaStream(selfvid, webcallpeers[0].stream);
-                                }
-                                selfvid.id = webcallpeers[0].videoContainer;
-                                selfvid.className = remoteobj.videoClass;
-                                selfvid.muted = true;
-                                attachControlButtons( selfvid, webcallpeers[0]); 
-
-                                if(localobj.userDisplay && webcallpeers[0].name){
-                                    attachUserDetails( selfvid, webcallpeers[0] );
-                                } 
-
-                                if(localobj.userMetaDisplay && webcallpeers[0].userid){
-                                    attachMetaUserDetails( selfvid, webcallpeers[0] ); 
-                                }
+                    /* handling local video transistion to active */
+                    if( outgoingVideo && localVideo && selfVideo ){
+                        /*chk if local video is added to conf , else adding local video to index 0 */
+                        //localvid : video container before p2p session 
+                        var localvid = document.getElementsByName(localVideo)[0];
+                        // selfvid : local video in a p2p session
+                        var selfvid = document.getElementsByName(selfVideo)[0];
+                        
+                        if(selfvid.played.length==0){
+                            if(localvid.played.lebth>0){
+                                reattachMediaStream(selfvid, localvid);
                             }else{
-                                webrtcdev.log(" not uppdating self video as it is already playing ");
+                                attachMediaStream(selfvid, webcallpeers[0].stream);
                             }
+                            selfvid.id = webcallpeers[0].videoContainer;
+                            selfvid.className = remoteobj.videoClass;
+                            selfvid.muted = true;
+                            attachControlButtons( selfvid, webcallpeers[0]); 
 
-                            webrtcdev.info(" User is joined by a remote peer , hiding local video container" , 
-                            "showing users conf video container and attaching attachMediaStream and attachUserDetails ");
+                            if(localobj.userDisplay && webcallpeers[0].name){
+                                attachUserDetails( selfvid, webcallpeers[0] );
+                            } 
 
-                        }else if(!outgoingVideo){
-                            webrtcdev.error(" Outgoing Local video is " , outgoingVideo);
+                            if(localobj.userMetaDisplay && webcallpeers[0].userid){
+                                attachMetaUserDetails( selfvid, webcallpeers[0] ); 
+                            }
                         }else{
-                            //alert(" Please Add a video container in config for video call ");
-                            webrtcdev.error(" Local video container not defined ");
+                            webrtcdev.log(" not uppdating self video as it is already playing ");
                         }
 
+                        webrtcdev.info(" User is joined by a remote peer , hiding local video container" , 
+                        "showing users conf video container and attaching attachMediaStream and attachUserDetails ");
 
-                        // handling remote video addition 
-                        if(remoteVideos){
+                    }else if(!outgoingVideo){
+                        webrtcdev.error(" Outgoing Local video is " , outgoingVideo);
+                    }else{
+                        //alert(" Please Add a video container in config for video call ");
+                        webrtcdev.error(" Local video container not defined ");
+                    }
 
-                            /*get the next empty index of video and pointer in remote video array */
-                            var vi=0;
-                            for(v in remoteVideos){
-                                webrtcdev.log("Remote Video index array " , v , " || ", remoteVideos[v] , 
-                                    document.getElementsByName(remoteVideos[v]),  document.getElementsByName(remoteVideos[v]).src);
-                                if(document.getElementsByName(remoteVideos[v])[0] && document.getElementsByName(remoteVideos[v])[0].src){
-                                    vi++;
-                                }else if(remoteVideos[v].video && remoteVideos[v].video){
-                                    vi++;
-                                }
+
+                    // handling remote video addition 
+                    if(remoteVideos){
+
+                        /*get the next empty index of video and pointer in remote video array */
+                        var vi=0;
+                        for(v in remoteVideos){
+                            webrtcdev.log("Remote Video index array " , v , " || ", remoteVideos[v] , 
+                                document.getElementsByName(remoteVideos[v]),  document.getElementsByName(remoteVideos[v]).src);
+                            if(document.getElementsByName(remoteVideos[v])[0] && document.getElementsByName(remoteVideos[v])[0].src){
+                                vi++;
+                            }else if(remoteVideos[v].video && remoteVideos[v].video){
+                                vi++;
                             }
+                        }
 
-                            try{
+                        try{
 
-                                if(remoteobj.maxAllowed=="unlimited"){
-                                    webrtcdev.log("remote video is unlimited , creating video for remoteVideos array ");
-                                    var video = document.createElement('video');
-                                    //video.autoplay = "autoplay";
-                                    remoteVideos[vi] = {
-                                        "userid": peerInfo.userid, 
-                                        "video" : video
-                                    };
-                                    document.getElementById(remoteobj.dynamicVideos.videoContainer).appendChild(video);
-                                }else{
-                                    webrtcdev.log("remote video is limited to size maxAllowed , current index ", vi);
-                                    var remVideoHolder = document.getElementsByName(remoteVideos[vi]);
-                                    webrtcdev.log("searching for video with index ", vi , " in remote video : " , remVideoHolder[0] );
-                                    if(remVideoHolder){
-                                        if(remVideoHolder[0]){
-                                            remoteVideos[vi] = { 
-                                                "userid": peerInfo.userid, 
-                                                "video" : remVideoHolder[0] 
-                                            };
-                                        }
-                                    }else{
-                                        // since remvideo holder doesnt exist just overwrite the last remote with the video 
-                                        remoteVideos[remoteVideos.length -1] = { 
+                            if(remoteobj.maxAllowed=="unlimited"){
+                                webrtcdev.log("remote video is unlimited , creating video for remoteVideos array ");
+                                var video = document.createElement('video');
+                                //video.autoplay = "autoplay";
+                                remoteVideos[vi] = {
+                                    "userid": peerInfo.userid, 
+                                    "video" : video
+                                };
+                                document.getElementById(remoteobj.dynamicVideos.videoContainer).appendChild(video);
+                            }else{
+                                webrtcdev.log("remote video is limited to size maxAllowed , current index ", vi);
+                                var remVideoHolder = document.getElementsByName(remoteVideos[vi]);
+                                webrtcdev.log("searching for video with index ", vi , " in remote video : " , remVideoHolder[0] );
+                                if(remVideoHolder){
+                                    if(remVideoHolder[0]){
+                                        remoteVideos[vi] = { 
                                             "userid": peerInfo.userid, 
                                             "video" : remVideoHolder[0] 
                                         };
                                     }
-
+                                }else{
+                                    // since remvideo holder doesnt exist just overwrite the last remote with the video 
+                                    remoteVideos[remoteVideos.length -1] = { 
+                                        "userid": peerInfo.userid, 
+                                        "video" : remVideoHolder[0] 
+                                    };
                                 }
 
-                                attachMediaStream(remoteVideos[vi].video, peerInfo.stream);
-                                if(remoteVideos[vi].video.hidden) remoteVideos[vi].video.hidden = false;
-                                remoteVideos[vi].video.id = peerInfo.videoContainer;
-                                remoteVideos[vi].video.className = remoteobj.videoClass;
-                                attachControlButtons(remoteVideos[vi].video, peerInfo); 
-
-                                if(remoteobj.userDisplay && peerInfo.name ) {
-                                    attachUserDetails( remoteVideos[vi].video, peerInfo); 
-                                }
-                                
-                                if(remoteobj.userMetaDisplay && peerInfo.userid) {
-                                    attachMetaUserDetails( remoteVideos[vi].video, peerInfo ); 
-                                }
-                            
-                            }catch(e){
-                                webrtcdev.error(e);
                             }
 
-                        }else{
-                            alert("remote Video containers not defined");
+                            attachMediaStream(remoteVideos[vi].video, peerInfo.stream);
+                            if(remoteVideos[vi].video.hidden) remoteVideos[vi].video.hidden = false;
+                            remoteVideos[vi].video.id = peerInfo.videoContainer;
+                            remoteVideos[vi].video.className = remoteobj.videoClass;
+                            attachControlButtons(remoteVideos[vi].video, peerInfo); 
+
+                            if(remoteobj.userDisplay && peerInfo.name ) {
+                                attachUserDetails( remoteVideos[vi].video, peerInfo); 
+                            }
+                            
+                            if(remoteobj.userMetaDisplay && peerInfo.userid) {
+                                attachMetaUserDetails( remoteVideos[vi].video, peerInfo ); 
+                            }
+                        
+                        }catch(e){
+                            webrtcdev.error(e);
                         }
-                    
-                    } else {
-                        webrtcdev.error(" PeerInfo vid didnt match either case ");
+
+                    }else{
+                        alert("remote Video containers not defined");
                     }
-                break;
+                
+                } else {
+                    webrtcdev.error(" PeerInfo vid didnt match either case ");
+                }
+            break;
 
-                default:
-                    webrtcdev.log("[start.js - updateWebCallView] Switch default case");
-            }
-
-        }catch(err){
-            webrtcdev.error("[start.js - updateWebCallView] " , err);
+            default:
+                webrtcdev.log("[start.js - updateWebCallView] Switch default case");
         }
 
-        webrtcdev.log(" [start.js - updateWebCallView] - finish");
+    }catch(err){
+        webrtcdev.error("[start.js - updateWebCallView] " , err);
     }
+
+    webrtcdev.log(" [start.js - updateWebCallView] - finish");
+}
   
     /********************************************************************************** 
             Session call and Updating Peer Info
