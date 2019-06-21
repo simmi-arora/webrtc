@@ -1,9 +1,9 @@
 'use strict';
 
-// Last time updated: 2018-12-02 2:13:21 PM UTC
+// Last time updated: 2019-06-21 10:41:11 AM UTC
 
 // _________________________
-// RTCMultiConnection v3.5.9
+// RTCMultiConnection v3.6.9
 
 // Open-Sourced: https://github.com/muaz-khan/RTCMultiConnection
 
@@ -123,6 +123,10 @@ var RTCMultiConnection = function(roomid, forceOptions) {
     })(typeof global !== 'undefined' ? global : null);
 
     function SocketConnection(connection, connectCallback) {
+        function isData(session) {
+            return !session.audio && !session.video && !session.screen && session.data;
+        }
+
         var parameters = '';
 
         parameters += '?userid=' + connection.userid;
@@ -372,10 +376,12 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             }
         });
 
-        connection.socket.on('disconnect', function() {
-            if (connection.enableLogs) {
-                console.warn('socket.io connection is closed');
-            }
+        connection.socket.on('disconnect', function(event) {
+            connection.onSocketDisconnect(event);
+        });
+
+        connection.socket.on('error', function(event) {
+            connection.onSocketError(event);
         });
 
         connection.socket.on('user-disconnected', function(remoteUserId) {
@@ -414,11 +420,8 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         });
 
         connection.socket.on('userid-already-taken', function(useridAlreadyTaken, yourNewUserId) {
-            connection.isInitiator = false;
-            connection.userid = yourNewUserId;
-
             connection.onUserIdAlreadyTaken(useridAlreadyTaken, yourNewUserId);
-        })
+        });
 
         connection.socket.on('logs', function(log) {
             if (!connection.enableLogs) return;
@@ -476,8 +479,14 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                 var that = this;
 
                 if (!isNull(data.size) && !isNull(data.type)) {
-                    self.shareFile(data, remoteUserId);
-                    return;
+                    if (connection.enableFileSharing) {
+                        self.shareFile(data, remoteUserId);
+                        return;
+                    }
+
+                    if (typeof data !== 'string') {
+                        data = JSON.stringify(data);
+                    }
                 }
 
                 if (data.type !== 'text' && !(data instanceof ArrayBuffer) && !(data instanceof DataView)) {
@@ -823,10 +832,6 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         }
 
         this.shareFile = function(file, remoteUserId) {
-            if (!connection.enableFileSharing) {
-                throw '"connection.enableFileSharing" is false.';
-            }
-
             initFileBufferReader();
 
             connection.fbr.readAsArrayBuffer(file, function(uuid) {
@@ -900,10 +905,10 @@ var RTCMultiConnection = function(roomid, forceOptions) {
 
     'use strict';
 
-    // Last Updated On: 2018-10-26 9:36:48 AM UTC
+    // Last Updated On: 2019-01-10 5:32:55 AM UTC
 
     // ________________
-    // DetectRTC v1.3.7
+    // DetectRTC v1.3.9
 
     // Open-Sourced: https://github.com/muaz-khan/DetectRTC
 
@@ -1416,7 +1421,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             }
         });
 
-        const regexIpv4Local = /^(192\.168\.|169\.254\.|10\.|172\.(1[6-9]|2\d|3[01]))/,
+        var regexIpv4Local = /^(192\.168\.|169\.254\.|10\.|172\.(1[6-9]|2\d|3[01]))/,
             regexIpv4 = /([0-9]{1,3}(\.[0-9]{1,3}){3})/,
             regexIpv6 = /[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7}/;
 
@@ -1429,7 +1434,9 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             var isPublic = true,
                 isIpv4 = true;
             getIPs(function(ip) {
-                if (ip.match(regexIpv4Local)) {
+                if (!ip) {
+                    callback(); // Pass nothing to tell that ICE-gathering-ended
+                } else if (ip.match(regexIpv4Local)) {
                     isPublic = false;
                     callback('Local: ' + ip, isPublic, isIpv4);
                 } else if (ip.match(regexIpv6)) { //via https://ourcodeworld.com/articles/read/257/how-to-get-the-client-ip-address-with-javascript-only
@@ -1491,12 +1498,17 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             }
 
             function handleCandidate(candidate) {
+                if (!candidate) {
+                    callback(); // Pass nothing to tell that ICE-gathering-ended
+                    return;
+                }
+
                 var match = regexIpv4.exec(candidate);
                 if (!match) {
                     return;
                 }
                 var ipAddress = match[1];
-                const isPublic = (candidate.match(regexIpv4Local)),
+                var isPublic = (candidate.match(regexIpv4Local)),
                     isIpv4 = true;
 
                 if (ipDuplicates[ipAddress] === undefined) {
@@ -1507,9 +1519,11 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             }
 
             // listen for candidate events
-            pc.onicecandidate = function(ice) {
-                if (ice.candidate) {
-                    handleCandidate(ice.candidate.candidate);
+            pc.onicecandidate = function(event) {
+                if (event.candidate && event.candidate.candidate) {
+                    handleCandidate(event.candidate.candidate);
+                } else {
+                    handleCandidate(); // Pass nothing to tell that ICE-gathering-ended
                 }
             };
 
@@ -1535,7 +1549,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                 var lines = pc.localDescription.sdp.split('\n');
 
                 lines.forEach(function(line) {
-                    if (line.indexOf('a=candidate:') === 0) {
+                    if (line && line.indexOf('a=candidate:') === 0) {
                         handleCandidate(line);
                     }
                 });
@@ -1999,7 +2013,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         DetectRTC.isPromisesSupported = !!('Promise' in window);
 
         // version is generated by "grunt"
-        DetectRTC.version = '1.3.7';
+        DetectRTC.version = '1.3.9';
 
         if (typeof DetectRTC === 'undefined') {
             window.DetectRTC = {};
@@ -2065,7 +2079,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
     }
 
     function setHarkEvents(connection, streamEvent) {
-        if (!streamEvent.stream || !streamEvent.stream.getAudioTracks || !streamEvent.stream.getAudioTracks().length) return;
+        if (!streamEvent.stream || !getTracks(streamEvent.stream, 'audio').length) return;
 
         if (!connection || !streamEvent) {
             throw 'Both arguments are required.';
@@ -2147,7 +2161,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         }
 
         var isAudioOnly = false;
-        if (!!stream.getVideoTracks && !stream.getVideoTracks().length && !stream.isVideo && !stream.isScreen) {
+        if (!getTracks(stream, 'video').length && !stream.isVideo && !stream.isScreen) {
             isAudioOnly = true;
         }
 
@@ -2161,15 +2175,11 @@ var RTCMultiConnection = function(roomid, forceOptions) {
 
         mediaElement.srcObject = stream;
 
-        try {
-            mediaElement.setAttributeNode(document.createAttribute('autoplay'));
-            mediaElement.setAttributeNode(document.createAttribute('playsinline'));
-            mediaElement.setAttributeNode(document.createAttribute('controls'));
-        } catch (e) {
-            mediaElement.setAttribute('autoplay', true);
-            mediaElement.setAttribute('playsinline', true);
-            mediaElement.setAttribute('controls', true);
-        }
+        mediaElement.setAttribute('autoplay', true);
+        mediaElement.setAttribute('playsinline', true);
+        mediaElement.setAttribute('controls', true);
+        mediaElement.setAttribute('muted', false);
+        mediaElement.setAttribute('volume', 1);
 
         // http://goo.gl/WZ5nFl
         // Firefox don't yet support onended for any stream (remote/local)
@@ -2342,39 +2352,62 @@ var RTCMultiConnection = function(roomid, forceOptions) {
 
     window.iOSDefaultAudioOutputDevice = window.iOSDefaultAudioOutputDevice || 'speaker'; // earpiece or speaker
 
-    if (typeof window.enableAdapter === 'undefined') {
-        if (DetectRTC.browser.name === 'Firefox' && DetectRTC.browser.version >= 54) {
-            window.enableAdapter = true;
+    function getTracks(stream, kind) {
+        if (!stream || !stream.getTracks) {
+            return [];
         }
 
-        if (DetectRTC.browser.name === 'Chrome' && DetectRTC.browser.version >= 60) {
-            // window.enableAdapter = true;
-        }
-
-        if (typeof adapter !== 'undefined' && adapter.browserDetails && typeof adapter.browserDetails.browser === 'string') {
-            window.enableAdapter = true;
-        }
+        return stream.getTracks().filter(function(t) {
+            return t.kind === (kind || 'audio');
+        });
     }
 
-    if (!window.enableAdapter) {
-        if (typeof URL.createObjectURL === 'undefined') {
-            URL.createObjectURL = function(stream) {
-                return 'blob:https://' + document.domain + '/' + getRandomString();
-            };
+    function isUnifiedPlanSupportedDefault() {
+        var canAddTransceiver = false;
+
+        try {
+            if (typeof RTCRtpTransceiver === 'undefined') return false;
+            if (!('currentDirection' in RTCRtpTransceiver.prototype)) return false;
+
+            var tempPc = new RTCPeerConnection();
+
+            try {
+                tempPc.addTransceiver('audio');
+                canAddTransceiver = true;
+            } catch (e) {}
+
+            tempPc.close();
+        } catch (e) {
+            canAddTransceiver = false;
         }
 
-        if (!('srcObject' in HTMLMediaElement.prototype)) {
-            HTMLMediaElement.prototype.srcObject = function(stream) {
-                if ('mozSrcObject' in this) {
-                    this.mozSrcObject = stream;
-                    return;
-                }
+        return canAddTransceiver && isUnifiedPlanSuppored();
+    }
 
-                this.src = URL.createObjectURL(stream);
-            };
+    function isUnifiedPlanSuppored() {
+        var isUnifiedPlanSupported = false;
+
+        try {
+            var pc = new RTCPeerConnection({
+                sdpSemantics: 'unified-plan'
+            });
+
+            try {
+                var config = pc.getConfiguration();
+                if (config.sdpSemantics == 'unified-plan')
+                    isUnifiedPlanSupported = true;
+                else if (config.sdpSemantics == 'plan-b')
+                    isUnifiedPlanSupported = false;
+                else
+                    isUnifiedPlanSupported = false;
+            } catch (e) {
+                isUnifiedPlanSupported = false;
+            }
+        } catch (e) {
+            isUnifiedPlanSupported = false;
         }
 
-        // need RTCPeerConnection shim here
+        return isUnifiedPlanSupported;
     }
 
     // ios-hacks.js
@@ -2410,25 +2443,6 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             OfferToReceiveAudio: !!config.OfferToReceiveAudio,
             OfferToReceiveVideo: !!config.OfferToReceiveVideo
         };
-
-        var oldBrowser = !window.enableAdapter;
-
-        if (DetectRTC.browser.name === 'Chrome' && DetectRTC.browser.version >= 60) {
-            // oldBrowser = false;
-        }
-
-        if (DetectRTC.browser.name === 'Firefox' && DetectRTC.browser.version >= 54) {
-            oldBrowser = false;
-        }
-
-        if (oldBrowser) {
-            sdpConstraints = {
-                mandatory: sdpConstraints,
-                optional: [{
-                    VoiceActivityDetection: false
-                }]
-            };
-        }
 
         return sdpConstraints;
     }
@@ -2515,23 +2529,29 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             }
 
             try {
-                var params = {};
+                // ref: developer.mozilla.org/en-US/docs/Web/API/RTCConfiguration
+                var params = {
+                    iceServers: connection.iceServers,
+                    iceTransportPolicy: connection.iceTransportPolicy || iceTransports
+                };
 
-                if (DetectRTC.browser.name !== 'Chrome') {
-                    params.iceServers = connection.iceServers;
+                if (typeof connection.iceCandidatePoolSize !== 'undefined') {
+                    params.iceCandidatePoolSize = connection.iceCandidatePoolSize;
                 }
 
-                if (DetectRTC.browser.name === 'Chrome') {
-                    params = {
-                        iceServers: connection.iceServers,
-                        iceTransportPolicy: connection.iceTransportPolicy || iceTransports,
-                        // rtcpMuxPolicy: connection.rtcpMuxPolicy || 'require', // or negotiate
-                        // bundlePolicy: 'max-bundle',
-                        // iceCandidatePoolSize: connection.iceCandidatePoolSize || 0
-                    };
+                if (typeof connection.bundlePolicy !== 'undefined') {
+                    params.bundlePolicy = connection.bundlePolicy;
                 }
 
-                if (!connection.iceServers.length) {
+                if (typeof connection.rtcpMuxPolicy !== 'undefined') {
+                    params.rtcpMuxPolicy = connection.rtcpMuxPolicy;
+                }
+
+                if (!!connection.sdpSemantics) {
+                    params.sdpSemantics = connection.sdpSemantics || 'unified-plan';
+                }
+
+                if (!connection.iceServers || !connection.iceServers.length) {
                     params = null;
                     connection.optionalArgument = null;
                 }
@@ -2617,24 +2637,14 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                 }
             });
 
-            if (localStream && typeof peer.addTrack === 'function') {
+            if (localStream && localStream.getTracks) {
                 localStream.getTracks().forEach(function(track) {
                     try {
+                        // last parameter is redundant for unified-plan
+                        // starting from chrome version 72
                         peer.addTrack(track, localStream);
                     } catch (e) {}
                 });
-            } else if (localStream && typeof peer.addStream === 'function') {
-                peer.addStream(localStream);
-            } else {
-                try {
-                    peer.addStream(localStream);
-                } catch (e) {
-                    localStream && localStream.getTracks().forEach(function(track) {
-                        try {
-                            peer.addTrack(track, localStream);
-                        } catch (e) {}
-                    });
-                }
             }
         });
 
@@ -2681,20 +2691,24 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         var streamObject;
         var dontDuplicate = {};
 
-        var incomingStreamEvent = 'track';
+        peer.ontrack = function(event) {
+            if (!event || event.type !== 'track') return;
 
-        if (!window.enableAdapter) {
-            incomingStreamEvent = 'addstream';
-        }
+            event.stream = event.streams[event.streams.length - 1];
 
-        peer.addEventListener(incomingStreamEvent, function(event) {
-            if (!event) return;
-
-            if (incomingStreamEvent === 'track') {
-                event.stream = event.streams[event.streams.length - 1];
+            if (!event.stream.id) {
+                event.stream.id = event.track.id;
             }
 
-            if (dontDuplicate[event.stream.id] && DetectRTC.browser.name !== 'Safari') return;
+            if (dontDuplicate[event.stream.id] && DetectRTC.browser.name !== 'Safari') {
+                if (event.track) {
+                    event.track.onended = function() { // event.track.onmute = 
+                        peer && peer.onremovestream(event);
+                    };
+                }
+                return;
+            }
+
             dontDuplicate[event.stream.id] = event.stream.id;
 
             var streamsToShare = {};
@@ -2710,25 +2724,26 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                 event.stream.isVideo = streamToShare.isVideo;
                 event.stream.isScreen = streamToShare.isScreen;
             } else {
-                event.stream.isVideo = !!event.stream.getVideoTracks().length;
+                event.stream.isVideo = !!getTracks(event.stream, 'video').length;
                 event.stream.isAudio = !event.stream.isVideo;
                 event.stream.isScreen = false;
             }
 
             event.stream.streamid = event.stream.id;
-            if (DetectRTC.browser.name == 'Firefox' || !event.stream.stop) {
-                event.stream.stop = function() {
-                    var streamEndedEvent = 'ended';
 
-                    if ('oninactive' in event.stream) {
-                        streamEndedEvent = 'inactive';
-                    }
-                    fireEvent(event.stream, streamEndedEvent);
-                };
-            }
             allRemoteStreams[event.stream.id] = event.stream;
             config.onRemoteStream(event.stream);
-        }, false);
+
+            event.stream.getTracks().forEach(function(track) {
+                track.onended = function() { // track.onmute = 
+                    peer && peer.onremovestream(event);
+                };
+            });
+
+            event.stream.onremovetrack = function() {
+                peer && peer.onremovestream(event);
+            };
+        };
 
         peer.onremovestream = function(event) {
             // this event doesn't works anymore
@@ -2740,6 +2755,15 @@ var RTCMultiConnection = function(roomid, forceOptions) {
 
             config.onRemoteStreamRemoved(event.stream);
         };
+
+        if (typeof peer.removeStream !== 'function') {
+            // removeStream backward compatibility
+            peer.removeStream = function(stream) {
+                stream.getTracks().forEach(function(track) {
+                    peer.removeTrack(track, stream);
+                });
+            };
+        }
 
         this.addRemoteCandidate = function(remoteCandidate) {
             peer.addIceCandidate(new RTCIceCandidate(remoteCandidate));
@@ -2763,14 +2787,17 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         this.addRemoteSdp = function(remoteSdp, cb) {
             cb = cb || function() {};
 
-            if (!window.enableAdapter) {
-                return oldAddRemoteSdp(remoteSdp, cb);
-            }
-
             if (DetectRTC.browser.name !== 'Safari') {
                 remoteSdp.sdp = connection.processSdp(remoteSdp.sdp);
             }
+
             peer.setRemoteDescription(new RTCSessionDescription(remoteSdp)).then(cb, function(error) {
+                if (!!connection.enableLogs) {
+                    console.error('setRemoteDescription failed', '\n', error, '\n', remoteSdp.sdp);
+                }
+
+                cb();
+            }).catch(function(error) {
                 if (!!connection.enableLogs) {
                     console.error('setRemoteDescription failed', '\n', error, '\n', remoteSdp.sdp);
                 }
@@ -2908,10 +2935,6 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         }
 
         function createOfferOrAnswer(_method) {
-            if (!window.enableAdapter) {
-                return oldCreateOfferOrAnswer(_method);
-            }
-
             peer[_method](defaults.sdpConstraints).then(function(localSdp) {
                 if (DetectRTC.browser.name !== 'Safari') {
                     localSdp.sdp = connection.processSdp(localSdp.sdp);
@@ -3390,44 +3413,13 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             // resiprocate: 3344+4433
             // pions: 7575
             var iceServers = [{
-                    'urls': [
-                        'stun:webrtcweb.com:7788', // coTURN
-                        'stun:webrtcweb.com:7788?transport=udp', // coTURN
-                    ],
-                    'username': 'muazkh',
-                    'credential': 'muazkh'
-                },
-                {
-                    'urls': [
-                        'turn:webrtcweb.com:7788', // coTURN 7788+8877
-                        'turn:webrtcweb.com:4455?transport=udp', // restund udp
-
-                        'turn:webrtcweb.com:8877?transport=udp', // coTURN udp
-                        'turn:webrtcweb.com:8877?transport=tcp', // coTURN tcp
-                    ],
-                    'username': 'muazkh',
-                    'credential': 'muazkh'
-                },
-                {
-                    'urls': [
-                        'stun:stun.l.google.com:19302',
-                        'stun:stun1.l.google.com:19302',
-                        'stun:stun2.l.google.com:19302',
-                        'stun:stun.l.google.com:19302?transport=udp',
-                    ]
-                }
-            ];
-
-            if (typeof window.InstallTrigger !== 'undefined') {
-                iceServers = [{
-                    'urls': [
-                        'turn:webrtcweb.com:7788',
-                        'stun:webrtcweb.com:7788',
-                    ],
-                    'username': 'muazkh',
-                    'credential': 'muazkh'
-                }];
-            }
+                'urls': [
+                    'stun:stun.l.google.com:19302',
+                    'stun:stun1.l.google.com:19302',
+                    'stun:stun2.l.google.com:19302',
+                    'stun:stun.l.google.com:19302?transport=udp',
+                ]
+            }];
 
             return iceServers;
         }
@@ -3576,6 +3568,31 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                 };
             }
 
+            if (options.localMediaConstraints.isScreen === true) {
+                if (navigator.mediaDevices.getDisplayMedia) {
+                    navigator.mediaDevices.getDisplayMedia(options.localMediaConstraints).then(function(stream) {
+                        stream.streamid = stream.streamid || stream.id || getRandomString();
+                        stream.idInstance = idInstance;
+
+                        streaming(stream);
+                    }).catch(function(error) {
+                        options.onLocalMediaError(error, options.localMediaConstraints);
+                    });
+                } else if (navigator.getDisplayMedia) {
+                    navigator.getDisplayMedia(options.localMediaConstraints).then(function(stream) {
+                        stream.streamid = stream.streamid || stream.id || getRandomString();
+                        stream.idInstance = idInstance;
+
+                        streaming(stream);
+                    }).catch(function(error) {
+                        options.onLocalMediaError(error, options.localMediaConstraints);
+                    });
+                } else {
+                    throw new Error('getDisplayMedia API is not availabe in this browser.');
+                }
+                return;
+            }
+
             navigator.mediaDevices.getUserMedia(options.localMediaConstraints).then(function(stream) {
                 stream.streamid = stream.streamid || stream.id || getRandomString();
                 stream.idInstance = idInstance;
@@ -3637,14 +3654,14 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                 }
 
                 if (typeof type == 'undefined' || type == 'audio') {
-                    stream.getAudioTracks().forEach(function(track) {
+                    getTracks(stream, 'audio').forEach(function(track) {
                         track.enabled = false;
                         connection.streamEvents[stream.streamid].isAudioMuted = true;
                     });
                 }
 
                 if (typeof type == 'undefined' || type == 'video') {
-                    stream.getVideoTracks().forEach(function(track) {
+                    getTracks(stream, 'video').forEach(function(track) {
                         track.enabled = false;
                     });
                 }
@@ -3668,14 +3685,14 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                 graduallyIncreaseVolume();
 
                 if (typeof type == 'undefined' || type == 'audio') {
-                    stream.getAudioTracks().forEach(function(track) {
+                    getTracks(stream, 'audio').forEach(function(track) {
                         track.enabled = true;
                         connection.streamEvents[stream.streamid].isAudioMuted = false;
                     });
                 }
 
                 if (typeof type == 'undefined' || type == 'video') {
-                    stream.getVideoTracks().forEach(function(track) {
+                    getTracks(stream, 'video').forEach(function(track) {
                         track.enabled = true;
                     });
 
@@ -3741,199 +3758,6 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             onSyncNeeded: function(streamid, action, type) {}
         };
     })();
-
-    // Last time updated on: June 08, 2018
-
-    // Latest file can be found here: https://cdn.webrtc-experiment.com/Screen-Capturing.js
-
-    // Muaz Khan     - www.MuazKhan.com
-    // MIT License   - www.WebRTC-Experiment.com/licence
-    // Documentation - https://github.com/muaz-khan/Chrome-Extensions/tree/master/Screen-Capturing.js
-    // Demo          - https://www.webrtc-experiment.com/Screen-Capturing/
-
-    // ___________________
-    // Screen-Capturing.js
-
-    // Source code: https://github.com/muaz-khan/Chrome-Extensions/tree/master/desktopCapture
-    // Google AppStore installation path: https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk
-
-    // This JavaScript file is aimed to explain steps needed to integrate above chrome extension
-    // in your own webpages
-
-    // Usage:
-    // getScreenConstraints(function(screen_constraints) {
-    //    navigator.mediaDevices.getUserMedia({ video: screen_constraints }).then(onSuccess).catch(onFailure );
-    // });
-
-    // First Step: Download the extension, modify "manifest.json" and publish to Google AppStore
-    //             https://github.com/muaz-khan/Chrome-Extensions/tree/master/desktopCapture#how-to-publish-yourself
-
-    // Second Step: Listen for postMessage handler
-    // postMessage is used to exchange "sourceId" between chrome extension and you webpage.
-    // though, there are tons other options as well, e.g. XHR-signaling, websockets, etc.
-    window.addEventListener('message', function(event) {
-        if (event.origin != window.location.origin) {
-            return;
-        }
-
-        onMessageCallback(event.data);
-    });
-
-    // and the function that handles received messages
-
-    function onMessageCallback(data) {
-        // "cancel" button is clicked
-        if (data == 'PermissionDeniedError') {
-            chromeMediaSource = 'PermissionDeniedError';
-            if (screenCallback) return screenCallback('PermissionDeniedError');
-            else throw new Error('PermissionDeniedError');
-        }
-
-        // extension notified his presence
-        if (data == 'rtcmulticonnection-extension-loaded') {
-            chromeMediaSource = 'desktop';
-        }
-
-        // extension shared temp sourceId
-        if (data.sourceId && screenCallback) {
-            screenCallback(sourceId = data.sourceId, data.canRequestAudioTrack === true);
-        }
-    }
-
-    // global variables
-    var chromeMediaSource = 'screen';
-    var sourceId;
-    var screenCallback;
-
-    // this method can be used to check if chrome extension is installed & enabled.
-    function isChromeExtensionAvailable(callback) {
-        if (!callback) return;
-
-        if (chromeMediaSource == 'desktop') return callback(true);
-
-        // ask extension if it is available
-        window.postMessage('are-you-there', '*');
-
-        setTimeout(function() {
-            if (chromeMediaSource == 'screen') {
-                callback(false);
-            } else callback(true);
-        }, 2000);
-    }
-
-    // this function can be used to get "source-id" from the extension
-    function getSourceId(callback) {
-        if (!callback) throw '"callback" parameter is mandatory.';
-        if (sourceId) return callback(sourceId);
-
-        screenCallback = callback;
-        window.postMessage('get-sourceId', '*');
-    }
-
-    // this function can be used to get "source-id" from the extension
-    function getCustomSourceId(arr, callback) {
-        if (!arr || !arr.forEach) throw '"arr" parameter is mandatory and it must be an array.';
-        if (!callback) throw '"callback" parameter is mandatory.';
-
-        if (sourceId) return callback(sourceId);
-
-        screenCallback = callback;
-        window.postMessage({
-            'get-custom-sourceId': arr
-        }, '*');
-    }
-
-    // this function can be used to get "source-id" from the extension
-    function getSourceIdWithAudio(callback) {
-        if (!callback) throw '"callback" parameter is mandatory.';
-        if (sourceId) return callback(sourceId);
-
-        screenCallback = callback;
-        window.postMessage('audio-plus-tab', '*');
-    }
-
-    var isFirefox = typeof window.InstallTrigger !== 'undefined';
-    var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
-    var isChrome = !!window.chrome && !isOpera;
-
-    function getChromeExtensionStatus(extensionid, callback) {
-        if (isFirefox) return callback('not-chrome');
-
-        if (arguments.length != 2) {
-            callback = extensionid;
-            extensionid = 'ajhifddimkapgcifgcodmmfdlknahffk'; // default extension-id
-        }
-
-        var image = document.createElement('img');
-        image.src = 'chrome-extension://' + extensionid + '/icon.png';
-        image.onload = function() {
-            chromeMediaSource = 'screen';
-            window.postMessage('are-you-there', '*');
-            setTimeout(function() {
-                if (chromeMediaSource == 'screen') {
-                    callback('installed-disabled');
-                } else callback('installed-enabled');
-            }, 2000);
-        };
-        image.onerror = function() {
-            callback('not-installed');
-        };
-    }
-
-    function getScreenConstraintsWithAudio(callback) {
-        getScreenConstraints(callback, true);
-    }
-
-    // this function explains how to use above methods/objects
-    function getScreenConstraints(callback, captureSourceIdWithAudio) {
-        var firefoxScreenConstraints = {
-            mozMediaSource: 'window',
-            mediaSource: 'window'
-        };
-
-        if (isFirefox) return callback(null, firefoxScreenConstraints);
-
-        // this statement defines getUserMedia constraints
-        // that will be used to capture content of screen
-        var screen_constraints = {
-            mandatory: {
-                chromeMediaSource: chromeMediaSource,
-                maxWidth: screen.width > 1920 ? screen.width : 1920,
-                maxHeight: screen.height > 1080 ? screen.height : 1080
-            },
-            optional: []
-        };
-
-        // this statement verifies chrome extension availability
-        // if installed and available then it will invoke extension API
-        // otherwise it will fallback to command-line based screen capturing API
-        if (chromeMediaSource == 'desktop' && !sourceId) {
-            if (captureSourceIdWithAudio) {
-                getSourceIdWithAudio(function(sourceId, canRequestAudioTrack) {
-                    screen_constraints.mandatory.chromeMediaSourceId = sourceId;
-
-                    if (canRequestAudioTrack) {
-                        screen_constraints.canRequestAudioTrack = true;
-                    }
-                    callback(sourceId == 'PermissionDeniedError' ? sourceId : null, screen_constraints);
-                });
-            } else {
-                getSourceId(function(sourceId) {
-                    screen_constraints.mandatory.chromeMediaSourceId = sourceId;
-                    callback(sourceId == 'PermissionDeniedError' ? sourceId : null, screen_constraints);
-                });
-            }
-            return;
-        }
-
-        // this statement sets gets 'sourceId" and sets "chromeMediaSourceId" 
-        if (chromeMediaSource == 'desktop') {
-            screen_constraints.mandatory.chromeMediaSourceId = sourceId;
-        }
-
-        // now invoking native getUserMedia API
-        callback(null, screen_constraints);
-    }
 
     // TextReceiver.js & TextSender.js
 
@@ -4748,13 +4572,11 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                             console.error('Unable to capture screen on Edge. HTTPs and version 17+ is required.');
                         });
                     } else {
-                        connection.getScreenConstraints(function(error, screen_constraints) {
-                            connection.invokeGetUserMedia({
-                                audio: isAudioPlusTab(connection) ? getAudioScreenConstraints(screen_constraints) : false,
-                                video: screen_constraints,
-                                isScreen: true
-                            }, (session.audio || session.video) && !isAudioPlusTab(connection) ? connection.invokeGetUserMedia(null, callback) : callback);
-                        });
+                        connection.invokeGetUserMedia({
+                            audio: isAudioPlusTab(connection),
+                            video: true,
+                            isScreen: true
+                        }, (session.audio || session.video) && !isAudioPlusTab(connection) ? connection.invokeGetUserMedia(null, callback) : callback);
                     }
                 } else if (session.audio || session.video) {
                     connection.invokeGetUserMedia(null, callback, session);
@@ -4796,28 +4618,22 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                             console.error('Unable to capture screen on Edge. HTTPs and version 17+ is required.');
                         });
                     } else {
-                        connection.getScreenConstraints(function(error, screen_constraints) {
-                            if (error) {
-                                throw error;
-                            }
-
-                            connection.invokeGetUserMedia({
-                                audio: isAudioPlusTab(connection) ? getAudioScreenConstraints(screen_constraints) : false,
-                                video: screen_constraints,
-                                isScreen: true
-                            }, function(stream) {
-                                if ((session.audio || session.video) && !isAudioPlusTab(connection)) {
-                                    var nonScreenSession = {};
-                                    for (var s in session) {
-                                        if (s !== 'screen') {
-                                            nonScreenSession[s] = session[s];
-                                        }
+                        connection.invokeGetUserMedia({
+                            audio: isAudioPlusTab(connection),
+                            video: true,
+                            isScreen: true
+                        }, function(stream) {
+                            if ((session.audio || session.video) && !isAudioPlusTab(connection)) {
+                                var nonScreenSession = {};
+                                for (var s in session) {
+                                    if (s !== 'screen') {
+                                        nonScreenSession[s] = session[s];
                                     }
-                                    connection.invokeGetUserMedia(sessionForced, callback, nonScreenSession);
-                                    return;
                                 }
-                                callback(stream);
-                            });
+                                connection.invokeGetUserMedia(sessionForced, callback, nonScreenSession);
+                                return;
+                            }
+                            callback(stream);
                         });
                     }
                 } else if (session.audio || session.video) {
@@ -4888,6 +4704,11 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         };
 
         connection.processSdp = function(sdp) {
+            // ignore SDP modification if unified-pan is supported
+            if (isUnifiedPlanSupportedDefault()) {
+                return sdp;
+            }
+
             if (DetectRTC.browser.name === 'Safari') {
                 return sdp;
             }
@@ -5052,7 +4873,10 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             }]
         };
 
-        connection.rtcpMuxPolicy = 'require'; // "require" or "negotiate"
+        connection.sdpSemantics = null; // "unified-plan" or "plan-b", ref: webrtc.org/web-apis/chrome/unified-plan/
+        connection.iceCandidatePoolSize = null; // 0
+        connection.bundlePolicy = null; // max-bundle
+        connection.rtcpMuxPolicy = null; // "require" or "negotiate"
         connection.iceTransportPolicy = null; // "relay" or "all"
         connection.optionalArgument = {
             optional: [{
@@ -5155,7 +4979,9 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             var played = e.mediaElement.play();
 
             if (typeof played !== 'undefined') {
-                played.catch(function() { /*** iOS 11 doesn't allow automatic play and rejects ***/ }).then(function() {
+                played.catch(function() {
+                    /*** iOS 11 doesn't allow automatic play and rejects ***/
+                }).then(function() {
                     setTimeout(function() {
                         e.mediaElement.play();
                     }, 2000);
@@ -5210,7 +5036,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         };
 
         connection.addStream = function(session, remoteUserId) {
-            if (!!session.getAudioTracks) {
+            if (!!session.getTracks) {
                 if (connection.attachStreams.indexOf(session) === -1) {
                     if (!session.streamid) {
                         session.streamid = session.id;
@@ -5248,33 +5074,18 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                             console.error('Unable to capture screen on Edge. HTTPs and version 17+ is required.');
                         });
                     } else {
-                        connection.getScreenConstraints(function(error, screen_constraints) {
-                            if (error) {
-                                if (error === 'PermissionDeniedError') {
-                                    if (session.streamCallback) {
-                                        session.streamCallback(null);
-                                    }
-                                    if (connection.enableLogs) {
-                                        console.error('User rejected to share his screen.');
-                                    }
-                                    return;
-                                }
-                                return alert(error);
-                            }
-
-                            connection.invokeGetUserMedia({
-                                audio: isAudioPlusTab(connection) ? getAudioScreenConstraints(screen_constraints) : false,
-                                video: screen_constraints,
-                                isScreen: true
-                            }, function(stream) {
-                                if ((session.audio || session.video) && !isAudioPlusTab(connection)) {
-                                    connection.invokeGetUserMedia(null, function(stream) {
-                                        gumCallback(stream);
-                                    });
-                                } else {
+                        connection.invokeGetUserMedia({
+                            audio: isAudioPlusTab(connection),
+                            video: true,
+                            isScreen: true
+                        }, function(stream) {
+                            if ((session.audio || session.video) && !isAudioPlusTab(connection)) {
+                                connection.invokeGetUserMedia(null, function(stream) {
                                     gumCallback(stream);
-                                }
-                            });
+                                });
+                            } else {
+                                gumCallback(stream);
+                            }
                         });
                     }
                 } else if (session.audio || session.video) {
@@ -5312,8 +5123,8 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                     }
 
                     if (!stream.isScreen) {
-                        stream.isVideo = stream.getVideoTracks().length;
-                        stream.isAudio = !stream.isVideo && stream.getAudioTracks().length;
+                        stream.isVideo = !!getTracks(stream, 'video').length;
+                        stream.isAudio = !stream.isVideo && getTracks(stream, 'audio').length;
                     }
 
                     mPeer.onGettingLocalMedia(stream, function() {
@@ -5341,13 +5152,13 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             }
 
             if (mediaConstraints.audio) {
-                stream.getAudioTracks().forEach(function(track) {
+                getTracks(stream, 'audio').forEach(function(track) {
                     track.applyConstraints(mediaConstraints.audio);
                 });
             }
 
             if (mediaConstraints.video) {
-                stream.getVideoTracks().forEach(function(track) {
+                getTracks(stream, 'video').forEach(function(track) {
                     track.applyConstraints(mediaConstraints.video);
                 });
             }
@@ -5398,12 +5209,12 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             }
 
             if (session instanceof MediaStream) {
-                if (session.getVideoTracks().length) {
-                    replaceTrack(session.getVideoTracks()[0], remoteUserId, true);
+                if (getTracks(session, 'video').length) {
+                    replaceTrack(getTracks(session, 'video')[0], remoteUserId, true);
                 }
 
-                if (session.getAudioTracks().length) {
-                    replaceTrack(session.getAudioTracks()[0], remoteUserId, false);
+                if (getTracks(session, 'audio').length) {
+                    replaceTrack(getTracks(session, 'audio')[0], remoteUserId, false);
                 }
                 return;
             }
@@ -5432,17 +5243,11 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                             console.error('Unable to capture screen on Edge. HTTPs and version 17+ is required.');
                         });
                     } else {
-                        connection.getScreenConstraints(function(error, screen_constraints) {
-                            if (error) {
-                                return alert(error);
-                            }
-
-                            connection.invokeGetUserMedia({
-                                audio: isAudioPlusTab(connection) ? getAudioScreenConstraints(screen_constraints) : false,
-                                video: screen_constraints,
-                                isScreen: true
-                            }, (session.audio || session.video) && !isAudioPlusTab(connection) ? connection.invokeGetUserMedia(null, gumCallback) : gumCallback);
-                        });
+                        connection.invokeGetUserMedia({
+                            audio: isAudioPlusTab(connection),
+                            video: true,
+                            isScreen: true
+                        }, (session.audio || session.video) && !isAudioPlusTab(connection) ? connection.invokeGetUserMedia(null, gumCallback) : gumCallback);
                     }
                 } else if (session.audio || session.video) {
                     connection.invokeGetUserMedia(null, gumCallback);
@@ -5837,7 +5642,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
 
         // default value should be 15k because [old]Firefox's receiving limit is 16k!
         // however 64k works chrome-to-chrome
-        connection.chunkSize = 65 * 1000;
+        connection.chunkSize = 40 * 1000;
 
         connection.maxParticipantsAllowed = 1000;
 
@@ -5934,19 +5739,6 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             connection.getChromeExtensionStatus = getChromeExtensionStatus;
         }
 
-        connection.getScreenConstraints = function(callback, audioPlusTab) {
-            if (isAudioPlusTab(connection, audioPlusTab)) {
-                audioPlusTab = true;
-            }
-
-            getScreenConstraints(function(error, screen_constraints) {
-                if (!error) {
-                    screen_constraints = connection.modifyScreenConstraints(screen_constraints);
-                    callback(error, screen_constraints);
-                }
-            }, audioPlusTab);
-        };
-
         connection.modifyScreenConstraints = function(screen_constraints) {
             return screen_constraints;
         };
@@ -6001,9 +5793,23 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             }
         }
 
-        connection.getExtraData = function(remoteUserId) {
+        connection.getExtraData = function(remoteUserId, callback) {
             if (!remoteUserId) throw 'remoteUserId is required.';
-            if (!connection.peers[remoteUserId]) return {};
+
+            if (typeof callback === 'function') {
+                connection.socket.emit('get-remote-user-extra-data', remoteUserId, function(extra, remoteUserId, error) {
+                    callback(extra, remoteUserId, error);
+                });
+                return;
+            }
+
+            if (!connection.peers[remoteUserId]) {
+                if (connection.peersBackup[remoteUserId]) {
+                    return connection.peersBackup[remoteUserId].extra;
+                }
+                return {};
+            }
+
             return connection.peers[remoteUserId].extra;
         };
 
@@ -6012,16 +5818,22 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         }
 
         connection.onUserIdAlreadyTaken = function(useridAlreadyTaken, yourNewUserId) {
-            if (connection.enableLogs) {
-                console.warn('Userid already taken.', useridAlreadyTaken, 'Your new userid:', yourNewUserId);
-            }
+            // via #683
+            connection.close();
+            connection.closeSocket();
 
+            connection.isInitiator = false;
             connection.userid = connection.token();
+
             connection.join(connection.sessionid);
+
+            if (connection.enableLogs) {
+                console.warn('Userid already taken.', useridAlreadyTaken, 'Your new userid:', connection.userid);
+            }
         };
 
         connection.trickleIce = true;
-        connection.version = '3.5.9';
+        connection.version = '3.6.9';
 
         connection.onSettingLocalDescription = function(event) {
             if (connection.enableLogs) {
@@ -6056,6 +5868,18 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             } else {
                 connection.password = password;
                 callback(true, connection.sessionid, null);
+            }
+        };
+
+        connection.onSocketDisconnect = function(event) {
+            if (connection.enableLogs) {
+                console.warn('socket.io connection is closed');
+            }
+        };
+
+        connection.onSocketError = function(event) {
+            if (connection.enableLogs) {
+                console.warn('socket.io connection is failed');
             }
         };
 

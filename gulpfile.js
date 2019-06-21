@@ -178,7 +178,8 @@ var scriptList=[
     "client/src/scripts/_init.js",
     "client/src/scripts/_notify.js",
     "client/src/scripts/DetectRTC.js",
-    "client/src/scripts/RTCMultiConnection_depricated.js",
+    // "client/src/scripts/RTCMultiConnection_depricated.js",
+    "client/src/scripts/RTCM.js",
     //"client/src/scripts/RTCMultiConnection_latest.js",
     //"client/src/scripts/RTCMultiConnection_custom.js",
     "client/src/scripts/_screenshare.js",
@@ -238,7 +239,6 @@ gulp.task('webrtcdevelopmentjs',function() {
         .pipe(replace(/use strict/g, ''))
         .pipe(gulp.dest(folderPath));
         //.pipe(uglify()); 
-
 });
 
 

@@ -465,6 +465,7 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     name.title = filetype +" shared by " +peerinfo.name ;  
     name.className = "filenameClass";
     name.id = "name"+filename+uuid;
+    filedom.appendChild(name);
 
     // Download Button 
     var downloadButton = document.createElement("li");
@@ -578,8 +579,14 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
         removeButton.setAttribute("style","display:none!important");
     }
 
+    if( role == "inspector"){
+        showDownloadButton.hidden=true;
+        showButton.hidden=true;
+        saveButton.hidden=true;
+        removeButton.hidden=true;
+    }   
+
     //Appenmd all of the above compoenets inot file list view 
-    filedom.appendChild(name);
     if(showDownloadButton) 
         filedom.appendChild(downloadButton);
     filedom.appendChild(showButton);
@@ -587,7 +594,6 @@ function displayList(uuid , peerinfo , fileurl , filename , filetype ){
     //filedom.appendChild(hideButton);
     if(showRemoveButton)
         filedom.appendChild(removeButton);
-
 
     webrtcdev.log("[filesharing JS ] filedom " , filedom  ," | parentdom ", parentdom );
 
@@ -843,6 +849,16 @@ function removeFile(element){
 }
 
 
+/**
+* Creates container for file sharing
+* @method
+* @name downloadFile
+* @param {id} uuid - uniwue identifier for file
+* @param {element} parent - 
+* @param {url} fileurl
+* @param {str} filename 
+* ffiletype {str}
+*/
 function downloadFile(uuid , element , fileurl , _filename , filetype){
     webrtcdev.log(" downloadButton _filename ", _filename , "  filetype ", filetype);
     if (filetype =="sessionRecording"){

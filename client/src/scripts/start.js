@@ -540,7 +540,7 @@ var setRtcConn = function ( sessionid) {
             webrtcdev.error("[startJS onMediaError] ", error, constraints);
             shownotification(error.name + " Joining without camera Stream ", "warning");
             localVideoStreaming = false;
-            // For local Peer , if camera is nott allowed or not connected then put null in video containers 
+            // For local Peer , if camera is not allowed or not connected then put null in video containers 
             //for(x in webcallpeers){
                 //if(!webcallpeers[x].stream &&  !webcallpeers[x].streamid){
                     var peerinfo = webcallpeers[0];
@@ -550,6 +550,11 @@ var setRtcConn = function ( sessionid) {
                     updateWebCallView(peerinfo);
                 //}
             //}
+
+            // get media info for console debuggging 
+            checkDevices();
+
+            // start local Connect 
             onLocalConnect() // event emitter for app client 
         },
 
