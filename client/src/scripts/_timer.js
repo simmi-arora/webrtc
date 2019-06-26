@@ -13,7 +13,20 @@ var hours,mins,secs;
 var today = new Date();
 var zone="";
 var t ;
-var worker = new Worker('js/timekeeper.js');
+var worker = null; 
+
+try{
+    //worker = new Worker('js/timekeeper.js');
+    // worker.addEventListener('message', function(e) {
+    //     if(e.data.time){
+    //         let timerspanpeer = document.getElementById(e.data.remotetimeid);
+    //         timerspanpeer.innerHTML = e.data.time;
+    //     }
+
+    // }, false);
+}catch(e){
+    webrtcdev.error("[Timer]" , e)
+}
 /**
  * function to start session timer with timerobj
  * @method
@@ -50,7 +63,7 @@ function startsessionTimer(timerobj){
  * @method
  * @name startForwardTimer
  */
- function startForwardTimer(){
+function startForwardTimer(){
     webrtcdev.log("[timerjs] startForwardTimer");
     var cd = secs;
     var cdm = mins;
@@ -74,7 +87,15 @@ function startBackwardTimer(){
     btimer(cd , c , cdm ,  m);  
 }
 
-
+/**
+ * function to start backward decreasing session timer 
+ * @method
+ * @name Timer
+ * @param {cd} timerobj
+ * @param {c} timerobj
+ * @param {cdm} timerobj
+ * @param {m} timerobj
+ */
 function ftimer(cd , c , cdm , m ){
     var interv = setInterval(function() {
         c++;
@@ -149,6 +170,8 @@ function createRemotetimeArea(userid){
  * function to fetch and show local peers time zone based on locally captured values
  * @method
  * @name peertimeZone
+ * @param {str} zone
+ * @param {id} userid
  */
 function peerTimeZone(zone , userid){
     try{
@@ -185,6 +208,9 @@ function peerTimeZone(zone , userid){
 /**
  * function to fetch and show Peers peers time based on onmesaage val
  * @name startPeersTime
+ * @param {date} date
+ * @param {str} zone
+ * @param {id} userid
  */
 
 var startPeersTime = function (date,zone,userid){
@@ -245,7 +271,7 @@ var startPeersTime = function (date,zone,userid){
             peerTimerStarted = true;
         }
         
-        webrtcdev.info("================== tobj " , tobj);
+        webrtcdev.info("[timerjs] tobj " , tobj);
         if(tobj.length > 0){
             worker.postMessage(tobj);
         }
@@ -254,14 +280,6 @@ var startPeersTime = function (date,zone,userid){
         webrtcdev.error(e);   
     }
 }
-
-worker.addEventListener('message', function(e) {
-    if(e.data.time){
-        let timerspanpeer = document.getElementById(e.data.remotetimeid);
-        timerspanpeer.innerHTML = e.data.time;
-    }
-
-}, false);
 
 
 /**
@@ -300,6 +318,10 @@ function shareTimePeer(){
     }
 }
 
+/**
+ * function to activateButtons
+ * @name activateButtons
+ */
 function activateBttons(timerobj){
     if(timerobj.container.minbutton_id && document.getElementById(timerobj.container.minbutton_id)){
         var button= document.getElementById(timerobj.container.minbutton_id);

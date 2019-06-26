@@ -51,8 +51,6 @@ if(properties.secure){
 }
 app.listen(properties.httpPort);
 
-
-
 /*var _realtimecomm=require('./client/build/minScripts/webrtcdevelopmentServer.js').realtimecomm;*/
 var _realtimecomm=require('./realtimecomm.js').realtimecomm;
 var realtimecomm= _realtimecomm(app, properties , log, function(socket) {

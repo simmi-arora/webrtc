@@ -180,8 +180,6 @@ var scriptList=[
     "client/src/scripts/DetectRTC.js",
     // "client/src/scripts/RTCMultiConnection_depricated.js",
     "client/src/scripts/RTCM.js",
-    //"client/src/scripts/RTCMultiConnection_latest.js",
-    //"client/src/scripts/RTCMultiConnection_custom.js",
     "client/src/scripts/_screenshare.js",
     "client/src/scripts/_detectRTC.js",
     "client/src/scripts/_webrtcchecks.js",

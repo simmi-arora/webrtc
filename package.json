@@ -63,7 +63,7 @@
     "build": "webpack-dev-server --env.WEBRTC_ENV=development",
     "test": "./node_modules/mocha/bin/mocha client/tests",
     "run": "gulp & node webrtcserver.js",
-    "prestart": "gulp production & apidoc -v -i /home/altanai/webrtcWSwksppace/webrtcdevelopment/ -e node_modules/  -o client/build/api/doc",
+    "prestart": "gulp production & apidoc -v -i /home/altanai/webrtcdev/webrtc/ -e node_modules/  -o client/docs",
     "start": "supervisor -i ./public/ webrtcserver.js"
   },
   "repository": {
