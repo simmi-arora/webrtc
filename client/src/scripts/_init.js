@@ -24,7 +24,6 @@ var numbersOfUsers  = document.getElementById("numbersofusers");
 var usersContainer  = document.getElementById("usersContainer");*/
 var tempuserid ;
 var sessions = {};
-var detectRTC ;
     
 var selfusername="" , selfemail="" , selfcolor="" ;
 var remoteusername="" , remoteemail="" , remotecolor="" ;

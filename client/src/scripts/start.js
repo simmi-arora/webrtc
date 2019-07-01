@@ -12,6 +12,7 @@ var localVideoStreaming= null;
 var turn="none";
 var localobj={}, remoteobj={};
 var pendingFileTransfer=[];
+var detectRTC = DetectRTC;
     //instantiates event emitter
     // EventEmitter.call(this);
 
@@ -128,34 +129,34 @@ function funcStartWebrtcdev(){
     webrtcdev.log("[]startJS] startwebrtcdev ");
 
     return new Promise(function (resolve, reject) {
-        detectRTC = DetectRTC;
+        
         webrtcdev.log(" [ startJS webrtcdom ] : DetectRTC " , detectRTC);
         if(!detectRTC) resolve("detectRTC not found");
 
-        //Cases around webcam malfunctiojn or absense 
-        if(!detectRTC.hasWebcam){
-            alert(" Your browser doesnt have webcam" , "warning");
-            outgoing.video = false;
-        }
-        if(!detectRTC.isWebsiteHasWebcamPermissions){
-            alert(" Your browser doesnt have permission for accessing webcam", "warning");
-            outgoing.video = false;
-        }
+        // //Cases around webcam malfunctiojn or absense 
+        // if(detectRTC.hasWebcam == false){
+        //     //alert(" Your browser doesnt have webcam" , "warning");
+        //     outgoing.video = false;
+        // }
+        // if(detectRTC.isWebsiteHasWebcamPermissions == false){
+        //     //alert(" Your browser doesnt have permission for accessing webcam", "warning");
+        //     outgoing.video = false;
+        // }
         
-        //Cases around Miceohone malfunction or absense 
-        if(!detectRTC.hasMicrophone){
-            alert(" Your browser doesnt have microphone", "warning");   
-            outgoing.audio = false ;
-        }
-        if(!detectRTC.isWebsiteHasMicrophonePermissions){
-            alert(" Your browser doesnt have permission for accessing microphone", "warning");
-            outgoing.audio = false;
-        }
+        // //Cases around Miceohone malfunction or absense 
+        // if(!detectRTC.hasMicrophone){
+        //     //alert(" Your browser doesnt have microphone", "warning");   
+        //     outgoing.audio = false ;
+        // }
+        // if(!detectRTC.isWebsiteHasMicrophonePermissions){
+        //     //alert(" Your browser doesnt have permission for accessing microphone", "warning");
+        //     outgoing.audio = false;
+        // }
         
-        // Case around speaker abent
-        if(!detectRTC.hasSpeakers){
-            alert(" Your browser doesnt have speakers", "warning");      
-        }
+        // // Case around speaker abent
+        // if(!detectRTC.hasSpeakers){
+        //     //alert(" Your browser doesnt have speakers", "warning");      
+        // }
 
         resolve("done");
     }).then((res)=>{
@@ -456,7 +457,7 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
 set Real Time Communication connection
 */
 var setRtcConn = function (sessionid) {
-
+    alert("setRtcConn");
     return new Promise( (resolve, reject)=> {
 
         webrtcdev.log("[startjs - setRtcConn] initiating RTcConn"),
@@ -464,7 +465,7 @@ var setRtcConn = function (sessionid) {
         rtcConn = new RTCMultiConnection(),
 
         rtcConn.channel = this.sessionid,
-        rtcConn.socketURL = location.hostname+":9001/",
+        rtcConn.socketURL = "http://loclahost:8085/",
 
         rtcConn.onNewParticipant = function (participantId, userPreferences) {
             alert(" onNewParticipant");
