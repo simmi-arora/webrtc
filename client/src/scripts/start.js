@@ -465,7 +465,7 @@ var setRtcConn = function (sessionid) {
         rtcConn = new RTCMultiConnection(),
 
         rtcConn.channel = this.sessionid,
-        rtcConn.socketURL = "http://loclahost:8085/",
+        rtcConn.socketURL = location.hostname+"8085/",
 
         rtcConn.onNewParticipant = function (participantId, userPreferences) {
             alert(" onNewParticipant");
