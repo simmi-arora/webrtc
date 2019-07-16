@@ -270,15 +270,17 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
         });
 
         socket.on('join-channel', function (data) {  
-            var isallowed=false;
-            if(webrtcdevchannels[data.channel].users.length < webrtcdevchannels[data.channel].maxAllowed || webrtcdevchannels[data.channel].maxAllowed=="unlimited")
-                isallowed=true;
+            var isallowed = false;
+            var channel = data.channel;
+            if(webrtcdevchannels[data.channel].users.length < webrtcdevchannels[data.channel].maxAllowed ||
+                 webrtcdevchannels[data.channel].maxAllowed == "unlimited")
+                isallowed = true;
 
             console.log("------------join channel------------- ", data.channel," by " , data.sender , " isallowed " , isallowed);
             
             if(isallowed){
                 webrtcdevchannels[data.channel].users.push(data.sender); 
-                webrtcdevchannels[data.channel].status=webrtcdevchannels[data.channel].users.length + " active members";
+                webrtcdevchannels[data.channel].status = webrtcdevchannels[data.channel].users.length + " active members";
                 webrtcdevchannels[data.channel].log.push(new Date().toLocaleString()+":-User "+data.sender+" joined the channel ");  
                 
                 // send back the join response to webclient
@@ -297,6 +299,10 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
                 };
                 socket.broadcast.emit('channel-event', cevent);
             }else{
+
+                console.warn(" Not aloowed to join channel , maxAllowed : " ,  webrtcdevchannels[data.channel].maxAllowed , 
+                            " current-users : " , webrtcdevchannels[data.channel].users.length);
+
                 var jevent={
                     status:false,
                     msgtype: "error",

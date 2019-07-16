@@ -178,14 +178,13 @@ var scriptList=[
     "client/src/scripts/_init.js",
     "client/src/scripts/_notify.js",
     "client/src/scripts/DetectRTC.js",
-    "client/src/scripts/RTCMultiConnection_depricated.js",
-    //"client/src/scripts/RTCMultiConnection_latest.js",
-    //"client/src/scripts/RTCMultiConnection_custom.js",
+    // "client/src/scripts/RTCMultiConnection_depricated.js",
+    "client/src/scripts/RTCM.js",
     "client/src/scripts/_screenshare.js",
-    "client/src/scripts/_detectRTC.js",
+    // "client/src/scripts/_detectRTC.js",
     "client/src/scripts/_webrtcchecks.js",
     "client/src/scripts/_settings.js",
-    "client/src/scripts/firebase.js",
+    // "client/src/scripts/firebase.js",
     "client/src/scripts/FileBufferReader.js",
     "client/src/scripts/MediaStreamRecorder.js",
     "client/src/scripts/RecordRTC.js",
@@ -210,16 +209,17 @@ var scriptList=[
     // "client/src/scripts/jszip.js"
 ];
 
-gulp.task('betawebrtcdevelopmentjs',function() {
+gulp.task('betawebrtcdevelopmentjs',function(done) {
     console.log(" gulping main webrtc development scripts into beta ");
     scriptList.push("client/src/scripts/start.js");
     scriptList.push("client/src/scripts/admin.js");  
     console.log(scriptList);
-    gulp.src(scriptList)
+    gulp.src(scriptList , {allowEmpty: true })
         // .pipe( rev({strict: true}) )
         .pipe(concat('webrtcdevelopment.js'))  
         .pipe(replace(/"use strict"/g, ''))
-        .pipe(gulp.dest(folderPath)); 
+        .pipe(gulp.dest(folderPath))
+        done(); 
 });
 /*.pipe(uglify())*/
 // .pipe( rev({strict: true}) )
@@ -238,7 +238,6 @@ gulp.task('webrtcdevelopmentjs',function() {
         .pipe(replace(/use strict/g, ''))
         .pipe(gulp.dest(folderPath));
         //.pipe(uglify()); 
-
 });
 
 
@@ -295,14 +294,14 @@ gulp.task('git_pull',function(cb){
   });
 });
 
-gulp.task('default', gulpSequence(
+gulp.task('default', gulp.series(
     'betawebrtcdevelopmentjs',
-    'screensharejs',
+    // 'screensharejs',
     'webrtcdevelopmentcss',
     'serverjs'
 ));
 
-gulp.task('develop', gulpSequence(
+gulp.task('develop', gulp.series(
     // 'vendorjs',
     // 'drawjs' , 
     // 'drawcss',
@@ -316,7 +315,7 @@ gulp.task('develop', gulpSequence(
 
 )); 
 
-gulp.task('production', gulpSequence(
+gulp.task('production', gulp.series(
     'vendorjs',
     'drawjs' , 
     'drawcss',

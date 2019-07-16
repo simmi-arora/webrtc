@@ -32,6 +32,12 @@ function shownotification(message , type){
 
 }
 
+/**
+ * function to show notification warning
+ * @function
+ * @name shownotificationWarning
+ * @param {string} message - message passed inside the notification 
+ */
 function shownotificationWarning(message){
 
   if(!message || message =="undefined") return ;
@@ -56,6 +62,11 @@ function shownotificationWarning(message){
 
 }
 
+/**
+ * function to show desktop notification
+ * @function
+ * @name showdesktopnotification
+ */
 function showdesktopnotification() {
   // Let's check if the browser supports notifications
   if (!("Notification" in window)) {
@@ -72,26 +83,49 @@ function showdesktopnotification() {
 
      var notification = new Notification("Vilageexperts" , options);
   }
-
-  // Otherwise, we need to ask the user for permission
   else if (Notification.permission !== 'denied') {
-    Notification.requestPermission(function (permission) {
-      // If the user accepts, let's create a notification
-      if (permission === "granted") {
-        var notification = new Notification("villageexpsrts");
-      }
-
-    });
-
+    webrtcdev.warning(" [notify.js] notification deined")
   }
+
+  //  Otherwise, we need to ask the user for permission
+  // else if (Notification.permission !== 'denied') {
+  //   Notification.requestPermission(function (permission) {
+  //     // If the user accepts, let's create a notification
+  //     if (permission === "granted") {
+  //       var notification = new Notification("Web based RealTime Communication");
+  //     }
+
+  //   });
+
+  // }
 
   // At last, if the user has denied notifications, and you 
   // want to be respectful there is no need to bother them any more.
 }
 
-Notification.requestPermission().then(function(result) {
-  webrtcdev.log(result);
-});
+
+// not a very good pracise i know
+// need this to inform user of session updates when he/she is on another tab/widnow 
+if(typeof Notification != undefined){
+    try{
+        Notification.requestPermission().then(function(result) {
+            webrtcdev.log("[notify.js] notification requestPermission " , result);
+        }); 
+    } catch (error) {
+        // Safari doesn't return a promise for requestPermissions and it                                                                                                                                       
+        // throws a TypeError. It takes a callback as the first argument                                                                                                                                       
+        // instead.
+        if (error instanceof TypeError) {
+            Notification.requestPermission((result) => {                                                                                                                                                             
+                webrtcdev.log("[notify.js] notification requestPermission safari" , result);
+            });
+        } else {
+            throw error;                                                                                                                                                                                       
+        }                                                                                                                                                                                                      
+    }      
+ 
+}
+
 
 function spawnNotification(theBody,theIcon,theTitle) {
   var options = {

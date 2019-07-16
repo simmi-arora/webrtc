@@ -14,6 +14,11 @@ function autorecordScreenVideo(){
 }
 
 
+/* 
+ * Assign Screen Record Button based on screenrecordobj widget
+ * @method
+ * @name assignScreenRecordButton
+ */
 function assignScreenRecordButton(){
 
     var recordButton = document.getElementById(screenrecordobj.button.id);
@@ -256,6 +261,11 @@ function getSourceIdScreenrecord(callback, audioPlusTab) {
     window.postMessage("webrtcdev-extension-getsourceId-audio-plus-tab", "*");
 };
 
+/* 
+ * Assign Screen Record Button based on screenrecordobj widget
+ * @method
+ * @name assignScreenRecordButton
+ */
 function onScreenrecordExtensionCallback(event){
     webrtcdev.log("onScreenrecordExtensionCallback" , event);
 
@@ -271,6 +281,7 @@ function onScreenrecordExtensionCallback(event){
         }
     }
 }
+
 
 function webrtcdevScreenRecordConstraints(chromeMediaSourceId){
     webrtcdev.log(" webrtcdevScreenRecordConstraints :" + chromeMediaSourceId);
