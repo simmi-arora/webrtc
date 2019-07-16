@@ -184,16 +184,6 @@ local object  :
 remote object  :
 ```
     var remote={
-<<<<<<< HEAD
-        videoarr: ["myConferenceVideo", "otherConferenceVideo"], // conatiners for the video after session is made 
-                                                                // first one is usually the local video holder followed by remote video holders
-        videoClass:"",
-        maxAllowed: "6",
-        videoContainer : "confVideoContainer",
-        userDisplay:false,
-        userMetaDisplay:false,
-        dynamicVideos: false 
-=======
         videoarr        : ["myConferenceVideo", "otherConferenceVideo"], // conatiners for the video after session is made 
                                                                 // first one is usually the local video holder followed by remote video holders
         videoClass      : "",
@@ -202,7 +192,6 @@ remote object  :
         userDisplay     : false,
         userMetaDisplay : false,
         dynamicVideos   : false 
->>>>>>> objectURLupdated
     };
 
 ```
@@ -210,19 +199,6 @@ remote object  :
 Incoming and outgoing media configiration  ( self exlanatory ) :
 ```
     var incoming={
-<<<<<<< HEAD
-        audio:  true,
-        video:  true,
-        data:   true,
-        screen: true
-    };
-
-    var outgoing={
-        audio:  true,
-        video:  true,
-        data:   true,
-        screen: true
-=======
         audio :  true,
         video :  true,
         data  :  true,
@@ -234,7 +210,7 @@ Incoming and outgoing media configiration  ( self exlanatory ) :
         video :  true,
         data  :  true,
         screen:  true
->>>>>>> objectURLupdated
+
     };
 
     webrtcdomobj= new WebRTCdom(
@@ -257,7 +233,6 @@ ___
 
 Create a session json object with turn credentials nd the session created from above step
 
-<<<<<<< HEAD
 set preference for the incoming and outgoing media connectection. Bydefault all are set to true . 
 ```
     var incoming={
@@ -295,7 +270,7 @@ Initiate the webrtcdev contructor
     var webrtcdevobj = new WebRTCdev ( 
         session,  incoming,  outgoing ,  widgets
     );
-=======
+```
 
 Set widgets and their properties . Currently available widgets are 
 	* Chat 
@@ -535,7 +510,6 @@ To enable the user to watch video in full screen mode or to inimize the video to
         }  
     }                    
 }
-
 ```
 
 ### 9. Mute (audio and/or video)
@@ -543,7 +517,6 @@ To enable the user to watch video in full screen mode or to inimize the video to
 Mutes the audio or video of the peer video . Created for each peer video.
 
 ```
-
  {
     active: true,
     drawCanvasContainer: "drawBoardRow",
@@ -559,7 +532,6 @@ Mutes the audio or video of the peer video . Created for each peer video.
         html_off:'<img title="Draw" src=assets/images/icon_3.png />'
     }
 }
-
 ```
 
 ### 10 . Reconnect 
@@ -597,7 +569,7 @@ Allows a user to recoonect a session without refreshing a page . Will enable him
 ```
 
 ### 12. Inspector 
-
+```
 {
     active: true,
     button:{
@@ -605,7 +577,7 @@ Allows a user to recoonect a session without refreshing a page . Will enable him
         textbox : "listenInLink"
     }
 }
-
+```
 ### 13. Debug 
 ```
  debug   : false,
@@ -633,7 +605,6 @@ Allows a user to recoonect a session without refreshing a page . Will enable him
 
 
 ### Assign individual widgets to a json object called widgets 
-
 
 ```
 	var widgets={
@@ -715,8 +686,6 @@ Allows a user to recoonect a session without refreshing a page . Will enable him
               active : true , 
               statsConainer : "network-stats-body"
             }
-
-
 	}
 ```
 
@@ -724,17 +693,13 @@ Initiate the webrtcdev contructor
 ```
 webrtcdevobj = new WebRTCdev( local, remote, incoming, outgoing ,session , widgets)
 
->>>>>>> objectURLupdated
 ```
-
 Start the session 
 ```
     startcall();
 ```
-
-<<<<<<< HEAD
 ##### 8. VOIP calls and conf
-=======
+
 Implement evenet listners 
 
 1. onLocalConnect
@@ -748,12 +713,10 @@ Implement evenet listners
 5. onNoCameraCard
 
 
-
 ##### 8. Add the Key and certs
 openssl req -x509 -newkey rsa:4096 -sha256 -nodes -keyout ssl_certs/server.key -out ssl_certs/server.crt -subj "/CN=webrtc.altanai.com" -days 3650
 
 ##### 9. VOIP calls and conf
->>>>>>> objectURLupdated
 open tab on chrome or mozilla browser and add a link to the https server using nodejs script
 https://127.0.0.1:8086/multiparty_fullfeatures.html
 
@@ -763,34 +726,25 @@ Used Libs
 
 Following are the additioanl libraries packed with the project 
 
-<<<<<<< HEAD
 ###### Gulp
 Minify and concat the js and css files  into minscripts
-=======
+
 ###### Task Runner 
 you can run gulp alone to minify and concat the js and css files  into minscripts
->>>>>>> objectURLupdated
 ```
 gulp
 ```
-
-<<<<<<< HEAD
-=======
 or can run grunt to concat , minifify , ugligy , push to git and npm all together 
 ```
 grunt production 
 ```
 
->>>>>>> objectURLupdated
 ###### forever 
 Keeps running even when window is not active 
 ```
 cd WebCall
 forever start webrtcserver.js
 ```
-
-<<<<<<< HEAD
-=======
 ##### Developing / Aletring the Libs
 
 creating doc 
@@ -798,8 +752,6 @@ creating doc
  ./node_modules/.bin/esdoc
   open ./docs/index.html
 ```
-
->>>>>>> objectURLupdated
 ###### PM2
 To start the Server using PM2 ( a process manager for nodejs)
 
