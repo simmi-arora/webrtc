@@ -181,7 +181,7 @@ var scriptList=[
     // "client/src/scripts/RTCMultiConnection_depricated.js",
     "client/src/scripts/RTCM.js",
     "client/src/scripts/_screenshare.js",
-    "client/src/scripts/_detectRTC.js",
+    // "client/src/scripts/_detectRTC.js",
     "client/src/scripts/_webrtcchecks.js",
     "client/src/scripts/_settings.js",
     // "client/src/scripts/firebase.js",

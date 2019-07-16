@@ -16,7 +16,6 @@ var repeatFlagShowButton =null, repeatFlagHideButton =null, repeatFlagRemoveButt
 /* DOM objects for single user video , user in conf and all other users*/
 var localVideo=null, selfVideo=null, remoteVideos=[];
 
-var RTCPeerConnection = null;
 var webrtcDetectedBrowser = null;
 var webrtcDetectedVersion = null;
 /*var usersList     = document.getElementById("userslist");

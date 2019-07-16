@@ -12,7 +12,7 @@ var localVideoStreaming= null;
 var turn="none";
 var localobj={}, remoteobj={};
 var pendingFileTransfer=[];
-var detectRTC = DetectRTC;
+
     //instantiates event emitter
     // EventEmitter.call(this);
 
@@ -129,33 +129,33 @@ function funcStartWebrtcdev(){
     webrtcdev.log("[]startJS] startwebrtcdev ");
 
     return new Promise(function (resolve, reject) {
-        
-        webrtcdev.log(" [ startJS webrtcdom ] : DetectRTC " , detectRTC);
-        if(!detectRTC) resolve("detectRTC not found");
+
+        // webrtcdev.log(" [ startJS webrtcdom ] : DetectRTC " , DetectRTC);
+        // if(!DetectRTC) resolve("detectRTC not found");
 
         // //Cases around webcam malfunctiojn or absense 
-        // if(detectRTC.hasWebcam == false){
-        //     //alert(" Your browser doesnt have webcam" , "warning");
+        // if(!DetectRTC.hasWebcam){
+        //     alert(" Your browser doesnt have webcam" , "warning");
         //     outgoing.video = false;
         // }
-        // if(detectRTC.isWebsiteHasWebcamPermissions == false){
-        //     //alert(" Your browser doesnt have permission for accessing webcam", "warning");
+        // if(!DetectRTC.isWebsiteHasWebcamPermissions){
+        //     alert(" Your browser doesnt have permission for accessing webcam", "warning");
         //     outgoing.video = false;
         // }
         
         // //Cases around Miceohone malfunction or absense 
-        // if(!detectRTC.hasMicrophone){
-        //     //alert(" Your browser doesnt have microphone", "warning");   
+        // if(!DetectRTC.hasMicrophone){
+        //     alert(" Your browser doesnt have microphone", "warning");   
         //     outgoing.audio = false ;
         // }
-        // if(!detectRTC.isWebsiteHasMicrophonePermissions){
-        //     //alert(" Your browser doesnt have permission for accessing microphone", "warning");
+        // if(!DetectRTC.isWebsiteHasMicrophonePermissions){
+        //     alert(" Your browser doesnt have permission for accessing microphone", "warning");
         //     outgoing.audio = false;
         // }
         
-        // // Case around speaker abent
-        // if(!detectRTC.hasSpeakers){
-        //     //alert(" Your browser doesnt have speakers", "warning");      
+        // Case around speaker abent
+        // if(!DetectRTC.hasSpeakers){
+        //     alert(" Your browser doesnt have speakers", "warning");      
         // }
 
         resolve("done");
@@ -346,8 +346,9 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
                     })
                     //rtcConn.openOrJoin(event.channel)
                 ).then(function(res){
-                    updatePeerInfo(selfuserid || rtcConn.userid , selfusername, selfcolor, selfemail, role, "local");
-                    webrtcdev.info(" Trying to open a channel on WebRTC SDP ");
+                    let uid = selfuserid || rtcConn.userid;
+                    updatePeerInfo(uid , selfusername, selfcolor, selfemail, role, "local");
+                    webrtcdev.info(" [startJS] open-channel-resp - Trying to open a channel on WebRTC SDP  "  , uid , role);
                 }).then(
                     getCamMedia()
                 ).catch((reason) => {
@@ -395,9 +396,11 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
                 promise.then(
                     rtcConn.connectionDescription = rtcConn.join(event.channel),
                 ).then(
+                    // for a new joiner , update his local info 
                     updatePeerInfo(rtcConn.userid, selfusername, selfcolor, selfemail, role, "local"),
-                    webrtcdev.info(" Trying to join a channel on WebRTC SDP ")
+                    webrtcdev.info(" [startJS] join-channel-resp. Trying to join a channel on WebRTC SDP " , rtcConn.userid)
                 ).then(function(res){
+                    //for remote users also update webcallpeers
                     for (x in rtcConn.remoteUsers) {
                         remoterole =  "participant"; // will fail in case of 2 listeners 
                         updatePeerInfo(rtcConn.remoteUsers[x], remoteusername, remotecolor, remoteemail, remoterole , "remote");
@@ -457,7 +460,7 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
 set Real Time Communication connection
 */
 var setRtcConn = function (sessionid) {
-    alert("setRtcConn");
+
     return new Promise( (resolve, reject)=> {
 
         webrtcdev.log("[startjs - setRtcConn] initiating RTcConn"),
@@ -465,10 +468,10 @@ var setRtcConn = function (sessionid) {
         rtcConn = new RTCMultiConnection(),
 
         rtcConn.channel = this.sessionid,
-        rtcConn.socketURL = location.hostname+"8085/",
+        rtcConn.socketURL = location.hostname+":8085/",
 
         rtcConn.onNewParticipant = function (participantId, userPreferences) {
-            alert(" onNewParticipant");
+            
             webrtcdev.log("onNewParticipant", participantId, userPreferences);
             shownotification(remoteusername + " requests new participatation ");
             if (remoteobj.maxAllowed !="unlimited " && webcallpeers.length <= remoteobj.maxAllowed) {
@@ -481,7 +484,7 @@ var setRtcConn = function (sessionid) {
         },
 
         rtcConn.onopen = function (event) {
-            alert(" onopen");
+            
             webrtcdev.log("rtcconn onopen " + rtcConn.connectionType);
             try {
 
@@ -1634,6 +1637,13 @@ function updateWebCallView(peerInfo){
      */
     function updatePeerInfo(userid , username , usecolor , useremail, userrole ,  type ){
         webrtcdev.log("updating peerInfo: " , userid , username , usecolor , useremail, userrole ,  type);
+
+        // if userid deosnt exist , exit
+        if (!userid){
+            return;
+        }
+
+        // if userid is already present in webcallpeers , exit
         for(var x in webcallpeers){
             if(webcallpeers[x].userid == userid) {
                 webrtcdev.log("UserID is already existing in webcallpeers");
