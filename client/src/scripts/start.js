@@ -397,13 +397,16 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
                     rtcConn.connectionDescription = rtcConn.join(event.channel),
                 ).then(
                     // for a new joiner , update his local info 
-                    updatePeerInfo(rtcConn.userid, selfusername, selfcolor, selfemail, role, "local"),
-                    webrtcdev.info(" [startJS] join-channel-resp. Trying to join a channel on WebRTC SDP " , rtcConn.userid)
+                    uid=rtcConn.userid||selfuserid,
+                    updatePeerInfo(uid, selfusername, selfcolor, selfemail, role, "local"),
+                    webrtcdev.info(" [startJS] join-channel-resp. Trying to join a channel on WebRTC SDP " , uid)
                 ).then(function(res){
                     //for remote users also update webcallpeers
                     for (x in rtcConn.remoteUsers) {
                         remoterole =  "participant"; // will fail in case of 2 listeners 
-                        updatePeerInfo(rtcConn.remoteUsers[x], remoteusername, remotecolor, remoteemail, remoterole , "remote");
+                        ruid=rtcConn.remoteUsers[x];
+                        updatePeerInfo(ruid, remoteusername, remotecolor, remoteemail, remoterole , "remote");
+                        webrtcdev.info(" [startJS] join-channel. Add remote peers " , ruid);
                         if (role == "inspector") shownotificationWarning("This session is being inspected ");
                     }
                 }).then(
@@ -489,6 +492,8 @@ var setRtcConn = function (sessionid) {
             try {
 
                 remoteUsers = rtcConn.remoteUsers;
+                if(!selfuserid) selfuserid = rtcConn.userid;
+                if(!sessionid) sessionid = rtcConn.sessionid;
                 // let index = remoteUsers.indexOf(selfuserid);
                 // if (index > -1) {
                 //   webrtcdev.log(" Splice remote users array "+ remoteUsers+ " -  index " , index , " for selfuserid " , selfuserid);

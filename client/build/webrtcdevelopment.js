@@ -7515,24 +7515,17 @@ function isChromeExtensionAvailable(callback) {
 function webrtcdevPrepareScreenShare(callback){
     webrtcdev.log("[screenshareJS] webrtcdevPrepareScreenShare ");
 
-    var time            = new Date().getUTCMilliseconds(); 
+    var time        = new Date().getUTCMilliseconds(); 
     if(screenRoomid == null)
-        screenRoomid    = "screenshare"+"_"+sessionid+"_"+time;
+        screenRoomid = "screenshare"+"_"+sessionid+"_"+time;
 
     localStorage.setItem("screenRoomid " , screenRoomid);
     webrtcdev.log("[screenshare JS] webrtcdevPrepareScreenShare" + screenRoomid);
     webrtcdev.log("[screenshare JS] filling up iceServers " , turn , webrtcdevIceServers);
 
-    scrConn  = new RTCMultiConnection();
-    if(turn && turn!='none'){
-        if(!webrtcdevIceServers) {
-            alert(" [screenshare JS] ICE server not found yet in screenshare session ");
-        }
-        scrConn.iceServers  = webrtcdevIceServers;      
-    }  
-    
+    scrConn  = new RTCMultiConnection(),
     scrConn.channel     = screenRoomid,
-    scrConn.socketURL   = socketAddr,
+    scrConn.socketURL   = location.hostname+":8085/" ,
     scrConn.session = {
         screen: true,
         oneway: true
@@ -7557,7 +7550,7 @@ function webrtcdevPrepareScreenShare(callback){
             document.getElementById(screenshareobj.screenshareContainer).appendChild(nameBox);
         }
 
-        //if(event.stream.isScreen){
+        if(event.stream.isScreen){
             if(event.type=="remote" && event.type!="local"){
                 shownotificationWarning("started streaming remote's screen");
                 webrtcdev.log("[screensharejs] on stream remote ");
@@ -7607,7 +7600,7 @@ function webrtcdevPrepareScreenShare(callback){
             setTimeout(function() {
                 event.mediaElement.play();
             }, 5000);*/
-        //}
+        }
     },
 
     scrConn.onstreamended = function(event) {
@@ -7627,14 +7620,39 @@ function webrtcdevPrepareScreenShare(callback){
 
         // event listener for Screen share stream ended 
         onScreenShareSEnded();
-    };
+    },
+    
+    scrConn.onopen = function (event) {    
+        webrtcdev.log("[screensharejs ] scrConn onopen " + scrConn.connectionType);
+    },
 
+    scrConn.onerror = function (err) {    
+        webrtcdev.error("[screensharejs ]scrConn error " + err);
+    },
+
+    scrConn.socketMessageEvent = 'scrRTCMultiConnection-Message',
+    scrConn.socketCustomEvent = 'scrRTCMultiConnection-Custom-Message';
+
+    if(turn && turn!='none'){
+        if(!webrtcdevIceServers) {
+            alert(" [screenshare JS] ICE server not found yet in screenshare session ");
+        }
+        scrConn.iceServers  = webrtcdevIceServers;      
+    } 
+
+    webrtcdev.info("[screensharejs] srcConn" , scrConn);
     webrtcdev.log("[screenshare JS] webrtcdevscreenshare calling callback for socket.io operations");
     //alert(" Preparing Screenshare "+ screenRoomid);
     setTimeout(callback(screenRoomid), 3000);
     
+
 }
 
+/**
+ * uprepares screenshare 
+ * @method
+ * @name webrtcdevSharescreen
+ */
 function webrtcdevSharescreen() {
     webrtcdev.log("[screenshare JS] webrtcdevSharescreen  , screenRoomid = " , screenRoomid );
 
@@ -7642,16 +7660,14 @@ function webrtcdevSharescreen() {
 
         //var selfuserid = "temp_"+(new Date().getUTCMilliseconds());
         scrConn.dontCaptureUserMedia = false,
-        //scrConn.captureUserMedia();
-        //scrConn.getUserMedia();
         scrConn.open(screenRoomid, function() {
             webrtcdev.log("[screenshare JS] Event : open-channel-screenshare" );
+            if(socket)
             socket.emit("open-channel-screenshare", {
                 channel    : screenRoomid,
                 sender     : selfuserid,
                 maxAllowed : 6
             });
-
             shownotification("Making a new session for screenshare" + screenRoomid);
         });
 
@@ -7677,10 +7693,19 @@ function webrtcdevSharescreen() {
     //webrtcdev.log("webrtcdevscreenshare . srcConn = " , scrConn , " | rtcConn = " ,  rtcConn);
 }
 
+/**
+ * update info about a peer in list of peers (webcallpeers)
+ * @method
+ * @name updatePeerInfo
+ * @param {string} userid
+ * @param {string} username
+ * @param {string} usercolor
+ * @param {string} type
+ */
 function connectScrWebRTC(type, channel , userid , remoteUsers){
     webrtcdev.log("connectScrWebRTC -> " , type, channel , userid , remoteUsers);
     if(type=="open"){
-        scrConn.connect(screenRoomid);
+        scrConn.openOrJoin(screenRoomid);
         shownotification("Connected to "+ screenRoomid + " for screenshare ");
     }else if(type=="join"){
         scrConn.join(screenRoomid);
@@ -26908,12 +26933,17 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
                 promise.then(
                     rtcConn.connectionDescription = rtcConn.join(event.channel),
                 ).then(
-                    updatePeerInfo(rtcConn.userid, selfusername, selfcolor, selfemail, role, "local"),
-                    webrtcdev.info(" [startJS] join-channel-resp  Trying to join a channel on WebRTC SDP " , uid)
+                    // for a new joiner , update his local info 
+                    uid=rtcConn.userid||selfuserid,
+                    updatePeerInfo(uid, selfusername, selfcolor, selfemail, role, "local"),
+                    webrtcdev.info(" [startJS] join-channel-resp. Trying to join a channel on WebRTC SDP " , uid)
                 ).then(function(res){
+                    //for remote users also update webcallpeers
                     for (x in rtcConn.remoteUsers) {
                         remoterole =  "participant"; // will fail in case of 2 listeners 
-                        updatePeerInfo(rtcConn.remoteUsers[x], remoteusername, remotecolor, remoteemail, remoterole , "remote");
+                        ruid=rtcConn.remoteUsers[x];
+                        updatePeerInfo(ruid, remoteusername, remotecolor, remoteemail, remoterole , "remote");
+                        webrtcdev.info(" [startJS] join-channel. Add remote peers " , ruid);
                         if (role == "inspector") shownotificationWarning("This session is being inspected ");
                     }
                 }).then(
@@ -26999,6 +27029,8 @@ var setRtcConn = function (sessionid) {
             try {
 
                 remoteUsers = rtcConn.remoteUsers;
+                if(!selfuserid) selfuserid = rtcConn.userid;
+                if(!sessionid) sessionid = rtcConn.sessionid;
                 // let index = remoteUsers.indexOf(selfuserid);
                 // if (index > -1) {
                 //   webrtcdev.log(" Splice remote users array "+ remoteUsers+ " -  index " , index , " for selfuserid " , selfuserid);
