@@ -211,7 +211,7 @@ function webrtcdevPrepareScreenShare(callback){
     },
 
     scrConn.onEntireSessionClosed = function(event){
-        webrtcdev.log("[screensharejs ] scrConn onEntireSessionClosed " , event);
+        webrtcdev.log("[screensharejs] scrConn onEntireSessionClosed " , event);
     },
 
     scrConn.socketMessageEvent = 'scrRTCMultiConnection-Message',
@@ -219,7 +219,8 @@ function webrtcdevPrepareScreenShare(callback){
 
     if(turn && turn!='none'){
         if(!webrtcdevIceServers) {
-            alert(" [screenshare JS] ICE server not found yet in screenshare session ");
+            webrtcdev.error("[screensharejs] ICE server not found yet in screenshare session");
+            alert("ICE server not found yet in screenshare session ");
         }
         scrConn.iceServers  = webrtcdevIceServers;      
     } 
@@ -469,7 +470,9 @@ function webrtcdevStopShareScreen(){
         //scrConn.onstreamended();
         //scrConn.close();
         scrConn.closeEntireSession();
-        webrtcdev.log("[screenshare JS] Sender stopped: screenRoomid "+ screenRoomid +" || Screen stoppped "  , scrConn , document.getElementById(screenshareobj.screenshareContainer));
+        webrtcdev.log("[screenshare JS] Sender stopped: screenRoomid ", screenRoomid ,
+                      "| Screen stoppped "  , scrConn , 
+                      "| container " , document.getElementById(screenshareobj.screenshareContainer));
         
         if(screenShareStreamLocal){
             screenShareStreamLocal.stop();
@@ -479,8 +482,8 @@ function webrtcdevStopShareScreen(){
         /*scrConn.leave();*/
         //removeScreenViewButton();
 
-    }catch(e){
-        webrtcdev.error(e);
+    }catch(err){
+        webrtcdev.error("[screensharejs] webrtcdevStopShareScreen - ", err);
     }
 }
 
@@ -490,11 +493,12 @@ function webrtcdevStopShareScreen(){
  * @name createOrAssignScreenviewButton
  */
 function createOrAssignScreenviewButton(){
-    if(screenshareobj.button.viewButton.id && document.getElementById(screenshareobj.button.viewButton.id)) 
-        let button =document.getElementById(screenshareobj.button.viewButton.id);
+    if(screenshareobj.button.viewButton.id && document.getElementById(screenshareobj.button.viewButton.id)) {
+        let button = document.getElementById(screenshareobj.button.viewButton.id);
         assignScreenViewButton(button);
-    else
+    }else{
         createScreenViewButton();
+    }
 }
 
 /**

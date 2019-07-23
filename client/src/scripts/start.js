@@ -1094,7 +1094,7 @@ var setWidgets = function (rtcConn) {
             }
             webrtcdev.log("chat widget loaded ");
         } else {
-            webrtcdev.log("chat widget not loaded ");
+            webrtcdev.warn("chat widget not loaded ");
         }
 
         // ---------------------------------- Screen record Widget --------------------------------------------------
@@ -1137,14 +1137,14 @@ var setWidgets = function (rtcConn) {
             if (screenrecordobj.button && screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
                 document.getElementById(screenrecordobj.button.id).className = "inactiveButton";
             }
-            webrtcdev.log(" screen record widget not loaded ");
+            webrtcdev.warn("[startjs] screen record widget loaded, but  widget not activated ");
         }
 
         // ---------------------------------- Screenshare Widget --------------------------------------------------
-        if (screenshareobj.active) {
+        if (screenshareobj && screenshareobj.active && role !="inspector") {
 
             detectExtension(screenshareobj.extensionID, function (status) {
-                webrtcdev.log("is screenshareobj extension installed  ? ", status);
+                webrtcdev.log("[startjs] Is screenshareobj extension installed ? ", status);
                 if (status == 'installed-enabled') {
                     var screenShareButton = createOrAssignScreenshareButton(screenshareobj);
                     hideScreenInstallButton();
@@ -1165,15 +1165,18 @@ var setWidgets = function (rtcConn) {
                     }
                 } else if (status == 'not-chrome') {
                     // using non-chrome browser
-                    alert(" Screen share extension only works in Chrome for now ");
+                    webrtcdev.error("[startjs] Not chrome , screenshare cant work ");
+                    alert("Screen share extension only works in Chrome for now ");
                 } else{
                     webrtcdev.error(" screen share extension's state is undefined ");
                 }
             });
 
             webrtcdev.log(" screen share widget loaded ");
+        } else if(screenshareobj && !screenshareobj.active){
+            webrtcdev.warn("[startjs] screen share widget loaded, but  widget not activated ");
         } else {
-            webrtcdev.log(" screen share widget not loaded ");
+            webrtcdev.warn(" screen share widget not loaded ");
         }
 
         // ---------------------------------- Reconnect Widget --------------------------------------------------
@@ -1182,15 +1185,15 @@ var setWidgets = function (rtcConn) {
                 webrtcdev.log("Rconnect Button Assigned");
                 assignButtonRedial(reconnectobj.button.id);
             } else {
-                webrtcdev.log("Rconnect Button created");
+                webrtcdev.log("Reconnect Button created");
                 createButtonRedial(reconnectobj);
             }
-            webrtcdev.log(" reconnect widget loacded ");
+            webrtcdev.log("Reconnect widget loaded ");
         } else if (reconnectobj && !reconnectobj.active) {
             if (reconnectobj.button && reconnectobj.button.id && document.getElementById(reconnectobj.button.id)) {
                 document.getElementById(reconnectobj.button.id).className = "inactiveButton";
             }
-            webrtcdev.log(" reconnect widget not loaded ");
+            webrtcdev.warn("Reconnect widget not loaded");
         }
 
         // ---------------------------------- Cursor Widget --------------------------------------------------
