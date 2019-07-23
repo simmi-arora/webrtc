@@ -7,6 +7,7 @@ var t = "";
 var e = null;
 var n = "";
 var rtcConn= null;
+var scrConn= null;
 var selfuserid=null , remoteUserId=null;
 var containerDiv;
 var webcallpeers=[];

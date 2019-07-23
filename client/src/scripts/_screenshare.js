@@ -8,13 +8,12 @@ var sourceId , screen_constraints , screenStreamId;
 var isFirefox = typeof window.InstallTrigger !== 'undefined';
 var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
 var isChrome = !!window.chrome && !isOpera;
-var isMobileDevice = !!navigator.userAgent.match(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile/i);
+// var isMobileDevice = !!navigator.userAgent.match(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile/i);
 
-var scrConn, screenCallback ;
+var screenCallback ;
 var iceServers=[];
 var signaler,screen,screenRoomid;
 var screenShareButton ;
-
 var screenShareStreamLocal = null;
 
 /**
@@ -26,6 +25,7 @@ var screenShareStreamLocal = null;
  */
 /* getsourceID in RTCmtulconn has been commented to make the below one active */
 function getSourceId(callback, audioPlusTab) {
+    webrtcdev.info("[screenshareJS] getSourceId from extension via postMessage to background");
     if (!callback)
         throw '"callback" parameter is mandatory.';
 
@@ -50,7 +50,7 @@ function getChromeExtensionStatus(extensionid, callback) {
         var image = document.createElement("img");
         image.src = "chrome-extension://" + extensionid + "/icon.png",
         image.onload = function() {
-            webrtcdev.info("screenshare extension " , image.src);
+            webrtcdev.info("[screenshareJS] getChromeExtensionStatus , screenshare extension " , image.src);
             chromeMediaSource = "screen",
             window.postMessage("webrtcdev-extension-presence", "*"),
             setTimeout(function() {
@@ -114,7 +114,7 @@ function webrtcdevPrepareScreenShare(callback){
         OfferToReceiveAudio: false,
         OfferToReceiveVideo: true
     },
-    scrConn.dontCaptureUserMedia = false,
+    // scrConn.dontCaptureUserMedia = false,
 
     scrConn.onMediaError = function(error, constraints) {
         webrtcdev.error(error, constraints);
@@ -130,7 +130,7 @@ function webrtcdevPrepareScreenShare(callback){
             document.getElementById(screenshareobj.screenshareContainer).appendChild(nameBox);
         }
 
-        if(event.stream.isScreen){
+        // if(event.stream.isScreen){
             if(event.type=="remote" && event.type!="local"){
                 shownotificationWarning("started streaming remote's screen");
                 webrtcdev.log("[screensharejs] on stream remote ");
@@ -180,12 +180,12 @@ function webrtcdevPrepareScreenShare(callback){
             setTimeout(function() {
                 event.mediaElement.play();
             }, 5000);*/
-        }
+        //}
     },
 
     scrConn.onstreamended = function(event) {
         if(event)
-            webrtcdev.log("[screenshare JS] onstreamended in _screenshare :" , event);
+            webrtcdev.log("[screenshare JS] onstreamended -" , event);
     
         if(document.getElementById(screenshareobj.screenshareContainer)){
             document.getElementById(screenshareobj.screenshareContainer).innerHTML="";
@@ -203,11 +203,15 @@ function webrtcdevPrepareScreenShare(callback){
     },
     
     scrConn.onopen = function (event) {    
-        webrtcdev.log("[screensharejs ] scrConn onopen " + scrConn.connectionType);
+        webrtcdev.log("[screensharejs ] scrConn onopen - " , scrConn.connectionType);
     },
 
     scrConn.onerror = function (err) {    
-        webrtcdev.error("[screensharejs ]scrConn error " + err);
+        webrtcdev.error("[screensharejs ]scrConn error - " , err);
+    },
+
+    scrConn.onEntireSessionClosed = function(event){
+        webrtcdev.log("[screensharejs ] scrConn onEntireSessionClosed " , event);
     },
 
     scrConn.socketMessageEvent = 'scrRTCMultiConnection-Message',
@@ -224,36 +228,38 @@ function webrtcdevPrepareScreenShare(callback){
     webrtcdev.log("[screenshare JS] webrtcdevscreenshare calling callback for socket.io operations");
     //alert(" Preparing Screenshare "+ screenRoomid);
     setTimeout(callback(screenRoomid), 3000);
-    
-
 }
 
 /**
- * uprepares screenshare 
+ * Prepares screenshare , send open channel and handled open channel reponse ,calls getusermedia in callback
  * @method
  * @name webrtcdevSharescreen
  */
 function webrtcdevSharescreen() {
-    webrtcdev.log("[screenshare JS] webrtcdevSharescreen  , screenRoomid = " , screenRoomid );
+    webrtcdev.log("[screenshare JS] webrtcdevSharescreen , preparing screenshare by initiating ScrConn");
 
-    webrtcdevPrepareScreenShare(function(screenRoomid){
-
+    webrtcdevPrepareScreenShare(function(scrroomid){
+        webrtcdev.log("[screenshare JS] call back from webrtcdevPrepareScreenShare , turn dontCaptureUserMedia to false");
         //var selfuserid = "temp_"+(new Date().getUTCMilliseconds());
-        scrConn.dontCaptureUserMedia = false,
-        scrConn.open(screenRoomid, function() {
-            webrtcdev.log("[screenshare JS] Event : open-channel-screenshare" );
-            if(socket)
-            socket.emit("open-channel-screenshare", {
-                channel    : screenRoomid,
-                sender     : selfuserid,
-                maxAllowed : 6
-            });
-            shownotification("Making a new session for screenshare" + screenRoomid);
+        //scrConn.dontCaptureUserMedia = false,
+        scrConn.getUserMedia();
+        scrConn.open(scrroomid, function() {
+            if(socket){
+                webrtcdev.log("[screenshare JS] Event : open-channel-screenshare with ", socket.io.uri);
+                socket.emit("open-channel-screenshare", {
+                    channel    : scrroomid,
+                    sender     : selfuserid,
+                    maxAllowed : 6
+                });
+                shownotification("Making a new session for screenshare" + scrroomid);
+            }else{
+                webrtcdev.error("socket doesnt exist ");
+            }
         });
 
         socket.on("open-channel-screenshare-resp",function(event) {
             webrtcdev.log("[screenshare JS] Event Handler : open-channel-screenshare-response " , event);
-            if(event) connectScrWebRTC("open" , screenRoomid, selfuserid, []); 
+            if(event) connectScrWebRTC("open" , scrroomid, selfuserid, []); 
         });
     });
     /*    
@@ -282,21 +288,28 @@ function webrtcdevSharescreen() {
  * @param {string} usercolor
  * @param {string} type
  */
-function connectScrWebRTC(type, channel , userid , remoteUsers){
-    webrtcdev.log("connectScrWebRTC -> " , type, channel , userid , remoteUsers);
+function connectScrWebRTC(type, scrroomid , userid , remoteUsers){
+    webrtcdev.log("[screenshare JS] connectScrWebRTC -> " , type, scrroomid , userid , remoteUsers);
     if(type=="open"){
-        scrConn.openOrJoin(screenRoomid);
-        shownotification("Connected to "+ screenRoomid + " for screenshare ");
+        scrConn.openOrJoin(scrroomid);
+        shownotification("Connected to "+ scrroomid + " for screenshare ");
     }else if(type=="join"){
-        scrConn.join(screenRoomid);
-        shownotification("Connected with existing Screenshare channel "+ screenRoomid);
+        scrConn.join(scrroomid);
+        shownotification("Connected with existing Screenshare channel "+ scrroomid);
     }else{
         shownotification("Connection type not found for Screenshare ");
+        webrtcdev.error("[screenshare JS] connectScrWebRTC - Connection type not found for Screenshare ");
     }
 }
 
+/**
+ * get screen contrsiants for get user media on screen 
+ * @method
+ * @name webrtcdevScreenConstraints
+ * @param {string} chromeMediaSourceId
+ */
 function webrtcdevScreenConstraints(chromeMediaSourceId) {
-    webrtcdev.log("[screenshare JS] webrtcdevScreenConstraints  - chromeMediaSourceId: ", chromeMediaSourceId);
+    webrtcdev.log("[screenshare JS] webrtcdevScreenConstraits  - chromeMediaSourceId: ", chromeMediaSourceId);
     screen_constraints = {
         audio: false,
         video: {
@@ -310,16 +323,8 @@ function webrtcdevScreenConstraints(chromeMediaSourceId) {
         }
     };
     
-    /*    
-    scrConn.getScreenConstraints = function(callback) {
-        alert("getScreenConstraints");
-        screen_constraints = scrConn.modifyScreenConstraints(screen_constraints);
-        webrtcdev.log("screen_constraints", screen_constraints);
-        callback(false, screen_constraints);
-        return;
-    };*/
     try {
-        webrtcdev.log(" screen getusermedia ");
+        webrtcdev.log("[screenshare JS] screen getusermedia ");
         navigator.getUserMedia(screen_constraints ,
             function stream(event) {
                 webrtcdev.log("[screenshare JS] screen stream event and container "  , event , screenshareobj.screenshareContainer);
@@ -381,7 +386,6 @@ function webrtcdevScreenConstraints(chromeMediaSourceId) {
                         alert("screenshare has neither streamid not id");
                     }
                 }, scrConn);
-
             },
             function error(err) {
                 webrtcdev.error("[screenshare JS] Error in webrtcdevScreenConstraints " , err);
@@ -462,8 +466,8 @@ function webrtcdevStopShareScreen(){
         });
 
         window.postMessage("webrtcdev-extension-stopsource", "*");
-        scrConn.onstreamended();
-        scrConn.close();
+        //scrConn.onstreamended();
+        //scrConn.close();
         scrConn.closeEntireSession();
         webrtcdev.log("[screenshare JS] Sender stopped: screenRoomid "+ screenRoomid +" || Screen stoppped "  , scrConn , document.getElementById(screenshareobj.screenshareContainer));
         
@@ -480,13 +484,24 @@ function webrtcdevStopShareScreen(){
     }
 }
 
+/**
+ * find if view button is provided or need to be created 
+ * @method
+ * @name createOrAssignScreenviewButton
+ */
 function createOrAssignScreenviewButton(){
     if(screenshareobj.button.viewButton.id && document.getElementById(screenshareobj.button.viewButton.id)) 
-        assignScreenViewButton();
+        let button =document.getElementById(screenshareobj.button.viewButton.id);
+        assignScreenViewButton(button);
     else
         createScreenViewButton();
 }
 
+/**
+ * create the view button for screnshare
+ * @method
+ * @name createScreenViewButton
+ */
 function createScreenViewButton(){
     if(document.getElementById("viewScreenShareButton"))
         return;
@@ -514,11 +529,15 @@ function createScreenViewButton(){
     }
 }
 
-function assignScreenViewButton(){
+/**
+ * assign the view button for screnshare with existing buttom dom
+ * @method
+ * @name assignScreenViewButton
+ */
+function assignScreenViewButton(button){
     /*    
     if(document.getElementById(screenshareobj.button.viewButton.id))
         return;*/
-    var button =document.getElementById(screenshareobj.button.viewButton.id);
     webrtcdevViewscreen(screenRoomid);
     button.onclick = function() {
         if(button.className==screenshareobj.button.viewButton.class_off){
@@ -533,6 +552,11 @@ function assignScreenViewButton(){
     };
 }
 
+/**
+ * if viewScreenShareButton button exists , remove it
+ * @method
+ * @name removeScreenViewButton
+ */
 function removeScreenViewButton(){
     if(document.getElementById("viewScreenShareButton")){
         var elem = document.getElementById("viewScreenShareButton");
@@ -541,6 +565,11 @@ function removeScreenViewButton(){
     return;
 }
 
+/**
+ * depricated after chrome removed inline installation : creates inline installation button for chrome 
+ * @method
+ * @name createScreenInstallButton
+ */
 function createScreenInstallButton(extensionID){
     var button= document.createElement("span");
     button.className = screenshareobj.button.installButton.class_off;
@@ -570,7 +599,7 @@ function assignScreenInstallButton(extensionID) {
     button.onclick= function(e) {    
         chrome.webstore.install("https://chrome.google.com/webstore/detail/"+extensionID,
             function(){
-                webrtcdev.log("Chrome extension inline installation - success from assignScreenInstallButton . Now  createOrAssignScreenshareButton with " , screenshareobj);
+                webrtcdev.log("Chrome extension inline installation - success from assignScreenInstallButton. Now createOrAssignScreenshareButton with " , screenshareobj);
                 button.hidden = true;
                 getSourceId(function () { }, true);
                 createOrAssignScreenshareButton(screenshareobj);
@@ -582,6 +611,11 @@ function assignScreenInstallButton(extensionID) {
     }
 }
 
+/**
+ * If not screenshare widget enbaled or the platfom is not supported for chrome extensions , hide screen instal button
+ * @method
+ * @name hideScreenInstallButton
+ */
 function hideScreenInstallButton(){
     var button=document.getElementById(screenshareobj.button.installButton.id);
     button.hidden=true;
@@ -644,18 +678,30 @@ function createScreenshareButton(){
  */
 function assignScreenShareButton(scrshareBtn){
     webrtcdev.log("assignScreenShareButton");
-    var button = document.getElementById(scrshareBtn.id);
+    let button = document.getElementById(scrshareBtn.id);
+    if(debug) {
+        // let debugbuttonid = document.createElement("div"); 
+        // debugbuttonid.innerHTML(debugbuttonid);
+        //button.appendChild("<div>"+button.id+"</div>");
+
+        // let debugbuttonstatus = document.createElement("div");
+        // debugbuttonstatus.id= button.id+"buttonstatus";
+        //button.appendChild("<div id="+button.id+"buttonstatus"+"></div>");
+    }
     button.onclick = function(event) {
         if(button.className == scrshareBtn.class_off){
+            // getSourceId(function () { }, true);
             webrtcdevSharescreen();
             button.className = scrshareBtn.class_on;
             button.innerHTML = scrshareBtn.html_on;
+            //f(debug) document.getElementById(button.id+"buttonstatus").innerHTML("Off");
         }else if(button.className == scrshareBtn.class_on){
             button.className = scrshareBtn.class_off;
             button.innerHTML = scrshareBtn.html_off;
             webrtcdevStopShareScreen();
+            //if(debug) document.getElementById(button.id+"buttonstatus").innerHTML("On");
         }else{
-            webrtcdev.log("[svreenshare js] createScreenshareButton ,classname neither on nor off" , creenShareButton.className);
+            webrtcdev.warn("[svreenshare js] createScreenshareButton ,classname neither on nor off" , creenShareButton.className);
         }
     }
     return button;
@@ -678,10 +724,10 @@ function showScreenShareButton(){
 window.addEventListener('message', onScreenshareExtensionCallback);*/
 
 function onScreenshareExtensionCallback(event){
-    webrtcdev.log("onScreenshareExtensionCallback" , event);
+    webrtcdev.log("[screenshare Js] onScreenshareExtensionCallback" , event);
 
     if (event.data.chromeExtensionStatus) {
-       webrtcdev.log(event.data.chromeExtensionStatus);
+       webrtcdev.log("event.data.chromeExtensionStatus ", event.data.chromeExtensionStatus);
     }
 
     if (event.data.sourceId) {
@@ -693,13 +739,20 @@ function onScreenshareExtensionCallback(event){
     }
 }
 
+/**
+ * Detects if extension is installed
+ * @method
+ * @name detectExtension
+ * @param {id} extensionID
+ * @param {callback} callback
+ */
 function detectExtension(extensionID , callback){
-    webrtcdev.log("detectExtension  ", extensionID);
+    webrtcdev.log("[screenshare Js] detectExtension  ", extensionID);
     return getChromeExtensionStatus(extensionID, function (status) {  
         //log sttaus 
-        webrtcdev.log("status extension ", status);
+        webrtcdev.log("[screenshare Js] extension status ", status);
         //reset extension's local storage objects 
-        webrtcdev.log("reset extension ", extensionID);
+        webrtcdev.log("[screenshare Js] reset extension ", extensionID);
         if (status !="not-installed")
             window.postMessage("reset-webrtcdev-extension", "*");
         callback(status);
@@ -712,6 +765,10 @@ function showSrcConn(){
     webrtcdev.log(" srcConn.peers.getAllParticipants() : " , srcConn.peers.getAllParticipants());
 }
 
+function resetAlertBox(){
+    document.getElementById("alertBox").hidden=false;
+    document.getElementById("alertBox").innerHTML="";
+}
 
 var counterBeforeFailureNotice=0;
 function screenshareNotification(message , type){
@@ -723,16 +780,14 @@ function screenshareNotification(message , type){
         if(type=="screenshareBegin"){
 
             var alertDiv =document.createElement("div");
-            document.getElementById("alertBox").hidden=false;
-            document.getElementById("alertBox").innerHTML="";
+            resetAlertBox();
             alertDiv.className="alert alert-info";
             alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ "You have begun sharing screen , waiting for peer to view";
             document.getElementById("alertBox").appendChild(alertDiv);
 
             setTimeout(function() {
                 var alertDiv = document.createElement("div");
-                document.getElementById("alertBox").hidden=false;
-                document.getElementById("alertBox").innerHTML="";
+                resetAlertBox();
                 alertDiv.className="alert alert-danger";
                 alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ "Peer was not able to view screen , please retry";
                 document.getElementById("alertBox").appendChild(alertDiv);
@@ -741,8 +796,7 @@ function screenshareNotification(message , type){
         }else if(type=="screenshareStartedViewing"){
                 
             var alertDiv =document.createElement("div");
-            document.getElementById("alertBox").hidden=false;
-            document.getElementById("alertBox").innerHTML="";
+            resetAlertBox();
             alertDiv.className="alert alert-success";
             alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ "Peer has started viewing screen ";        
             document.getElementById("alertBox").appendChild(alertDiv);
@@ -750,8 +804,7 @@ function screenshareNotification(message , type){
         }else if(type=="screenshareError"){
 
             var alertDiv = document.createElement("div");
-            document.getElementById("alertBox").hidden=false;
-            document.getElementById("alertBox").innerHTML="";
+            resetAlertBox();
             alertDiv.className="alert alert-danger";
             alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ "There was a error while sharing screen , please contact support ";
             document.getElementById("alertBox").appendChild(alertDiv);
@@ -763,9 +816,14 @@ function screenshareNotification(message , type){
     }else{
         alert(message);
     }
-
 }
 
+
+/**
+ * Install widnow
+ * @method
+ * @name createExtensionInstallWindow
+ */
 function createExtensionInstallWindow (){
     try{
         var modalBox = document.createElement("div");
