@@ -284,59 +284,69 @@ web dev Logger
 var webrtcdev = {};
 var webrtcdevlogs=[];
 
-// webrtcdev.log = function(){
-//   // var arg = getArgsJson(arguments);
-//   // document.getElementById("help-view-body").innerHTML += '[-]' + arg + "<br/>";
-//   if(isJSON(arguments)){
-//     let arg = JSON.stringify(arguments, undefined, 2);
-//     webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
-//   }else{
-//     let arg = getArgsJson(arguments);
-//     webrtcdevlogs.push("<p style='color:grey'>[-]" + arg + "</p>");
-//   }
-//   console.log(arguments);
-// };
+function setlogslevel(){
 
-// webrtcdev.info= function(){
-//   let arg = getArgsJson(arguments);
-//   webrtcdevlogs.push("<p style='color:blue'>[INFO]" + arg + "</p>");
-//   console.info(arguments);
-// };
+  if(debug){
+    
+    webrtcdev.log = console.log;
+    webrtcdev.info = console.info;
+    webrtcdev.debug = console.debug;
+    webrtcdev.warn = console.warn;
+    webrtcdev.error = console.error;
 
-//  webrtcdev.debug= function(){
-//   if(isJSON(arguments)){
-//     let arg = JSON.stringify(arguments, undefined, 2);
-//     webrtcdevlogs.push( "<pre style='color:green'>[DEBUG]" + arg + "</pre>");
-//   }else{
-//     let arg = getArgsJson(arguments);
-//     webrtcdevlogs.push("<p style='color:green'>[DEBUG]" + arg + "</p>");
-//   }
-//   console.debug(arguments);
-// };
+  }else{
 
-// webrtcdev.warn= function(){
-//   let arg = getArgsJson(arguments);
-//   webrtcdevlogs.push("<p style='color:yellow'>[WARN]" + arg + "</p>");
-//   console.warn(arguments);
-// };
+    webrtcdev.log = function(){
+      // var arg = getArgsJson(arguments);
+      // document.getElementById("help-view-body").innerHTML += '[-]' + arg + "<br/>";
+      if(isJSON(arguments)){
+        let arg = JSON.stringify(arguments, undefined, 2);
+        webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
+      }else{
+        let arg = getArgsJson(arguments);
+        webrtcdevlogs.push("<p style='color:grey'>[-]" + arg + "</p>");
+      }
+      console.log(arguments);
+    };
 
-// webrtcdev.error= function(){
-//   if(isJSON(arguments)){
-//     let arg = JSON.stringify(arguments, undefined, 2);
-//     webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
-//   }else{
-//     let arg = getArgsJson(arguments);
-//     webrtcdevlogs.push("<p style='color:red'>[ERROR]"+ arg + "</p>");
-//   }
-//    console.error(arguments);
-// };
+    webrtcdev.info= function(){
+      let arg = getArgsJson(arguments);
+      webrtcdevlogs.push("<p style='color:blue'>[INFO]" + arg + "</p>");
+      console.info(arguments);
+    };
 
+     webrtcdev.debug= function(){
+      if(isJSON(arguments)){
+        let arg = JSON.stringify(arguments, undefined, 2);
+        webrtcdevlogs.push( "<pre style='color:green'>[DEBUG]" + arg + "</pre>");
+      }else{
+        let arg = getArgsJson(arguments);
+        webrtcdevlogs.push("<p style='color:green'>[DEBUG]" + arg + "</p>");
+      }
+      console.debug(arguments);
+    };
 
-webrtcdev.log = console.log;
-webrtcdev.info = console.info;
-webrtcdev.debug = console.debug;
-webrtcdev.warn = console.warn;
-webrtcdev.error = console.error;
+    webrtcdev.warn= function(){
+      let arg = getArgsJson(arguments);
+      webrtcdevlogs.push("<p style='color:yellow'>[WARN]" + arg + "</p>");
+      console.warn(arguments);
+    };
+
+    webrtcdev.error= function(){
+      if(isJSON(arguments)){
+        let arg = JSON.stringify(arguments, undefined, 2);
+        webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
+      }else{
+        let arg = getArgsJson(arguments);
+        webrtcdevlogs.push("<p style='color:red'>[ERROR]"+ arg + "</p>");
+      }
+       console.error(arguments);
+    };
+  }
+
+}
+
+setlogslevel();
 
 /**
  * function to show bootstrap based notification to client
@@ -477,11 +487,29 @@ function spawnNotification(theBody,theIcon,theTitle) {
 
 
 
+'use strict';
+
+// Last Updated On: 2019-05-03 5:27:06 AM UTC
+
+// ________________
+// DetectRTC v1.3.9
+
+// Open-Sourced: https://github.com/muaz-khan/DetectRTC
+
+// --------------------------------------------------
+// Muaz Khan     - www.MuazKhan.com
+// MIT License   - www.WebRTC-Experiment.com/licence
+// --------------------------------------------------
+
 (function() {
 
-    'use strict';
-
     var browserFakeUserAgent = 'Fake/5.0 (FakeOS) AppleWebKit/123 (KHTML, like Gecko) Fake/12.3.4567.89 Fake/123.45';
+
+    var isNodejs = typeof process === 'object' && typeof process.versions === 'object' && process.versions.node && /*node-process*/ !process.browser;
+    if (isNodejs) {
+        var version = process.versions.node.toString().replace('v', '');
+        browserFakeUserAgent = 'Nodejs/' + version + ' (NodeOS) AppleWebKit/' + version + ' (KHTML, like Gecko) Nodejs/' + version + ' Nodejs/' + version
+    }
 
     (function(that) {
         if (typeof window !== 'undefined') {
@@ -498,15 +526,6 @@ function spawnNotification(theBody,theIcon,theTitle) {
             that.window = global;
         } else if (typeof window === 'undefined') {
             // window = this;
-        }
-
-        if (typeof document === 'undefined') {
-            /*global document:true */
-            that.document = {};
-
-            document.createElement = document.captureStream = document.mozCaptureStream = function() {
-                return {};
-            };
         }
 
         if (typeof location === 'undefined') {
@@ -550,10 +569,10 @@ function spawnNotification(theBody,theIcon,theTitle) {
     var isEdge = navigator.userAgent.indexOf('Edge') !== -1 && (!!navigator.msSaveOrOpenBlob || !!navigator.msSaveBlob);
 
     var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
-    var isFirefox = typeof window.InstallTrigger !== 'undefined';
-    var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1 && ('netscape' in window) && / rv:/.test(navigator.userAgent);
+    var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     var isChrome = !!window.chrome && !isOpera;
-    var isIE = !!document.documentMode && !isEdge;
+    var isIE = typeof document !== 'undefined' && !!document.documentMode && !isEdge;
 
     // this one can also be used:
     // https://www.websocket.org/js/stuff.js (DetectBrowser.js)
@@ -577,11 +596,17 @@ function spawnNotification(theBody,theIcon,theTitle) {
                 majorVersion = 0;
             }
         }
-        // In MSIE, the true version is after 'MSIE' in userAgent
+        // In MSIE version <=10, the true version is after 'MSIE' in userAgent
+        // In IE 11, look for the string after 'rv:'
         else if (isIE) {
-            verOffset = nAgt.indexOf('MSIE');
+            verOffset = nAgt.indexOf('rv:');
+            if (verOffset > 0) { //IE 11
+                fullVersion = nAgt.substring(verOffset + 3);
+            } else { //IE 10 or earlier
+                verOffset = nAgt.indexOf('MSIE');
+                fullVersion = nAgt.substring(verOffset + 5);
+            }
             browserName = 'IE';
-            fullVersion = nAgt.substring(verOffset + 5);
         }
         // In Chrome, the true version is after 'Chrome' 
         else if (isChrome) {
@@ -591,12 +616,28 @@ function spawnNotification(theBody,theIcon,theTitle) {
         }
         // In Safari, the true version is after 'Safari' or after 'Version' 
         else if (isSafari) {
-            verOffset = nAgt.indexOf('Safari');
-            browserName = 'Safari';
-            fullVersion = nAgt.substring(verOffset + 7);
+            // both and safri and chrome has same userAgent
+            if (nAgt.indexOf('CriOS') !== -1) {
+                verOffset = nAgt.indexOf('CriOS');
+                browserName = 'Chrome';
+                fullVersion = nAgt.substring(verOffset + 6);
+            } else if (nAgt.indexOf('FxiOS') !== -1) {
+                verOffset = nAgt.indexOf('FxiOS');
+                browserName = 'Firefox';
+                fullVersion = nAgt.substring(verOffset + 6);
+            } else {
+                verOffset = nAgt.indexOf('Safari');
 
-            if ((verOffset = nAgt.indexOf('Version')) !== -1) {
-                fullVersion = nAgt.substring(verOffset + 8);
+                browserName = 'Safari';
+                fullVersion = nAgt.substring(verOffset + 7);
+
+                if ((verOffset = nAgt.indexOf('Version')) !== -1) {
+                    fullVersion = nAgt.substring(verOffset + 8);
+                }
+
+                if (navigator.userAgent.indexOf('Version/') !== -1) {
+                    fullVersion = navigator.userAgent.split('Version/')[1].split(' ')[0];
+                }
             }
         }
         // In Firefox, the true version is after 'Firefox' 
@@ -618,16 +659,12 @@ function spawnNotification(theBody,theIcon,theTitle) {
 
         if (isEdge) {
             browserName = 'Edge';
-            // fullVersion = navigator.userAgent.split('Edge/')[1];
-            fullVersion = parseInt(navigator.userAgent.match(/Edge\/(\d+).(\d+)$/)[2], 10).toString();
+            fullVersion = navigator.userAgent.split('Edge/')[1];
+            // fullVersion = parseInt(navigator.userAgent.match(/Edge\/(\d+).(\d+)$/)[2], 10).toString();
         }
 
-        // trim the fullVersion string at semicolon/space if present
-        if ((ix = fullVersion.indexOf(';')) !== -1) {
-            fullVersion = fullVersion.substring(0, ix);
-        }
-
-        if ((ix = fullVersion.indexOf(' ')) !== -1) {
+        // trim the fullVersion string at semicolon/space/bracket if present
+        if ((ix = fullVersion.search(/[; \)]/)) !== -1) {
             fullVersion = fullVersion.substring(0, ix);
         }
 
@@ -684,59 +721,65 @@ function spawnNotification(theBody,theIcon,theTitle) {
     function detectPrivateMode(callback) {
         var isPrivate;
 
-        if (window.webkitRequestFileSystem) {
-            window.webkitRequestFileSystem(
-                window.TEMPORARY, 1,
-                function() {
-                    isPrivate = false;
-                },
-                function(e) {
-                    isPrivate = true;
-                }
-            );
-        } else if (window.indexedDB && /Firefox/.test(window.navigator.userAgent)) {
-            var db;
-            try {
-                db = window.indexedDB.open('test');
-                db.onerror = function() {
-                    return true;
-                };
-            } catch (e) {
-                isPrivate = true;
-            }
+        try {
 
-            if (typeof isPrivate === 'undefined') {
-                retry(
-                    function isDone() {
-                        return db.readyState === 'done' ? true : false;
+            if (window.webkitRequestFileSystem) {
+                window.webkitRequestFileSystem(
+                    window.TEMPORARY, 1,
+                    function() {
+                        isPrivate = false;
                     },
-                    function next(isTimeout) {
-                        if (!isTimeout) {
-                            isPrivate = db.result ? false : true;
-                        }
+                    function(e) {
+                        isPrivate = true;
                     }
                 );
-            }
-        } else if (isIE10OrLater(window.navigator.userAgent)) {
-            isPrivate = false;
-            try {
-                if (!window.indexedDB) {
+            } else if (window.indexedDB && /Firefox/.test(window.navigator.userAgent)) {
+                var db;
+                try {
+                    db = window.indexedDB.open('test');
+                    db.onerror = function() {
+                        return true;
+                    };
+                } catch (e) {
                     isPrivate = true;
                 }
-            } catch (e) {
-                isPrivate = true;
-            }
-        } else if (window.localStorage && /Safari/.test(window.navigator.userAgent)) {
-            try {
-                window.localStorage.setItem('test', 1);
-            } catch (e) {
-                isPrivate = true;
+
+                if (typeof isPrivate === 'undefined') {
+                    retry(
+                        function isDone() {
+                            return db.readyState === 'done' ? true : false;
+                        },
+                        function next(isTimeout) {
+                            if (!isTimeout) {
+                                isPrivate = db.result ? false : true;
+                            }
+                        }
+                    );
+                }
+            } else if (isIE10OrLater(window.navigator.userAgent)) {
+                isPrivate = false;
+                try {
+                    if (!window.indexedDB) {
+                        isPrivate = true;
+                    }
+                } catch (e) {
+                    isPrivate = true;
+                }
+            } else if (window.localStorage && /Safari/.test(window.navigator.userAgent)) {
+                try {
+                    window.localStorage.setItem('test', 1);
+                } catch (e) {
+                    isPrivate = true;
+                }
+
+                if (typeof isPrivate === 'undefined') {
+                    isPrivate = false;
+                    window.localStorage.removeItem('test');
+                }
             }
 
-            if (typeof isPrivate === 'undefined') {
-                isPrivate = false;
-                window.localStorage.removeItem('test');
-            }
+        } catch (e) {
+            isPrivate = false;
         }
 
         retry(
@@ -803,6 +846,9 @@ function spawnNotification(theBody,theIcon,theTitle) {
 
         var os = unknown;
         var clientStrings = [{
+            s: 'Chrome OS',
+            r: /CrOS/
+        }, {
             s: 'Windows 10',
             r: /(Windows 10.0|Windows NT 10.0)/
         }, {
@@ -881,8 +927,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
             s: 'Search Bot',
             r: /(nuhk|Googlebot|Yammybot|Openbot|Slurp|MSNBot|Ask Jeeves\/Teoma|ia_archiver)/
         }];
-        for (var id in clientStrings) {
-            var cs = clientStrings[id];
+        for (var i = 0, cs; cs = clientStrings[i]; i++) {
             if (cs.r.test(nAgt)) {
                 os = cs.s;
                 break;
@@ -926,17 +971,39 @@ function spawnNotification(theBody,theIcon,theTitle) {
     var osName = 'Unknown OS';
     var osVersion = 'Unknown OS Version';
 
-    if (isMobile.any()) {
-        osName = isMobile.getOsName();
-    } else {
-        var osInfo = detectDesktopOS();
+    function getAndroidVersion(ua) {
+        ua = (ua || navigator.userAgent).toLowerCase();
+        var match = ua.match(/android\s([0-9\.]*)/);
+        return match ? match[1] : false;
+    }
+
+    var osInfo = detectDesktopOS();
+
+    if (osInfo && osInfo.osName && osInfo.osName != '-') {
         osName = osInfo.osName;
         osVersion = osInfo.osVersion;
+    } else if (isMobile.any()) {
+        osName = isMobile.getOsName();
+
+        if (osName == 'Android') {
+            osVersion = getAndroidVersion();
+        }
+    }
+
+    var isNodejs = typeof process === 'object' && typeof process.versions === 'object' && process.versions.node;
+
+    if (osName === 'Unknown OS' && isNodejs) {
+        osName = 'Nodejs';
+        osVersion = process.versions.node.toString().replace('v', '');
     }
 
     var isCanvasSupportsStreamCapturing = false;
     var isVideoSupportsStreamCapturing = false;
     ['captureStream', 'mozCaptureStream', 'webkitCaptureStream'].forEach(function(item) {
+        if (typeof document === 'undefined' || typeof document.createElement !== 'function') {
+            return;
+        }
+
         if (!isCanvasSupportsStreamCapturing && item in document.createElement('canvas')) {
             isCanvasSupportsStreamCapturing = true;
         }
@@ -946,132 +1013,139 @@ function spawnNotification(theBody,theIcon,theTitle) {
         }
     });
 
+    var regexIpv4Local = /^(192\.168\.|169\.254\.|10\.|172\.(1[6-9]|2\d|3[01]))/,
+        regexIpv4 = /([0-9]{1,3}(\.[0-9]{1,3}){3})/,
+        regexIpv6 = /[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7}/;
+
     // via: https://github.com/diafygi/webrtc-ips
-    function DetectLocalIPAddress(callback) {
+    function DetectLocalIPAddress(callback, stream) {
         if (!DetectRTC.isWebRTCSupported) {
             return;
         }
 
-        if (DetectRTC.isORTCSupported) {
+        var isPublic = true,
+            isIpv4 = true;
+        getIPs(function(ip) {
+            if (!ip) {
+                callback(); // Pass nothing to tell that ICE-gathering-ended
+            } else if (ip.match(regexIpv4Local)) {
+                isPublic = false;
+                callback('Local: ' + ip, isPublic, isIpv4);
+            } else if (ip.match(regexIpv6)) { //via https://ourcodeworld.com/articles/read/257/how-to-get-the-client-ip-address-with-javascript-only
+                isIpv4 = false;
+                callback('Public: ' + ip, isPublic, isIpv4);
+            } else {
+                callback('Public: ' + ip, isPublic, isIpv4);
+            }
+        }, stream);
+    }
+
+    function getIPs(callback, stream) {
+        if (typeof document === 'undefined' || typeof document.getElementById !== 'function') {
             return;
         }
 
-        getIPs(function(ip) {
-            //local IPs
-            if (ip.match(/^(192\.168\.|169\.254\.|10\.|172\.(1[6-9]|2\d|3[01]))/)) {
-                callback('Local: ' + ip);
-            }
-
-            //assume the rest are public IPs
-            else {
-                callback('Public: ' + ip);
-            }
-        });
-    }
-
-    //get the IP addresses associated with an account
-    function getIPs(callback) {
         var ipDuplicates = {};
 
-        //compatibility for firefox and chrome
         var RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
-        var useWebKit = !!window.webkitRTCPeerConnection;
 
-        // bypass naive webrtc blocking using an iframe
         if (!RTCPeerConnection) {
             var iframe = document.getElementById('iframe');
             if (!iframe) {
-                //<iframe id="iframe" sandbox="allow-same-origin" style="display: none"></iframe>
-                throw 'NOTE: you need to have an iframe in the page right above the script tag.';
+                return;
             }
             var win = iframe.contentWindow;
             RTCPeerConnection = win.RTCPeerConnection || win.mozRTCPeerConnection || win.webkitRTCPeerConnection;
-            useWebKit = !!win.webkitRTCPeerConnection;
         }
 
-        // if still no RTCPeerConnection then it is not supported by the browser so just return
         if (!RTCPeerConnection) {
             return;
         }
 
-        //minimal requirements for data connection
-        var mediaConstraints = {
-            optional: [{
-                RtpDataChannels: true
+        var peerConfig = null;
+
+        if (DetectRTC.browser === 'Chrome' && DetectRTC.browser.version < 58) {
+            // todo: add support for older Opera
+            peerConfig = {
+                optional: [{
+                    RtpDataChannels: true
+                }]
+            };
+        }
+
+        var servers = {
+            iceServers: [{
+                urls: 'stun:stun.l.google.com:19302'
             }]
         };
 
-        //firefox already has a default stun server in about:config
-        //    media.peerconnection.default_iceservers =
-        //    [{"url": "stun:stun.services.mozilla.com"}]
-        var servers;
+        var pc = new RTCPeerConnection(servers, peerConfig);
 
-        //add same stun server for chrome
-        if (useWebKit) {
-            servers = {
-                iceServers: [{
-                    urls: 'stun:stun.services.mozilla.com'
-                }]
-            };
-
-            if (typeof DetectRTC !== 'undefined' && DetectRTC.browser.isFirefox && DetectRTC.browser.version <= 38) {
-                servers[0] = {
-                    url: servers[0].urls
-                };
+        if (stream) {
+            if (pc.addStream) {
+                pc.addStream(stream);
+            } else if (pc.addTrack && stream.getTracks()[0]) {
+                pc.addTrack(stream.getTracks()[0], stream);
             }
         }
 
-        //construct a new RTCPeerConnection
-        var pc = new RTCPeerConnection(servers, mediaConstraints);
-
         function handleCandidate(candidate) {
-            //match just the IP address
-            var ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3})/;
-            var match = ipRegex.exec(candidate);
+            if (!candidate) {
+                callback(); // Pass nothing to tell that ICE-gathering-ended
+                return;
+            }
+
+            var match = regexIpv4.exec(candidate);
             if (!match) {
-                webrtcdev.warn('Could not match IP address in', candidate);
                 return;
             }
             var ipAddress = match[1];
+            var isPublic = (candidate.match(regexIpv4Local)),
+                isIpv4 = true;
 
-            //remove duplicates
             if (ipDuplicates[ipAddress] === undefined) {
-                callback(ipAddress);
+                callback(ipAddress, isPublic, isIpv4);
             }
 
             ipDuplicates[ipAddress] = true;
         }
 
-        //listen for candidate events
-        pc.onicecandidate = function(ice) {
-            //skip non-candidate events
-            if (ice.candidate) {
-                handleCandidate(ice.candidate.candidate);
+        // listen for candidate events
+        pc.onicecandidate = function(event) {
+            if (event.candidate && event.candidate.candidate) {
+                handleCandidate(event.candidate.candidate);
+            } else {
+                handleCandidate(); // Pass nothing to tell that ICE-gathering-ended
             }
         };
 
-        //create a bogus data channel
-        pc.createDataChannel('');
+        // create data channel
+        if (!stream) {
+            try {
+                pc.createDataChannel('sctp', {});
+            } catch (e) {}
+        }
 
-        //create an offer sdp
-        pc.createOffer(function(result) {
+        // create an offer sdp
+        if (DetectRTC.isPromisesSupported) {
+            pc.createOffer().then(function(result) {
+                pc.setLocalDescription(result).then(afterCreateOffer);
+            });
+        } else {
+            pc.createOffer(function(result) {
+                pc.setLocalDescription(result, afterCreateOffer, function() {});
+            }, function() {});
+        }
 
-            //trigger the stun server request
-            pc.setLocalDescription(result, function() {}, function() {});
-
-        }, function() {});
-
-        //wait for a while to let everything done
-        setTimeout(function() {
-            //read candidate info from local description
+        function afterCreateOffer() {
             var lines = pc.localDescription.sdp.split('\n');
 
             lines.forEach(function(line) {
-                if (line.indexOf('a=candidate:') === 0) {
+                if (line && line.indexOf('a=candidate:') === 0) {
                     handleCandidate(line);
                 }
             });
-        }, 1000);
+        }
     }
 
     var MediaDevices = [];
@@ -1084,9 +1158,14 @@ function spawnNotification(theBody,theIcon,theTitle) {
         // Firefox 38+ seems having support of enumerateDevices
         // Thanks @xdumaine/enumerateDevices
         navigator.enumerateDevices = function(callback) {
-            navigator.mediaDevices.enumerateDevices().then(callback).catch(function() {
+            var enumerateDevices = navigator.mediaDevices.enumerateDevices();
+            if (enumerateDevices && enumerateDevices.then) {
+                navigator.mediaDevices.enumerateDevices().then(callback).catch(function() {
+                    callback([]);
+                });
+            } else {
                 callback([]);
-            });
+            }
         };
     }
 
@@ -1137,6 +1216,13 @@ function spawnNotification(theBody,theIcon,theTitle) {
         audioOutputDevices = [];
         videoInputDevices = [];
 
+        hasMicrophone = false;
+        hasSpeakers = false;
+        hasWebcam = false;
+
+        isWebsiteHasMicrophonePermissions = false;
+        isWebsiteHasWebcamPermissions = false;
+
         // to prevent duplication
         var alreadyUsedDevices = {};
 
@@ -1151,7 +1237,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
                     } catch (e) {}
                 }
 
-                if (alreadyUsedDevices[device.deviceId]) {
+                if (alreadyUsedDevices[device.deviceId + device.label + device.kind]) {
                     return;
                 }
 
@@ -1173,13 +1259,25 @@ function spawnNotification(theBody,theIcon,theTitle) {
                 }
 
                 if (!device.label) {
-                    device.label = 'Please invoke getUserMedia once.';
-                    if (location.protocol !== 'https:') {
-                        if (document.domain.search && document.domain.search(/localhost|127.0./g) === -1) {
+                    device.isCustomLabel = true;
+
+                    if (device.kind === 'videoinput') {
+                        device.label = 'Camera ' + (videoInputDevices.length + 1);
+                    } else if (device.kind === 'audioinput') {
+                        device.label = 'Microphone ' + (audioInputDevices.length + 1);
+                    } else if (device.kind === 'audiooutput') {
+                        device.label = 'Speaker ' + (audioOutputDevices.length + 1);
+                    } else {
+                        device.label = 'Please invoke getUserMedia once.';
+                    }
+
+                    if (typeof DetectRTC !== 'undefined' && DetectRTC.browser.isChrome && DetectRTC.browser.version >= 46 && !/^(https:|chrome-extension:)$/g.test(location.protocol || '')) {
+                        if (typeof document !== 'undefined' && typeof document.domain === 'string' && document.domain.search && document.domain.search(/localhost|127.0./g) === -1) {
                             device.label = 'HTTPs is required to get label of this ' + device.kind + ' device.';
                         }
                     }
                 } else {
+                    // Firefox on Android still returns empty label
                     if (device.kind === 'videoinput' && !isWebsiteHasWebcamPermissions) {
                         isWebsiteHasWebcamPermissions = true;
                     }
@@ -1216,7 +1314,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
                 // there is no 'videoouput' in the spec.
                 MediaDevices.push(device);
 
-                alreadyUsedDevices[device.deviceId] = device;
+                alreadyUsedDevices[device.deviceId + device.label + device.kind] = device;
             });
 
             if (typeof DetectRTC !== 'undefined') {
@@ -1240,9 +1338,6 @@ function spawnNotification(theBody,theIcon,theTitle) {
         });
     }
 
-    // check for microphone/camera support!
-    checkDeviceSupport();
-
     var DetectRTC = window.DetectRTC || {};
 
     // ----------
@@ -1256,7 +1351,11 @@ function spawnNotification(theBody,theIcon,theTitle) {
     // DetectRTC.isChrome || DetectRTC.isFirefox || DetectRTC.isEdge
     DetectRTC.browser['is' + DetectRTC.browser.name] = true;
 
-    var isNodeWebkit = !!(window.process && (typeof window.process === 'object') && window.process.versions && window.process.versions['node-webkit']);
+    // -----------
+    DetectRTC.osName = osName;
+    DetectRTC.osVersion = osVersion;
+
+    var isNodeWebkit = typeof process === 'object' && typeof process.versions === 'object' && process.versions['node-webkit'];
 
     // --------- Detect if system supports WebRTC 1.0 or WebRTC 1.1.
     var isWebRTCSupported = false;
@@ -1280,10 +1379,23 @@ function spawnNotification(theBody,theIcon,theTitle) {
         isScreenCapturingSupported = true;
     } else if (DetectRTC.browser.isFirefox && DetectRTC.browser.version >= 34) {
         isScreenCapturingSupported = true;
+    } else if (DetectRTC.browser.isEdge && DetectRTC.browser.version >= 17) {
+        isScreenCapturingSupported = true;
+    } else if (DetectRTC.osName === 'Android' && DetectRTC.browser.isChrome) {
+        isScreenCapturingSupported = true;
     }
 
-    if (location.protocol !== 'https:') {
-        isScreenCapturingSupported = false;
+    if (!!navigator.getDisplayMedia || (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia)) {
+        isScreenCapturingSupported = true;
+    }
+
+    if (!/^(https:|chrome-extension:)$/g.test(location.protocol || '')) {
+        var isNonLocalHost = typeof document !== 'undefined' && typeof document.domain === 'string' && document.domain.search && document.domain.search(/localhost|127.0./g) === -1;
+        if (isNonLocalHost && (DetectRTC.browser.isChrome || DetectRTC.browser.isEdge || DetectRTC.browser.isOpera)) {
+            isScreenCapturingSupported = false;
+        } else if (DetectRTC.browser.isFirefox) {
+            isScreenCapturingSupported = false;
+        }
     }
     DetectRTC.isScreenCapturingSupported = isScreenCapturingSupported;
 
@@ -1338,14 +1450,17 @@ function spawnNotification(theBody,theIcon,theTitle) {
     } else if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         isGetUserMediaSupported = true;
     }
-    if (DetectRTC.browser.isChrome && DetectRTC.browser.version >= 46 && location.protocol !== 'https:') {
-        DetectRTC.isGetUserMediaSupported = 'Requires HTTPs';
+
+    if (DetectRTC.browser.isChrome && DetectRTC.browser.version >= 46 && !/^(https:|chrome-extension:)$/g.test(location.protocol || '')) {
+        if (typeof document !== 'undefined' && typeof document.domain === 'string' && document.domain.search && document.domain.search(/localhost|127.0./g) === -1) {
+            isGetUserMediaSupported = 'Requires HTTPs';
+        }
+    }
+
+    if (DetectRTC.osName === 'Nodejs') {
+        isGetUserMediaSupported = false;
     }
     DetectRTC.isGetUserMediaSupported = isGetUserMediaSupported;
-
-    // -----------
-    DetectRTC.osName = osName;
-    DetectRTC.osVersion = osVersion;
 
     var displayResolution = '';
     if (screen.width) {
@@ -1354,6 +1469,16 @@ function spawnNotification(theBody,theIcon,theTitle) {
         displayResolution += '' + width + ' x ' + height;
     }
     DetectRTC.displayResolution = displayResolution;
+
+    function getAspectRatio(w, h) {
+        function gcd(a, b) {
+            return (b == 0) ? a : gcd(b, a % b);
+        }
+        var r = gcd(w, h);
+        return (w / r) / (h / r);
+    }
+
+    DetectRTC.displayAspectRatio = getAspectRatio(screen.width, screen.height).toFixed(2);
 
     // ----------
     DetectRTC.isCanvasSupportsStreamCapturing = isCanvasSupportsStreamCapturing;
@@ -1375,12 +1500,23 @@ function spawnNotification(theBody,theIcon,theTitle) {
     DetectRTC.isWebSocketsSupported = 'WebSocket' in window && 2 === window.WebSocket.CLOSING;
     DetectRTC.isWebSocketsBlocked = !DetectRTC.isWebSocketsSupported;
 
+    if (DetectRTC.osName === 'Nodejs') {
+        DetectRTC.isWebSocketsSupported = true;
+        DetectRTC.isWebSocketsBlocked = false;
+    }
+
     DetectRTC.checkWebSocketsSupport = function(callback) {
         callback = callback || function() {};
         try {
+            var starttime;
             var websocket = new WebSocket('wss://echo.websocket.org:443/');
             websocket.onopen = function() {
                 DetectRTC.isWebSocketsBlocked = false;
+                starttime = (new Date).getTime();
+                websocket.send('ping');
+            };
+            websocket.onmessage = function() {
+                DetectRTC.WebsocketLatency = (new Date).getTime() - starttime + 'ms';
                 callback();
                 websocket.close();
                 websocket = null;
@@ -1401,7 +1537,17 @@ function spawnNotification(theBody,theIcon,theTitle) {
         checkDeviceSupport(callback);
     };
 
-    DetectRTC.MediaDevices = MediaDevices;
+    // check for microphone/camera support!
+    if (typeof checkDeviceSupport === 'function') {
+        // checkDeviceSupport();
+    }
+
+    if (typeof MediaDevices !== 'undefined') {
+        DetectRTC.MediaDevices = MediaDevices;
+    } else {
+        DetectRTC.MediaDevices = [];
+    }
+
     DetectRTC.hasMicrophone = hasMicrophone;
     DetectRTC.hasSpeakers = hasSpeakers;
     DetectRTC.hasWebcam = hasWebcam;
@@ -1415,7 +1561,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
 
     // ------
     var isSetSinkIdSupported = false;
-    if ('setSinkId' in document.createElement('video')) {
+    if (typeof document !== 'undefined' && typeof document.createElement === 'function' && 'setSinkId' in document.createElement('video')) {
         isSetSinkIdSupported = true;
     }
     DetectRTC.isSetSinkIdSupported = isSetSinkIdSupported;
@@ -1462,6 +1608,9 @@ function spawnNotification(theBody,theIcon,theTitle) {
 
     DetectRTC.isPromisesSupported = !!('Promise' in window);
 
+    // version is generated by "grunt"
+    DetectRTC.version = '1.3.9';
+
     if (typeof DetectRTC === 'undefined') {
         window.DetectRTC = {};
     }
@@ -1472,7 +1621,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
         MediaStream = webkitMediaStream;
     }
 
-    if (typeof MediaStream !== 'undefined') {
+    if (typeof MediaStream !== 'undefined' && typeof MediaStream === 'function') {
         DetectRTC.MediaStream = Object.keys(MediaStream.prototype);
     } else DetectRTC.MediaStream = false;
 
@@ -1498,6 +1647,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
         });
     }
 })();
+
 'use strict';
 
 // Last time updated: 2019-07-08 4:54:27 PM UTC
@@ -7461,7 +7611,7 @@ function getSourceId(callback, audioPlusTab) {
  * @param {string} audioPlusTab
  */
 function getChromeExtensionStatus(extensionid, callback) {
-    if (2 != arguments.length && (callback = extensionid, extensionid = window.RMCExtensionID || "ajhifddimkapgcifgcodmmfdlknahffk"), isFirefox)
+    if (2 != arguments.length && (callback = extensionid, extensionid = window.RMCExtensionID || "jpcjjkpbiepbmhklnjoahacppaemhmpd"), isFirefox)
         return callback("not-chrome");
     
     if(!extensionid)
@@ -7664,7 +7814,7 @@ function webrtcdevSharescreen() {
         webrtcdev.log("[screenshare JS] call back from webrtcdevPrepareScreenShare , turn dontCaptureUserMedia to false");
         //var selfuserid = "temp_"+(new Date().getUTCMilliseconds());
         //scrConn.dontCaptureUserMedia = false,
-        scrConn.getUserMedia();
+        //scrConn.getUserMedia();
         scrConn.open(scrroomid, function() {
             if(socket){
                 webrtcdev.log("[screenshare JS] Event : open-channel-screenshare with ", socket.io.uri);
@@ -8019,6 +8169,11 @@ function createScreenInstallButton(extensionID){
     document.getElementById("topIconHolder_ul").appendChild(li);
 }
 
+/**
+ * depricated after chrome removed inline installation : creates inline installation button for chrome 
+ * @method
+ * @name assignScreenInstallButton
+ */
 function assignScreenInstallButton(extensionID) {
     var button = document.getElementById(screenshareobj.button.installButton.id);
     button.onclick= function(e) {    
@@ -26640,7 +26795,7 @@ var pendingFileTransfer=[];
  * @param {json} session - session object.
  * @param {json} widgets - widgets object.
  */
-var webrtcdevconstructor= function(_localobj , _remoteobj , incoming, outgoing , session, widgets){
+var webrtcdevconstructor = function(_localobj , _remoteobj , incoming, outgoing , session, widgets){
     //try{
         sessionid  = session.sessionid;
         socketAddr = session.socketAddr;
@@ -26672,7 +26827,7 @@ var webrtcdevconstructor= function(_localobj , _remoteobj , incoming, outgoing ,
 
         webrtcdev.log( " WebRTCdev - widgets  " , widgets);
 
-        if(widgets.debug)           debug           = widgets.debug || false;
+        if(widgets.debug)           debug           = widgets.debug || false
 
         if(widgets.chat)            chatobj         = widgets.chat || null;
 
@@ -26727,39 +26882,12 @@ var webrtcdevconstructor= function(_localobj , _remoteobj , incoming, outgoing ,
 function funcStartWebrtcdev(){
 
     webrtcdev.log("[]startJS] startwebrtcdev ");
-
+    setlogslevel();
+    
     return new Promise(function (resolve, reject) {
-
-        // webrtcdev.log(" [ startJS webrtcdom ] : DetectRTC " , DetectRTC);
-        // if(!DetectRTC) resolve("detectRTC not found");
-
-        // //Cases around webcam malfunctiojn or absense 
-        // if(!DetectRTC.hasWebcam){
-        //     alert(" Your browser doesnt have webcam" , "warning");
-        //     outgoing.video = false;
-        // }
-        // if(!DetectRTC.isWebsiteHasWebcamPermissions){
-        //     alert(" Your browser doesnt have permission for accessing webcam", "warning");
-        //     outgoing.video = false;
-        // }
-        
-        // //Cases around Miceohone malfunction or absense 
-        // if(!DetectRTC.hasMicrophone){
-        //     alert(" Your browser doesnt have microphone", "warning");   
-        //     outgoing.audio = false ;
-        // }
-        // if(!DetectRTC.isWebsiteHasMicrophonePermissions){
-        //     alert(" Your browser doesnt have permission for accessing microphone", "warning");
-        //     outgoing.audio = false;
-        // }
-        
-        // Case around speaker abent
-        // if(!DetectRTC.hasSpeakers){
-        //     alert(" Your browser doesnt have speakers", "warning");      
-        // }
-
         resolve("done");
-    }).then((res)=>{
+    }).then( ()=> checkDevices()
+    ).then((res)=>{
         webrtcdev.log(" [ startJS webrtcdom ] : sessionid : "+ sessionid+" and localStorage  " , localStorage);
 
         return new Promise(function (resolve , reject){
@@ -27346,8 +27474,9 @@ var setRtcConn = function (sessionid) {
 
                         webrtcdev.log(" [startjs] peerTimerStarted , start peerTimeZone and startPeersTime");
                         
-                        peerTimeZone(e.data.zone, e.userid);
-                        startPeersTime(e.data.time, e.data.zone , e.userid);
+                            peerTimeZone(e.data.zone, e.userid);
+                            startPeersTime(e.data.time, e.data.zone , e.userid);
+
                         //if(!peerTimerStarted){
                         //}
                         break;
@@ -27388,8 +27517,11 @@ var setRtcConn = function (sessionid) {
                         webrtcdev.log(" [startjs] shareFileStopUpload" ,progressid);
                         // var filename = e.data._filename;
 
+                        //console.log(" here 1 ");
                         for(x in webcallpeers){
+                            //console.log("here 2 ")
                             for( y in webcallpeers[x].filearray){
+                                //console.log ("here ------------- " , webcallpeers[x].filearray[y]);
                                 if(webcallpeers[x].filearray[y].pid == progressid ) {
                                     console.log("[ startjs ] shareFileStopUpload -  filepid " , webcallpeers[x].filearray[y].pid , " | status " , webcallpeers[x].filearray[y].status);
                                     webcallpeers[x].filearray[y].status="stopped";
@@ -27399,7 +27531,7 @@ var setRtcConn = function (sessionid) {
                                 }
                             }
                         }
-                        // let stopuploadButton = "stopuploadButton"+filename;
+                        //  let stopuploadButton = "stopuploadButton"+filename;
                         // document.getElementById(stopuploadButton).hidden = true;
                         break;
                     default:
@@ -27442,18 +27574,17 @@ var setRtcConn = function (sessionid) {
             //eventEmitter.emit('sessiondisconnected', peerinfo);
         },
 
-        rtcConn.onclose = function (event) {
-            webrtcdev.error("[startjs] RTCConn onclose - peer diconnected ", event);
-            shownotification("Session Disconneted, do not remove containers, wait for rejoin");
+        rtcConn.onclose = function (e) {
+            webrtcdev.log(" RTCConn on close conversation ", e);
             /*alert(e.extra.name + "closed ");*/
         },
 
         rtcConn.onEntireSessionClosed = function (event) {
-            webrtcdev.error("[startjs] RTCConn onEntireSessionClosed - session diconnected ", event);
             rtcConn.attachStreams.forEach(function (stream) {
                 stream.stop();
             });
             shownotification("Session Disconneted");
+            //alert(" Entire Session Disconneted ");
             //eventEmitter.emit('sessiondisconnected', '');
         },
 
@@ -27620,7 +27751,7 @@ var setRtcConn = function (sessionid) {
 */
 function supportSessionRefresh(){
     //alert(" old Userid " + localStorage.getItem("userid") + " | old channel  "+ localStorage.getItem("channel") );
-    webrtcdev.log(" [startJS ] check for session refresh / user refresh, channel in local stoarge " , localStorage.getItem("channel") , 
+    webrtcdev.log(" [startJS ] check for session refresh / user refreshed , channel in local stoarge " , localStorage.getItem("channel") , 
         " Current Channel " , rtcConn.channel);
     if(localStorage.getItem("channel") == rtcConn.channel && localStorage.getItem("userid")){
         selfuserid = localStorage.getItem("userid");
@@ -27636,20 +27767,50 @@ function supportSessionRefresh(){
 * Check Microphone and Camera Devices
 */
 function checkDevices(){
-    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-      webrtcdev.warn("enumerateDevices() not supported.");
-      return;
-    }
+    // if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+    //   webrtcdev.warn("enumerateDevices() not supported.");
+    //   return;
+    // }
 
-    // List cameras and microphones.
-    navigator.mediaDevices.enumerateDevices()
-    .then(function(devices) {
-      devices.forEach(function(device) {
-         webrtcdev.log("[startJS] checkDevices ",device.kind ,  ": " , device.label ," id = " , device.deviceId);
-      });
-    })
-    .catch(function(err) {
-      webrtcdev.error('[startJS] checkDevices ', err.name , ": " , err.message);
+    // // List cameras and microphones.
+    // navigator.mediaDevices.enumerateDevices()
+    // .then(function(devices) {
+    //   devices.forEach(function(device) {
+    //      webrtcdev.log("[startJS] checkDevices ",device.kind ,  ": " , device.label ," id = " , device.deviceId);
+    //   });
+    // })
+    // .catch(function(err) {
+    //   webrtcdev.error('[startJS] checkDevices ', err.name , ": " , err.message);
+    // });
+    return DetectRTC.load(function() {
+
+        webrtcdev.log(" [ startJS webrtcdom ] : DetectRTC " , rtcConn.DetectRTC , DetectRTC.MediaDevices);
+        if(!DetectRTC) resolve("detectRTC not found");
+
+        //Cases around webcam malfunctiojn or absense 
+        if(!DetectRTC.hasWebcam){
+            alert(" Your browser doesnt have webcam" , "warning");
+            outgoing.video = false;
+        }
+        if(!DetectRTC.isWebsiteHasWebcamPermissions){
+            alert(" Your browser doesnt have permission for accessing webcam", "warning");
+            outgoing.video = false;
+        }
+        
+        //Cases around Miceohone malfunction or absense 
+        if(!DetectRTC.hasMicrophone){
+            alert(" Your browser doesnt have microphone", "warning");   
+            outgoing.audio = false ;
+        }
+        if(!DetectRTC.isWebsiteHasMicrophonePermissions){
+            alert(" Your browser doesnt have permission for accessing microphone", "warning");
+            outgoing.audio = false;
+        }
+        
+        //Case around speaker absent
+        if(!DetectRTC.hasSpeakers){
+            alert(" Your browser doesnt have speakers", "warning");      
+        }
     });
 }
 
@@ -27694,7 +27855,7 @@ var setWidgets = function (rtcConn) {
             }
             webrtcdev.log("chat widget loaded ");
         } else {
-            webrtcdev.warn("chat widget not loaded ");
+            webrtcdev.log("chat widget not loaded ");
         }
 
         // ---------------------------------- Screen record Widget --------------------------------------------------
@@ -27729,7 +27890,6 @@ var setWidgets = function (rtcConn) {
                 } else{
                      webrtcdev.error(" screen record extension's state is undefined ");
                 }
-
             });
 
             webrtcdev.log(" screen record widget loaded ");
@@ -27737,14 +27897,14 @@ var setWidgets = function (rtcConn) {
             if (screenrecordobj.button && screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
                 document.getElementById(screenrecordobj.button.id).className = "inactiveButton";
             }
-            webrtcdev.warn("[startjs] screen record widget loaded, but  widget not activated ");
+            webrtcdev.log(" screen record widget not loaded ");
         }
 
         // ---------------------------------- Screenshare Widget --------------------------------------------------
-        if (screenshareobj && screenshareobj.active && role !="inspector") {
+        if (screenshareobj.active) {
 
             detectExtension(screenshareobj.extensionID, function (status) {
-                webrtcdev.log("[startjs] Is screenshareobj extension installed ? ", status);
+                webrtcdev.log("is screenshareobj extension installed  ? ", status);
                 if (status == 'installed-enabled') {
                     var screenShareButton = createOrAssignScreenshareButton(screenshareobj);
                     hideScreenInstallButton();
@@ -27765,18 +27925,15 @@ var setWidgets = function (rtcConn) {
                     }
                 } else if (status == 'not-chrome') {
                     // using non-chrome browser
-                    webrtcdev.error("[startjs] Not chrome , screenshare cant work ");
-                    alert("Screen share extension only works in Chrome for now ");
+                    alert(" Screen share extension only works in Chrome for now ");
                 } else{
                     webrtcdev.error(" screen share extension's state is undefined ");
                 }
             });
 
             webrtcdev.log(" screen share widget loaded ");
-        } else if(screenshareobj && !screenshareobj.active){
-            webrtcdev.warn("[startjs] screen share widget loaded, but  widget not activated ");
         } else {
-            webrtcdev.warn(" screen share widget not loaded ");
+            webrtcdev.log(" screen share widget not loaded ");
         }
 
         // ---------------------------------- Reconnect Widget --------------------------------------------------
@@ -27785,15 +27942,15 @@ var setWidgets = function (rtcConn) {
                 webrtcdev.log("Rconnect Button Assigned");
                 assignButtonRedial(reconnectobj.button.id);
             } else {
-                webrtcdev.log("Reconnect Button created");
+                webrtcdev.log("Rconnect Button created");
                 createButtonRedial(reconnectobj);
             }
-            webrtcdev.log("Reconnect widget loaded ");
+            webrtcdev.log(" reconnect widget loacded ");
         } else if (reconnectobj && !reconnectobj.active) {
             if (reconnectobj.button && reconnectobj.button.id && document.getElementById(reconnectobj.button.id)) {
                 document.getElementById(reconnectobj.button.id).className = "inactiveButton";
             }
-            webrtcdev.warn("Reconnect widget not loaded");
+            webrtcdev.log(" reconnect widget not loaded ");
         }
 
         // ---------------------------------- Cursor Widget --------------------------------------------------

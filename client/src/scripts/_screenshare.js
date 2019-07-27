@@ -40,7 +40,7 @@ function getSourceId(callback, audioPlusTab) {
  * @param {string} audioPlusTab
  */
 function getChromeExtensionStatus(extensionid, callback) {
-    if (2 != arguments.length && (callback = extensionid, extensionid = window.RMCExtensionID || "ajhifddimkapgcifgcodmmfdlknahffk"), isFirefox)
+    if (2 != arguments.length && (callback = extensionid, extensionid = window.RMCExtensionID || "jpcjjkpbiepbmhklnjoahacppaemhmpd"), isFirefox)
         return callback("not-chrome");
     
     if(!extensionid)
@@ -243,7 +243,7 @@ function webrtcdevSharescreen() {
         webrtcdev.log("[screenshare JS] call back from webrtcdevPrepareScreenShare , turn dontCaptureUserMedia to false");
         //var selfuserid = "temp_"+(new Date().getUTCMilliseconds());
         //scrConn.dontCaptureUserMedia = false,
-        scrConn.getUserMedia();
+        //scrConn.getUserMedia();
         scrConn.open(scrroomid, function() {
             if(socket){
                 webrtcdev.log("[screenshare JS] Event : open-channel-screenshare with ", socket.io.uri);
@@ -598,6 +598,11 @@ function createScreenInstallButton(extensionID){
     document.getElementById("topIconHolder_ul").appendChild(li);
 }
 
+/**
+ * depricated after chrome removed inline installation : creates inline installation button for chrome 
+ * @method
+ * @name assignScreenInstallButton
+ */
 function assignScreenInstallButton(extensionID) {
     var button = document.getElementById(screenshareobj.button.installButton.id);
     button.onclick= function(e) {    

@@ -62,14 +62,10 @@ gulp.task('vendorjs',function() {
         .pipe(gulp.dest(folderPath)); 
 });
 
-/*gulp.task('screensharejs',function() {
+gulp.task('screensharejs',function() {
     console.log(" gulping screensharing  ");
     list=[ 
-<<<<<<< HEAD
         "client/build/scripts/screensharing.js",
-=======
-        "client/src/scripts/screensharing.js",
->>>>>>> objectURLupdated
     ]; 
     console.log(list);
     gulp.src(list)
@@ -77,16 +73,12 @@ gulp.task('vendorjs',function() {
         .pipe(uglify())
         .pipe(concat('webrtcdevelopment_screenshare.js'))  
         .pipe(gulp.dest(folderPath+'minScripts/')); 
-});*/
+});
 
 /*gulp.task('adminjs',function() {
     console.log(" gulping admin script  ");
     list=[ 
-<<<<<<< HEAD
         "client/build/scripts/admin.js",
-=======
-        "client/src/scripts/admin.js",
->>>>>>> objectURLupdated
     ]; 
     console.log(list);
     gulp.src(list)
@@ -181,7 +173,6 @@ var scriptList=[
     // "client/src/scripts/RTCMultiConnection_depricated.js",
     "client/src/scripts/RTCM.js",
     "client/src/scripts/_screenshare.js",
-    // "client/src/scripts/_detectRTC.js",
     "client/src/scripts/_webrtcchecks.js",
     "client/src/scripts/_settings.js",
     // "client/src/scripts/firebase.js",

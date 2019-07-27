@@ -40,7 +40,7 @@ var pendingFileTransfer=[];
  * @param {json} session - session object.
  * @param {json} widgets - widgets object.
  */
-var webrtcdevconstructor= function(_localobj , _remoteobj , incoming, outgoing , session, widgets){
+var webrtcdevconstructor = function(_localobj , _remoteobj , incoming, outgoing , session, widgets){
     //try{
         sessionid  = session.sessionid;
         socketAddr = session.socketAddr;
@@ -72,7 +72,7 @@ var webrtcdevconstructor= function(_localobj , _remoteobj , incoming, outgoing ,
 
         webrtcdev.log( " WebRTCdev - widgets  " , widgets);
 
-        if(widgets.debug)           debug           = widgets.debug || false;
+        if(widgets.debug)           debug           = widgets.debug || false
 
         if(widgets.chat)            chatobj         = widgets.chat || null;
 
@@ -127,39 +127,12 @@ var webrtcdevconstructor= function(_localobj , _remoteobj , incoming, outgoing ,
 function funcStartWebrtcdev(){
 
     webrtcdev.log("[]startJS] startwebrtcdev ");
-
+    setlogslevel();
+    
     return new Promise(function (resolve, reject) {
-
-        // webrtcdev.log(" [ startJS webrtcdom ] : DetectRTC " , DetectRTC);
-        // if(!DetectRTC) resolve("detectRTC not found");
-
-        // //Cases around webcam malfunctiojn or absense 
-        // if(!DetectRTC.hasWebcam){
-        //     alert(" Your browser doesnt have webcam" , "warning");
-        //     outgoing.video = false;
-        // }
-        // if(!DetectRTC.isWebsiteHasWebcamPermissions){
-        //     alert(" Your browser doesnt have permission for accessing webcam", "warning");
-        //     outgoing.video = false;
-        // }
-        
-        // //Cases around Miceohone malfunction or absense 
-        // if(!DetectRTC.hasMicrophone){
-        //     alert(" Your browser doesnt have microphone", "warning");   
-        //     outgoing.audio = false ;
-        // }
-        // if(!DetectRTC.isWebsiteHasMicrophonePermissions){
-        //     alert(" Your browser doesnt have permission for accessing microphone", "warning");
-        //     outgoing.audio = false;
-        // }
-        
-        // Case around speaker abent
-        // if(!DetectRTC.hasSpeakers){
-        //     alert(" Your browser doesnt have speakers", "warning");      
-        // }
-
         resolve("done");
-    }).then((res)=>{
+    }).then( ()=> checkDevices()
+    ).then((res)=>{
         webrtcdev.log(" [ startJS webrtcdom ] : sessionid : "+ sessionid+" and localStorage  " , localStorage);
 
         return new Promise(function (resolve , reject){
@@ -746,8 +719,9 @@ var setRtcConn = function (sessionid) {
 
                         webrtcdev.log(" [startjs] peerTimerStarted , start peerTimeZone and startPeersTime");
                         
-                        peerTimeZone(e.data.zone, e.userid);
-                        startPeersTime(e.data.time, e.data.zone , e.userid);
+                            peerTimeZone(e.data.zone, e.userid);
+                            startPeersTime(e.data.time, e.data.zone , e.userid);
+
                         //if(!peerTimerStarted){
                         //}
                         break;
@@ -788,8 +762,11 @@ var setRtcConn = function (sessionid) {
                         webrtcdev.log(" [startjs] shareFileStopUpload" ,progressid);
                         // var filename = e.data._filename;
 
+                        //console.log(" here 1 ");
                         for(x in webcallpeers){
+                            //console.log("here 2 ")
                             for( y in webcallpeers[x].filearray){
+                                //console.log ("here ------------- " , webcallpeers[x].filearray[y]);
                                 if(webcallpeers[x].filearray[y].pid == progressid ) {
                                     console.log("[ startjs ] shareFileStopUpload -  filepid " , webcallpeers[x].filearray[y].pid , " | status " , webcallpeers[x].filearray[y].status);
                                     webcallpeers[x].filearray[y].status="stopped";
@@ -799,7 +776,7 @@ var setRtcConn = function (sessionid) {
                                 }
                             }
                         }
-                        // let stopuploadButton = "stopuploadButton"+filename;
+                        //  let stopuploadButton = "stopuploadButton"+filename;
                         // document.getElementById(stopuploadButton).hidden = true;
                         break;
                     default:
@@ -842,18 +819,17 @@ var setRtcConn = function (sessionid) {
             //eventEmitter.emit('sessiondisconnected', peerinfo);
         },
 
-        rtcConn.onclose = function (event) {
-            webrtcdev.error("[startjs] RTCConn onclose - peer diconnected ", event);
-            shownotification("Session Disconneted, do not remove containers, wait for rejoin");
+        rtcConn.onclose = function (e) {
+            webrtcdev.log(" RTCConn on close conversation ", e);
             /*alert(e.extra.name + "closed ");*/
         },
 
         rtcConn.onEntireSessionClosed = function (event) {
-            webrtcdev.error("[startjs] RTCConn onEntireSessionClosed - session diconnected ", event);
             rtcConn.attachStreams.forEach(function (stream) {
                 stream.stop();
             });
             shownotification("Session Disconneted");
+            //alert(" Entire Session Disconneted ");
             //eventEmitter.emit('sessiondisconnected', '');
         },
 
@@ -1020,7 +996,7 @@ var setRtcConn = function (sessionid) {
 */
 function supportSessionRefresh(){
     //alert(" old Userid " + localStorage.getItem("userid") + " | old channel  "+ localStorage.getItem("channel") );
-    webrtcdev.log(" [startJS ] check for session refresh / user refresh, channel in local stoarge " , localStorage.getItem("channel") , 
+    webrtcdev.log(" [startJS ] check for session refresh / user refreshed , channel in local stoarge " , localStorage.getItem("channel") , 
         " Current Channel " , rtcConn.channel);
     if(localStorage.getItem("channel") == rtcConn.channel && localStorage.getItem("userid")){
         selfuserid = localStorage.getItem("userid");
@@ -1036,20 +1012,50 @@ function supportSessionRefresh(){
 * Check Microphone and Camera Devices
 */
 function checkDevices(){
-    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-      webrtcdev.warn("enumerateDevices() not supported.");
-      return;
-    }
+    // if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+    //   webrtcdev.warn("enumerateDevices() not supported.");
+    //   return;
+    // }
 
-    // List cameras and microphones.
-    navigator.mediaDevices.enumerateDevices()
-    .then(function(devices) {
-      devices.forEach(function(device) {
-         webrtcdev.log("[startJS] checkDevices ",device.kind ,  ": " , device.label ," id = " , device.deviceId);
-      });
-    })
-    .catch(function(err) {
-      webrtcdev.error('[startJS] checkDevices ', err.name , ": " , err.message);
+    // // List cameras and microphones.
+    // navigator.mediaDevices.enumerateDevices()
+    // .then(function(devices) {
+    //   devices.forEach(function(device) {
+    //      webrtcdev.log("[startJS] checkDevices ",device.kind ,  ": " , device.label ," id = " , device.deviceId);
+    //   });
+    // })
+    // .catch(function(err) {
+    //   webrtcdev.error('[startJS] checkDevices ', err.name , ": " , err.message);
+    // });
+    return DetectRTC.load(function() {
+
+        webrtcdev.log(" [ startJS webrtcdom ] : DetectRTC " , rtcConn.DetectRTC , DetectRTC.MediaDevices);
+        if(!DetectRTC) resolve("detectRTC not found");
+
+        //Cases around webcam malfunctiojn or absense 
+        if(!DetectRTC.hasWebcam){
+            alert(" Your browser doesnt have webcam" , "warning");
+            outgoing.video = false;
+        }
+        if(!DetectRTC.isWebsiteHasWebcamPermissions){
+            alert(" Your browser doesnt have permission for accessing webcam", "warning");
+            outgoing.video = false;
+        }
+        
+        //Cases around Miceohone malfunction or absense 
+        if(!DetectRTC.hasMicrophone){
+            alert(" Your browser doesnt have microphone", "warning");   
+            outgoing.audio = false ;
+        }
+        if(!DetectRTC.isWebsiteHasMicrophonePermissions){
+            alert(" Your browser doesnt have permission for accessing microphone", "warning");
+            outgoing.audio = false;
+        }
+        
+        //Case around speaker absent
+        if(!DetectRTC.hasSpeakers){
+            alert(" Your browser doesnt have speakers", "warning");      
+        }
     });
 }
 
@@ -1094,7 +1100,7 @@ var setWidgets = function (rtcConn) {
             }
             webrtcdev.log("chat widget loaded ");
         } else {
-            webrtcdev.warn("chat widget not loaded ");
+            webrtcdev.log("chat widget not loaded ");
         }
 
         // ---------------------------------- Screen record Widget --------------------------------------------------
@@ -1129,7 +1135,6 @@ var setWidgets = function (rtcConn) {
                 } else{
                      webrtcdev.error(" screen record extension's state is undefined ");
                 }
-
             });
 
             webrtcdev.log(" screen record widget loaded ");
@@ -1137,14 +1142,14 @@ var setWidgets = function (rtcConn) {
             if (screenrecordobj.button && screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
                 document.getElementById(screenrecordobj.button.id).className = "inactiveButton";
             }
-            webrtcdev.warn("[startjs] screen record widget loaded, but  widget not activated ");
+            webrtcdev.log(" screen record widget not loaded ");
         }
 
         // ---------------------------------- Screenshare Widget --------------------------------------------------
-        if (screenshareobj && screenshareobj.active && role !="inspector") {
+        if (screenshareobj.active) {
 
             detectExtension(screenshareobj.extensionID, function (status) {
-                webrtcdev.log("[startjs] Is screenshareobj extension installed ? ", status);
+                webrtcdev.log("is screenshareobj extension installed  ? ", status);
                 if (status == 'installed-enabled') {
                     var screenShareButton = createOrAssignScreenshareButton(screenshareobj);
                     hideScreenInstallButton();
@@ -1165,18 +1170,15 @@ var setWidgets = function (rtcConn) {
                     }
                 } else if (status == 'not-chrome') {
                     // using non-chrome browser
-                    webrtcdev.error("[startjs] Not chrome , screenshare cant work ");
-                    alert("Screen share extension only works in Chrome for now ");
+                    alert(" Screen share extension only works in Chrome for now ");
                 } else{
                     webrtcdev.error(" screen share extension's state is undefined ");
                 }
             });
 
             webrtcdev.log(" screen share widget loaded ");
-        } else if(screenshareobj && !screenshareobj.active){
-            webrtcdev.warn("[startjs] screen share widget loaded, but  widget not activated ");
         } else {
-            webrtcdev.warn(" screen share widget not loaded ");
+            webrtcdev.log(" screen share widget not loaded ");
         }
 
         // ---------------------------------- Reconnect Widget --------------------------------------------------
@@ -1185,15 +1187,15 @@ var setWidgets = function (rtcConn) {
                 webrtcdev.log("Rconnect Button Assigned");
                 assignButtonRedial(reconnectobj.button.id);
             } else {
-                webrtcdev.log("Reconnect Button created");
+                webrtcdev.log("Rconnect Button created");
                 createButtonRedial(reconnectobj);
             }
-            webrtcdev.log("Reconnect widget loaded ");
+            webrtcdev.log(" reconnect widget loacded ");
         } else if (reconnectobj && !reconnectobj.active) {
             if (reconnectobj.button && reconnectobj.button.id && document.getElementById(reconnectobj.button.id)) {
                 document.getElementById(reconnectobj.button.id).className = "inactiveButton";
             }
-            webrtcdev.warn("Reconnect widget not loaded");
+            webrtcdev.log(" reconnect widget not loaded ");
         }
 
         // ---------------------------------- Cursor Widget --------------------------------------------------
