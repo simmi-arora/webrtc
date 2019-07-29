@@ -61,38 +61,6 @@
     text-align: left
 }
 
-.localMessageclass{
-/*  background-color:#9999FF;
-    color: #968787;*/
-    color: #9999FF;
-    float: left;
-}
-.remoteMessageClass{
-/*  background-color:#666699;
-    color: #968787;*/
-    color: #666699;
-    float:right;
-    text-align: right;
-    padding-right: 80px;
-}
-
-.chatusername {
-    font-size: 13px;
-    color: #9D0C0C;
-    font-weight: 600;
-    font-stretch: expanded;
-    font-style: italic
-}
-.userchatmsg {
-    font-size: 16px;
-    color: #000;
-    font-weight: lighter;
-    font-style: oblique;
-    text-rendering: optimizeSpeed;
-    white-space: pre-line;
-    word-wrap: break-word;
-    color:white
-}
 
 .popup-box {
     position: absolute;
@@ -221,40 +189,11 @@
 .locationContainerClass{
     border: 5px solid #777;
 }
-.videoBox{
-    /*left: 10%;*/
-}
-
-.snapshotButton{
-    color: black; 
-    float: right;    
-    padding-right: 40px; 
-    line-height: 1.4; 
-    font-size:35px
-}
-
-.videoContainer{
-    margin: 0 20px 0 20px;
-    padding: 10px;
-    border: 0;
-    background: transparent;
-}
-
-video {
-    top: 0;
-    left: 0;
-    transition: width .5s ease;
-    margin: 0;
-    background-color: #000;
-    border-radius: 50px;
-    height: 100% ;
-    width:100%;
-}
 
 
 .centre{
     margin: 0 auto;
-    width: 90%;"
+    width: 90%;
 }
 
 #container {
@@ -285,29 +224,7 @@ video {
     width: 100%;
 }
 
-#localVideo {
-    -webkit-transition-duration: 2s;
-    -webkit-transition-property: opacity;
-    opacity: 0;
-    width: 100%;
-}
-#remoteVideo {
-    -webkit-transition-duration: 2s;
-    -webkit-transition-property: opacity;
-    opacity: 0;
-    width: 100%;
-}
 
-.leftVideoClass , .rightVideoClass{
-    background: transparent;
-    border: transparent;
-    width: 48%;
-}
-
-.videoControlBarClass{
-    float:left;
-    margin-left: 20px;
-}
 
 .merge{
     background: transparent;
@@ -357,29 +274,4 @@ video {
     margin: 0px;
     background-color: grey;
 }
-/*video::-webkit-media-controls {
-  display: none;
-}
-video::-webkit-media-controls-play-button {}
-
-video::-webkit-media-controls-volume-slider {}
-
-video::-webkit-media-controls-mute-button {}
-
-video::-webkit-media-controls-timeline {}
-
-video::-webkit-media-controls-current-time-display {}*/
-
-.video-block::-webkit-media-controls {
-  display: none;
-}
-.video-block::-webkit-media-controls-play-button {}
-
-.video-block::-webkit-media-controls-volume-slider {}
-
-.video-block::-webkit-media-controls-mute-button {}
-
-.video-block::-webkit-media-controls-timeline {}
-
-.video-block::-webkit-media-controls-current-time-display {}
 

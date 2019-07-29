@@ -130,9 +130,10 @@ function funcStartWebrtcdev(){
     setlogslevel();
     
     return new Promise(function (resolve, reject) {
-        resolve("done");
-    }).then( ()=> checkDevices()
-    ).then((res)=>{
+        webrtcdev.log(" [ startJS webrtcdom ] : begin DetectRTC checkDevices"); 
+        checkDevices(resolve, reject , incoming , outgoing);
+    // }).then(()=> checkDevices()
+    }).then((res)=>{
         webrtcdev.log(" [ startJS webrtcdom ] : sessionid : "+ sessionid+" and localStorage  " , localStorage);
 
         return new Promise(function (resolve , reject){
@@ -450,7 +451,10 @@ var setRtcConn = function (sessionid) {
             
             webrtcdev.log("[sartjs] onNewParticipant - participantId : ", participantId, userPreferences);
             shownotification("[sartjs] onNewParticipant userPreferences.connectionDescription.sender : " + participantId + " name : "+ remoteusername + " requests new participation ");
+            
+            // check if maxAllowed capacity of the session isnt reached before updating peer info, else return
             if (remoteobj.maxAllowed !="unlimited " && webcallpeers.length <= remoteobj.maxAllowed) {
+                webrtcdev.log("[startjs] peer length "+ webcallpeers.length +" is less than max capacity of session  of the session "+ remoteobj.maxAllowed);
                 var peerinfo = findPeerInfo(participantId);
                 if (!peerinfo) {
                     if (userPreferences.extra.name == "LOCAL") {
@@ -471,7 +475,7 @@ var setRtcConn = function (sessionid) {
                 // updatePeerInfo(participantId, remoteusername, remotecolor, "", role, "remote");
             } else {
                 // max capacity of session is reached 
-                webrtcdev.error("[sartjs] onNewParticipant  - max capacity of session is reached ")
+                webrtcdev.error("[sartjs] onNewParticipant  - max capacity of session is reached ", remoteobj.maxAllowed);
                 shownotification("Another user is trying to join this channel but max count [ " + remoteobj.maxAllowed + " ] is reached", "warning");
                 return;
             }
@@ -548,22 +552,36 @@ var setRtcConn = function (sessionid) {
         },
 
         rtcConn.onMediaError = function (error, constraints) {
-            webrtcdev.error("[startJS onMediaError] ", error, constraints);
+            webrtcdev.error("[startJS] onMediaError - ", error, constraints);
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+              webrtcdev.warn("enumerateDevices() not supported.");
+              return;
+            }
+
+            // List cameras and microphones.
+            navigator.mediaDevices.enumerateDevices()
+            .then(function(devices) {
+              devices.forEach(function(device) {
+                 webrtcdev.log("[startJS] onMediaError- checkDevices ",device.kind ,  ": " , device.label ," id = " , device.deviceId);
+              });
+            })
+            .catch(function(err) {
+              webrtcdev.error('[startJS] onMediaError- checkDevices ', err.name , ": " , err.message);
+            });
+
+            // retrying checkDevices 
+            // checkDevices();
+
+            webrtcdev.warn("[startJS] onMediaError- Joining without camera Stream");
             shownotification(error.name + " Joining without camera Stream ", "warning");
             localVideoStreaming = false;
             // For local Peer , if camera is not allowed or not connected then put null in video containers 
-            // for(x in webcallpeers){
-                //if(!webcallpeers[x].stream &&  !webcallpeers[x].streamid){
-                    var peerinfo = webcallpeers[0];
-                    peerinfo.type = "Local";
-                    peerinfo.stream = null;
-                    peerinfo.streamid = "nothing01";
-                    updateWebCallView(peerinfo);
-                //}
-            //}
-
-            // get media info for console debuggging 
-            checkDevices();
+            var peerinfo = webcallpeers[0];
+            peerinfo.type = "Local";
+            peerinfo.stream = null;
+            peerinfo.streamid = "nothing01";
+            updateWebCallView(peerinfo);
 
             // start local Connect 
             onLocalConnect() // event emitter for app client 
@@ -1011,7 +1029,7 @@ function supportSessionRefresh(){
 /*
 * Check Microphone and Camera Devices
 */
-function checkDevices(){
+function checkDevices(resolveparent , rejectparent , incoming , outgoing){
     // if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
     //   webrtcdev.warn("enumerateDevices() not supported.");
     //   return;
@@ -1027,35 +1045,61 @@ function checkDevices(){
     // .catch(function(err) {
     //   webrtcdev.error('[startJS] checkDevices ', err.name , ": " , err.message);
     // });
-    return DetectRTC.load(function() {
+    return new Promise(function(resolve, reject) {
 
-        webrtcdev.log(" [ startJS webrtcdom ] : DetectRTC " , rtcConn.DetectRTC , DetectRTC.MediaDevices);
-        if(!DetectRTC) resolve("detectRTC not found");
+        DetectRTC.load(function() {
 
-        //Cases around webcam malfunctiojn or absense 
-        if(!DetectRTC.hasWebcam){
-            alert(" Your browser doesnt have webcam" , "warning");
-            outgoing.video = false;
-        }
-        if(!DetectRTC.isWebsiteHasWebcamPermissions){
-            alert(" Your browser doesnt have permission for accessing webcam", "warning");
-            outgoing.video = false;
-        }
-        
-        //Cases around Miceohone malfunction or absense 
-        if(!DetectRTC.hasMicrophone){
-            alert(" Your browser doesnt have microphone", "warning");   
-            outgoing.audio = false ;
-        }
-        if(!DetectRTC.isWebsiteHasMicrophonePermissions){
-            alert(" Your browser doesnt have permission for accessing microphone", "warning");
-            outgoing.audio = false;
-        }
-        
-        //Case around speaker absent
-        if(!DetectRTC.hasSpeakers){
-            alert(" Your browser doesnt have speakers", "warning");      
-        }
+            if(!DetectRTC) resolve("detectRTC not found");
+            webrtcdev.log(" [startJS] : DetectRTC - " , DetectRTC , DetectRTC.MediaDevices);
+
+            if(!DetectRTC.isWebsiteHasWebcamPermissions || !DetectRTC.isWebsiteHasMicrophonePermissions){
+                //permission not found , retry getting permissions 
+                // var promise1 = new Promise(function(resolve, reject) {
+                //     webrtcdev.log(" [startJS] : retry to getusermedia  inattempt to get device pemrissions " );
+                //     navigator.mediaDevices.getUserMedia({audio: true, video: true}).then(function(stream) {
+                //         webrtcdev.log(" [startJS] : DetectRTC  recheck stream " , stream );
+                //         resolve('foo');
+                //     }).catch(err =>  webrtcdev.error('[startJS] : DetectRTC  recheck stream error: ', err),resolve('foo'))
+                // });
+
+                // promise1.then(function(value) {
+
+                    // of user still doesnt give permission to browser  set outgoing values and stat the session by resolve still 
+                    if (!DetectRTC.isWebsiteHasWebcamPermissions){
+                        alert(" Your browser doesnt have permission for accessing webcam", "warning");
+                        outgoing.video = false;
+                    }
+
+                    if(!DetectRTC.isWebsiteHasMicrophonePermissions){
+                        alert(" Your browser doesnt have permission for accessing microphone", "warning");
+                        outgoing.audio = false;
+                    }
+                // });
+
+            }else if(!DetectRTC.hasWebcam || !DetectRTC.hasMicrophone){
+                // devices not found
+                if(!DetectRTC.hasWebcam){
+                    alert(" Your browser doesnt have webcam" , "warning");
+                    outgoing.video = false;
+                } 
+
+                if(!DetectRTC.hasMicrophone){
+                    alert(" Your browser doesnt have microphone", "warning");   
+                    outgoing.audio = false ;
+                }
+            }
+            
+            //Case around speaker absent
+            if(!DetectRTC.hasSpeakers){
+                alert(" Your browser doesnt have speakers", "warning"); 
+                incoming.audio = false ;     
+            }
+
+            resolve("done");
+        });
+
+    }).then(function(value) {
+        resolveparent("done");
     });
 }
 
@@ -1073,6 +1117,7 @@ function getCamMedia(){
             rtcConn.getUserMedia();  // not wait for the rtc conn on media stream or on error 
         }else{
             webrtcdev.error(" [startJS] getCamMedia - dont Capture outgoing video " , outgoingVideo);
+            local
             onNoCameraCard();
         }
         resolve("success");
@@ -1660,7 +1705,7 @@ function stopCall(){
  * @param {string} usercolor
  * @param {string} type
  */
-function updatePeerInfo(userid , username , usecolor , useremail, userrole ,  type ){
+function updatePeerInfo(userid, username, usecolor, useremail, userrole, type ){
     webrtcdev.log("updating peerInfo: " , userid , username , usecolor , useremail, userrole ,  type);
 
     // if userid deosnt exist , exit
@@ -1676,6 +1721,9 @@ function updatePeerInfo(userid , username , usecolor , useremail, userrole ,  ty
             return;
         }
     }
+
+    // check if total capacity of webcallpeers has been reached 
+
 
     peerInfo={ 
         videoContainer : "video"+userid,

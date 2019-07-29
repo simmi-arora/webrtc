@@ -1,3 +1,7 @@
+/*-----------------------------------------------------------------------------------*/
+/*                        stats JS                                                   */
+/*-----------------------------------------------------------------------------------*/
+
 // ___________
 // getStats.js
 // an abstraction layer runs top over RTCPeerConnection.getStats API
@@ -303,3 +307,5 @@ function showRtcConn(){
     webrtcdev.log(" rtcConn : "  , rtcConn);
     webrtcdev.log(" rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
 }
+
+/*-----------------------------------------------------------------------------------*/

@@ -1,6 +1,13 @@
-/********************************************************************************8
-        Chat
-**************************************************************************************/
+/*-----------------------------------------------------------------------------------*/
+/*.                        Chat JS                                                   */
+/*-----------------------------------------------------------------------------------*/
+
+/* 
+ * creates chat button DOM
+ * @method
+ * @name createChatButton
+ * @param {json} chat widget object
+ */
 function createChatButton(obj){
     var button= document.createElement("span");
     button.className= chatobj.button.class_on;
@@ -37,6 +44,13 @@ function createChatButton(obj){
     };
 }*/
 
+
+/* 
+ * creates chat box DOM
+ * @method
+ * @name createChatBox
+ * @param {json} chat widget object
+ */
 function createChatBox(obj){
 
     var mainInputBox=document.createElement("div");
@@ -77,6 +91,13 @@ function createChatBox(obj){
     document.getElementById(chatobj.container.id).appendChild(chatBoard);
 }
 
+
+/* 
+ * Assigns chat DOM
+ * @method
+ * @name assignChatBox
+ * @param {json} chat widget object
+ */
 function assignChatBox(obj){
 
     var chatInput = document.getElementById(chatobj.inputBox.text_id);
@@ -111,10 +132,25 @@ function assignChatBox(obj){
     }
 }
 
+
+/* 
+ * diaplys Who is typing
+ * @method
+ * @name updateWhotyping
+ * @param {string} data
+ */
 function updateWhotyping(data){
-    document.getElementById("whoTyping").innerHTML=data;
+    document.getElementById("whoTyping").innerHTML = data;
 }
 
+
+/* 
+ * Sends chat messages
+ * @method
+ * @name sendChatMessage
+ * @param {string} msg
+ * @param {json} peerinfo
+ */
 function sendChatMessage(msg,  peerinfo){
     /*var userinfo;*/
     /*try{
@@ -136,47 +172,81 @@ function sendChatMessage(msg,  peerinfo){
     });
 }
 
-
+/* 
+ * replaces URLs With HTML Links 
+ * @method
+ * @name replaceURLWithHTMLLinks
+ * @param {string} text
+ */
 function replaceURLWithHTMLLinks(text) {
   var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
   return text.replace(exp,"<a href='$1'>$1</a>"); 
 }
 
-function addNewMessagelocal(e ) {
+/* 
+ * Display local message and add a snapshot
+ * @method
+ * @name addNewMessagelocal
+ * @param {json} e peermessage
+ */
+function addNewMessagelocal(e) {
     if ("" != e.message && " " != e.message) {
         addMessageSnapshotFormat("user-activity user-activity-right localMessageClass" , e.userinfo , e.message , chatobj.chatBox.id);
     }
 }
 
+/* 
+ * Display message and add a snapshot
+ * @method
+ * @name addNewMessage
+ * @param {json} e peermessage
+ */
 function addNewMessage(e) {
     if ("" != e.message && " " != e.message) {
         addMessageSnapshotFormat("user-activity user-activity-right remoteMessageClass" , e.userinfo , e.message , chatobj.chatBox.id);
     }
 }
 
+/* 
+ * Display local message and add a snapshot
+ * @method
+ * @name addMessageSnapshotFormat
+ * @param {string} messageDivclass
+ * @param {json} userinfo
+ * @param {string} message
+ * @param {dom} parent
+ */
 function addMessageSnapshotFormat(messageDivclass, userinfo , message , parent){
     var n = document.createElement("div");
     n.className = messageDivclass; 
     webrtcdev.log("addNewMessagelocal" , userinfo);
 
-      takeSnapshot(userinfo, function(datasnapshot) {    
-            var image= document.createElement("img");
-            image.src= datasnapshot;
-            image.style.height="40px";
+    takeSnapshot(userinfo, function(datasnapshot) {    
+        var image= document.createElement("img");
+        image.src= datasnapshot;
+        image.style.height="40px";
 
-            var t = document.createElement("span");
-            t.innerHTML =  replaceURLWithHTMLLinks(message);
+        var t = document.createElement("span");
+        t.innerHTML =  replaceURLWithHTMLLinks(message);
 
-            n.appendChild(image) ;
-            n.appendChild(t);
-            //n.innerHTML = image +" : "+ replaceURLWithHTMLLinks(message);
-               // displayFile(peerinfo.uuid , peerinfo, datasnapshot , snapshotname, "imagesnapshot");
-
-        });       
+        n.appendChild(image) ;
+        n.appendChild(t);
+        //n.innerHTML = image +" : "+ replaceURLWithHTMLLinks(message);
+        // displayFile(peerinfo.uuid , peerinfo, datasnapshot , snapshotname, "imagesnapshot");
+    });       
 
     document.getElementById(parent).insertBefore(n, document.getElementById(parent).firstChild);
 }
 
+/* 
+ * Display Messages in Lineformat
+ * @method
+ * @name addMessageLineformat
+ * @param {string} messageDivclass
+ * @param {json} userinfo
+ * @param {string} message
+ * @param {dom} parent
+ */
 function addMessageLineformat(messageDivclass, messageheader , message , parent){
     var n = document.createElement("div");
     n.className = messageDivclass; 
@@ -189,6 +259,16 @@ function addMessageLineformat(messageDivclass, messageheader , message , parent)
     document.getElementById(parent).insertBefore(n, document.getElementById(parent).firstChild);
 }
 
+
+/* 
+ * Display Messages in BlockFormat
+ * @method
+ * @name addMessageBlockFormat
+ * @param {string} messageDivclass
+ * @param {json} userinfo
+ * @param {string} message
+ * @param {dom} parent
+ */
 function addMessageBlockFormat(messageheaderDivclass , messageheader ,messageDivclass, message , parent){
     
     var t = document.createElement("div");
@@ -219,3 +299,5 @@ function addMessageBlockFormat(messageheaderDivclass , messageheader ,messageDiv
 $('#chatbox').css('max-height', $( "#leftVideo" ).height()+ 80);
 $('#chatBoard').css('max-height', $( "#leftVideo" ).height());
 $("#chatBoard").css("overflow-y" , "scroll");
+
+/*-----------------------------------------------------------------------------------*/

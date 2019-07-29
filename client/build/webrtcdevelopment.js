@@ -1,7 +1,6 @@
-
-/********************************************************************
-  global variables
-**********************************************************************/
+/*-----------------------------------------------------------------------------------*/
+/*                    Global Init JS                                                 */
+/*-----------------------------------------------------------------------------------*/
 
 var t = "";
 var e = null;
@@ -348,6 +347,12 @@ function setlogslevel(){
 
 setlogslevel();
 
+/*-----------------------------------------------------------------------------------*/
+
+/*-----------------------------------------------------------------------------------*/
+/*                    Notify JS                                                     */
+/*-----------------------------------------------------------------------------------*/
+
 /**
  * function to show bootstrap based notification to client
  * @constructor
@@ -434,7 +439,7 @@ function showdesktopnotification() {
      var notification = new Notification("Vilageexperts" , options);
   }
   else if (Notification.permission !== 'denied') {
-    webrtcdev.warning(" [notify.js] notification deined")
+    webrtcdev.warn(" [notify.js] notification deined")
   }
 
   //  Otherwise, we need to ask the user for permission
@@ -485,6 +490,7 @@ function spawnNotification(theBody,theIcon,theTitle) {
   var n = new Notification(theTitle,options);
 }
 
+/*-----------------------------------------------------------------------------------*/
 
 
 'use strict';
@@ -8463,6 +8469,10 @@ function createExtensionInstallWindow (){
     }
                                 
 }
+/*-----------------------------------------------------------------------------------*/
+/*                        webrtc checks JS                                           */
+/*-----------------------------------------------------------------------------------*/
+
 /**
  * function to check devices like speakers , webcam ,  microphone etc
  * @method
@@ -8549,6 +8559,8 @@ function checkWebRTCSupport(obj){
     }
 
 }
+
+/*-----------------------------------------------------------------------------------*/
 /* ***********************************************
 settings
 *********************************************/
@@ -22570,9 +22582,9 @@ function syncSnapshot(datasnapshot , datatype , dataname ){
     webrtcdev.log("snaspshot ",datasnapshot);
 }*/
 
-/* ***********************************************
-geolocation
-*********************************************/
+/*-----------------------------------------------------------------------------------*/
+/*                    Geo JS                                                   */
+/*-----------------------------------------------------------------------------------*/
 
 if (navigator.geolocation) {
     /*webrtcdev.log(navigator);*/
@@ -22618,9 +22630,18 @@ function showError(error) {
             break;
     }
 }
-/********************************************************************************8
-        Chat
-**************************************************************************************/
+
+/*-----------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------*/
+/*.                        Chat JS                                                   */
+/*-----------------------------------------------------------------------------------*/
+
+/* 
+ * creates chat button DOM
+ * @method
+ * @name createChatButton
+ * @param {json} chat widget object
+ */
 function createChatButton(obj){
     var button= document.createElement("span");
     button.className= chatobj.button.class_on;
@@ -22657,6 +22678,13 @@ function createChatButton(obj){
     };
 }*/
 
+
+/* 
+ * creates chat box DOM
+ * @method
+ * @name createChatBox
+ * @param {json} chat widget object
+ */
 function createChatBox(obj){
 
     var mainInputBox=document.createElement("div");
@@ -22697,6 +22725,13 @@ function createChatBox(obj){
     document.getElementById(chatobj.container.id).appendChild(chatBoard);
 }
 
+
+/* 
+ * Assigns chat DOM
+ * @method
+ * @name assignChatBox
+ * @param {json} chat widget object
+ */
 function assignChatBox(obj){
 
     var chatInput = document.getElementById(chatobj.inputBox.text_id);
@@ -22731,10 +22766,25 @@ function assignChatBox(obj){
     }
 }
 
+
+/* 
+ * diaplys Who is typing
+ * @method
+ * @name updateWhotyping
+ * @param {string} data
+ */
 function updateWhotyping(data){
-    document.getElementById("whoTyping").innerHTML=data;
+    document.getElementById("whoTyping").innerHTML = data;
 }
 
+
+/* 
+ * Sends chat messages
+ * @method
+ * @name sendChatMessage
+ * @param {string} msg
+ * @param {json} peerinfo
+ */
 function sendChatMessage(msg,  peerinfo){
     /*var userinfo;*/
     /*try{
@@ -22756,47 +22806,81 @@ function sendChatMessage(msg,  peerinfo){
     });
 }
 
-
+/* 
+ * replaces URLs With HTML Links 
+ * @method
+ * @name replaceURLWithHTMLLinks
+ * @param {string} text
+ */
 function replaceURLWithHTMLLinks(text) {
   var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
   return text.replace(exp,"<a href='$1'>$1</a>"); 
 }
 
-function addNewMessagelocal(e ) {
+/* 
+ * Display local message and add a snapshot
+ * @method
+ * @name addNewMessagelocal
+ * @param {json} e peermessage
+ */
+function addNewMessagelocal(e) {
     if ("" != e.message && " " != e.message) {
         addMessageSnapshotFormat("user-activity user-activity-right localMessageClass" , e.userinfo , e.message , chatobj.chatBox.id);
     }
 }
 
+/* 
+ * Display message and add a snapshot
+ * @method
+ * @name addNewMessage
+ * @param {json} e peermessage
+ */
 function addNewMessage(e) {
     if ("" != e.message && " " != e.message) {
         addMessageSnapshotFormat("user-activity user-activity-right remoteMessageClass" , e.userinfo , e.message , chatobj.chatBox.id);
     }
 }
 
+/* 
+ * Display local message and add a snapshot
+ * @method
+ * @name addMessageSnapshotFormat
+ * @param {string} messageDivclass
+ * @param {json} userinfo
+ * @param {string} message
+ * @param {dom} parent
+ */
 function addMessageSnapshotFormat(messageDivclass, userinfo , message , parent){
     var n = document.createElement("div");
     n.className = messageDivclass; 
     webrtcdev.log("addNewMessagelocal" , userinfo);
 
-      takeSnapshot(userinfo, function(datasnapshot) {    
-            var image= document.createElement("img");
-            image.src= datasnapshot;
-            image.style.height="40px";
+    takeSnapshot(userinfo, function(datasnapshot) {    
+        var image= document.createElement("img");
+        image.src= datasnapshot;
+        image.style.height="40px";
 
-            var t = document.createElement("span");
-            t.innerHTML =  replaceURLWithHTMLLinks(message);
+        var t = document.createElement("span");
+        t.innerHTML =  replaceURLWithHTMLLinks(message);
 
-            n.appendChild(image) ;
-            n.appendChild(t);
-            //n.innerHTML = image +" : "+ replaceURLWithHTMLLinks(message);
-               // displayFile(peerinfo.uuid , peerinfo, datasnapshot , snapshotname, "imagesnapshot");
-
-        });       
+        n.appendChild(image) ;
+        n.appendChild(t);
+        //n.innerHTML = image +" : "+ replaceURLWithHTMLLinks(message);
+        // displayFile(peerinfo.uuid , peerinfo, datasnapshot , snapshotname, "imagesnapshot");
+    });       
 
     document.getElementById(parent).insertBefore(n, document.getElementById(parent).firstChild);
 }
 
+/* 
+ * Display Messages in Lineformat
+ * @method
+ * @name addMessageLineformat
+ * @param {string} messageDivclass
+ * @param {json} userinfo
+ * @param {string} message
+ * @param {dom} parent
+ */
 function addMessageLineformat(messageDivclass, messageheader , message , parent){
     var n = document.createElement("div");
     n.className = messageDivclass; 
@@ -22809,6 +22893,16 @@ function addMessageLineformat(messageDivclass, messageheader , message , parent)
     document.getElementById(parent).insertBefore(n, document.getElementById(parent).firstChild);
 }
 
+
+/* 
+ * Display Messages in BlockFormat
+ * @method
+ * @name addMessageBlockFormat
+ * @param {string} messageDivclass
+ * @param {json} userinfo
+ * @param {string} message
+ * @param {dom} parent
+ */
 function addMessageBlockFormat(messageheaderDivclass , messageheader ,messageDivclass, message , parent){
     
     var t = document.createElement("div");
@@ -22839,6 +22933,8 @@ function addMessageBlockFormat(messageheaderDivclass , messageheader ,messageDiv
 $('#chatbox').css('max-height', $( "#leftVideo" ).height()+ 80);
 $('#chatBoard').css('max-height', $( "#leftVideo" ).height());
 $("#chatBoard").css("overflow-y" , "scroll");
+
+/*-----------------------------------------------------------------------------------*/
 /***************************************************
 video handling 
 *********************************************************/
@@ -23131,9 +23227,9 @@ function attachMediaStream(element, stream) {
 function reattachMediaStream(to, from) {
     to.src = from.src;
 }
-/* ***********************************************
-Record
-*********************************************/
+/*-----------------------------------------------------------------------------------*/
+/*                       Record JS                                                   */
+/*-----------------------------------------------------------------------------------*/
 
 /**
  * Create Record Button to call start and stop recoriding functions 
@@ -23297,6 +23393,7 @@ function stopRecord(){
     }, {audio:true, video:true} );
 }*/
 
+/*-----------------------------------------------------------------------------------*/
 
 /************************************************************************
 Canvas Record 
@@ -23864,9 +23961,9 @@ function PostBlob(blob) {
     video.focus();
     video.play();
 }
-/***************************************************************88
-File sharing 
-******************************************************************/
+/*-----------------------------------------------------------------------------------*/
+/*                    File JS                                                   */
+/*-----------------------------------------------------------------------------------*/
 
 var progressHelper = {};
 
@@ -25331,9 +25428,11 @@ function createModalPopup(filetype ){
 
     mainDiv.appendChild(modalBox);
 }
-/**************************************************************************8
-draw 
-******************************************************************************/
+
+/*-----------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------*/
+/*                         Draw JS                                                   */
+/*-----------------------------------------------------------------------------------*/
 var CanvasDesigner;
 var isDrawOpened = false ;
 
@@ -25483,12 +25582,12 @@ saveButtonCanvas.onclick=function(){
    createModalPopup( "blobcanvas" );
 };
 document.body.appendChild(saveButtonCanvas);
-/**********************************
-Reconnect 
-****************************************/
-/*
-add code hetre for redial 
-*/
+
+/*-----------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------*/
+/*                    Reconnect JS                                                   */
+/*-----------------------------------------------------------------------------------*/
+
 
 function createButtonRedial(){
     var reconnectButton= document.createElement("span");
@@ -25536,9 +25635,10 @@ function assignButtonRedial(id){
         }
     };
 }
-/* **********************************************
-Listen -In
-*************************************************/
+/*-----------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------*/
+/*                    listen-in JS                                                   */
+/*-----------------------------------------------------------------------------------*/
 
 if(document.getElementById("ListenInButton")){
 
@@ -25636,9 +25736,11 @@ function mailListenInLink(){
 	.then(res => console.log(res));
 }
 
-/***************************************************************************
-cursor sharing 
-***************************************************************************/
+/*-----------------------------------------------------------------------------------*/
+
+/*-----------------------------------------------------------------------------------*/
+/*                       cursor JS                                                   */
+/*-----------------------------------------------------------------------------------*/
 
 var cursorX;
 var cursorY;
@@ -25727,10 +25829,14 @@ function createCursorButton(controlBarName, peerinfo, streamid, stream ){
 }
 
 
- // ............................Cursors resting position .................. 
+/*-----------------------------------------------------------------------------------*/
 /*
     <div id="cursor1" class="fa fa-hand-o-up" style="width:0"></div>
     <div id="cursor2" class="fa fa-hand-o-up" style="width:0"></div>*/
+/*-----------------------------------------------------------------------------------*/
+/*                    Code Editor  JS                                                */
+/*-----------------------------------------------------------------------------------*/
+
 function createCodeEditorButton(){
     var codeeditorButton= document.createElement("span");
     codeeditorButton.className=codeeditorobj.button.class_off ;
@@ -25768,9 +25874,6 @@ function createCodeEditorButton(){
     document.getElementById("topIconHolder_ul").appendChild(li);
 }
 
-/*************************************************************************
-code Editor
-******************************************************************************/
 function sendWebrtcdevCodeeditorSync(evt){
     if(evt.which ==  37 || evt.which ==  38 || evt.which ==  39 || evt.which ==  40  || evt.which==17 || evt.which == 18|| evt.which == 16){
         return true; 
@@ -25832,6 +25935,8 @@ function startWebrtcdevcodeeditorSync(){
 function stopWebrtcdevcodeeditorSync(){
     document.getElementById(codeeditorobj.codeeditorContainer).removeEventListener("keyup", sendWebrtcdevCodeeditorSync, false);
 }
+
+/*-----------------------------------------------------------------------------------*/
 
 function createTextEditorButton(){
     var texteditorButton= document.createElement("span");
@@ -25943,9 +26048,9 @@ function getICEServer(){
     xhr.setRequestHeader("Authorization", "Basic " + btoa("farookafsari:e35af4d2-dbd5-11e7-b927-0c3f27cba33f"));
     xhr.send();
 }
-/**************************************************8
-Timer 
-***************************************************/
+/*-----------------------------------------------------------------------------------*/
+/*                        timer JS                                                   */
+/*-----------------------------------------------------------------------------------*/
 /**
  * {@link https://github.com/altanai/webrtc/blob/master/client/build/scripts/_timer.js|TIMER} 
  * @summary Takes local and remote peers time , localtion and show and shows timer for session
@@ -26283,6 +26388,12 @@ function checkTime(i) {
     if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
     return i;
 }
+
+/*-----------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------*/
+/*                        stats JS                                                   */
+/*-----------------------------------------------------------------------------------*/
+
 // ___________
 // getStats.js
 // an abstraction layer runs top over RTCPeerConnection.getStats API
@@ -26589,9 +26700,10 @@ function showRtcConn(){
     webrtcdev.log(" rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
 }
 
-/************************************************************************
-Track Call Record 
-*************************************************************************/
+/*-----------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------*/
+/*                        Tracing JS                                                   */
+/*-----------------------------------------------------------------------------------*/
 /**
  * collect all webrtcStats and stream to Server to be stored in a file with seesion id as the file name 
  * @method
@@ -26753,6 +26865,7 @@ function getScreenshotOfElement(element, posX, posY, width, height, callback) {
         allowTaint: false
     });
 }
+/*-----------------------------------------------------------------------------------*/
 // 'use strict';
 
 // var inherits = require('util').inherits;
@@ -26885,9 +26998,10 @@ function funcStartWebrtcdev(){
     setlogslevel();
     
     return new Promise(function (resolve, reject) {
-        resolve("done");
-    }).then( ()=> checkDevices()
-    ).then((res)=>{
+        webrtcdev.log(" [ startJS webrtcdom ] : begin DetectRTC checkDevices"); 
+        checkDevices(resolve, reject , incoming , outgoing);
+    // }).then(()=> checkDevices()
+    }).then((res)=>{
         webrtcdev.log(" [ startJS webrtcdom ] : sessionid : "+ sessionid+" and localStorage  " , localStorage);
 
         return new Promise(function (resolve , reject){
@@ -27205,7 +27319,10 @@ var setRtcConn = function (sessionid) {
             
             webrtcdev.log("[sartjs] onNewParticipant - participantId : ", participantId, userPreferences);
             shownotification("[sartjs] onNewParticipant userPreferences.connectionDescription.sender : " + participantId + " name : "+ remoteusername + " requests new participation ");
+            
+            // check if maxAllowed capacity of the session isnt reached before updating peer info, else return
             if (remoteobj.maxAllowed !="unlimited " && webcallpeers.length <= remoteobj.maxAllowed) {
+                webrtcdev.log("[startjs] peer length "+ webcallpeers.length +" is less than max capacity of session  of the session "+ remoteobj.maxAllowed);
                 var peerinfo = findPeerInfo(participantId);
                 if (!peerinfo) {
                     if (userPreferences.extra.name == "LOCAL") {
@@ -27226,7 +27343,7 @@ var setRtcConn = function (sessionid) {
                 // updatePeerInfo(participantId, remoteusername, remotecolor, "", role, "remote");
             } else {
                 // max capacity of session is reached 
-                webrtcdev.error("[sartjs] onNewParticipant  - max capacity of session is reached ")
+                webrtcdev.error("[sartjs] onNewParticipant  - max capacity of session is reached ", remoteobj.maxAllowed);
                 shownotification("Another user is trying to join this channel but max count [ " + remoteobj.maxAllowed + " ] is reached", "warning");
                 return;
             }
@@ -27303,22 +27420,36 @@ var setRtcConn = function (sessionid) {
         },
 
         rtcConn.onMediaError = function (error, constraints) {
-            webrtcdev.error("[startJS onMediaError] ", error, constraints);
+            webrtcdev.error("[startJS] onMediaError - ", error, constraints);
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+              webrtcdev.warn("enumerateDevices() not supported.");
+              return;
+            }
+
+            // List cameras and microphones.
+            navigator.mediaDevices.enumerateDevices()
+            .then(function(devices) {
+              devices.forEach(function(device) {
+                 webrtcdev.log("[startJS] onMediaError- checkDevices ",device.kind ,  ": " , device.label ," id = " , device.deviceId);
+              });
+            })
+            .catch(function(err) {
+              webrtcdev.error('[startJS] onMediaError- checkDevices ', err.name , ": " , err.message);
+            });
+
+            // retrying checkDevices 
+            // checkDevices();
+
+            webrtcdev.warn("[startJS] onMediaError- Joining without camera Stream");
             shownotification(error.name + " Joining without camera Stream ", "warning");
             localVideoStreaming = false;
             // For local Peer , if camera is not allowed or not connected then put null in video containers 
-            // for(x in webcallpeers){
-                //if(!webcallpeers[x].stream &&  !webcallpeers[x].streamid){
-                    var peerinfo = webcallpeers[0];
-                    peerinfo.type = "Local";
-                    peerinfo.stream = null;
-                    peerinfo.streamid = "nothing01";
-                    updateWebCallView(peerinfo);
-                //}
-            //}
-
-            // get media info for console debuggging 
-            checkDevices();
+            var peerinfo = webcallpeers[0];
+            peerinfo.type = "Local";
+            peerinfo.stream = null;
+            peerinfo.streamid = "nothing01";
+            updateWebCallView(peerinfo);
 
             // start local Connect 
             onLocalConnect() // event emitter for app client 
@@ -27766,7 +27897,7 @@ function supportSessionRefresh(){
 /*
 * Check Microphone and Camera Devices
 */
-function checkDevices(){
+function checkDevices(resolveparent , rejectparent , incoming , outgoing){
     // if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
     //   webrtcdev.warn("enumerateDevices() not supported.");
     //   return;
@@ -27782,35 +27913,61 @@ function checkDevices(){
     // .catch(function(err) {
     //   webrtcdev.error('[startJS] checkDevices ', err.name , ": " , err.message);
     // });
-    return DetectRTC.load(function() {
+    return new Promise(function(resolve, reject) {
 
-        webrtcdev.log(" [ startJS webrtcdom ] : DetectRTC " , rtcConn.DetectRTC , DetectRTC.MediaDevices);
-        if(!DetectRTC) resolve("detectRTC not found");
+        DetectRTC.load(function() {
 
-        //Cases around webcam malfunctiojn or absense 
-        if(!DetectRTC.hasWebcam){
-            alert(" Your browser doesnt have webcam" , "warning");
-            outgoing.video = false;
-        }
-        if(!DetectRTC.isWebsiteHasWebcamPermissions){
-            alert(" Your browser doesnt have permission for accessing webcam", "warning");
-            outgoing.video = false;
-        }
-        
-        //Cases around Miceohone malfunction or absense 
-        if(!DetectRTC.hasMicrophone){
-            alert(" Your browser doesnt have microphone", "warning");   
-            outgoing.audio = false ;
-        }
-        if(!DetectRTC.isWebsiteHasMicrophonePermissions){
-            alert(" Your browser doesnt have permission for accessing microphone", "warning");
-            outgoing.audio = false;
-        }
-        
-        //Case around speaker absent
-        if(!DetectRTC.hasSpeakers){
-            alert(" Your browser doesnt have speakers", "warning");      
-        }
+            if(!DetectRTC) resolve("detectRTC not found");
+            webrtcdev.log(" [startJS] : DetectRTC - " , DetectRTC , DetectRTC.MediaDevices);
+
+            if(!DetectRTC.isWebsiteHasWebcamPermissions || !DetectRTC.isWebsiteHasMicrophonePermissions){
+                //permission not found , retry getting permissions 
+                // var promise1 = new Promise(function(resolve, reject) {
+                //     webrtcdev.log(" [startJS] : retry to getusermedia  inattempt to get device pemrissions " );
+                //     navigator.mediaDevices.getUserMedia({audio: true, video: true}).then(function(stream) {
+                //         webrtcdev.log(" [startJS] : DetectRTC  recheck stream " , stream );
+                //         resolve('foo');
+                //     }).catch(err =>  webrtcdev.error('[startJS] : DetectRTC  recheck stream error: ', err),resolve('foo'))
+                // });
+
+                // promise1.then(function(value) {
+
+                    // of user still doesnt give permission to browser  set outgoing values and stat the session by resolve still 
+                    if (!DetectRTC.isWebsiteHasWebcamPermissions){
+                        alert(" Your browser doesnt have permission for accessing webcam", "warning");
+                        outgoing.video = false;
+                    }
+
+                    if(!DetectRTC.isWebsiteHasMicrophonePermissions){
+                        alert(" Your browser doesnt have permission for accessing microphone", "warning");
+                        outgoing.audio = false;
+                    }
+                // });
+
+            }else if(!DetectRTC.hasWebcam || !DetectRTC.hasMicrophone){
+                // devices not found
+                if(!DetectRTC.hasWebcam){
+                    alert(" Your browser doesnt have webcam" , "warning");
+                    outgoing.video = false;
+                } 
+
+                if(!DetectRTC.hasMicrophone){
+                    alert(" Your browser doesnt have microphone", "warning");   
+                    outgoing.audio = false ;
+                }
+            }
+            
+            //Case around speaker absent
+            if(!DetectRTC.hasSpeakers){
+                alert(" Your browser doesnt have speakers", "warning"); 
+                incoming.audio = false ;     
+            }
+
+            resolve("done");
+        });
+
+    }).then(function(value) {
+        resolveparent("done");
     });
 }
 
@@ -27828,6 +27985,7 @@ function getCamMedia(){
             rtcConn.getUserMedia();  // not wait for the rtc conn on media stream or on error 
         }else{
             webrtcdev.error(" [startJS] getCamMedia - dont Capture outgoing video " , outgoingVideo);
+            local
             onNoCameraCard();
         }
         resolve("success");
@@ -28415,7 +28573,7 @@ function stopCall(){
  * @param {string} usercolor
  * @param {string} type
  */
-function updatePeerInfo(userid , username , usecolor , useremail, userrole ,  type ){
+function updatePeerInfo(userid, username, usecolor, useremail, userrole, type ){
     webrtcdev.log("updating peerInfo: " , userid , username , usecolor , useremail, userrole ,  type);
 
     // if userid deosnt exist , exit
@@ -28431,6 +28589,9 @@ function updatePeerInfo(userid , username , usecolor , useremail, userrole ,  ty
             return;
         }
     }
+
+    // check if total capacity of webcallpeers has been reached 
+
 
     peerInfo={ 
         videoContainer : "video"+userid,

@@ -179,6 +179,10 @@ module.exports = function(grunt) {
         //     },
         // }
 
+        list_nodemodules:{
+            
+        },
+
         release: {
             options: {
               bump: true, //default: true
@@ -213,8 +217,6 @@ module.exports = function(grunt) {
               }
             }
           }
-
-
     });
 
     grunt.loadNpmTasks('grunt-contrib-copy');
@@ -229,7 +231,7 @@ module.exports = function(grunt) {
     // Default task(s).
     grunt.registerTask('dev', ['concat','jshint','uglify']);
     // grunt.registerTask('production', ['jshint','uglify','copy']);
-    grunt.registerTask('production', ['concat','uglify','copy']);
+    grunt.registerTask('production', ['list_nodemodules','concat','uglify','copy']);
     grunt.registerTask('default', ['concat']);
     grunt.registerTask('release', ['release']);
     // grunt.registerTask('rtcconn', ['concat', 'replace', 'jsbeautifier', 'uglify', 'copy', 'clean']);
