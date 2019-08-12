@@ -67,19 +67,19 @@ gulp.task('vendorjs',function(done) {
     done();
 });
 
-gulp.task('screensharejs',function(done) {
-    console.log(" gulping screensharing  ");
-    list=[ 
-        "client/build/scripts/screensharing.js",
-    ]; 
-    console.log(list);
-    gulp.src(list)
-        .pipe(rev({strict: true}) )
-        .pipe(uglify())
-        .pipe(concat('webrtcdevelopment_screenshare.js'))  
-        .pipe(gulp.dest(folderPath+'minScripts/')); 
-    done();
-});
+// gulp.task('screensharejs',function(done) {
+//     console.log(" gulping screensharing  ");
+//     list=[ 
+//         "client/build/scripts/screensharing.js",
+//     ]; 
+//     console.log(list);
+//     gulp.src(list)
+//         .pipe(rev({strict: true}) )
+//         .pipe(uglify())
+//         .pipe(concat('webrtcdevelopment_screenshare.js'))  
+//         .pipe(gulp.dest(folderPath+'minScripts/')); 
+//     done();
+// });
 
 /*gulp.task('adminjs',function() {
     console.log(" gulping admin script  ");

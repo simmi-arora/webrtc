@@ -1054,16 +1054,20 @@ function checkDevices(resolveparent , rejectparent , incoming , outgoing){
 
             if(!DetectRTC.isWebsiteHasWebcamPermissions || !DetectRTC.isWebsiteHasMicrophonePermissions){
                 //permission not found , retry getting permissions 
-                // var promise1 = new Promise(function(resolve, reject) {
-                //     webrtcdev.log(" [startJS] : retry to getusermedia  inattempt to get device pemrissions " );
-                //     navigator.mediaDevices.getUserMedia({audio: true, video: true}).then(function(stream) {
-                //         webrtcdev.log(" [startJS] : DetectRTC  recheck stream " , stream );
-                //         resolve('foo');
-                //     }).catch(err =>  webrtcdev.error('[startJS] : DetectRTC  recheck stream error: ', err),resolve('foo'))
-                // });
-
-                // promise1.then(function(value) {
-
+                webrtcdev.warn(" [startJS] : permission not found for mic or camera , try getusermedia again ");
+                var promise1 = new Promise(function(resolvec, rejectc) {
+                    webrtcdev.log(" [startJS] : retry to getusermedia  inattempt to get device pemrissions " );
+                    navigator.mediaDevices.getUserMedia({audio: true, video: true})
+                        .then(function(stream) {
+                            webrtcdev.log(" [startJS] : DetectRTC  recheck stream " , stream );
+                            resolvec('foo');
+                        }).catch(function(err) {
+                            webrtcdev.error('[startJS] : DetectRTC  recheck stream error: ', err);
+                            console.error(err.code , err.name , err.message);
+                            rejectc(err);
+                        })
+                }).catch(function(err) {
+                     webrtcdev.error('[startJS] : DetectRTC : ', err);
                     // of user still doesnt give permission to browser  set outgoing values and stat the session by resolve still 
                     if (!DetectRTC.isWebsiteHasWebcamPermissions){
                         alert(" Your browser doesnt have permission for accessing webcam", "warning");
@@ -1074,7 +1078,7 @@ function checkDevices(resolveparent , rejectparent , incoming , outgoing){
                         alert(" Your browser doesnt have permission for accessing microphone", "warning");
                         outgoing.audio = false;
                     }
-                // });
+                });
 
             }else if(!DetectRTC.hasWebcam || !DetectRTC.hasMicrophone){
                 // devices not found
@@ -1095,7 +1099,7 @@ function checkDevices(resolveparent , rejectparent , incoming , outgoing){
                 incoming.audio = false ;     
             }
 
-            resolve("done");
+            resolve("ok");
         });
 
     }).then(function(value) {
@@ -1117,7 +1121,6 @@ function getCamMedia(){
             rtcConn.getUserMedia();  // not wait for the rtc conn on media stream or on error 
         }else{
             webrtcdev.error(" [startJS] getCamMedia - dont Capture outgoing video " , outgoingVideo);
-            local
             onNoCameraCard();
         }
         resolve("success");
