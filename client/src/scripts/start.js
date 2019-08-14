@@ -1153,38 +1153,13 @@ var setWidgets = function (rtcConn) {
 
         // ---------------------------------- Screen record Widget --------------------------------------------------
         if (screenrecordobj && screenrecordobj.active && role !="inspector") {
-
-            detectExtension(screenshareobj.extensionID, function (status) {
-                extensioninstalled = status;
-                webrtcdev.log("is screenshareobj extension installed  ? ", status);
-
-                if (status == 'not-installed') {
-                    shownotification(" Sessions recoridng cannot start as there is not extension installed ", "warning");
-                    createExtensionInstallWindow();
-                } else if (status == 'installed-enabled') {
-                    if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
-                        webrtcdev.log("Assign Record Button ");
-                        assignScreenRecordButton(screenrecordobj);
-                    } else {
-                        webrtcdev.log("Create Record Button ");
-                        createScreenRecordButton(screenrecordobj);
-                    }
-                } else if (extensioninstalled == 'installed-disabled') {
-                    shownotification("chrome extension is installed but disabled." , "warning");
-                    if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
-                        assignScreenRecordButton(screenrecordobj);
-                        webrtcdev.log("Assign Record Button ");
-                    } else {
-                        webrtcdev.log("Create Record Button ");
-                        createScreenRecordButton(screenrecordobj);
-                    }
-                } else if (extensioninstalled == 'not-chrome') {
-                    // using non-chrome browser
-                } else{
-                     webrtcdev.error(" screen record extension's state is undefined ");
-                }
-            });
-
+            if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
+                webrtcdev.log("Assign Record Button ");
+                assignScreenRecordButton(screenrecordobj);
+            } else {
+                webrtcdev.log("Create Record Button ");
+                createScreenRecordButton(screenrecordobj);
+            }
             webrtcdev.log(" screen record widget loaded ");
         } else if (screenrecordobj && !screenrecordobj.active) {
             if (screenrecordobj.button && screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
@@ -1195,35 +1170,14 @@ var setWidgets = function (rtcConn) {
 
         // ---------------------------------- Screenshare Widget --------------------------------------------------
         if (screenshareobj.active) {
-
-            detectExtension(screenshareobj.extensionID, function (status) {
-                webrtcdev.log("is screenshareobj extension installed  ? ", status);
-                if (status == 'installed-enabled') {
-                    var screenShareButton = createOrAssignScreenshareButton(screenshareobj);
-                    hideScreenInstallButton();
-                } else if (status == 'installed-disabled') {
-                    shownotification("chrome extension is installed but disabled.");
-                    var screenShareButton = createOrAssignScreenshareButton(screenshareobj);
-                    hideScreenInstallButton();
-                } else if (status == 'not-installed') {
-
-                    //document.getElementById("screensharedialog").showModal();
-                    $("#screensharedialog").modal("show");
-                    hideScreenShareButton();
-
-                    if (screenshareobj.button.installButton.id && document.getElementById(screenshareobj.button.installButton.id)) {
-                        assignScreenInstallButton(screenshareobj.extensionID);
-                    } else {
-                        createScreenInstallButton(screenshareobj.extensionID);
-                    }
-                } else if (status == 'not-chrome') {
-                    // using non-chrome browser
-                    alert(" Screen share extension only works in Chrome for now ");
-                } else{
-                    webrtcdev.error(" screen share extension's state is undefined ");
-                }
-            });
-
+            //................ TBD
+            if (screenrecordobj.button.id && document.getElementById(screenrecordobj.button.id)) {
+                webrtcdev.log("Assign Record Button ");
+                assignScreenShareButton(screenshareobj.button.shareButton);
+            } else {
+                webrtcdev.log("Create Record Button ");
+                createScreenShareButton();
+            }
             webrtcdev.log(" screen share widget loaded ");
         } else {
             webrtcdev.log(" screen share widget not loaded ");
