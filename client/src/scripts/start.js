@@ -331,7 +331,8 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
                 );
 
             } else {
-                alert(" signaller doesnt allow channel open");
+                // signaller doesnt allow channel open
+                alert("Could not open this channel, Server refused");
             }
             if(event.message)
                 shownotification(event.msgtype + " : " + event.message);
@@ -393,7 +394,8 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
                 if(event.message)  
                     shownotification(event.msgtype + " : " + event.message);               
             } else {
-                alert(" signaller doesnt allow channel Join");
+                // signaller doesnt allow channel Join
+                alert("Coudl not join this channel, Server refused ");
             }
         });
 
@@ -424,9 +426,9 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
         });
 
         resolve("done");
-
     })
     .catch((err)=>{
+        webrtcdev.error("[startjs] error ", err);
         reject(err);
     });
     
@@ -626,7 +628,28 @@ var setRtcConn = function (sessionid) {
                 var msgpeerinfo = findPeerInfo(e.userid);
                 switch (e.data.type) {
                     case "screenshare":
-                        if (e.data.message == "stoppedscreenshare") {
+                        if ( e.data.message == "startscreenshare"){ 
+
+                            let scrroomid = e.data.screenid;
+                            shownotification("Starting screen share ", scrroomid);
+                            //createScreenViewButton();
+                            let button = document.getElementById(screenshareobj.button.shareButton.id);
+                            button.className = screenshareobj.button.shareButton.class_busy;
+                            button.innerHTML = screenshareobj.button.shareButton.html_busy;
+                            button.disabled = true;
+
+                            var promise = new Promise(function(resolve, reject) {
+                                webrtcdevPrepareScreenShare(scrroomid);
+                                resolve(scrroomid);
+                            });
+
+                            promise.then(function(scrroomid) {
+                                connectScrWebRTC("join", scrroomid);
+                            });
+
+                        } else if (e.data.message == "screenshareStartedViewing") {
+                            screenshareNotification("", "screenshareStartedViewing"); 
+                        } else if (e.data.message == "stoppedscreenshare") {
                             shownotification("Screenshare has stopped : " + e.data.screenStreamid);
                             //createScreenViewButton();
                             let button = document.getElementById(screenshareobj.button.shareButton.id);
@@ -637,22 +660,8 @@ var setRtcConn = function (sessionid) {
                             scrConn.onstreamended();
                             scrConn.removeStream(e.data.screenStreamid);
                             scrConn.close();
-                        } else if (e.data.message == "screenshareStartedViewing") {
-                            screenshareNotification("", "screenshareStartedViewing");
-                        } else {
-                            shownotification("screen is getting shared " + e.data.screenid);
-                            //createScreenViewButton();
-                            let button = document.getElementById(screenshareobj.button.shareButton.id);
-                            button.className = screenshareobj.button.shareButton.class_busy;
-                            button.innerHTML = screenshareobj.button.shareButton.html_busy;
-                            button.disabled = true;
-
-                            screenRoomid = e.data.screenid;
-                            var selfuserid = "temp_" + (new Date().getUTCMilliseconds());
-                            webrtcdevPrepareScreenShare(function (screenRoomid) {
-                                //scrConn.join(screenRoomid);  
-                                connectScrWebRTC("join", screenRoomid, selfuserid, []);
-                            });
+                        }else{
+                            webrtcdev.warn(" unreognized screen share nessage ",e.data.message );
                         }
 
                         break;
@@ -1938,25 +1947,7 @@ window.onunload=function(){
     alert(" Refreshing the Page will loose the session data");
 };
 
-/**
- * function to interact with background script of chrome extension
- * @call
- * @name addeventlistener
- */
-window.addEventListener('message', function(event){
-    webrtcdev.log("------ message from Extension " , event);
-    if (event.data.type) {
-        if(event.data.type=="screenshare"){
-            onScreenshareExtensionCallback(event);
-        }else if(event.data.type=="screenrecord"){
-            onScreenrecordExtensionCallback(event);
-        }
-    }else if(event.data=="webrtcdev-extension-getsourceId-audio-plus-tab"){
-        onScreenrecordExtensionCallback(event);
-    }else{
-        onScreenshareExtensionCallback(event);
-    }
-}); 
+
 
 /**
  * cleares local storage varibles 
