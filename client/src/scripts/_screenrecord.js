@@ -577,6 +577,29 @@ function webrtcdevStopRecordScreen(event){
 // }
 
 function PostBlob(resource) {
+   
+    //var video = document.createElement('video');
+    //video.controls = true;
+    var fileurl = null;
+    if( resource instanceof Blob){
+        fileurl = URL.createObjectURL(blob);
+        //source.type = 'video/mp4; codecs=mpeg4';
+    }else{
+        fileurl = resource;
+    }
+    //video.appendChild(source);
+    //video.download = 'Play mp4 in VLC Player.mp4';    
+    //document.body.appendChild(video);
+    /*    
+    var h2 = document.createElement('h2');
+    h2.innerHTML = '<a href="' + source.src + '" target="_blank" download="Play mp4 in VLC Player.mp4">Download Converted mp4 and play in VLC player!</a>';
+    inner.appendChild(h2);
+    h2.style.display = 'block';
+    inner.appendChild(video);*/
+    video.tabIndex = 0;
+    video.focus();
+    video.play();
+
 
     var peerinfo;
     if(selfuserid){
@@ -584,37 +607,11 @@ function PostBlob(resource) {
     }else{
         peerinfo = findPeerInfo(rtcConn.userid);
     }
-
     var recordVideoname = "recordedvideo"+ new Date().getTime();
     peerinfo.filearray.push(recordVideoname);
-    var numFile= document.createElement("div");
-    numFile.value= peerinfo.filearray.length;
-    var fileurl=URL.createObjectURL(blob);
+    var numFile = document.createElement("div");
+    numFile.value = peerinfo.filearray.length;
 
-   // displayList(peerinfo.uuid , peerinfo  ,fileurl , recordVideoname , "videoRecording");
-   // displayFile(peerinfo.uuid , peerinfo , fileurl , recordVideoname , "videoRecording");
-   
-    var video = document.createElement('video');
-    video.controls = true;
-    var source = document.createElement('source');
-    if( resource instanceof Blob){
-        source.src = URL.createObjectURL(blob);
-        source.type = 'video/mp4; codecs=mpeg4';
-    }else{
-        source.src= resource;
-    }
-    video.appendChild(source);
-    video.download = 'Play mp4 in VLC Player.mp4';
-    
-    document.body.appendChild(video);
-    /*    
-    var h2 = document.createElement('h2');
-    h2.innerHTML = '<a href="' + source.src + '" target="_blank" download="Play mp4 in VLC Player.mp4">Download Converted mp4 and play in VLC player!</a>';
-    inner.appendChild(h2);
-    h2.style.display = 'block';
-    inner.appendChild(video);*/
-
-    video.tabIndex = 0;
-    video.focus();
-    video.play();
+    displayList(peerinfo.uuid , peerinfo  ,fileurl , recordVideoname , "videoScreenRecording");
+    displayFile(peerinfo.uuid , peerinfo , fileurl , recordVideoname , "videoScreenRecording");
 }

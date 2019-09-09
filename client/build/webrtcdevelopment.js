@@ -23420,13 +23420,7 @@ function assignScreenRecordButton(){
 //       console.log('Capture stream inactive - stop recording!');
 //       this._stopCapturing(e);
 //     });
-//     this.mediaRecorder = new MediaRecorder(this.stream, {mimeType: 'video/webm'});
-//     this.mediaRecorder.addEventListener('dataavailable', event => {
-//       if (event.data && event.data.size > 0) {
-//         this.chunks.push(event.data);
-//       }
-//     });
-//     this.mediaRecorder.start(10);
+
 //   }
 
 //   _stopRecording(e) {
@@ -23484,7 +23478,8 @@ async function webrtcdevRecordScreen() {
                 optional: []
             }
         });
-    }catch(e){
+        webrtcdev.log('[screenrecord js] stream', scrrecordStream);
+    }catch(err){
         webrtcdev.error("[screenrecord js] Error in webrtcdevRecordScreen " , err);
         // List of errors 
         //AbortError-  doesn't match any of the other exceptions below occurred.
@@ -23496,25 +23491,23 @@ async function webrtcdevRecordScreen() {
         // TypeError - The specified constraints include constraints which are not permitted when calling getDisplayMedia(). These unsupported constraints are advanced and any constraints which in turn have a member named min or exact.    
     };
 
-        
-    webrtcdev.log('[screenrecord js] stream', scrrecordStream);
-    var peerinfo;
-    if(selfuserid)
-        peerinfo = findPeerInfo(selfuserid);
-    else
-        peerinfo = findPeerInfo(rtcConn.userid);
-
     scrrecordStream.addEventListener('inactive', e => {
         webrtcdev.log('Capture stream inactive - stop recording!');
         webrtcdevStopRecordScreen(e);
     });
-    mediaRecorder = new MediaRecorder(scrrecordStream, {mimeType: 'video/webm'});
-    mediaRecorder.addEventListener('dataavailable', event => {
-        if (event.data && event.data.size > 0) {
-            chunks.push(event.data);
-        }
-    });
-    mediaRecorder.start(10);
+
+    try{
+        mediaRecorder = new MediaRecorder(scrrecordStream, {mimeType: 'video/webm'});
+        mediaRecorder.addEventListener('dataavailable', event => {
+            if (event.data && event.data.size > 0) {
+                chunks.push(event.data);
+            }
+        });
+        mediaRecorder.start(10);
+        webrtcdev.log('[screenrecord js] mediaRecorder', mediaRecorder);
+    }catch(err){
+        webrtcdev.error("[screenrecord js] Error in mediaRecorder " , err);
+    }
 }
 
 function webrtcdevStopRecordScreen(event){
@@ -23528,11 +23521,6 @@ function webrtcdevStopRecordScreen(event){
     scrrecordStream = null;
 
     let recording = window.URL.createObjectURL(new Blob(chunks, {type: 'video/webm'}));
-    //if(scrrecordStream) scrrecordStream.stop();
-    //else webrtcdev.error("[stopRecord.js]  screen video recoridng was not succesfull");
-
-    // if(scrrecordAudioStream) scrrecordAudioStream.stop();
-    // else webrtcdev.error("[stopRecord.js]  screen audio recording was not successfull");
 
     PostBlob(recording);
 }
@@ -23687,7 +23675,30 @@ function webrtcdevStopRecordScreen(event){
 //     };
 // }
 
-function PostBlob(blob) {
+function PostBlob(resource) {
+   
+    //var video = document.createElement('video');
+    //video.controls = true;
+    var fileurl = null;
+    if( resource instanceof Blob){
+        fileurl = URL.createObjectURL(blob);
+        //source.type = 'video/mp4; codecs=mpeg4';
+    }else{
+        fileurl = resource;
+    }
+    //video.appendChild(source);
+    //video.download = 'Play mp4 in VLC Player.mp4';    
+    //document.body.appendChild(video);
+    /*    
+    var h2 = document.createElement('h2');
+    h2.innerHTML = '<a href="' + source.src + '" target="_blank" download="Play mp4 in VLC Player.mp4">Download Converted mp4 and play in VLC player!</a>';
+    inner.appendChild(h2);
+    h2.style.display = 'block';
+    inner.appendChild(video);*/
+    video.tabIndex = 0;
+    video.focus();
+    video.play();
+
 
     var peerinfo;
     if(selfuserid){
@@ -23695,35 +23706,13 @@ function PostBlob(blob) {
     }else{
         peerinfo = findPeerInfo(rtcConn.userid);
     }
-
     var recordVideoname = "recordedvideo"+ new Date().getTime();
     peerinfo.filearray.push(recordVideoname);
-    var numFile= document.createElement("div");
-    numFile.value= peerinfo.filearray.length;
-    var fileurl=URL.createObjectURL(blob);
+    var numFile = document.createElement("div");
+    numFile.value = peerinfo.filearray.length;
 
-   // displayList(peerinfo.uuid , peerinfo  ,fileurl , recordVideoname , "videoRecording");
-   // displayFile(peerinfo.uuid , peerinfo , fileurl , recordVideoname , "videoRecording");
-   
-    var video = document.createElement('video');
-    video.controls = true;
-    var source = document.createElement('source');
-    source.src = URL.createObjectURL(blob);
-    source.type = 'video/mp4; codecs=mpeg4';
-    video.appendChild(source);
-    video.download = 'Play mp4 in VLC Player.mp4';
-    
-    document.body.appendChild(video);
-    /*    
-    var h2 = document.createElement('h2');
-    h2.innerHTML = '<a href="' + source.src + '" target="_blank" download="Play mp4 in VLC Player.mp4">Download Converted mp4 and play in VLC player!</a>';
-    inner.appendChild(h2);
-    h2.style.display = 'block';
-    inner.appendChild(video);*/
-
-    video.tabIndex = 0;
-    video.focus();
-    video.play();
+    displayList(peerinfo.uuid , peerinfo  ,fileurl , recordVideoname , "videoScreenRecording");
+    displayFile(peerinfo.uuid , peerinfo , fileurl , recordVideoname , "videoScreenRecording");
 }
 /*-----------------------------------------------------------------------------------*/
 /*                    File JS                                                   */
