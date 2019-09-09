@@ -308,4 +308,12 @@ function showRtcConn(){
     webrtcdev.log(" rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
 }
 
+function showRTCPcapabilities(){
+
+    RTCRtpSender.getCapabilities('audio');
+    RTCRtpSender.getCapabilities('video');
+
+    RTCRtpSender.getCapabilities('audio');
+    RTCRtpSender.getCapabilities('video');
+}
 /*-----------------------------------------------------------------------------------*/

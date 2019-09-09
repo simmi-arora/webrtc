@@ -3,15 +3,16 @@
 Canvas Record 
 *************************************************************************/
 var scrrecordStream = null , scrrecordStreamid = null;
-var scrrecordAudioStream = null , scrrecordAudioStreamid = null;
+var mediaRecorder = null , chunks = [];
+// var scrrecordAudioStream = null , scrrecordAudioStreamid = null;
 
-function syncVideoScreenRecording(data , datatype , dataname ){
-    rtcMultiConnection.send({type:datatype, message:data  , name : dataname});
-}
+// function syncVideoScreenRecording(data , datatype , dataname ){
+//     rtcMultiConnection.send({type:datatype, message:data  , name : dataname});
+// }
 
-function autorecordScreenVideo(){
+// function autorecordScreenVideo(){
 
-}
+// }
 
 
 /* 
@@ -43,36 +44,36 @@ function assignScreenRecordButton(){
             recordButton.innerHTML= screenrecordobj.button.html_on;
             webrtcdevStopRecordScreen();
 
-            stopRecord(peerinfo , scrrecordStreamid, scrrecordStream , scrrecordAudioStreamid, scrrecordAudioStream);
+            // stopRecord(peerinfo , scrrecordStreamid, scrrecordStream , scrrecordAudioStreamid, scrrecordAudioStream);
             
-            var scrrecordStreamBlob;
-            var scrrecordAudioStreamBlob;
+            // var scrrecordStreamBlob;
+            // var scrrecordAudioStreamBlob;
 
-            var recorder1 = listOfRecorders[scrrecordStreamid];
-            recorder1.stopRecording(function() {
-                scrrecordStreamBlob = recorder1.getBlob();
-            });
+            // var recorder1 = listOfRecorders[scrrecordStreamid];
+            // recorder1.stopRecording(function() {
+            //     scrrecordStreamBlob = recorder1.getBlob();
+            // });
 
-            var recorder2 = listOfRecorders[scrrecordAudioStreamid];
-            recorder2.stopRecording(function() {
-                scrrecordAudioStreamBlob = recorder2.getBlob();
-            });
+            // var recorder2 = listOfRecorders[scrrecordAudioStreamid];
+            // recorder2.stopRecording(function() {
+            //     scrrecordAudioStreamBlob = recorder2.getBlob();
+            // });
 
-            setTimeout(function(){ 
+            // setTimeout(function(){ 
 
-                webrtcdev.log(" ===2 blobs====", scrrecordStreamBlob , scrrecordAudioStreamBlob); 
-                mergeStreams(scrrecordStreamBlob , scrrecordAudioStreamBlob);
-                //convertStreams(scrrecordStreamBlob , scrrecordAudioStreamBlob);
+            //     webrtcdev.log(" ===blobs====", scrrecordStreamBlob , scrrecordAudioStreamBlob); 
+            //     mergeStreams(scrrecordStreamBlob , scrrecordAudioStreamBlob);
+            //     //convertStreams(scrrecordStreamBlob , scrrecordAudioStreamBlob);
                 
-                scrrecordStreamid = null;
-                scrrecordStream = null ;
+            //     scrrecordStreamid = null;
+            //     scrrecordStream = null ;
 
-                scrrecordAudioStreamid = null;
-                scrrecordAudioStream = null ;
+            //     scrrecordAudioStreamid = null;
+            //     scrrecordAudioStream = null ;
 
-                //recordButton.disabled=false;
+            //     //recordButton.disabled=false;
 
-             }, 5000);
+            //  }, 5000);
 
         }
     };
@@ -253,144 +254,192 @@ function assignScreenRecordButton(){
     document.getElementById("topIconHolder_ul").appendChild(li);       
 }*/
 
-//call with getSourceIdScreenrecord(function(){} , true)
-function getSourceIdScreenrecord(callback, audioPlusTab) {
-    if (!callback)
-        throw '"callback" parameter is mandatory.';
-
-    window.postMessage("webrtcdev-extension-getsourceId-audio-plus-tab", "*");
-};
-
-/* 
- * Assign Screen Record Button based on screenrecordobj widget
- * @method
- * @name assignScreenRecordButton
- */
-function onScreenrecordExtensionCallback(event){
-    webrtcdev.log("onScreenrecordExtensionCallback" , event);
-
-    if (event.data.chromeExtensionStatus) {
-       webrtcdev.log(event.data.chromeExtensionStatus);
-    }
-
-    if (event.data.sourceId) {
-        if (event.data.sourceId === 'PermissionDeniedError') {
-            webrtcdev.log('permission-denied');
-        } else{
-            webrtcdevScreenRecordConstraints(event.data.sourceId);
-        }
-    }
-}
 
 
-function webrtcdevScreenRecordConstraints(chromeMediaSourceId){
-    webrtcdev.log(" webrtcdevScreenRecordConstraints :" + chromeMediaSourceId);
+// function webrtcdevScreenRecordConstraints(chromeMediaSourceId){
+//     webrtcdev.log(" webrtcdevScreenRecordConstraints :" + chromeMediaSourceId);
     
-    navigator.getUserMedia(
-        {
+//     // navigator.getUserMedia(
+//     //     {
+//     //         audio: true,
+//     //         video: false
+//     //     },
+//     //     function stream(event) {
+
+//     //         var peerinfo;
+//     //         if(selfuserid)
+//     //             peerinfo = findPeerInfo(selfuserid);
+//     //         else
+//     //             peerinfo = findPeerInfo(rtcConn.userid);
+
+//     //         scrrecordAudioStreamid = event.id ;
+//     //         scrrecordAudioStream = event ;
+//     //         startRecord(peerinfo ,  scrrecordAudioStreamid , scrrecordAudioStream);
+//     //     },
+//     //     function error(err) {
+//     //         webrtcdev.log(" Error in webrtcdevScreenRecordConstraints "  , err);
+//     //         if (isChrome && location.protocol === 'http:') {
+//     //             alert('Please test this WebRTC experiment on HTTPS.');
+//     //         } else if(isChrome) {
+//     //             alert('Screen capturing is either denied or not supported. Please install chrome extension for screen capturing or run chrome with command-line flag: --enable-usermedia-screen-capturing');
+//     //         } else if(!!navigator.mozGetUserMedia) {
+//     //             alert(Firefox_Screen_Capturing_Warning);
+//     //         }
+//     //     }
+//     // );
+
+// }
+
+// {
+
+//  static _startScreenCapture() {
+//     if (navigator.getDisplayMedia) {
+//       return navigator.getDisplayMedia({video: true});
+//     } else if (navigator.mediaDevices.getDisplayMedia) {
+//       return navigator.mediaDevices.getDisplayMedia({video: true});
+//     } else {
+//       return navigator.mediaDevices.getUserMedia({video: {mediaSource: 'screen'}});
+//     }
+//   }
+
+//   async _startRecording(e) {
+//     console.log('Start capturing.');
+//     this.status = 'Screen recording started.';
+//     this.enableStartCapture = false;
+//     this.enableStopCapture = true;
+//     this.enableDownloadRecording = false;
+//     this.requestUpdate('buttons');
+
+//     if (this.recording) {
+//       window.URL.revokeObjectURL(this.recording);
+//     }
+
+//     this.chunks = [];
+//     this.recording = null;
+//     this.stream = await ScreenSharing._startScreenCapture();
+//     this.stream.addEventListener('inactive', e => {
+//       console.log('Capture stream inactive - stop recording!');
+//       this._stopCapturing(e);
+//     });
+
+//   }
+
+//   _stopRecording(e) {
+//     console.log('Stop capturing.');
+//     this.status = 'Screen recorded completed.';
+//     this.enableStartCapture = true;
+//     this.enableStopCapture = false;
+//     this.enableDownloadRecording = true;
+
+//     this.mediaRecorder.stop();
+//     this.mediaRecorder = null;
+//     this.stream.getTracks().forEach(track => track.stop());
+//     this.stream = null;
+
+//     this.recording = window.URL.createObjectURL(new Blob(this.chunks, {type: 'video/webm'}));
+//   }
+
+//   _downloadRecording(e) {
+//     console.log('Download recording.');
+//     this.enableStartCapture = true;
+//     this.enableStopCapture = false;
+//     this.enableDownloadRecording = false;
+
+//     const downloadLink = this.shadowRoot.querySelector('a#downloadLink');
+//     downloadLink.addEventListener('progress', e => console.log(e));
+//     downloadLink.href = this.recording;
+//     downloadLink.download = 'screen-recording.webm';
+//     downloadLink.click();
+//   }
+// }
+
+// customElements.define('screen-sharing', ScreenSharing);
+
+async function webrtcdevRecordScreen() {
+    webrtcdev.log("[screenrecord js] webrtcdevRecordScreen");
+   
+    // if (navigator.getDisplayMedia) {
+    //   return navigator.getDisplayMedia({video: true});
+    // } else if (navigator.mediaDevices.getDisplayMedia) {
+    //   return navigator.mediaDevices.getDisplayMedia({video: true});
+    // } else {
+    //   return navigator.mediaDevices.getUserMedia({video: {mediaSource: 'screen'}});
+    // }
+    try{
+
+        // uses await to asynchronously wait for getDisplayMedia() to resolve with a MediaStream
+        scrrecordStream = await navigator.mediaDevices.getDisplayMedia({
             audio: true,
-            video: false
-        },
-        function stream(event) {
-
-            var peerinfo;
-            if(selfuserid)
-                peerinfo = findPeerInfo(selfuserid);
-            else
-                peerinfo = findPeerInfo(rtcConn.userid);
-
-            scrrecordAudioStreamid = event.id ;
-            scrrecordAudioStream = event ;
-            startRecord(peerinfo ,  scrrecordAudioStreamid , scrrecordAudioStream);
-        },
-        function error(err) {
-            webrtcdev.log(" Error in webrtcdevScreenRecordConstraints "  , err);
-            if (isChrome && location.protocol === 'http:') {
-                alert('Please test this WebRTC experiment on HTTPS.');
-            } else if(isChrome) {
-                alert('Screen capturing is either denied or not supported. Please install chrome extension for screen capturing or run chrome with command-line flag: --enable-usermedia-screen-capturing');
-            } else if(!!navigator.mozGetUserMedia) {
-                alert(Firefox_Screen_Capturing_Warning);
-            }
-        }
-    );
-
-    navigator.getUserMedia(
-        {
-            audio: false,
             video: {
+                mediaSource: "screen",
                 mandatory: {
-                    chromeMediaSource: 'desktop',
-                    chromeMediaSourceId: chromeMediaSourceId,
                     maxWidth: window.screen.width > 1920 ? window.screen.width : 1920,
                     maxHeight: window.screen.height > 1080 ? window.screen.height : 1080
                 },
                 optional: []
             }
-        },
-        function stream(event) {
+        });
+        webrtcdev.log('[screenrecord js] stream', scrrecordStream);
+    }catch(err){
+        webrtcdev.error("[screenrecord js] Error in webrtcdevRecordScreen " , err);
+        // List of errors 
+        //AbortError-  doesn't match any of the other exceptions below occurred.
+        // InvalidStateError - document in whose context getDisplayMedia() was called is not fully active; for example, perhaps it is not the frontmost tab.
+        // NotAllowedError -  Permission to access a screen area was denied by the user, or the current browsing instance is not permitted access to screen sharing.
+        // NotFoundError - No sources of screen video are available for capture.
+        // NotReadableError - The user selected a screen, window, tab, or other source of screen data, but a hardware or operating system level error or lockout occurred, prevenging the sharing of the selected source.
+        // OverconstrainedError - After creating the stream, applying the specified constraints fails because no compatible stream could be generated.
+        // TypeError - The specified constraints include constraints which are not permitted when calling getDisplayMedia(). These unsupported constraints are advanced and any constraints which in turn have a member named min or exact.    
+    };
 
-            //var container = document.getElementById(screenshareobj.screenshareContainer);
-            //var videosContainer = document.createElement("video");
-            //videosContainer.src = window.URL.createObjectURL(event);
-            //container.appendChild(videosContainer);
+    scrrecordStream.addEventListener('inactive', e => {
+        webrtcdev.log('Capture stream inactive - stop recording!');
+        webrtcdevStopRecordScreen(e);
+    });
 
-            var peerinfo;
-            if(selfuserid)
-                peerinfo = findPeerInfo(selfuserid);
-            else
-                peerinfo = findPeerInfo(rtcConn.userid);
-
-            scrrecordStreamid = event.id ;
-            scrrecordStream = event ;
-            startRecord(peerinfo ,  scrrecordStreamid , scrrecordStream);
-        },
-        function error(err) {
-            webrtcdev.log(" Error in webrtcdevScreenRecordConstraints "  , err);
-            if (isChrome && location.protocol === 'http:') {
-                alert('Please test this WebRTC experiment on HTTPS.');
-            } else if(isChrome) {
-                alert('Screen capturing is either denied or not supported. Please install chrome extension for screen capturing or run chrome with command-line flag: --enable-usermedia-screen-capturing');
-            } else if(!!navigator.mozGetUserMedia) {
-                alert(Firefox_Screen_Capturing_Warning);
+    try{
+        mediaRecorder = new MediaRecorder(scrrecordStream, {mimeType: 'video/webm'});
+        mediaRecorder.addEventListener('dataavailable', event => {
+            if (event.data && event.data.size > 0) {
+                chunks.push(event.data);
             }
-        }
-    );
-
+        });
+        mediaRecorder.start(10);
+        webrtcdev.log('[screenrecord js] mediaRecorder', mediaRecorder);
+    }catch(err){
+        webrtcdev.error("[screenrecord js] Error in mediaRecorder " , err);
+    }
 }
 
-function webrtcdevRecordScreen() {
-    webrtcdev.log("webrtcdevRecordScreen");
-    getSourceIdScreenrecord(function(){} , true);
-}
+function webrtcdevStopRecordScreen(event){
 
-function webrtcdevStopRecordScreen(){
-    webrtcdev.log("webrtcdevStopRecordScreen screenRoomid");
-    window.postMessage("webrtcdev-extension-stopsource-screenrecord", "*");
+    webrtcdev.log("webrtcdevStopRecordScreen" , event);
+    // window.postMessage("webrtcdev-extension-stopsource-screenrecord", "*");
+    mediaRecorder.stop();
+    mediaRecorder = null;
 
-    if(scrrecordStream) scrrecordStream.stop();
-    else webrtcdev.error(" screen video recoridng was not succesfull");
+    scrrecordStream.getTracks().forEach(track => track.stop());
+    scrrecordStream = null;
 
-    if(scrrecordAudioStream) scrrecordAudioStream.stop();
-    else webrtcdev.error(" screen audio recording was not successfull");
+    let recording = window.URL.createObjectURL(new Blob(chunks, {type: 'video/webm'}));
+
+    PostBlob(recording);
 }
 
 // Using ffmpeg concept and merging it together
+// var workerPath = 'https://archive.org/download/ffmpeg_asm/ffmpeg_asm.js';
+// function processInWebWorker() {
+//     var blob = URL.createObjectURL(new Blob(['importScripts("' + workerPath + '");var now = Date.now;function print(text) {postMessage({"type" : "stdout","data" : text});};onmessage = function(event) {var message = event.data;if (message.type === "command") {var Module = {print: print,printErr: print,files: message.files || [],arguments: message.arguments || [],TOTAL_MEMORY: message.TOTAL_MEMORY || false};postMessage({"type" : "start","data" : Module.arguments.join(" ")});postMessage({"type" : "stdout","data" : "Received command: " +Module.arguments.join(" ") +((Module.TOTAL_MEMORY) ? ".  Processing with " + Module.TOTAL_MEMORY + " bits." : "")});var time = now();var result = ffmpeg_run(Module);var totalTime = now() - time;postMessage({"type" : "stdout","data" : "Finished processing (took " + totalTime + "ms)"});postMessage({"type" : "done","data" : result,"time" : totalTime});}};postMessage({"type" : "ready"});'], {
+//         type: 'application/javascript'
+//     }));
 
-var workerPath = 'https://archive.org/download/ffmpeg_asm/ffmpeg_asm.js';
+//     var worker = new Worker(blob);
+//     URL.revokeObjectURL(blob);
+//     return worker;
+// }
 
-function processInWebWorker() {
-    var blob = URL.createObjectURL(new Blob(['importScripts("' + workerPath + '");var now = Date.now;function print(text) {postMessage({"type" : "stdout","data" : text});};onmessage = function(event) {var message = event.data;if (message.type === "command") {var Module = {print: print,printErr: print,files: message.files || [],arguments: message.arguments || [],TOTAL_MEMORY: message.TOTAL_MEMORY || false};postMessage({"type" : "start","data" : Module.arguments.join(" ")});postMessage({"type" : "stdout","data" : "Received command: " +Module.arguments.join(" ") +((Module.TOTAL_MEMORY) ? ".  Processing with " + Module.TOTAL_MEMORY + " bits." : "")});var time = now();var result = ffmpeg_run(Module);var totalTime = now() - time;postMessage({"type" : "stdout","data" : "Finished processing (took " + totalTime + "ms)"});postMessage({"type" : "done","data" : result,"time" : totalTime});}};postMessage({"type" : "ready"});'], {
-        type: 'application/javascript'
-    }));
-
-    var worker = new Worker(blob);
-    URL.revokeObjectURL(blob);
-    return worker;
-}
-
-var worker;
-var videoFile = !!navigator.mozGetUserMedia ? 'video.gif' : 'video.webm';
+// var worker;
+// var videoFile = !!navigator.mozGetUserMedia ? 'video.gif' : 'video.webm';
 
 /**
  * merging the recorded audio and video stream
@@ -402,132 +451,132 @@ var videoFile = !!navigator.mozGetUserMedia ? 'video.gif' : 'video.webm';
   * @param {string} scrrecordAudioStreamid
  * @param {blob} scrrecordAudioStream
  */
-function mergeStreams(videoBlob, audioBlob) {
-    var peerinfo;
-    if(selfuserid){
-        peerinfo = findPeerInfo(selfuserid);
-    }else{
-        peerinfo = findPeerInfo(rtcConn.userid);
-    }
+// function mergeStreams(videoBlob, audioBlob) {
+//     var peerinfo;
+//     if(selfuserid){
+//         peerinfo = findPeerInfo(selfuserid);
+//     }else{
+//         peerinfo = findPeerInfo(rtcConn.userid);
+//     }
 
-    var recordVideoname = "recordedvideo"+ new Date().getTime();
-    peerinfo.filearray.push(recordVideoname);
-    var numFile= document.createElement("div");
-    numFile.value= peerinfo.filearray.length;
-    var fileurl=URL.createObjectURL(videoBlob);
+//     var recordVideoname = "recordedvideo"+ new Date().getTime();
+//     peerinfo.filearray.push(recordVideoname);
+//     var numFile= document.createElement("div");
+//     numFile.value= peerinfo.filearray.length;
+//     var fileurl=URL.createObjectURL(videoBlob);
 
-    var recordAudioname = "recordedaudio"+ new Date().getTime();
-    peerinfo.filearray.push(recordAudioname);
-    var numFile2= document.createElement("div");
-    numFile2.value= peerinfo.filearray.length;
-    var fileurl2=URL.createObjectURL(audioBlob);
+//     var recordAudioname = "recordedaudio"+ new Date().getTime();
+//     peerinfo.filearray.push(recordAudioname);
+//     var numFile2= document.createElement("div");
+//     numFile2.value= peerinfo.filearray.length;
+//     var fileurl2=URL.createObjectURL(audioBlob);
 
-    var sessionRecordfileurl={
-        videofileurl: fileurl,
-        audiofileurl: fileurl2
-    };
+//     var sessionRecordfileurl={
+//         videofileurl: fileurl,
+//         audiofileurl: fileurl2
+//     };
 
-    var sessionRecordName={
-        videoname: recordVideoname,
-        audioname: recordAudioname
-    };
+//     var sessionRecordName={
+//         videoname: recordVideoname,
+//         audioname: recordAudioname
+//     };
 
-   displayList(peerinfo.uuid , peerinfo , sessionRecordfileurl , sessionRecordName , "sessionRecording");
-   displayFile(peerinfo.uuid , peerinfo , sessionRecordfileurl , sessionRecordName , "sessionRecording"); 
+//    displayList(peerinfo.uuid , peerinfo , sessionRecordfileurl , sessionRecordName , "sessionRecording");
+//    displayFile(peerinfo.uuid , peerinfo , sessionRecordfileurl , sessionRecordName , "sessionRecording"); 
 
-}
+// }
 
-function convertStreams(videoBlob, audioBlob) {
-    var vab;
-    var aab;
-    var buffersReady;
-    var workerReady;
-    var posted = false;
+// function convertStreams(videoBlob, audioBlob) {
+//     var vab;
+//     var aab;
+//     var buffersReady;
+//     var workerReady;
+//     var posted = false;
 
-    var fileReader1 = new FileReader();
-    fileReader1.onload = function() {
-        vab = this.result;
+//     var fileReader1 = new FileReader();
+//     fileReader1.onload = function() {
+//         vab = this.result;
 
-        if (aab) buffersReady = true;
+//         if (aab) buffersReady = true;
 
-        if (buffersReady && workerReady && !posted) postMessage();
-    };
+//         if (buffersReady && workerReady && !posted) postMessage();
+//     };
 
-    var fileReader2 = new FileReader();
-    fileReader2.onload = function() {
-        aab = this.result;
+//     var fileReader2 = new FileReader();
+//     fileReader2.onload = function() {
+//         aab = this.result;
 
-        if (vab) buffersReady = true;
+//         if (vab) buffersReady = true;
 
-        if (buffersReady && workerReady && !posted) postMessage();
-    };
+//         if (buffersReady && workerReady && !posted) postMessage();
+//     };
 
-    webrtcdev.log("videoBlob ", videoBlob);
-    webrtcdev.log("audioBlob ", audioBlob);
+//     webrtcdev.log("videoBlob ", videoBlob);
+//     webrtcdev.log("audioBlob ", audioBlob);
 
-    fileReader1.readAsArrayBuffer(videoBlob);
-    fileReader2.readAsArrayBuffer(audioBlob);
+//     fileReader1.readAsArrayBuffer(videoBlob);
+//     fileReader2.readAsArrayBuffer(audioBlob);
 
-    if (!worker) {
-        worker = processInWebWorker();
-    }
+//     if (!worker) {
+//         worker = processInWebWorker();
+//     }
 
-    worker.onmessage = function(event) {
-        var message = event.data;
-        if (message.type == "ready") {
-            webrtcdev.log('<a href="'+ workerPath +'" download="ffmpeg-asm.js">ffmpeg-asm.js</a> file has been loaded.');
-            workerReady = true;
-            if (buffersReady)
-                postMessage();
-        } else if (message.type == "stdout") {
-            webrtcdev.log(message.data);
-        } else if (message.type == "start") {
-            webrtcdev.log('<a href="'+ workerPath +'" download="ffmpeg-asm.js">ffmpeg-asm.js</a> file received ffmpeg command.');
-        } else if (message.type == "done") {
-            webrtcdev.log(JSON.stringify(message));
+//     worker.onmessage = function(event) {
+//         var message = event.data;
+//         if (message.type == "ready") {
+//             webrtcdev.log('<a href="'+ workerPath +'" download="ffmpeg-asm.js">ffmpeg-asm.js</a> file has been loaded.');
+//             workerReady = true;
+//             if (buffersReady)
+//                 postMessage();
+//         } else if (message.type == "stdout") {
+//             webrtcdev.log(message.data);
+//         } else if (message.type == "start") {
+//             webrtcdev.log('<a href="'+ workerPath +'" download="ffmpeg-asm.js">ffmpeg-asm.js</a> file received ffmpeg command.');
+//         } else if (message.type == "done") {
+//             webrtcdev.log(JSON.stringify(message));
 
-            var result = message.data[0];
-            webrtcdev.log(JSON.stringify(result));
+//             var result = message.data[0];
+//             webrtcdev.log(JSON.stringify(result));
 
-            var blob = new Blob([result.data], {
-                type: 'video/mp4'
-            });
+//             var blob = new Blob([result.data], {
+//                 type: 'video/mp4'
+//             });
 
-            webrtcdev.log(JSON.stringify(blob));
+//             webrtcdev.log(JSON.stringify(blob));
 
-            PostBlob(blob);
-        }
-    };
+//             PostBlob(blob);
+//         }
+//     };
 
-    var postMessage = function() {
-        posted = true;
+//     var postMessage = function() {
+//         posted = true;
 
-        worker.postMessage({
-            type: 'command',
-            arguments: [
-                '-i', videoFile,
-                '-i', 'audio.wav',
-                '-c:v', 'mpeg4',
-                '-c:a', 'vorbis',
-                '-b:v', '6400k',
-                '-b:a', '4800k',
-                '-strict', 'experimental', 'output.mp4'
-            ],
-            files: [
-                {
-                    data: new Uint8Array(vab),
-                    name: videoFile
-                },
-                {
-                    data: new Uint8Array(aab),
-                    name: "audio.wav"
-                }
-            ]
-        });
-    };
-}
+//         worker.postMessage({
+//             type: 'command',
+//             arguments: [
+//                 '-i', videoFile,
+//                 '-i', 'audio.wav',
+//                 '-c:v', 'mpeg4',
+//                 '-c:a', 'vorbis',
+//                 '-b:v', '6400k',
+//                 '-b:a', '4800k',
+//                 '-strict', 'experimental', 'output.mp4'
+//             ],
+//             files: [
+//                 {
+//                     data: new Uint8Array(vab),
+//                     name: videoFile
+//                 },
+//                 {
+//                     data: new Uint8Array(aab),
+//                     name: "audio.wav"
+//                 }
+//             ]
+//         });
+//     };
+// }
 
-function PostBlob(blob) {
+function PostBlob(resource) {
 
     var peerinfo;
     if(selfuserid){
@@ -548,8 +597,12 @@ function PostBlob(blob) {
     var video = document.createElement('video');
     video.controls = true;
     var source = document.createElement('source');
-    source.src = URL.createObjectURL(blob);
-    source.type = 'video/mp4; codecs=mpeg4';
+    if( resource instanceof Blob){
+        source.src = URL.createObjectURL(blob);
+        source.type = 'video/mp4; codecs=mpeg4';
+    }else{
+        source.src= resource;
+    }
     video.appendChild(source);
     video.download = 'Play mp4 in VLC Player.mp4';
     

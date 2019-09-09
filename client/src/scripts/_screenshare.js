@@ -245,18 +245,12 @@ function webrtcdevViewscreen(roomid){
  */
 function webrtcdevStopShareScreen(){
     try{
-        /*
-        scrConn.removeStream({
-            screen: true,  // it will remove all screen streams
-            stop: true     // ask to stop old stream
-        });*/
+
         if(screenshareobj.screenshareContainer)
             document.getElementById(screenshareobj.screenshareContainer).innerHTML="";
 
         rtcConn.send({
             type:"screenshare", 
-            screenid: screenRoomid,
-            screenStreamid: screenStreamId,
             message:"stoppedscreenshare"
         });
         //scrConn.onstreamended();
