@@ -1,3 +1,7 @@
+/*-----------------------------------------------------------------------------------*/
+/*                    Code Editor  JS                                                */
+/*-----------------------------------------------------------------------------------*/
+
 function createCodeEditorButton(){
     var codeeditorButton= document.createElement("span");
     codeeditorButton.className=codeeditorobj.button.class_off ;
@@ -35,9 +39,6 @@ function createCodeEditorButton(){
     document.getElementById("topIconHolder_ul").appendChild(li);
 }
 
-/*************************************************************************
-code Editor
-******************************************************************************/
 function sendWebrtcdevCodeeditorSync(evt){
     if(evt.which ==  37 || evt.which ==  38 || evt.which ==  39 || evt.which ==  40  || evt.which==17 || evt.which == 18|| evt.which == 16){
         return true; 
@@ -99,3 +100,5 @@ function startWebrtcdevcodeeditorSync(){
 function stopWebrtcdevcodeeditorSync(){
     document.getElementById(codeeditorobj.codeeditorContainer).removeEventListener("keyup", sendWebrtcdevCodeeditorSync, false);
 }
+
+/*-----------------------------------------------------------------------------------*/

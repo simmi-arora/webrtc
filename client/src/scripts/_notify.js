@@ -1,3 +1,7 @@
+/*-----------------------------------------------------------------------------------*/
+/*                    Notify JS                                                     */
+/*-----------------------------------------------------------------------------------*/
+
 /**
  * function to show bootstrap based notification to client
  * @constructor
@@ -84,7 +88,7 @@ function showdesktopnotification() {
      var notification = new Notification("Vilageexperts" , options);
   }
   else if (Notification.permission !== 'denied') {
-    webrtcdev.warning(" [notify.js] notification deined")
+    webrtcdev.warn(" [notify.js] notification deined")
   }
 
   //  Otherwise, we need to ask the user for permission
@@ -135,4 +139,5 @@ function spawnNotification(theBody,theIcon,theTitle) {
   var n = new Notification(theTitle,options);
 }
 
+/*-----------------------------------------------------------------------------------*/
 

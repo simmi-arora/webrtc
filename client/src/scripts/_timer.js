@@ -1,6 +1,6 @@
-/**************************************************8
-Timer 
-***************************************************/
+/*-----------------------------------------------------------------------------------*/
+/*                        timer JS                                                   */
+/*-----------------------------------------------------------------------------------*/
 /**
  * {@link https://github.com/altanai/webrtc/blob/master/client/build/scripts/_timer.js|TIMER} 
  * @summary Takes local and remote peers time , localtion and show and shows timer for session
@@ -338,3 +338,5 @@ function checkTime(i) {
     if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
     return i;
 }
+
+/*-----------------------------------------------------------------------------------*/
