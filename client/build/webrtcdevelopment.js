@@ -23695,10 +23695,9 @@ function PostBlob(resource) {
     inner.appendChild(h2);
     h2.style.display = 'block';
     inner.appendChild(video);*/
-    video.tabIndex = 0;
-    video.focus();
-    video.play();
-
+    // video.tabIndex = 0;
+    // video.focus();
+    // video.play();
 
     var peerinfo;
     if(selfuserid){
