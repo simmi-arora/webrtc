@@ -26424,17 +26424,20 @@ function activateBandwidthButtons(timerobj){
  */
 function showStatus(conn){
     getStats(rtcConn, function(result) {
-        alert("getstats Result");
-        webrtcdev.log(result.connectionType.remote.ipAddress);
-        webrtcdev.log(result.connectionType.remote.candidateType);
-        webrtcdev.log(result.connectionType.transport);
+        webrtcdev.info("[stats] ",result.connectionType.remote.ipAddress);
+        webrtcdev.info("[stats]",result.connectionType.remote.candidateType);
+        webrtcdev.info("[stats]",result.connectionType.transport);
     });
-    alert( "got stats " , result.connectionType.transport);
-    webrtcdev.log("WebcallPeers " , webcallpeers);
+    webrtcdev.info("[stats] WebcallPeers " , webcallpeers);
 }
 
-
-function rtpstats(){
+/**
+ * shows stats of ongoing webrtc call 
+ * @method
+ * @name showStatus
+ * @param {obj} conn
+ */
+function showRtpstats(){
     try{
         for( x=0; x<rtcConn.peers.getLength(); x++){
             var pid =  rtcConn.peers.getAllParticipants()[x];
@@ -26442,23 +26445,25 @@ function rtpstats(){
             document.getElementById(statisticsobj.statsConainer).innerHTML += "<pre >"+ arg + "</pre>";        
         }
     }catch(e){
-        webrtcdev.error("rtpstats" , e);
+        webrtcdev.error("[stats] rtpstats" , e);
     }
 
 }
 
 function showRtcConn(){
-    webrtcdev.log(" rtcConn : "  , rtcConn);
-    webrtcdev.log(" rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
+    webrtcdev.info("[stats] rtcConn : "  , rtcConn);
+    webrtcdev.info("[stats] rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
 }
 
 function showRTCPcapabilities(){
+    let str = ""; 
+    str += RTCRtpSender.getCapabilities('audio');
+    str += RTCRtpSender.getCapabilities('video');
 
-    RTCRtpSender.getCapabilities('audio');
-    RTCRtpSender.getCapabilities('video');
+    str += RTCRtpSender.getCapabilities('audio');
+    str += RTCRtpSender.getCapabilities('video');
 
-    RTCRtpSender.getCapabilities('audio');
-    RTCRtpSender.getCapabilities('video');
+    document.getElementById(statisticsobj.statsConainer).innerHTML += "<pre >"+ str + "</pre>";    
 }
 /*-----------------------------------------------------------------------------------*/
 /*-----------------------------------------------------------------------------------*/
