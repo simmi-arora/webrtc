@@ -334,6 +334,17 @@ function showRTCPcapabilities(){
 }
 
 
+/*
+
+check MediaStreamTrack
+    MediaTrackSupportedConstraints, 
+    MediaTrackCapabilities, 
+    MediaTrackConstraints 
+    MediaTrackSettings
+*/
+function getstatsMediaDevices(){
+    webrtcdev.log("[stats] getSupportedConstraints - " , navigator.mediaDevices.getSupportedConstraints());
+}
 
 
 
