@@ -332,4 +332,9 @@ function showRTCPcapabilities(){
 
     document.getElementById(statisticsobj.statsConainer).innerHTML += "<pre >"+ str + "</pre>";    
 }
+
+
+
+
+
 /*-----------------------------------------------------------------------------------*/

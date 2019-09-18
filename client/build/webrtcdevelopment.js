@@ -26424,7 +26424,7 @@ function activateBandwidthButtons(timerobj){
  */
 function showStatus(conn){
     getStats(rtcConn, function(result) {
-        webrtcdev.info("[stats] ",result.connectionType.remote.ipAddress);
+        webrtcdev.info("[stats]",result.connectionType.remote.ipAddress);
         webrtcdev.info("[stats]",result.connectionType.remote.candidateType);
         webrtcdev.info("[stats]",result.connectionType.transport);
     });
@@ -26449,12 +26449,23 @@ function showRtpstats(){
     }
 
 }
-
+/*
+ * shows rtc conn of ongoing webrtc call 
+ * @method
+ * @name showRtcConn
+ * @param {obj} conn
+ */
 function showRtcConn(){
     webrtcdev.info("[stats] rtcConn : "  , rtcConn);
     webrtcdev.info("[stats] rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
 }
 
+/*
+ * shows rtcp capabilities of transceivers webrtc call 
+ * @method
+ * @name showRTCPcapabilities
+ * @param {obj} conn
+ */
 function showRTCPcapabilities(){
     let str = ""; 
     str += RTCRtpSender.getCapabilities('audio');

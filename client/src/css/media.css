@@ -26,7 +26,6 @@ video {
     transition: width .5s ease;
     margin: 0;
     background-color: #000;
-    border-radius: 50px;
     height: 100% ;
     width:100%;
 }
