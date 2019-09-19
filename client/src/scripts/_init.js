@@ -309,8 +309,13 @@ function setlogslevel(){
     };
 
     webrtcdev.info= function(){
-      let arg = getArgsJson(arguments);
-      webrtcdevlogs.push("<p style='color:blue'>[INFO]" + arg + "</p>");
+      if(isJSON(arguments)){
+         let arg = JSON.stringify(arguments, undefined, 2);
+        webrtcdevlogs.push("<pre style='color:blue'>[-]" + arg + "</pre>");         
+      }else{
+        let arg = getArgsJson(arguments);
+        webrtcdevlogs.push("<p style='color:blue'>[INFO]" + arg + "</p>");
+      }
       console.info(arguments);
     };
 

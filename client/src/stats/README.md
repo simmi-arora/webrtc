@@ -1,11 +1,24 @@
-# [getStats.js](https://github.com/muaz-khan/getStats) / [Demo](https://www.webrtc-experiment.com/getStats/)
+# stats 
 
-getStats.js is separated/splitted into unique files.
 
-This directory contains all those development files.
+getStats() psrt of w3c Webrtc API, used to collect metrics from a WebRTC session. 
+Its attribites tell about the health of media streams in the session.
 
-`grunt` tools are used to concatenate/merge all these files into `~/getStats.js`.
+Returned reports include : 
 
-## License
+googTrack
+googLibjingleSession
+googCertificate
+googComponent
+googCandidatePair
+localCandidate
+remoteCandidate
 
-[getStats.js](https://github.com/muaz-khan/getStats) is released under [MIT licence](https://www.webrtc-experiment.com/licence/) . Copyright (c) [Muaz Khan](http://www.MuazKhan.com/).
+## ssrc
+
+
+
+## VideoBWE
+
+Ref :
+w3C on webrtc stats - https://www.w3.org/TR/webrtc-stats

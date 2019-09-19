@@ -277,6 +277,22 @@ function webrtcdevStopShareScreen(){
 }
 
 /**
+ * function clear screen share session RTC peer connection 
+ * @method
+ * @name webrtcdevCleanShareScreen
+ */
+function webrtcdevCleanShareScreen(streamid){
+    try{
+        scrConn.onstreamended();
+        scrConn.removeStream(streamid);
+        scrConn.close();
+        scrConn = null;
+    }catch(err){
+        webrtcdev.error("[screensharejs] webrtcdevStopShareScreen - ", err);
+    }
+}
+
+/**
  * find if view button is provided or need to be created 
  * @method
  * @name createOrAssignScreenviewButton
@@ -452,31 +468,26 @@ function showScreenShareButton(){
     button.setAttribute("style","display:block");
 }
 
-/*
-//shifted to start.js
-window.addEventListener('message', onScreenshareExtensionCallback);*/
 
-function onScreenshareExtensionCallback(event){
-    webrtcdev.log("[screenshare Js] onScreenshareExtensionCallback" , event);
-
-    if (event.data.chromeExtensionStatus) {
-       webrtcdev.log("event.data.chromeExtensionStatus ", event.data.chromeExtensionStatus);
-    }
-
-    if (event.data.sourceId) {
-        if (event.data.sourceId === 'PermissionDeniedError') {
-            webrtcdev.error('permission-denied');
-        } else{
-            webrtcdevScreenConstraints(event.data.sourceId);
-        }
+function showScrConn(){
+    if(scrConn){
+        webrtcdev.info(" =========================================================================");
+        webrtcdev.info(" srcConn : "  , scrConn);
+        webrtcdev.info(" srcConn.peers.getAllParticipants() : " , scrConn.peers.getAllParticipants());
+        webrtcdev.info(" =========================================================================");
+    }else{
+        webrtcdev.debug(" Screen share is not active ");
     }
 }
 
-function showSrcConn(){
-    webrtcdev.log(" srcConn : "  , srcConn);
-    webrtcdev.log(" srcConn.peers.getAllParticipants() : " , srcConn.peers.getAllParticipants());
-}
 
+
+
+/**
+ * Alert boxes for user if screen share isnt working 
+ * @method
+ * @name screenshareNotification
+ */
 function resetAlertBox(){
     document.getElementById("alertBox").hidden=false;
     document.getElementById("alertBox").innerHTML="";
@@ -528,70 +539,4 @@ function screenshareNotification(message , type){
     }else{
         alert(message);
     }
-}
-
-
-/**
- * Install widnow
- * @method
- * @name createExtensionInstallWindow
- */
-function createExtensionInstallWindow (){
-    try{
-        var modalBox = document.createElement("div");
-        modalBox.className = "modal fade";
-        modalBox.setAttribute("role", "dialog");
-        modalBox.id = "screensharedialog";
-
-        var modalinnerBox = document.createElement("div");
-        modalinnerBox.className = "modal-dialog";
-
-        var modal = document.createElement("div");
-        modal.className = "modal-content";
-
-        var modalheader = document.createElement("div");
-        modalheader.className = "modal-header";
-
-        var closeButton = document.createElement("button");
-        closeButton.className = "close";
-        closeButton.setAttribute("data-dismiss", "modal");
-        closeButton.innerHTML = "&times;";
-
-        var title = document.createElement("h4");
-        title.className = "modal-title";
-        title.innerHTML = "Install Ample Chat chrome extension";
-
-        modalheader.appendChild(title);
-        modalheader.appendChild(closeButton);
-
-
-        var modalbody = document.createElement("div");
-        modalbody.className = "modal-body";
-
-        var div = document.createElement("div");
-        div.innerHTML = "Click this link to install " +
-                        "<a href='https://chrome.google.com/webstore/detail/jpcjjkpbiepbmhklnjoahacppaemhmpd' target='_blank'> Ample Chat Extension </a> "+
-                        "which enbles screen share and session record features. "+
-                        "<br/> Please reload this session after extension installation ";
-
-        modalbody.appendChild(div);
-
-        modal.appendChild(modalheader);
-        modal.appendChild(modalbody);
-
-        modalinnerBox.appendChild(modal);
-        modalBox.appendChild(modalinnerBox);
-
-        if(document.getElementById("mainDiv")){
-            var mainDiv = document.getElementById("mainDiv");
-            mainDiv.appendChild(modalBox);
-
-            //document.getElementById("screensharedialog").showModal();
-            $("#screensharedialog").modal("show");            
-        }
-
-    }catch(e){
-        webrtcdev.error("[ createExtensionInstallWindow - Screenshare.js]" , e); 
-    }
-                                
 }

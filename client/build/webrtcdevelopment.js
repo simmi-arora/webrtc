@@ -7854,6 +7854,22 @@ function webrtcdevStopShareScreen(){
 }
 
 /**
+ * function clear screen share session RTC peer connection 
+ * @method
+ * @name webrtcdevCleanShareScreen
+ */
+function webrtcdevCleanShareScreen(streamid){
+    try{
+        scrConn.onstreamended();
+        scrConn.removeStream(streamid);
+        scrConn.close();
+        scrConn = null;
+    }catch(err){
+        webrtcdev.error("[screensharejs] webrtcdevStopShareScreen - ", err);
+    }
+}
+
+/**
  * find if view button is provided or need to be created 
  * @method
  * @name createOrAssignScreenviewButton
@@ -8029,31 +8045,26 @@ function showScreenShareButton(){
     button.setAttribute("style","display:block");
 }
 
-/*
-//shifted to start.js
-window.addEventListener('message', onScreenshareExtensionCallback);*/
 
-function onScreenshareExtensionCallback(event){
-    webrtcdev.log("[screenshare Js] onScreenshareExtensionCallback" , event);
-
-    if (event.data.chromeExtensionStatus) {
-       webrtcdev.log("event.data.chromeExtensionStatus ", event.data.chromeExtensionStatus);
-    }
-
-    if (event.data.sourceId) {
-        if (event.data.sourceId === 'PermissionDeniedError') {
-            webrtcdev.error('permission-denied');
-        } else{
-            webrtcdevScreenConstraints(event.data.sourceId);
-        }
+function showScrConn(){
+    if(scrConn){
+        webrtcdev.info(" =========================================================================");
+        webrtcdev.info(" srcConn : "  , scrConn);
+        webrtcdev.info(" srcConn.peers.getAllParticipants() : " , scrConn.peers.getAllParticipants());
+        webrtcdev.info(" =========================================================================");
+    }else{
+        webrtcdev.debug(" Screen share is not active ");
     }
 }
 
-function showSrcConn(){
-    webrtcdev.log(" srcConn : "  , srcConn);
-    webrtcdev.log(" srcConn.peers.getAllParticipants() : " , srcConn.peers.getAllParticipants());
-}
 
+
+
+/**
+ * Alert boxes for user if screen share isnt working 
+ * @method
+ * @name screenshareNotification
+ */
 function resetAlertBox(){
     document.getElementById("alertBox").hidden=false;
     document.getElementById("alertBox").innerHTML="";
@@ -8105,72 +8116,6 @@ function screenshareNotification(message , type){
     }else{
         alert(message);
     }
-}
-
-
-/**
- * Install widnow
- * @method
- * @name createExtensionInstallWindow
- */
-function createExtensionInstallWindow (){
-    try{
-        var modalBox = document.createElement("div");
-        modalBox.className = "modal fade";
-        modalBox.setAttribute("role", "dialog");
-        modalBox.id = "screensharedialog";
-
-        var modalinnerBox = document.createElement("div");
-        modalinnerBox.className = "modal-dialog";
-
-        var modal = document.createElement("div");
-        modal.className = "modal-content";
-
-        var modalheader = document.createElement("div");
-        modalheader.className = "modal-header";
-
-        var closeButton = document.createElement("button");
-        closeButton.className = "close";
-        closeButton.setAttribute("data-dismiss", "modal");
-        closeButton.innerHTML = "&times;";
-
-        var title = document.createElement("h4");
-        title.className = "modal-title";
-        title.innerHTML = "Install Ample Chat chrome extension";
-
-        modalheader.appendChild(title);
-        modalheader.appendChild(closeButton);
-
-
-        var modalbody = document.createElement("div");
-        modalbody.className = "modal-body";
-
-        var div = document.createElement("div");
-        div.innerHTML = "Click this link to install " +
-                        "<a href='https://chrome.google.com/webstore/detail/jpcjjkpbiepbmhklnjoahacppaemhmpd' target='_blank'> Ample Chat Extension </a> "+
-                        "which enbles screen share and session record features. "+
-                        "<br/> Please reload this session after extension installation ";
-
-        modalbody.appendChild(div);
-
-        modal.appendChild(modalheader);
-        modal.appendChild(modalbody);
-
-        modalinnerBox.appendChild(modal);
-        modalBox.appendChild(modalinnerBox);
-
-        if(document.getElementById("mainDiv")){
-            var mainDiv = document.getElementById("mainDiv");
-            mainDiv.appendChild(modalBox);
-
-            //document.getElementById("screensharedialog").showModal();
-            $("#screensharedialog").modal("show");            
-        }
-
-    }catch(e){
-        webrtcdev.error("[ createExtensionInstallWindow - Screenshare.js]" , e); 
-    }
-                                
 }
 /*-----------------------------------------------------------------------------------*/
 /*                        webrtc checks JS                                           */
@@ -26146,19 +26091,6 @@ function checkTime(i) {
 /*                        stats JS                                                   */
 /*-----------------------------------------------------------------------------------*/
 
-// ___________
-// getStats.js
-// an abstraction layer runs top over RTCPeerConnection.getStats API
-// cross-browser compatible solution
-// http://dev.w3.org/2011/webrtc/editor/webrtc.html#dom-peerconnection-getstats
-/*
-getStats(rtcPeerConnection, function(result) {
-    result.connectionType.remote.ipAddress
-    result.connectionType.remote.candidateType
-    result.connectionType.transport
-});
-*/
-
 function getStats(mediaStreamTrack, callback, interval) {
     var peer = this;
     //webrtcdev.log("----getStats-----", arguments[0] , arguments[1] ,arguments[2] , arguments[3])
@@ -26346,42 +26278,42 @@ function getStats(mediaStreamTrack, callback, interval) {
         });
     })();
 
-// a wrapper around getStats which hides the differences (where possible)
-// following code-snippet is taken from somewhere on the github
-function _getStats(cb) {
-    // if !peer or peer.signalingState == 'closed' then return;
-    webrtcdev.log( "peer " , peer);
-    if(!peer.getStats()) return;
+    // a wrapper around getStats which hides the differences (where possible)
+    // following code-snippet is taken from somewhere on the github
+    function _getStats(cb) {
+        // if !peer or peer.signalingState == 'closed' then return;
+        webrtcdev.log( "peer " , peer);
+        if(!peer.getStats()) return;
 
-    if (!!navigator.mozGetUserMedia) {
-        peer.getStats(
-            mediaStreamTrack,
-            function(res) {
+        if (!!navigator.mozGetUserMedia) {
+            peer.getStats(
+                mediaStreamTrack,
+                function(res) {
+                    var items = [];
+                    res.forEach(function(result) {
+                        items.push(result);
+                    });
+                    cb(items);
+                },
+                cb
+            );
+        } else {
+            peer.getStats(function(res) {
                 var items = [];
-                res.forEach(function(result) {
-                    items.push(result);
+                res.result().forEach(function(result) {
+                    var item = {};
+                    result.names().forEach(function(name) {
+                        item[name] = result.stat(name);
+                    });
+                    item.id = result.id;
+                    item.type = result.type;
+                    item.timestamp = result.timestamp;
+                    items.push(item);
                 });
                 cb(items);
-            },
-            cb
-        );
-    } else {
-        peer.getStats(function(res) {
-            var items = [];
-            res.result().forEach(function(result) {
-                var item = {};
-                result.names().forEach(function(name) {
-                    item[name] = result.stat(name);
-                });
-                item.id = result.id;
-                item.type = result.type;
-                item.timestamp = result.timestamp;
-                items.push(item);
             });
-            cb(items);
-        });
-    }
-};
+        }
+    };
 }
 
 function merge(mergein, mergeto) {
@@ -26422,12 +26354,12 @@ function activateBandwidthButtons(timerobj){
  * @name showStatus
  * @param {obj} conn
  */
-function showStatus(conn){
+function showStatus(){
     getStats(rtcConn, function(result) {
         webrtcdev.info("[stats]",result.connectionType.remote.ipAddress);
         webrtcdev.info("[stats]",result.connectionType.remote.candidateType);
         webrtcdev.info("[stats]",result.connectionType.transport);
-    });
+    } , 10000);
     webrtcdev.info("[stats] WebcallPeers " , webcallpeers);
 }
 
@@ -26441,7 +26373,7 @@ function showRtpstats(){
     try{
         for( x=0; x<rtcConn.peers.getLength(); x++){
             var pid =  rtcConn.peers.getAllParticipants()[x];
-            var arg = JSON.stringify( rtcConn.peers[pid] , undefined, 2);
+            var arg = JSON.stringify(rtcConn.peers[pid] , undefined, 2);
             document.getElementById(statisticsobj.statsConainer).innerHTML += "<pre >"+ arg + "</pre>";        
         }
     }catch(e){
@@ -26453,11 +26385,16 @@ function showRtpstats(){
  * shows rtc conn of ongoing webrtc call 
  * @method
  * @name showRtcConn
- * @param {obj} conn
  */
 function showRtcConn(){
-    webrtcdev.info("[stats] rtcConn : "  , rtcConn);
-    webrtcdev.info("[stats] rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
+    if(rtcConn){
+        webrtcdev.info(" =========================================================================");
+        webrtcdev.info("[stats] rtcConn : " , rtcConn);
+        webrtcdev.info("[stats] rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
+        webrtcdev.info(" =========================================================================");
+    }else{
+        webrtcdev.debug(" rtcConn doesnt exist ");
+    }
 }
 
 /*
@@ -26476,66 +26413,25 @@ function showRTCPcapabilities(){
 
     document.getElementById(statisticsobj.statsConainer).innerHTML += "<pre >"+ str + "</pre>";    
 }
+
+
+/*
+check MediaStreamTrack
+    MediaTrackSupportedConstraints, 
+    MediaTrackCapabilities, 
+    MediaTrackConstraints 
+    MediaTrackSettings
+*/
+function getstatsMediaDevices(){
+    webrtcdev.log("[stats] getSupportedConstraints - " , navigator.mediaDevices.getSupportedConstraints());
+}
+
+
+
 /*-----------------------------------------------------------------------------------*/
 /*-----------------------------------------------------------------------------------*/
 /*                        Tracing JS                                                   */
 /*-----------------------------------------------------------------------------------*/
-/**
- * collect all webrtcStats and stream to Server to be stored in a file with seesion id as the file name 
- * @method
- * @name sendCallTraces
- * @param {string} traces
- */
-// function sendCallTraces(){
-
-// }
-
-/**
- * collect all webrtcdev.log and stream to Server to be stored in a file with seesion id as the file name 
- * @method
- * @name sendwebrtcdevLogs
- * @param {string} logs
- */
-// function sendwebrtcdevLogs(url , key){
-
-// 	try{
-
-// 		var zip = new JSZip();
-// 		zip.file("webrtcDevSessionLogs.txt", webrtcdevlogs);
-// 		// var img = zip.folder("images");
-// 		// img.file("smile.gif", imgData, {base64: true});
-// 		// zip.generateAsync({type:"blob"})
-// 		zip.generateAsync({type:"base64"})
-// 		.then(function(content) {
-// 		    // see FileSaver.js
-// 		    // saveAs(content, "webrtcDevSessionLogs.zip");
-// 		    fetch(url, {
-// 			  method		: 'post',
-// 			  crossDomain	: true,
-// 			  ContentEncoding: 'base64',
-// 			  headers		: {
-// 			    'Accept': 'application/zip, text/plain, */*',
-// 			    'Content-Type': 'application/json',
-// 			    'Authorization' : key
-// 			  },
-// 			  body: { 
-// 		            apikey 		: key ,
-// 		            useremail	: selfemail, 
-// 		            sessionid	: sessionid,
-// 		            webrtcZip 	: content , //Zip file (Max File Size 2MB)
-// 		            webrtcTxt 	: 'traceswebrtcdev'
-// 		        }
-// 			})
-// 			.then(res => res.json())
-// 			.then(res => console.log(res));
-
-// 		});
-
-// 	}catch(e){
-// 		webrtcdevlogs.error(" Exception in sendwebrtcdevLogs " , e);
-// 	}
-// }
-
 
 /**
  * collect all webrtcStats and stream to Server to be stored in a file with seesion id as the file name 
@@ -26592,23 +26488,11 @@ function showUserStats(){
 }
 
 /**
- * get screenshost to send along with dbeug logs
+ * get screenshost to send along with debug logs
  * @method
  * @name getscreenshot
  */
 function getscreenshot(){
-	// return getScreenshotOfElement($("#mainDiv").get(0), 0, 0, 100, 100, function(data) {
-	// 	console.log(" ----------- data img" , data);
-	//     $("#help-screenshot-body").attr("src", "data:image/png;base64,"+data);
-	// });
-	
-	// html2canvas($('#mainDiv'), {
-	//   onrendered: function(canvas) {
-	//     var img = canvas.toDataURL()
-	//     $("#help-screenshot-body").attr("src", "data:image/png;base64,"+img);
-	//   }
-	// });
-
 	html2canvas(document.querySelector("#bodyDiv")).then(canvas => {
 	    document.getElementById("help-screenshot-body").src = canvas.toDataURL();
 	});
@@ -27188,7 +27072,7 @@ var setRtcConn = function (sessionid) {
                 // stats widget
                 if (statisticsobj && statisticsobj.active) {
                     //populate RTP stats 
-                    rtpstats();
+                    showRtpstats();
                 }
 
             } catch (e) {
@@ -27300,10 +27184,7 @@ var setRtcConn = function (sessionid) {
                             button.className = screenshareobj.button.shareButton.class_off;
                             button.innerHTML = screenshareobj.button.shareButton.html_off;
                             button.disabled = false;
-
-                            scrConn.onstreamended();
-                            scrConn.removeStream(e.data.screenStreamid);
-                            scrConn.close();
+                            webrtcdevCleanShareScreen(e.data.screenStreamid);
                         }else{
                             webrtcdev.warn(" unreognized screen share nessage ",e.data.message );
                         }

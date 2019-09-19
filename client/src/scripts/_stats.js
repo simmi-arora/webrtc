@@ -2,19 +2,6 @@
 /*                        stats JS                                                   */
 /*-----------------------------------------------------------------------------------*/
 
-// ___________
-// getStats.js
-// an abstraction layer runs top over RTCPeerConnection.getStats API
-// cross-browser compatible solution
-// http://dev.w3.org/2011/webrtc/editor/webrtc.html#dom-peerconnection-getstats
-/*
-getStats(rtcPeerConnection, function(result) {
-    result.connectionType.remote.ipAddress
-    result.connectionType.remote.candidateType
-    result.connectionType.transport
-});
-*/
-
 function getStats(mediaStreamTrack, callback, interval) {
     var peer = this;
     //webrtcdev.log("----getStats-----", arguments[0] , arguments[1] ,arguments[2] , arguments[3])
@@ -202,42 +189,42 @@ function getStats(mediaStreamTrack, callback, interval) {
         });
     })();
 
-// a wrapper around getStats which hides the differences (where possible)
-// following code-snippet is taken from somewhere on the github
-function _getStats(cb) {
-    // if !peer or peer.signalingState == 'closed' then return;
-    webrtcdev.log( "peer " , peer);
-    if(!peer.getStats()) return;
+    // a wrapper around getStats which hides the differences (where possible)
+    // following code-snippet is taken from somewhere on the github
+    function _getStats(cb) {
+        // if !peer or peer.signalingState == 'closed' then return;
+        webrtcdev.log( "peer " , peer);
+        if(!peer.getStats()) return;
 
-    if (!!navigator.mozGetUserMedia) {
-        peer.getStats(
-            mediaStreamTrack,
-            function(res) {
+        if (!!navigator.mozGetUserMedia) {
+            peer.getStats(
+                mediaStreamTrack,
+                function(res) {
+                    var items = [];
+                    res.forEach(function(result) {
+                        items.push(result);
+                    });
+                    cb(items);
+                },
+                cb
+            );
+        } else {
+            peer.getStats(function(res) {
                 var items = [];
-                res.forEach(function(result) {
-                    items.push(result);
+                res.result().forEach(function(result) {
+                    var item = {};
+                    result.names().forEach(function(name) {
+                        item[name] = result.stat(name);
+                    });
+                    item.id = result.id;
+                    item.type = result.type;
+                    item.timestamp = result.timestamp;
+                    items.push(item);
                 });
                 cb(items);
-            },
-            cb
-        );
-    } else {
-        peer.getStats(function(res) {
-            var items = [];
-            res.result().forEach(function(result) {
-                var item = {};
-                result.names().forEach(function(name) {
-                    item[name] = result.stat(name);
-                });
-                item.id = result.id;
-                item.type = result.type;
-                item.timestamp = result.timestamp;
-                items.push(item);
             });
-            cb(items);
-        });
-    }
-};
+        }
+    };
 }
 
 function merge(mergein, mergeto) {
@@ -278,12 +265,12 @@ function activateBandwidthButtons(timerobj){
  * @name showStatus
  * @param {obj} conn
  */
-function showStatus(conn){
+function showStatus(){
     getStats(rtcConn, function(result) {
         webrtcdev.info("[stats]",result.connectionType.remote.ipAddress);
         webrtcdev.info("[stats]",result.connectionType.remote.candidateType);
         webrtcdev.info("[stats]",result.connectionType.transport);
-    });
+    } , 10000);
     webrtcdev.info("[stats] WebcallPeers " , webcallpeers);
 }
 
@@ -297,7 +284,7 @@ function showRtpstats(){
     try{
         for( x=0; x<rtcConn.peers.getLength(); x++){
             var pid =  rtcConn.peers.getAllParticipants()[x];
-            var arg = JSON.stringify( rtcConn.peers[pid] , undefined, 2);
+            var arg = JSON.stringify(rtcConn.peers[pid] , undefined, 2);
             document.getElementById(statisticsobj.statsConainer).innerHTML += "<pre >"+ arg + "</pre>";        
         }
     }catch(e){
@@ -309,11 +296,16 @@ function showRtpstats(){
  * shows rtc conn of ongoing webrtc call 
  * @method
  * @name showRtcConn
- * @param {obj} conn
  */
 function showRtcConn(){
-    webrtcdev.info("[stats] rtcConn : "  , rtcConn);
-    webrtcdev.info("[stats] rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
+    if(rtcConn){
+        webrtcdev.info(" =========================================================================");
+        webrtcdev.info("[stats] rtcConn : " , rtcConn);
+        webrtcdev.info("[stats] rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
+        webrtcdev.info(" =========================================================================");
+    }else{
+        webrtcdev.debug(" rtcConn doesnt exist ");
+    }
 }
 
 /*
@@ -335,7 +327,6 @@ function showRTCPcapabilities(){
 
 
 /*
-
 check MediaStreamTrack
     MediaTrackSupportedConstraints, 
     MediaTrackCapabilities, 

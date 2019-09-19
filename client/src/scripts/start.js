@@ -544,7 +544,7 @@ var setRtcConn = function (sessionid) {
                 // stats widget
                 if (statisticsobj && statisticsobj.active) {
                     //populate RTP stats 
-                    rtpstats();
+                    showRtpstats();
                 }
 
             } catch (e) {
@@ -656,10 +656,7 @@ var setRtcConn = function (sessionid) {
                             button.className = screenshareobj.button.shareButton.class_off;
                             button.innerHTML = screenshareobj.button.shareButton.html_off;
                             button.disabled = false;
-
-                            scrConn.onstreamended();
-                            scrConn.removeStream(e.data.screenStreamid);
-                            scrConn.close();
+                            webrtcdevCleanShareScreen(e.data.screenStreamid);
                         }else{
                             webrtcdev.warn(" unreognized screen share nessage ",e.data.message );
                         }

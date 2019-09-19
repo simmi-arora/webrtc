@@ -1,4 +1,5 @@
 # webrtc
+
 web real time communication platform 
 
 ![alt webrtc development ](https://altanaitelecom.files.wordpress.com/2015/05/webrtc_development_logo.png?w=100&h=100)
@@ -20,14 +21,14 @@ web real time communication platform
 
 This is a ready to deploy webrtc SDK and SaaS for a customized and flexible communication and collaboration solution .
 
-SDK
+
+## Architecture 
 ----
 
-##### Architecture 
 The Solution primarily contains nodejs frameworks for hosting the project and webbsockets over socket.io to perform offer - answer handshake and share SDP (Session description protocol ).
 ![alt webrtc development architecture ](https://s32.postimg.org/uamq0uq9h/webrtcdevelopment_SDK.png)
 
-##### Technologies used 
+### Technologies used 
 
 1. WebRTC 
 Web based real time communication framework.
@@ -49,7 +50,7 @@ grunt -verbose
 ```
 
 
-Build SDK
+## SDK
 ----
 
 Project is divided into 4 parts 
@@ -57,9 +58,9 @@ Project is divided into 4 parts
 1. Core RTC Conn Lib 
 2. Wrappers for the Core Lib containing feature sets and widgets like screensharing , recording , pointer share , machine learning , face detection etc
 3. Demo Applicatins like two party full-features , multi-party full features etc which implement and use the SDK by invoking the constructirs , emitters and listeners .
+4. SIgnaller over socket.io for SDP excahnge on offer answer model
 
-
-##### Building the SDK
+### Building the SDK
 
 Download the dev dependencies by setting the NODE_ENV to dev . 
 This will install all grunt and gulp dependencies used for building the SDK
@@ -81,17 +82,17 @@ gulp production
 
 
 
-Get Started
+## Get Started
 ----
 
 To run this project following steps need to be followed in that order :
 
-##### 1. get the project from github 
+**1. Get the project from github**
 ```
 git clone https://github.com/altanai/webrtc.git webrtc
 ```
 
-##### 2. install nvm ( node version manager ) 
+**2. install nvm ( node version manager )**
 ```
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.2/install.sh | bash
 . ~/.nvm/nvm.sh
@@ -99,7 +100,7 @@ nvm install v5.0.0
 nvm use v5.0.0
 ```
 
-##### 3. install npm and update the dependencies 
+**3. install npm and update the dependencies**
 It will read the package.json and update the dependencies in node_modules folder on project location
 
 ```
@@ -107,9 +108,7 @@ It will read the package.json and update the dependencies in node_modules folder
 	npm install 
 ```
 
-
-##### 4. Change ENV variables and Test
-
+**4. Change ENV variables and Test**
 
 To change the ports for running the https server and rest server, goto env.json
 ```
@@ -129,7 +128,7 @@ To run the tests
 	npm test
 ```
 
-##### 5. Start up the Server 
+**5. Start up the Server**
 
 To start the Server in dev mode  and stop the server as soon as Ctrl+ C is hit or the terminal widnow is closed . 
 ```
@@ -143,7 +142,7 @@ To start the Server using npm start ( using package.json) , behaves same as earl
 	npm start
 ```
 
-##### 6. JS and CSS Libs
+**6. JS and CSS Libs**
 
 Make a webpage and give holders for video and button elements that SDK will use .
 
@@ -157,9 +156,7 @@ After the body tag of html
     build/webrtcdevelopment.js
 
 
-
-##### 7. Configure
-
+**7. Configure**
 
 Create the webrtc dom object with local and remote objects
 
@@ -218,7 +215,17 @@ Incoming and outgoing media configiration  ( self exlanatory ) :
     );
 ```
 
-____
+**7. Adding Widgets**
+
+set widgets (expained in section below)
+```
+    var widgets={
+    }
+```
+Set widgets and their properties . 
+
+
+**8. Creating session**
 
 Get session id automaically
 ```
@@ -228,10 +235,7 @@ or get session name from user
 ```
 sessionid = init(false);
 ```
-
-___
-
-Create a session json object with turn credentials nd the session created from above step
+Create a session json object with turn credentials and the session created from above step
 
 set preference for the incoming and outgoing media connectection. Bydefault all are set to true . 
 ```
@@ -249,42 +253,36 @@ set preference for the incoming and outgoing media connectection. Bydefault all 
         screen: true
     };
 ```
-Set widgets and their properties . Currently available widgets are 
-	* Chat
-	* Fileshare
-	* Screen Record
-	* Screen Share
-	* Video Record
-	* Snapshot
-	* Draw on Canvas and Sync
-	* Text Editor and Sync
-	* Mute (audio amd video)
-	* Reconnect
 
-```
-	var widgets={
-	}
-```
-Initiate the webrtcdev contructor 
+finally initiate the webrtcdev contructor 
 ```
     var webrtcdevobj = new WebRTCdev ( 
         session,  incoming,  outgoing ,  widgets
     );
 ```
 
-Set widgets and their properties . Currently available widgets are 
-	* Chat 
-	* Fileshare
-	* Timer
+Start the session 
+```
+    startcall();
+```
+
+
+## Widgets 
+----
+
+Currently available widgets are 
+    * Chat 
+    * Fileshare
+    * Timer
     * Screen Record
-	* Screen Share
-	* Video Record
-	* Snapshot
+    * Screen Share
+    * Video Record
+    * Snapshot
     * Minimising/ maximising Video
     * Mute (audio and/or video)
-	* Draw on Canvas and Sync
-	* Text Editor and Sync
-	* Reconnect
+    * Draw on Canvas and Sync
+    * Text Editor and Sync
+    * Reconnect
 
 Description of Widgets with SDK invocation
 
@@ -689,18 +687,11 @@ Allows a user to recoonect a session without refreshing a page . Will enable him
 	}
 ```
 
-Initiate the webrtcdev contructor 
-```
-webrtcdevobj = new WebRTCdev( local, remote, incoming, outgoing ,session , widgets)
 
-```
-Start the session 
-```
-    startcall();
-```
-##### 8. VOIP calls and conf
+## Event listners 
+----
 
-Implement evenet listners 
+Implemented event listners 
 
 1. onLocalConnect
 
@@ -713,23 +704,35 @@ Implement evenet listners
 5. onNoCameraCard
 
 
-##### 8. Add the Key and certs
+##Keys and certs 
+----
+
+Add the Key and certs
 openssl req -x509 -newkey rsa:4096 -sha256 -nodes -keyout ssl_certs/server.key -out ssl_certs/server.crt -subj "/CN=webrtc.altanai.com" -days 3650
 
-##### 9. VOIP calls and conf
+
+## Demo
+----
+
 open tab on chrome or mozilla browser and add a link to the https server using nodejs script
 https://127.0.0.1:8086/multiparty_fullfeatures.html
 
+Other implementation of the SDK are 
 
-Used Libs
+webrtc_quickstart - https://github.com/altanai/webrtc_quickstart
+
+webrtc_usecases - https://github.com/altanai/webrtc_usercases
+
+
+## Extra 
 ----
 
 Following are the additioanl libraries packed with the project 
 
-###### Gulp
+**Gulp**
 Minify and concat the js and css files  into minscripts
 
-###### Task Runner 
+**Task Runner**
 you can run gulp alone to minify and concat the js and css files  into minscripts
 ```
 gulp
@@ -739,23 +742,25 @@ or can run grunt to concat , minifify , ugligy , push to git and npm all togethe
 grunt production 
 ```
 
-###### forever 
+**forever**
 Keeps running even when window is not active 
 ```
 cd WebCall
 forever start webrtcserver.js
 ```
-##### Developing / Aletring the Libs
+**Notification / Alerting**
 
-creating doc 
+//tbd
+
+**creating doc**
 ```
  ./node_modules/.bin/esdoc
   open ./docs/index.html
 ```
-###### PM2
+**PM2**
 To start the Server using PM2 ( a process manager for nodejs)
 
-License
+### License
 ----
 
 MIT

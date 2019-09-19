@@ -9,7 +9,7 @@
  * @param {object} connection
  */
 function checkDevices(obj){
-
+    webrtcdev.info(" =============================== check Devices ==========================================");
     if(obj.hasMicrophone) {
         // seems current system has at least one audio input device
         webrtcdev.info("has Microphone");
@@ -41,6 +41,8 @@ function checkDevices(obj){
     for( x in obj.videoInputDevices) webrtcdev.info(obj.videoInputDevices[x]);  
 
     webrtcdev.info(" Screen Device " + obj.displayResolution); 
+
+    webrtcdev.info(" =========================================================================");
 
      // Update Stats if active
     if(statisticsobj && statisticsobj.active){
