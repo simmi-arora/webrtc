@@ -93,7 +93,7 @@ gulp.task('vendorjs',function(done) {
         .pipe(gulp.dest(folderPath+'minScripts/')); 
 });*/
 
-gulp.task('serverjs',function(done) {
+gulp.task('webrtcdevelopmentServer',function(done) {
     console.log(" gulping admin script  ");
     list=[ 
         "realtimecomm.js",
@@ -301,9 +301,8 @@ gulp.task('git_pull',function(cb){
 // gulp webrtc dev css and js along with server changes 
 gulp.task('default', gulp.series(
     'betawebrtcdevelopmentjs',
-    // 'screensharejs',
     'webrtcdevelopmentcss',
-    'serverjs'
+    'webrtcdevelopmentServer'
 ));
 
 // onlu gulp webrtcdev js changes 
@@ -333,5 +332,5 @@ gulp.task('production', gulp.parallel(
     /*'screensharejs',*/
     'mainstyle',
     'webrtcdevelopmentcss',
-    'serverjs'
+    'webrtcdevelopmentServer'
 )); 

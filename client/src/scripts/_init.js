@@ -225,6 +225,15 @@ function getElement(e) {
     return document.querySelector(e)
 }
 
+function getElementById(elem) {
+    try{
+        return document.getElementById(elem);
+    }catch(e){
+        webrtcdev.error(e);
+        return "";
+    }
+}
+
 function getRandomColor() {
     for (var e = "0123456789ABCDEF".split(""), t = "#", n = 0; 6 > n; n++) t += e[Math.round(15 * Math.random())];
     return t

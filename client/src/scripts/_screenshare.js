@@ -53,7 +53,7 @@ function webrtcdevPrepareScreenShare(screenRoomid ){
         if (debug) {
             var nameBox = document.createElement("span");
             nameBox.innerHTML = "<br/>" + screenRoomid + "<br/>";
-            document.getElementById(screenshareobj.screenshareContainer).appendChild(nameBox);
+            getElementById(screenshareobj.screenshareContainer).appendChild(nameBox);
         }
 
         if(event.type=="remote" && event.type!="local"){
@@ -73,8 +73,8 @@ function webrtcdevPrepareScreenShare(screenRoomid ){
             var stream = event.stream;
             attachMediaStream(video, stream);
             //video.id = peerInfo.videoContainer;
-            document.getElementById(screenshareobj.screenshareContainer).appendChild(video);
-            document.getElementById(screenshareobj.screenshareContainer).hidden=false;
+            getElementById(screenshareobj.screenshareContainer).appendChild(video);
+            getElementById(screenshareobj.screenshareContainer).hidden=false;
             rtcConn.send({
                 type:"screenshare", 
                 screenid: screenRoomid,
@@ -85,13 +85,6 @@ function webrtcdevPrepareScreenShare(screenRoomid ){
             // Local got screen share stream 
             shownotificationWarning("started streaming local screen");
             webrtcdev.log("[screenshareJS] on stream local ");
-
-            // var video = document.createElement('video');
-            // var stream = event.stream;
-            // attachMediaStream(video, stream);
-            // //video.id = peerInfo.videoContainer;
-            // document.getElementById(screenshareobj.screenshareContainer).appendChild(video);
-            // document.getElementById(screenshareobj.screenshareContainer).hidden=false;
 
             rtcConn.send({
                 type:"screenshare", 
@@ -111,8 +104,8 @@ function webrtcdevPrepareScreenShare(screenRoomid ){
         if(event)
             webrtcdev.log("[screenshare JS] onstreamended -" , event);
     
-        if(document.getElementById(screenshareobj.screenshareContainer)){
-            document.getElementById(screenshareobj.screenshareContainer).innerHTML="";
+        if(getElementById(screenshareobj.screenshareContainer)){
+            getElementById(screenshareobj.screenshareContainer).innerHTML="";
         }
 
         scrConn.removeStream(screenStreamId);
@@ -148,10 +141,7 @@ function webrtcdevPrepareScreenShare(screenRoomid ){
         }
         scrConn.iceServers  = webrtcdevIceServers;      
     } 
-
-    webrtcdev.info("[screensharejs] srcConn" , scrConn);
     webrtcdev.log("[screenshare JS] webrtcdevpreparescreenshare calling callback for socket.io operations");
-
     return;
 }
 
@@ -161,48 +151,34 @@ function webrtcdevPrepareScreenShare(screenRoomid ){
  * @name webrtcdevSharescreen
  */
 function webrtcdevSharescreen(scrroomid) {
-    webrtcdev.log("[screenshare JS] webrtcdevSharescreen , preparing screenshare by initiating ScrConn , scrroomid - " , scrroomid);
+    webrtcdev.log("[screenshareJS] webrtcdevSharescreen, preparing screenshare by initiating ScrConn , scrroomid - " , scrroomid);
 
     return new Promise((resolve, reject) => { 
         webrtcdevPrepareScreenShare(scrroomid)
         resolve(scrroomid);
     })
     .then(function(scrroomid){
-        webrtcdev.log("[screenshare JS] webrtcdevSharescreen - to open up room for screen share ");
-        scrConn.open(scrroomid, function() {
-            if(socket){
-                webrtcdev.log("[screenshare JS] Event : open-channel-screenshare with ", socket.io.uri);
-                socket.emit("open-channel-screenshare", {
-                    channel    : scrroomid,
-                    sender     : selfuserid,
-                    maxAllowed : 6
-                });
-                shownotification("Making a new session for screenshare" + scrroomid);
-            }else{
-                webrtcdev.error("[screenshare JS] webrtcdevSharescreen -  socket doesnt exist ");
-            }
-        });
+        if(socket){
+            webrtcdev.log("[screenshare JS] Event : open-channel-screenshare with ", socket.io.uri);
+            socket.emit("open-channel-screenshare", {
+                channel    : scrroomid,
+                sender     : selfuserid,
+                maxAllowed : 6
+            });
+            shownotification("Making a new session for screenshare" + scrroomid);
+        }else{
+            webrtcdev.error("[screenshare JS] webrtcdevSharescreen -  socket doesnt exist ");
+        }
 
         socket.on("open-channel-screenshare-resp",function(event) {
             webrtcdev.log("[screenshare JS] webrtcdevSharescreen Event Handler : open-channel-screenshare-response " , event);
-            if(event) connectScrWebRTC("open" , scrroomid); 
+             if (event.status && event.channel == sessionid) {
+                scrConn.open(scrroomid, function() {   
+                     webrtcdev.log("[screenshare JS] webrtcdevSharescreen - to open up room for screen share ");
+                });
+             }
         });
     });
-
-    //.then(getScreenSourceIdExtension(true));
-    /*    
-    if(Object.keys(scrConn.streamEvents).length>2){   
-        scrConn.addStream({
-            screen: true,
-            oneway: true
-        });
-        shownotification(" ReStarting Screenshare session "+roomid);
-        rtcMultiConnection.send({
-            type:"screenshare", 
-            message:roomid
-        });
-        return ;
-    }*/
 }
 
 /**
@@ -215,17 +191,22 @@ function webrtcdevSharescreen(scrroomid) {
  * @param {string} type
  */
 function connectScrWebRTC(type, scrroomid ){
-    webrtcdev.log("[screenshare JS] connectScrWebRTC -> " , type, scrroomid );
-    if(type=="open"){
-        scrConn.openOrJoin(scrroomid);
-        shownotification("Connected to "+ scrroomid + " for screenshare ");
-    }else if(type=="join"){
-        scrConn.join(scrroomid);
-        shownotification("Connected with existing Screenshare channel "+ scrroomid);
-    }else{
-        shownotification("Connection type not found for Screenshare ");
-        webrtcdev.error("[screenshare JS] connectScrWebRTC - Connection type not found for Screenshare ");
-    }
+     webrtcdev.log("[screenshareJS] connectScrWebRTC, first preparing screenshare by initiating ScrConn , scrroomid - " , scrroomid);
+
+    return new Promise((resolve, reject) => { 
+        webrtcdevPrepareScreenShare(scrroomid)
+        resolve(scrroomid);
+    })
+    .then(function(scrroomid){
+        webrtcdev.log("[screenshare JS] connectScrWebRTC -> " , type, scrroomid );
+        if(type=="join"){
+            scrConn.join(scrroomid);
+            shownotification("Connected with existing Screenshare channel "+ scrroomid);
+        }else{
+            shownotification("Connection type not found for Screenshare ");
+            webrtcdev.error("[screenshare JS] connectScrWebRTC - Connection type not found for Screenshare ");
+        }  
+    });
 }
 
 /**
