@@ -2,49 +2,57 @@
 Admin
 ******************************************************************/
 
-var socket ;
+var socket;
 var webrtcdevDataObj;
 var usersDataObj;
 var channelsFeed= document.getElementById("channelsFeed");
 
 var WebRTCdevadmin= function(signaller){
-    socket= io.connect(signaller);
-    socket.on('response_to_admin_enquire', function(message) {
+    console.log("[adminjs] connect to ", signaller);
+    try{
+        socket= io.connect(signaller);
 
-        switch (message.response){
-            case "channels":
-                webrtcdevDataObj=message.channels;
-                if(message.format=="list"){
-                    clearList("channellistArea");
-                    for (i in Object.keys(webrtcdevDataObj)) { 
-                        /*drawList("channellistArea" , Object.keys(webrtcdevDataObj)[i]);*/
-                        drawList("channellistArea" , webrtcdevDataObj[i]);
+        socket.on('response_to_admin_enquire', function(message) {
+            console.log("[adminjs] response_to_admin_enquire -", message );
+            switch (message.response){
+                case "channels":
+                    console.log("[adminjs] chnanels ");
+                    let channelinfo = message.channelinfo;
+                    if(message.format=="list"){
+                        clearList("channellistArea");
+                        for (i in Object.keys(channelinfo)) { 
+                            /*drawList("channellistArea" , Object.keys(webrtcdevDataObj)[i]);*/
+                            drawList("channellistArea" , channelinfo[i]);
+                        }
+                    }else if(message.format=="table"){
+                        drawTable("webrtcdevTableBody",channelinfo);
+                    }else{
+                        webrtcdev.error("format not specified ");
                     }
-                }else if(message.format=="table"){
-                    drawTable("webrtcdevTableBody",webrtcdevDataObj);
-                }else{
-                    webrtcdev.error("format not specified ");
-                }
-            break;
-        
-            case "users":
-                usersDataObj=message.users;
-                if(message.format=="list"){
-                    clearList("userslistArea");
-                    for (i in usersDataObj) { 
-                        drawList("userslistArea" , usersDataObj[i]);
+                break;
+            
+                case "users":
+                    console.log("[adminjs] users ");
+                    users = message.users;
+                    if(message.format=="list"){
+                        clearList("userslistArea");
+                        for (i in usersDataObj) { 
+                            drawList("userslistArea" , usersDataObj[i]);
+                        }
                     }
-                }
-            break;
+                break;
 
-            case "all":
-                channelsFeed.innerHTML=JSON.stringify(message.channels, null, 4);
-            break;
+                case "all":
+                    channelsFeed.innerHTML=JSON.stringify(message.channels, null, 4);
+                break;
 
-            default :
-                webrtcdev.log("unrecognizable response from signaller " , message);
-        }
-    });
+                default :
+                    webrtcdev.log("unrecognizable response from signaller " , message);
+            }
+        });
+    }catch(e){
+        console.error(e);
+    }
 };
 
 function onLoadAdmin(){

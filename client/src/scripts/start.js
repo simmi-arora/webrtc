@@ -1795,7 +1795,6 @@ var openWebRTC = function(channel , userid , maxallowed){
 var connectWebRTC=function(type, channel, userid ,remoteUsers){
     webrtcdev.info(" [startjs] ConnectWebRTC type : " , type , " , Channel :" , channel , 
                                     " , Userid : " ,  userid , " , remote users : " , remoteUsers);
-
     if(debug) showUserStats();
 
     /*void(document.title = channel);*/
@@ -1803,7 +1802,7 @@ var connectWebRTC=function(type, channel, userid ,remoteUsers){
         
         //Do not create file share and file viewer for inspector's own session 
         var _peerinfo = findPeerInfo(userid);
-
+        
         // Create File Sharing Div 
         if(fileshareobj.props.fileShare=="single"){
             createFileSharingDiv(_peerinfo);
