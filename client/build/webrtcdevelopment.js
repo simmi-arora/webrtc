@@ -27108,7 +27108,7 @@ var setRtcConn = function (sessionid) {
         rtcConn.chunkSize = 50 * 1000,
 
         rtcConn.onmessage = function (e) {
-            webrtcdev.log(" on message ", e);
+            webrtcdev.log("[startjs] on message ", e);
             if (e.data.typing) {
                 updateWhotyping(e.extra.name + " is typing ...");
             } else if (e.data.stoppedTyping) {
@@ -27215,16 +27215,11 @@ var setRtcConn = function (sessionid) {
                             //check if the peer has stored zone and time info
                             msgpeerinfo.time = e.data.time;
                             msgpeerinfo.zone = e.data.zone;
-                            webrtcdev.log("webcallpeers appended with zone and datetime " , msgpeerinfo);
+                            webrtcdev.log("[startjs] webcallpeers appended with zone and datetime " , msgpeerinfo);
                         }
-
-                        webrtcdev.log(" [startjs] peerTimerStarted , start peerTimeZone and startPeersTime");
-                        
-                            peerTimeZone(e.data.zone, e.userid);
-                            startPeersTime(e.data.time, e.data.zone , e.userid);
-
-                        //if(!peerTimerStarted){
-                        //}
+                        webrtcdev.log("[startjs] peerTimerStarted, start peerTimeZone and startPeersTime");                        
+                        peerTimeZone(e.data.zone, e.userid);
+                        startPeersTime(e.data.time, e.data.zone , e.userid);
                         break;
                     case "buttonclick":
                         var buttonElement = document.getElementById(e.data.buttonName);
