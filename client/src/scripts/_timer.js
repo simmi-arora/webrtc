@@ -167,12 +167,13 @@ function createRemotetimeArea(userid){
     let remotetimecontainer = document.createElement("ul");
     remotetimecontainer.id="remoteTimerArea_"+userid;
     var peerinfo = findPeerInfo(userid);
-    if(getElementById(peerinfo.videoContainer))
+    if(getElementById(peerinfo.videoContainer)){
         var parentTimecontainer = getElementById(peerinfo.videoContainer).parentNode;
         parentTimecontainer.appendChild(remotetimecontainer);
         return remotetimecontainer;
-    else
+    }else{
         return null;
+    }
 }
 
 /**
