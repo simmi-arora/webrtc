@@ -1252,8 +1252,6 @@ function createFileListingBox(peerinfo, parent){
     }
 }
 
-// __________________
-// createFileSharingDiv.js
 
 /**
  * {@link createFileSharingDiv} is an inner/private helper for {@link RecordRTC}.

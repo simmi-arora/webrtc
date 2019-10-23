@@ -266,7 +266,11 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
 
         socket.on('open-channel-screenshare', function (data) {  
             console.log("------------open channel screenshare------------- ", data.channel," by " , data.sender);
-            socket.emit("open-channel-screenshare-resp",true);  
+            var oevent={
+                status : true,
+                channel: data.channel
+            };
+            socket.emit("open-channel-screenshare-resp",oevent);  
         });
 
         socket.on('join-channel', function (data) {  
@@ -340,7 +344,8 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
             socket.emit("presence",presence);
         });
 
-        /*socket.on("admin_enquire",function(data){
+        // Supports Admin functioality on channel
+        socket.on("admin_enquire",function(data){
             switch (data.ask){
                 case "channels":
                     if(data.find){
@@ -358,7 +363,7 @@ exports.realtimecomm  = function(app, properties, log, socketCallback) {
                 default :
                     socket.emit('response_to_admin_enquire', "no case matched ");
             }           
-        });*/
+        });
 
         function onMessageCallback(message) {
             try {

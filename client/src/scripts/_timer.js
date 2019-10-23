@@ -19,7 +19,7 @@ try{
     //worker = new Worker('js/timekeeper.js');
     // worker.addEventListener('message', function(e) {
     //     if(e.data.time){
-    //         let timerspanpeer = document.getElementById(e.data.remotetimeid);
+    //         let timerspanpeer = getElementById(e.data.remotetimeid);
     //         timerspanpeer.innerHTML = e.data.time;
     //     }
 
@@ -36,9 +36,9 @@ try{
 function startsessionTimer(timerobj){
 
     if(timerobj.counter.hours && timerobj.counter.minutes && timerobj.counter.seconds ){
-        hours = document.getElementById(timerobj.counter.hours);
-        mins = document.getElementById(timerobj.counter.minutes);
-        secs = document.getElementById(timerobj.counter.seconds);
+        hours = getElementById(timerobj.counter.hours);
+        mins = getElementById(timerobj.counter.minutes);
+        secs = getElementById(timerobj.counter.seconds);
 
         if(timerobj.type=="forward"){
             startForwardTimer();
@@ -144,8 +144,8 @@ function prepareTime(){
 function startTime() {
     try{
 
-        if(timerobj.span.currentTime_id && document.getElementById(timerobj.span.currentTime_id)){
-            var timerspanlocal = document.getElementById(timerobj.span.currentTime_id);
+        if(timerobj.span.currentTime_id && getElementById(timerobj.span.currentTime_id)){
+            var timerspanlocal = getElementById(timerobj.span.currentTime_id);
             timerspanlocal.innerHTML = new Date().toLocaleTimeString();
             var t = setTimeout(startTime, 1000);
         }else{
@@ -157,13 +157,23 @@ function startTime() {
     //webrtcdev.log(" localdate :" , today);
 }
 
+
+/**
+ * creates and appends remotetimecontainer belonging to userid to parentTimecontainer
+ * @method
+ * @name createRemotetimeArea
+ */
 function createRemotetimeArea(userid){
     let remotetimecontainer = document.createElement("ul");
     remotetimecontainer.id="remoteTimerArea_"+userid;
     var peerinfo = findPeerInfo(userid);
-    var parentTimecontainer = document.getElementById(peerinfo.videoContainer).parentNode;
-    parentTimecontainer.appendChild(remotetimecontainer);
-    return remotetimecontainer;
+    if(getElementById(peerinfo.videoContainer)){
+        var parentTimecontainer = getElementById(peerinfo.videoContainer).parentNode;
+        parentTimecontainer.appendChild(remotetimecontainer);
+        return remotetimecontainer;
+    }else{
+        return null;
+    }
 }
 
 /**
@@ -176,14 +186,14 @@ function createRemotetimeArea(userid){
 function peerTimeZone(zone , userid){
     try{
         if(timerobj.span.remoteTimeZone_id && 
-            document.getElementById(timerobj.span.remoteTimeZone_id) && 
-            !document.getElementById(timerobj.span.remoteTimeZone_id).innerHTML){
-            let timerzonepeer = document.getElementById(timerobj.span.remoteTimeZone_id);
+            getElementById(timerobj.span.remoteTimeZone_id) && 
+            !getElementById(timerobj.span.remoteTimeZone_id).innerHTML){
+            let timerzonepeer = getElementById(timerobj.span.remoteTimeZone_id);
             timerzonepeer.innerHTML = zone;
         }else{
-            webrtcdev.error("timerobj.span.remoteTimeZone_id DOM doesnt exist , creating it ");
+            webrtcdev.warn("timerobj.span.remoteTimeZone_id DOM doesnt exist , creating it ");
             
-            if(document.getElementById("remoteTimeZone_"+userid))
+            if(getElementById("remoteTimeZone_"+userid))
             return ;
 
             let timerzonepeer = document.createElement("li");
@@ -191,10 +201,10 @@ function peerTimeZone(zone , userid){
             timerzonepeer.innerHTML = zone + " , ";
 
             var remotetimecontainer;
-            if(!document.getElementById("remoteTimerArea_"+userid)){
+            if(!getElementById("remoteTimerArea_"+userid)){
                 remotetimecontainer = createRemotetimeArea(userid);
             }else{
-                remotetimecontainer = document.getElementById("remoteTimerArea_"+userid);
+                remotetimecontainer = getElementById("remoteTimerArea_"+userid);
             }
             remotetimecontainer.appendChild(timerzonepeer);
         }
@@ -223,7 +233,7 @@ var startPeersTime = function (date,zone,userid){
 
             webrtcdev.debug(" [timerjs] startPeersTime for " , userid);
 
-            if( window.location.href.indexOf("conference") > -1 && document.getElementById("remoteTimeDate_"+webcallpeers[x].userid)){
+            if( window.location.href.indexOf("conference") > -1 && getElementById("remoteTimeDate_"+webcallpeers[x].userid)){
                 //if its conference , send to webworkers 
                 webrtcdev.info(" timerobj.span.remoteTime_id exist for local and remotes, appending to tobj to send to worker cumulatively");
                 tobj.push({
@@ -232,7 +242,7 @@ var startPeersTime = function (date,zone,userid){
                     remotetimeid : "remoteTimeDate_"+webcallpeers[x].userid
                 });
 
-            } else if(timerobj.span.remoteTime_id && document.getElementById(timerobj.span.remoteTime_id)){
+            } else if(timerobj.span.remoteTime_id && getElementById(timerobj.span.remoteTime_id)){
                 // update the time for p2p
                 webrtcdev.info(" timerobj.span.remoteTime_id exists and its a p2p session , hence updating it");
                 options = {
@@ -241,14 +251,14 @@ var startPeersTime = function (date,zone,userid){
                   hour12: false,
                   timeZone: webcallpeers[x].zone
                 };
-                let timerspanpeer = document.getElementById(timerobj.span.remoteTime_id);
+                let timerspanpeer = getElementById(timerobj.span.remoteTime_id);
                 timerspanpeer.innerHTML = new Date().toLocaleString('en-US', options );
             } else {
                 // create the timer for p2p and conferences
                 webrtcdev.info(" timerobj.span.remoteTime_id DOM does not exist , creating it" ,
-                    timerobj.span.remoteTime_id , document.getElementById(timerobj.span.remoteTime_id)  );
+                    timerobj.span.remoteTime_id , getElementById(timerobj.span.remoteTime_id)  );
 
-                if(document.getElementById("remoteTimeDate_"+userid))
+                if(getElementById("remoteTimeDate_"+userid))
                 return ;
 
                 let timerspanpeer = document.createElement("li");
@@ -256,10 +266,10 @@ var startPeersTime = function (date,zone,userid){
                 timerspanpeer.innerHTML = new Date().toLocaleString('en-US', options );
 
                 var remotetimecontainer;
-                if(!document.getElementById("remoteTimerArea_"+userid)){
+                if(!getElementById("remoteTimerArea_"+userid)){
                     remotetimecontainer = createRemotetimeArea(userid);
                 }else{
-                    remotetimecontainer = document.getElementById("remoteTimerArea_"+userid);
+                    remotetimecontainer = getElementById("remoteTimerArea_"+userid);
                 }
                 remotetimecontainer.appendChild(timerspanpeer);
 
@@ -289,9 +299,9 @@ var startPeersTime = function (date,zone,userid){
  */
 function timeZone(){
     try{
-        if(timerobj.span.currentTimeZone_id && document.getElementById(timerobj.span.currentTimeZone_id)){
+        if(timerobj.span.currentTimeZone_id && getElementById(timerobj.span.currentTimeZone_id)){
             zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            var timerzonelocal = document.getElementById(timerobj.span.currentTimeZone_id);
+            var timerzonelocal = getElementById(timerobj.span.currentTimeZone_id);
             timerzonelocal.innerHTML = zone;
         }else{
             webrtcdev.error(" timerobj.span.currentTimeZone_id DOM doesnt exist ");
@@ -323,13 +333,13 @@ function shareTimePeer(){
  * @name activateButtons
  */
 function activateBttons(timerobj){
-    if(timerobj.container.minbutton_id && document.getElementById(timerobj.container.minbutton_id)){
-        var button= document.getElementById(timerobj.container.minbutton_id);
+    if(timerobj.container.minbutton_id && getElementById(timerobj.container.minbutton_id)){
+        var button= getElementById(timerobj.container.minbutton_id);
         button.onclick=function(e){
-            if(document.getElementById(timerobj.container.id).hidden)
-                document.getElementById(timerobj.container.id).hidden=false;
+            if(getElementById(timerobj.container.id).hidden)
+                getElementById(timerobj.container.id).hidden=false;
             else
-                document.getElementById(timerobj.container.id).hidden=true;
+                getElementById(timerobj.container.id).hidden=true;
         }  
     }
 }
