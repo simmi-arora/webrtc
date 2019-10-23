@@ -308,7 +308,7 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
                     updatePeerInfo(selfuserid, selfusername, selfcolor, selfemail, role, "local"),
                     webrtcdev.log(" [startJS] updated local peerinfo for open-channel ")
                 }).then(
-                    getCamMedia(),
+                    getCamMedia(rtcConn),
                     webrtcdev.log(" [startJS] started cam media ")
                 ).catch((reason) => {
                         webrtcdev.error(' [startJS] Handle rejected promise ('+reason+')');
@@ -358,7 +358,7 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
                     updatePeerInfo(selfuserid , selfusername, selfcolor, selfemail, role, "local"),
                     webrtcdev.log(" [startJS] updated local peerinfo for join-channel ")
                 ).then(
-                    getCamMedia(),
+                    getCamMedia(rtcConn),
                     webrtcdev.log(" [startJS] started cam media ")
                 ).catch(
                    (reason) => {
@@ -403,6 +403,11 @@ var setRtcConn = function (sessionid) {
 
         rtcConn.channel = this.sessionid,
         rtcConn.socketURL = location.hostname+":8085/",
+
+        // turn off media till connection happens
+        rtcConn.dontAttachStream =  true,
+        rtcConn.dontCaptureUserMedia = true,
+        rtcConn.dontGetRemoteStream = true,
 
         rtcConn.onNewParticipant = function (participantId, userPreferences) {
             
@@ -450,10 +455,11 @@ var setRtcConn = function (sessionid) {
                 remoteUsers = rtcConn.peers.getAllParticipants(),
                 webrtcdev.log(" [startJS] Collecting remote peers" , remoteUsers);
 
-                // remove old non existing peers 
+                // remove old non existing peers, excluded selfuserid 
                 for (x in webcallpeers) {
-                    if(! remoteUsers.inlcudes(webcallpeers[x])){
-                        removePeerInfo(webcallpeers[x])
+                    if(!(remoteUsers.includes(webcallpeers[x].userid)) && ! (selfuserid == webcallpeers[x].userid)){
+                        console.warn("[startjs remove PeerInfo - " , webcallpeers[x]);
+                        removePeerInfo(webcallpeers[x].userid);
                     }
                 }
 
@@ -1071,7 +1077,11 @@ function checkDevices(resolveparent , rejectparent , incoming , outgoing){
 /*
 * Get Audio and Video Stream Media
 */
-function getCamMedia(){
+function getCamMedia(rtcConn){
+    rtcConn.dontAttachStream =  false,
+    rtcConn.dontCaptureUserMedia = false,
+    rtcConn.dontGetRemoteStream = false;
+
     webrtcdev.log(" [startJS] getCamMedia  role :" , role );
     return new Promise(function (resolve, reject) {
         if( role == "inspector"){
