@@ -26835,7 +26835,7 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
                     webrtcdev.log(" [startJS] updated local peerinfo for open-channel ")
                 }).then(
                     getCamMedia(rtcConn),
-                    webrtcdev.log(" [startJS] started cam media ")
+                    webrtcdev.log(" [startJS] done cam media ")
                 ).catch((reason) => {
                         webrtcdev.error(' [startJS] Handle rejected promise ('+reason+')');
                 });
@@ -26885,7 +26885,7 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
                     webrtcdev.log(" [startJS] updated local peerinfo for join-channel ")
                 ).then(
                     getCamMedia(rtcConn),
-                    webrtcdev.log(" [startJS] started cam media ")
+                    webrtcdev.log(" [startJS] done cam media ")
                 ).catch(
                    (reason) => {
                         webrtcdev.error('Handle rejected promise ('+reason+')');
@@ -26902,8 +26902,43 @@ function startSocketSession(rtcConn , socketAddr , sessionid){
 
         socket.on("channel-event", function (event) {
             webrtcdev.log("channel-event", event);
-            if (event.type == "new-join") {
+            if (event.type == "new-join" && event.msgtype != "error") {
                 webrtcdev.warn(" [new-join-channel]" ); 
+
+                // check if maxAllowed capacity of the session isnt reached before updating peer info, else return
+                if (remoteobj.maxAllowed != "unlimited" && webcallpeers.length <= remoteobj.maxAllowed) {
+                    webrtcdev.log("[startjs] channel-event : peer length "+ webcallpeers.length +" is less than max capacity of session  of the session "+ remoteobj.maxAllowed);
+                    let participantId = event.sender;
+                    let peerinfo = findPeerInfo(participantId);
+                    let name = event.data.extra.name;
+                    let color = event.data.extra.color;
+                    let email = event.data.extra.email;
+                    let role = event.data.extra.role;
+                    if (!peerinfo) {
+                        webrtcdev.log(" [sartjs] channel-event : PeerInfo not already present, create new peerinfo");
+                        // If peerinfo isnot present for new particpant , treat him as Remote 
+                        if (name == "LOCAL") {
+                            name = "REMOTE";
+                            color = remotecolor;
+                        }
+                        // event.data.extra.color, not this color, it is local color 
+                        updatePeerInfo(participantId, name , color ,email, role , "remote");
+                        // shownotification( event.data.extra.role  + "  " +event.type);
+                    }else {
+                        // Peer was already present, this is s rejoin 
+                        webrtcdev.log(" [sartjs] channel-event : PeerInfo was already present, this is s rejoin ");
+                        // event.data.extra.color ,  not this color , it is local color 
+                        updatePeerInfo(participantId, extra.name, color, email, role , "remote");
+                        //shownotification(event.data.extra.role+" "+event.type);
+                    }
+                } else {
+                    // max capacity of session is reached 
+                    webrtcdev.error("[sartjs] channel-event : max capacity of session is reached ", remoteobj.maxAllowed);
+                    shownotification("Another user is trying to join this channel but max count [ " + remoteobj.maxAllowed + " ] is reached", "warning");
+                    return;
+                }
+            }else{
+                webrtcdev.warn(" unhandled channel event "); 
             }
         });
 
@@ -26936,36 +26971,8 @@ var setRtcConn = function (sessionid) {
         rtcConn.dontGetRemoteStream = true,
 
         rtcConn.onNewParticipant = function (participantId, userPreferences) {
-            
             webrtcdev.log("[sartjs] rtcconn onNewParticipant, participantId -  ", participantId, " , userPreferences - ",  userPreferences);
             //shownotification("[sartjs] onNewParticipant userPreferences.connectionDescription.sender : " + participantId + " name : "+ remoteusername + " requests new participation ");
-            
-            // check if maxAllowed capacity of the session isnt reached before updating peer info, else return
-            if (remoteobj.maxAllowed !="unlimited " && webcallpeers.length <= remoteobj.maxAllowed) {
-                webrtcdev.log("[startjs] peer length "+ webcallpeers.length +" is less than max capacity of session  of the session "+ remoteobj.maxAllowed);
-                var peerinfo = findPeerInfo(participantId);
-                if (!peerinfo) {
-                    if (userPreferences.extra.name == "LOCAL") {
-                        userPreferences.extra.name = "REMOTE";
-                        userPreferences.extra.color = remotecolor;
-                    }
-                    // event.data.extra.color, not this color, it is local color 
-                    updatePeerInfo(participantId, userPreferences.extra.name , "#a69afe", "", "participant" , "remote");
-                    // shownotification( event.data.extra.role  + "  " +event.type);
-                }else {
-                    // Peer was already present, this is s rejoin 
-                    webrtcdev.log(" [sartjs] onNewParticipant - PeerInfo was already present, this is s rejoin ");
-                    // event.data.extra.color ,  not this color , it is local color 
-                    updatePeerInfo(event.data.sender, event.data.extra.name, "#a69afe", event.data.extra.email, event.data.extra.role , "remote");
-                    //shownotification(event.data.extra.role+" "+event.type);
-                }
-                // updatePeerInfo(participantId, remoteusername, remotecolor, "", role, "remote");
-            } else {
-                // max capacity of session is reached 
-                webrtcdev.error("[sartjs] onNewParticipant  - max capacity of session is reached ", remoteobj.maxAllowed);
-                shownotification("Another user is trying to join this channel but max count [ " + remoteobj.maxAllowed + " ] is reached", "warning");
-                return;
-            }
             rtcConn.acceptParticipationRequest(participantId, userPreferences);
         },
 
@@ -26985,7 +26992,7 @@ var setRtcConn = function (sessionid) {
                 for (x in webcallpeers) {
                     if(!(remoteUsers.includes(webcallpeers[x].userid)) && ! (selfuserid == webcallpeers[x].userid)){
                         console.warn("[startjs remove PeerInfo - " , webcallpeers[x]);
-                        removePeerInfo(webcallpeers[x].userid)
+                        removePeerInfo(webcallpeers[x].userid);
                     }
                 }
 
@@ -27096,16 +27103,22 @@ var setRtcConn = function (sessionid) {
 
             var peerinfo = findPeerInfo(event.userid) ;
             if (!peerinfo ) {
-                console.error(" PeerInfo not present in webcallpeers ", event.userid, rtcConn);
-                alert(" Cannot create session for Peer");
+                webrtcdev.error("[sartjs] onstream - PeerInfo not present in webcallpeers ", event.userid, rtcConn , " creating it now ");
+                //userid, username, usecolor, useremail, userrole, type 
+                updatePeerInfo(event.userid, event.extra.name, event.extra.color, event.extra.email, "participant", event.type),
+                webrtcdev.log(" [startJS] onstream - updated local peerinfo for open-channel "),
+                peerinfo = findPeerInfo(event.userid) ;
+                //alert(" Cannot create session for Peer");
             } else if(role=="inspector" && event.type=="local"){
                 //ignore
-            } else {
-                peerinfo.type = event.type;
-                peerinfo.stream = event.stream;
-                peerinfo.streamid = event.stream.streamid;
-                updateWebCallView(peerinfo);
-            }
+                webrtcdev.info("[startjs] onstream - ignore any incoming stream from inspector");
+            } 
+
+            peerinfo.type = event.type;
+            peerinfo.stream = event.stream;
+            peerinfo.streamid = event.stream.streamid;
+            updateWebCallView(peerinfo);
+            
             onLocalConnect() // event emitter for app client 
         },
 
@@ -27154,12 +27167,6 @@ var setRtcConn = function (sessionid) {
                         break;
                     case "chat":
                         updateWhotyping(e.extra.name + " has send message");
-                        /*var userinfo;
-                        try{
-                            userinfo=getUserinfo(rtcConn.blobURLs[e.userid], "chat-message.png");
-                        }catch(e){
-                            userinfo="empty";
-                        }*/
                         addNewMessage({
                             header: e.extra.name,
                             message: e.data.message,
@@ -27528,7 +27535,7 @@ function checkDevices(resolveparent , rejectparent , incoming , outgoing){
     //   return;
     // }
 
-    // // List cameras and microphones.
+    // List cameras and microphones.
     // navigator.mediaDevices.enumerateDevices()
     // .then(function(devices) {
     //   devices.forEach(function(device) {
@@ -27544,6 +27551,9 @@ function checkDevices(resolveparent , rejectparent , incoming , outgoing){
 
             if(!DetectRTC) resolve("detectRTC not found");
             webrtcdev.log(" [startJS] : DetectRTC - " , DetectRTC , DetectRTC.MediaDevices);
+
+            if(role == "inspector") 
+                resolve("ok");
 
             if(!DetectRTC.isWebsiteHasWebcamPermissions || !DetectRTC.isWebsiteHasMicrophonePermissions){
                 //permission not found , retry getting permissions 
@@ -27562,13 +27572,13 @@ function checkDevices(resolveparent , rejectparent , incoming , outgoing){
                 }).catch(function(err) {
                      webrtcdev.error('[startJS] : DetectRTC : ', err);
                     // of user still doesnt give permission to browser  set outgoing values and stat the session by resolve still 
-                    if (!DetectRTC.isWebsiteHasWebcamPermissions){
-                        alert(" Your browser doesnt have permission for accessing webcam", "warning");
+                    if (!DetectRTC.isWebsiteHasWebcamPermissions ){
+                        if(role != "inspector") alert(" Your browser doesnt have permission for accessing webcam", "warning");
                         outgoing.video = false;
                     }
 
                     if(!DetectRTC.isWebsiteHasMicrophonePermissions){
-                        alert(" Your browser doesnt have permission for accessing microphone", "warning");
+                        if(role != "inspector") alert(" Your browser doesnt have permission for accessing microphone", "warning");
                         outgoing.audio = false;
                     }
                 });
@@ -27979,7 +27989,7 @@ function updateWebCallView(peerInfo){
                     webrtcdev.info(" [start.js - updateWebCallView] role-participant , PeerInfo Vid is Remote");
                     //when video is remote 
 
-                    /* handling local video transistion to active */
+                    // handling local video transistion to active
                     if( outgoingVideo && localVideo && selfVideo ){
                         /*chk if local video is added to conf , else adding local video to index 0 */
                         //localvid : video container before p2p session 
@@ -28019,7 +28029,6 @@ function updateWebCallView(peerInfo){
                         webrtcdev.error(" Local video container not defined ");
                     }
 
-
                     // handling remote video addition 
                     if(remoteVideos){
 
@@ -28036,7 +28045,6 @@ function updateWebCallView(peerInfo){
                         }
 
                         try{
-
                             if(remoteobj.maxAllowed=="unlimited"){
                                 webrtcdev.log("remote video is unlimited , creating video for remoteVideos array ");
                                 var video = document.createElement('video');
@@ -28064,7 +28072,6 @@ function updateWebCallView(peerInfo){
                                         "video" : remVideoHolder[0] 
                                     };
                                 }
-
                             }
 
                             attachMediaStream(remoteVideos[vi].video, peerInfo.stream);
@@ -28161,6 +28168,7 @@ function stopCall(){
  */
 function updatePeerInfo(userid, username, usecolor, useremail, userrole, type ){
     webrtcdev.log("updating peerInfo: " , userid , username , usecolor , useremail, userrole ,  type);
+    var updateflag = 0 ;
 
     return new Promise(function (resolve, reject) {
         // if userid deosnt exist , exit
@@ -28172,13 +28180,14 @@ function updatePeerInfo(userid, username, usecolor, useremail, userrole, type ){
         // if userid is already present in webcallpeers , exit
         for(var x in webcallpeers){
             if(webcallpeers[x].userid == userid) {
-                webrtcdev.log("UserID is already existing in webcallpeers");
-                return;
+                webrtcdev.log("UserID is already existing in webcallpeers , update the fields only");
+                updateflag = webcallpeers[x];
+                //return;
             }
         }
 
         // check if total capacity of webcallpeers has been reached 
-        peerInfo={ 
+        peerInfo = { 
             videoContainer : "video"+userid,
             videoHeight : null,
             videoClassName: null,
@@ -28225,8 +28234,14 @@ function updatePeerInfo(userid, username, usecolor, useremail, userrole, type ){
                 };
             }
         }
-        webrtcdev.log("[startjs] updated peerInfo: " ,peerInfo);
-        webcallpeers.push(peerInfo);
+
+        if(updateflag){
+            webcallpeers[x]=peerInfo;
+            webrtcdev.log("[startjs] updated peerInfo: " ,peerInfo);
+        }else{
+            webcallpeers.push(peerInfo);
+            webrtcdev.log("[startjs] created peerInfo: " ,peerInfo);
+        }
 
     })
     .catch((err) =>{
