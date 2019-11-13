@@ -81,8 +81,19 @@ var screen_roomid , screen_userid;
 
 var role="participant";
 
-function init( autoload , callback ){
+var webrtcdev =  webrtcdevlogger;
 
+/*********** global ****************/
+this.sessionid="";
+
+/**
+ * creates sessionid 
+ * @method
+ * @name makesessionid
+ * @param {string} autoload
+ * @return {string}sessionid
+ */
+this.makesessionid = function(autoload , callback ){
   if(autoload && !location.hash.replace('#', '').length) {
     // When Session should autogenerate ssid and locationbar doesnt have a session name
     location.href = location.href.split('#')[0] + '#' + (Math.random() * 100).toString().replace('.', '');
@@ -95,36 +106,22 @@ function init( autoload , callback ){
       sessionid = location.hash.replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
     }
     callback(sessionid);
-
   }else{
     sessionid = prompt("Enter session ", "");
     callback(sessionid);
   }
 }
 
+/**************************************************************************************
+    peerconnection 
+****************************************************************************/
 
-function loadjscssfile(filename, filetype){
-  if (filetype=="js"){ //if filename is a external JavaScript file
-    var fileref=document.createElement('script')
-    fileref.setAttribute("type","text/javascript")
-    fileref.setAttribute("src", filename)
-  }
-  else if (filetype=="css"){ //if filename is an external CSS file
-    var fileref=document.createElement("link")
-    fileref.setAttribute("rel", "stylesheet")
-    fileref.setAttribute("type", "text/css")
-    fileref.setAttribute("href", filename)
-  }
-  if (typeof fileref!="undefined")
-    document.getElementsByTagName("head")[0].appendChild(fileref)
-}
+var channelpresence= false;
+var localVideoStreaming= null;
+var turn="none";
+var localobj={}, remoteobj={};
+var pendingFileTransfer=[];
 
-function loadScript(src, onload) {
-  var script = document.createElement('script');
-  script.src = src;
-  script.async = true;
-  document.documentElement.appendChild(script);
-}
 
 function isData(session) {
   return !session.audio && !session.video && !session.screen && session.data;
@@ -167,18 +164,6 @@ function str2ab(str) {
   return buf;
 }
 
-function toStr(obj) {
-  try{
-      return JSON.stringify(obj, function(key, value) {
-      if (value && value.sdp) {
-        log(value.sdp.type, '\t', value.sdp.sdp);
-        return '';
-      } else return value;
-    }, '\t');
-  }catch(e){
-    return obj; // in case the obj is non valid json or just a string 
-  }
-}
 
 function getLength(obj) {
   var length = 0;
@@ -187,28 +172,7 @@ function getLength(obj) {
   return length;
 }
 
-function getArgsJson(arg){
-  var str="";
-  for (i = 0; i < arg.length; i++) {
-    if (arg[i]) {
-      str += toStr(arg[i]);
-    }
-  }
-  return str;
-}
 
-function isJSON(text){
-    if (typeof text!=="string"){
-        return false;
-    }
-    try{
-        JSON.parse(text);
-        return true;
-    }
-    catch (error){
-        return false;
-    }
-}
 
 function isHTML(str) {
   var a = document.createElement('div');
@@ -220,6 +184,7 @@ function isHTML(str) {
 
   return false;
 }
+
 
 function getElement(e) {
     return document.querySelector(e)
@@ -271,8 +236,34 @@ function bytesToSize(e) {
 }
 
 
+/************************************************
+scripts or stylesheets load unloading
+********************************************/
+function loadjscssfile(filename, filetype){
+  if (filetype=="js"){ //if filename is a external JavaScript file
+    var fileref=document.createElement('script')
+    fileref.setAttribute("type","text/javascript")
+    fileref.setAttribute("src", filename)
+  }
+  else if (filetype=="css"){ //if filename is an external CSS file
+    var fileref=document.createElement("link")
+    fileref.setAttribute("rel", "stylesheet")
+    fileref.setAttribute("type", "text/css")
+    fileref.setAttribute("href", filename)
+  }
+  if (typeof fileref!="undefined")
+    document.getElementsByTagName("head")[0].appendChild(fileref)
+}
+
+function loadScript(src, onload) {
+  var script = document.createElement('script');
+  script.src = src;
+  script.async = true;
+  document.documentElement.appendChild(script);
+}
+
 /* ********************************************************
-Remove DOM
+UI / DOM related functions
 ****************************************************** */
 
 Element.prototype.remove = function() {
@@ -286,79 +277,264 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
     }
 }
 
-/* ********************************************************
-web dev Logger 
-****************************************************** */
-var webrtcdev = {};
-var webrtcdevlogs=[];
+// function showElement(elem){
+//     if(elem.vide) elem.video.hidden = false;
+//     elem.removeAttribute("hidden");
+//     elem.setAttribute("style","display:block!important");
+// }
 
-function setlogslevel(){
-
-  if(debug){
-    
-    webrtcdev.log = console.log;
-    webrtcdev.info = console.info;
-    webrtcdev.debug = console.debug;
-    webrtcdev.warn = console.warn;
-    webrtcdev.error = console.error;
-
-  }else{
-
-    webrtcdev.log = function(){
-      // var arg = getArgsJson(arguments);
-      // document.getElementById("help-view-body").innerHTML += '[-]' + arg + "<br/>";
-      if(isJSON(arguments)){
-        let arg = JSON.stringify(arguments, undefined, 2);
-        webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
-      }else{
-        let arg = getArgsJson(arguments);
-        webrtcdevlogs.push("<p style='color:grey'>[-]" + arg + "</p>");
-      }
-      console.log(arguments);
-    };
-
-    webrtcdev.info= function(){
-      if(isJSON(arguments)){
-         let arg = JSON.stringify(arguments, undefined, 2);
-        webrtcdevlogs.push("<pre style='color:blue'>[-]" + arg + "</pre>");         
-      }else{
-        let arg = getArgsJson(arguments);
-        webrtcdevlogs.push("<p style='color:blue'>[INFO]" + arg + "</p>");
-      }
-      console.info(arguments);
-    };
-
-     webrtcdev.debug= function(){
-      if(isJSON(arguments)){
-        let arg = JSON.stringify(arguments, undefined, 2);
-        webrtcdevlogs.push( "<pre style='color:green'>[DEBUG]" + arg + "</pre>");
-      }else{
-        let arg = getArgsJson(arguments);
-        webrtcdevlogs.push("<p style='color:green'>[DEBUG]" + arg + "</p>");
-      }
-      console.debug(arguments);
-    };
-
-    webrtcdev.warn= function(){
-      let arg = getArgsJson(arguments);
-      webrtcdevlogs.push("<p style='color:yellow'>[WARN]" + arg + "</p>");
-      console.warn(arguments);
-    };
-
-    webrtcdev.error= function(){
-      if(isJSON(arguments)){
-        let arg = JSON.stringify(arguments, undefined, 2);
-        webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
-      }else{
-        let arg = getArgsJson(arguments);
-        webrtcdevlogs.push("<p style='color:red'>[ERROR]"+ arg + "</p>");
-      }
-       console.error(arguments);
-    };
-  }
-
+/**
+ * function to show an elemnt by id or dom
+ * @method
+ * @name showelem
+ * @param {dom} elem
+ */
+function showelem(elem){
+    if( typeof elem   === 'object' && elem.nodeType !== undefined){
+        elem.removeAttribute("hidden");
+        elem.setAttribute("style","display:block!important");
+    }else if(document.getElementById(elem)){
+        document.getElementById(elem).removeAttribute("hidden");
+        document.getElementById(elem).setAttribute("style","display:block");
+    }else{
+        webrtcdev.warn("elem not found ", elem);
+    }
 }
 
-setlogslevel();
+/**
+ * function to hide an Element by id of dom 
+ * @method
+ * @name hideelem
+ * @param {dom} elem
+ */
+function hideelem(elem){
+    if( typeof elem   === 'object' && elem.nodeType !== undefined){
+        elem.addAttribute("hidden");
+        elem.setAttribute("style","display:none!important");
+    }else if(document.getElementById(elem)){
+        document.getElementById(eid).setAttribute("hidden" , true);
+        document.getElementById(eid).setAttribute("style","display:none");
+        webrtcdev.log("hideElement ", eid , document.getElementById(eid));
+    }
+}
 
 /*-----------------------------------------------------------------------------------*/
+
+
+/**
+ * Assigns session varables, ICE gateways and widgets 
+ * @constructor
+ * @param {json} _localObj - local object.
+ * @param {json} _remoteObj - remote object.
+ * @param {json} incoming - incoming media stream attributes
+ * @param {json} outgoing - outgoing media stream attributes
+ * @param {json} session - session object.
+ * @param {json} widgets - widgets object.
+ */
+this.setsession = function(_localobj, _remoteobj , incoming, outgoing , session, widgets){
+    //try{
+        this.sessionid = sessionid  = session.sessionid;
+        socketAddr = session.socketAddr;
+        localobj = _localobj;
+        remoteobj = _remoteobj;
+        webrtcdev.log("[startjs] WebRTCdev Session - " , session);
+    // }catch(e){
+    //     webrtcdev.error(e);
+    //     alert(" Session object doesnt have all parameters ");
+    // }
+
+    turn = (session.hasOwnProperty('turn')?session.turn:null);
+    webrtcdev.log("[ startjs] WebRTCdev TURN - ", turn);
+    if(turn && turn !="none"){
+        if(turn.active && turn.iceServers){
+            webrtcdev.log("WebRTCdev - Getting preset static ICE servers " , turn.iceServers);
+            webrtcdevIceServers = turn.iceServers;
+        }else{
+            webrtcdev.info("WebRTCdev - Calling API to fetch dynamic ICE servers ");
+            getICEServer();  
+            // getICEServer( turn.username ,turn.secretkey , turn.domain,
+            //                 turn.application , turn.room , turn.secure);                
+        }
+    }else{
+        webrtcdev.log("WebRTCdev - TURN not applied ");
+    }
+
+    if(widgets){
+
+        webrtcdev.log( " WebRTCdev - widgets  " , widgets);
+
+        if(widgets.debug)           debug           = widgets.debug || false
+
+        if(widgets.chat)            chatobj         = widgets.chat || null;
+
+        if(widgets.fileShare)       fileshareobj    = widgets.fileShare || null;
+
+        if(widgets.screenrecord)    screenrecordobj = widgets.screenrecord || null;
+
+        if(widgets.screenshare)     screenshareobj  = widgets.screenshare || null;
+
+        if(widgets.snapshot)        snapshotobj     = widgets.snapshot || null;
+
+        if(widgets.videoRecord)     videoRecordobj  = widgets.videoRecord || null;
+
+        if(widgets.reconnect)       reconnectobj    = widgets.reconnect || null;
+
+        if(widgets.drawCanvas)      drawCanvasobj   = widgets.drawCanvas || null;
+
+        if(widgets.texteditor)      texteditorobj   = widgets.texteditor || null;
+
+        if(widgets.codeeditor)      codeeditorobj   = widgets.codeeditor || null;
+
+        if(widgets.mute)            muteobj         = widgets.mute || null;
+
+        if(widgets.timer)           timerobj        = widgets.timer || null;
+
+        if(widgets.listenin)        listeninobj     = widgets.listenin || null;
+
+        if(widgets.cursor)          cursorobj       = widgets.cursor || null;
+
+        if(widgets.minmax)          minmaxobj       = widgets.minmax || null;
+
+        if(widgets.help)            helpobj         = widgets.help || null;
+
+        if(widgets.statistics)      statisticsobj   = widgets.statistics || null;
+    }
+
+    return {
+        sessionid : sessionid,
+        socketAddr: socketAddr,
+        turn : turn,
+        widgets  : widgets,
+        startwebrtcdev: funcStartWebrtcdev,
+        rtcConn : rtcConn
+    };
+}
+
+/**
+ * function to return chain of promises for webrtc session to start
+ * @method
+ * @name funcStartWebrtcdev
+ */
+function funcStartWebrtcdev(){
+    console.log(" [startjs] funcStartWebrtcdev - webrtcdev" , webrtcdev);
+    return new Promise(function (resolve, reject) {
+        webrtcdev.log(" [ startJS webrtcdom ] : begin DetectRTC checkDevices"); 
+        if(role!="inspector") checkDevices(resolve, reject , incoming , outgoing);
+    }).then((res)=>{
+        webrtcdev.log(" [ startJS webrtcdom ] : sessionid : "+ sessionid+" and localStorage  " , localStorage);
+
+        return new Promise(function (resolve , reject){
+            if(localStorage.length>=1 && localStorage.getItem("channel") != sessionid){
+                webrtcdev.log("[startjs] Current Session ID " + sessionid + " doesnt match cached channel id "+ localStorage.getItem("channel") +"-> clearCaches()");
+                clearCaches();
+            }else {
+                webrtcdev.log(" no action taken on localStorage");
+            }
+            resolve("done");
+        });
+    }).then((res)=>{
+
+        webrtcdev.log(" [ startJS webrtcdom ] : incoming " , incoming);
+        webrtcdev.log(" [ startJS webrtcdom ] : outgoing " , outgoing);
+
+        return new Promise(function (resolve , reject){
+            if(incoming){
+                incomingAudio = incoming.audio ; 
+                incomingVideo = incoming.video ; 
+                incomingData  = incoming.data  ;  
+            }
+            if(outgoing){
+                outgoingAudio = outgoing.audio ; 
+                outgoingVideo = outgoing.video ; 
+                outgoingData  = outgoing.data ;
+            }
+            resolve("done");
+        });
+    }).then((res)=>{
+
+        webrtcdev.log(" [ startJS webrtcdom ] : localobj " , localobj);
+        webrtcdev.log(" [ startJS webrtcdom ] : remoteobj " , remoteobj);
+
+        return new Promise(function (resolve , reject){
+            /* When user is single */
+            localVideo = localobj.video;
+
+            /* when user is in conference */
+            let _remotearr = remoteobj.videoarr;
+            /* first video container in remotearr belongs to user */
+            if(outgoingVideo){
+                selfVideo = _remotearr[0];
+            }
+            /* create arr for remote peers videos */
+            if(!remoteobj.dynamicVideos){
+                for(var x=1;x<_remotearr.length;x++){
+                    remoteVideos.push(_remotearr[x]);    
+                }
+            }
+            resolve("done");
+        });
+    }).then((res)=>{
+        return new Promise(function (resolve , reject){
+
+            if(localobj.hasOwnProperty('userdetails')){
+                let obj      = localobj.userdetails;
+                webrtcdev.info("localobj userdetails " , obj);
+                selfusername = obj.username  || "LOCAL";
+                selfcolor    = obj.usercolor || "";
+                selfemail    = obj.useremail || "";
+                role         = obj.role      || "participant";
+            }else{
+                webrtcdev.warn("localobj has no userdetails ");
+            }
+            resolve("done");
+        });
+    }).then( ()=> setRtcConn(sessionid)
+    ).then( (result)=> setWidgets(rtcConn)
+    ).then( (result)=> startSocketSession(rtcConn, socketAddr,  sessionid)
+    ).catch((err) =>{
+        webrtcdev.error(" Promise rejected " , err);
+    });
+}
+
+this.issafari= /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+/********************************************************************************** 
+        Session call and Updating Peer Info
+************************************************************************************/
+/**
+ * starts a call 
+ * @method
+ * @name startCall
+ * @param {json} obj
+ */
+this.startCall=function(obj){
+    webrtcdev.log(" startCall obj" , obj);
+    webrtcdev.log(" TURN " , turn);
+    //if(turn=='none'){
+        obj.startwebrtcdev();
+    // }else if(turn!=null){
+    //     repeatInitilization = window.setInterval(obj.startwebrtcdev, 2000);     
+    // }
+    return;
+}
+
+/**
+ * stops a call and removes loalstorage items 
+ * @method
+ * @name stopCall
+ */
+this.stopCall=function(){
+    webrtcdev.log(" stopCall ");
+    rtcConn.closeEntireSession();
+
+    if(!localStorage.getItem("channel"))
+        localStorage.removeItem("channel");
+
+    if(!localStorage.getItem("userid"))
+        localStorage.removeItem("userid");
+    
+    if(!localStorage.getItem("remoteUsers"))
+        localStorage.removeItem("remoteUsers");
+
+    return;
+}
+

@@ -177,11 +177,11 @@ gulp.task('codecss',function(done) {
 });
 
 var scriptList=[
+    "client/src/scripts/_logger.js",
+    "client/src/scripts/RTCM.js",
+    "client/src/scripts/head.js",
     "client/src/scripts/_init.js",
     "client/src/scripts/_notify.js",
-    "client/src/scripts/DetectRTC.js",
-    // "client/src/scripts/RTCMultiConnection_depricated.js",
-    "client/src/scripts/RTCM.js",
     "client/src/scripts/_screenshare.js",
     "client/src/scripts/_webrtcchecks.js",
     "client/src/scripts/_settings.js",
@@ -208,11 +208,12 @@ var scriptList=[
     "client/src/scripts/_stats.js",
     "client/src/scripts/_tracing.js",
     // "client/src/scripts/jszip.js"
+    "client/src/scripts/start.js",
+    "client/src/scripts/tail.js"
 ];
 
 gulp.task('betawebrtcdevelopmentjs',function(done) {
     console.log(" gulping main webrtc development scripts into beta ");
-    scriptList.push("client/src/scripts/start.js");
     scriptList.push("client/src/scripts/admin.js");  
     console.log(scriptList);
     gulp.src(scriptList , {allowEmpty: true })

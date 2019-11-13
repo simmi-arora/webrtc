@@ -443,7 +443,12 @@ function showScreenShareButton(){
     button.setAttribute("style","display:block");
 }
 
-function showScrConn(){
+/*
+ * shows screenscre rtc conn of ongoing webrtc call 
+ * @method
+ * @name showScrConn
+ */
+this.showScrConn = function(){
     if(scrConn){
         webrtcdev.info(" =========================================================================");
         webrtcdev.info(" srcConn : "  , scrConn);
@@ -453,8 +458,6 @@ function showScrConn(){
         webrtcdev.debug(" Screen share is not active ");
     }
 }
-
-
 
 
 /**

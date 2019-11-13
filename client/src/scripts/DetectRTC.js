@@ -1,5 +1,3 @@
-'use strict';
-
 // Last Updated On: 2019-05-03 5:27:06 AM UTC
 
 // ________________
@@ -974,22 +972,24 @@
     DetectRTC.isGetUserMediaSupported = isGetUserMediaSupported;
 
     var displayResolution = '';
-    if (screen.width) {
-        var width = (screen.width) ? screen.width : '';
-        var height = (screen.height) ? screen.height : '';
-        displayResolution += '' + width + ' x ' + height;
-    }
-    DetectRTC.displayResolution = displayResolution;
-
-    function getAspectRatio(w, h) {
-        function gcd(a, b) {
-            return (b == 0) ? a : gcd(b, a % b);
+    if(screen){
+        if(screen.width) {
+            var width = (screen.width) ? screen.width : '';
+            var height = (screen.height) ? screen.height : '';
+            displayResolution += '' + width + ' x ' + height;
         }
-        var r = gcd(w, h);
-        return (w / r) / (h / r);
-    }
+        DetectRTC.displayResolution = displayResolution;
 
-    DetectRTC.displayAspectRatio = getAspectRatio(screen.width, screen.height).toFixed(2);
+        function getAspectRatio(w, h) {
+            function gcd(a, b) {
+                return (b == 0) ? a : gcd(b, a % b);
+            }
+            var r = gcd(w, h);
+            return (w / r) / (h / r);
+        }
+
+        DetectRTC.displayAspectRatio = getAspectRatio(screen.width, screen.height).toFixed(2);
+    }
 
     // ----------
     DetectRTC.isCanvasSupportsStreamCapturing = isCanvasSupportsStreamCapturing;

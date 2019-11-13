@@ -292,12 +292,13 @@ function showRtpstats(){
     }
 
 }
+
 /*
  * shows rtc conn of ongoing webrtc call 
  * @method
  * @name showRtcConn
  */
-function showRtcConn(){
+this.showRtcConn = function(){
     if(rtcConn){
         webrtcdev.info(" =========================================================================");
         webrtcdev.info("[stats] rtcConn : " , rtcConn);
