@@ -1,8 +1,8 @@
 /*********************************************
-ICE
-**************************************************/
+ ICE
+ **************************************************/
 /**
- * {@link https://github.com/altanai/webrtc/blob/master/client/build/scripts/_turn.js|TURN} 
+ * {@link https://github.com/altanai/webrtc/blob/master/client/build/scripts/_turn.js|TURN}
  * @summary JavaScript audio/video recording library runs top over WebRTC getUserMedia API.
  * @author {@link https://telecom.altanai.com/about-me/|Altanai}
  * @typedef _turn.js
@@ -15,7 +15,8 @@ ICE
  *   }
  */
 
-var iceServers=[];
+var iceServers = [];
+
 function createCORSRequest(method, url) {
     var xhr = new XMLHttpRequest();
     if ("withCredentials" in xhr) {
@@ -30,17 +31,17 @@ function createCORSRequest(method, url) {
 }
 
 //function getICEServer(username , secretkey , domain , appname , roomname , secure){
-function getICEServer(){
+function getICEServer() {
     var url = 'https://global.xirsys.net/_turn/Amplechat/';
     var xhr = createCORSRequest('PUT', url);
     xhr.onload = function () {
-        webrtcdev.log("[turn Js] Response from Xirsys " , xhr.responseText);
-        if(JSON.parse(xhr.responseText).v==null){
+        webrtcdev.log("[turn Js] Response from Xirsys ", xhr.responseText);
+        if (JSON.parse(xhr.responseText).v == null) {
             webrtcdevIceServers = "err";
-            shownotification("Media will not able to pass through "+ JSON.parse(xhr.responseText).e);
-        }else{
+            shownotification("Media will not able to pass through " + JSON.parse(xhr.responseText).e);
+        } else {
             webrtcdevIceServers = JSON.parse(xhr.responseText).v.iceServers;
-            webrtcdev.log("Obtained iceServers" , webrtcdevIceServers);
+            webrtcdev.log("Obtained iceServers", webrtcdevIceServers);
         }
     };
     xhr.onerror = function () {

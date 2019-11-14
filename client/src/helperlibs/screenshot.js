@@ -67,56 +67,56 @@ function h2cRenderContext(e, t) {
         storage: n,
         width: e,
         height: t,
-        clip: function() {
+        clip: function () {
             n.push({
                 type: "function",
                 name: "clip",
                 arguments: arguments
             })
         },
-        translate: function() {
+        translate: function () {
             n.push({
                 type: "function",
                 name: "translate",
                 arguments: arguments
             })
         },
-        fill: function() {
+        fill: function () {
             n.push({
                 type: "function",
                 name: "fill",
                 arguments: arguments
             })
         },
-        save: function() {
+        save: function () {
             n.push({
                 type: "function",
                 name: "save",
                 arguments: arguments
             })
         },
-        restore: function() {
+        restore: function () {
             n.push({
                 type: "function",
                 name: "restore",
                 arguments: arguments
             })
         },
-        fillRect: function() {
+        fillRect: function () {
             n.push({
                 type: "function",
                 name: "fillRect",
                 arguments: arguments
             })
         },
-        createPattern: function() {
+        createPattern: function () {
             n.push({
                 type: "function",
                 name: "createPattern",
                 arguments: arguments
             })
         },
-        drawShape: function() {
+        drawShape: function () {
             var e = [];
             n.push({
                 type: "function",
@@ -124,31 +124,31 @@ function h2cRenderContext(e, t) {
                 arguments: e
             });
             return {
-                moveTo: function() {
+                moveTo: function () {
                     e.push({
                         name: "moveTo",
                         arguments: arguments
                     })
                 },
-                lineTo: function() {
+                lineTo: function () {
                     e.push({
                         name: "lineTo",
                         arguments: arguments
                     })
                 },
-                arcTo: function() {
+                arcTo: function () {
                     e.push({
                         name: "arcTo",
                         arguments: arguments
                     })
                 },
-                bezierCurveTo: function() {
+                bezierCurveTo: function () {
                     e.push({
                         name: "bezierCurveTo",
                         arguments: arguments
                     })
                 },
-                quadraticCurveTo: function() {
+                quadraticCurveTo: function () {
                     e.push({
                         name: "quadraticCurveTo",
                         arguments: arguments
@@ -156,21 +156,21 @@ function h2cRenderContext(e, t) {
                 }
             }
         },
-        drawImage: function() {
+        drawImage: function () {
             n.push({
                 type: "function",
                 name: "drawImage",
                 arguments: arguments
             })
         },
-        fillText: function() {
+        fillText: function () {
             n.push({
                 type: "function",
                 name: "fillText",
                 arguments: arguments
             })
         },
-        setVariable: function(e, t) {
+        setVariable: function (e, t) {
             n.push({
                 type: "variable",
                 name: e,
@@ -196,11 +196,12 @@ function getMouseXY(e) {
     }
     return true
 }
+
 var _html2canvas = {},
     previousElement, computedCSS, html2canvas;
 _html2canvas.Util = {};
-_html2canvas.Util.trimText = function(e) {
-    return function(t) {
+_html2canvas.Util.trimText = function (e) {
+    return function (t) {
         if (e) {
             return e.apply(t)
         } else {
@@ -208,13 +209,13 @@ _html2canvas.Util.trimText = function(e) {
         }
     }
 }(String.prototype.trim);
-_html2canvas.Util.parseBackgroundImage = function(e) {
+_html2canvas.Util.parseBackgroundImage = function (e) {
     var t = " \r\n	",
         n, r, i, s, o, u = [],
         a, f = 0,
         l = 0,
         c, h;
-    var p = function() {
+    var p = function () {
         if (n) {
             if (r.substr(0, 1) === '"') {
                 r = r.substr(1, r.length - 2)
@@ -301,7 +302,7 @@ _html2canvas.Util.parseBackgroundImage = function(e) {
     p();
     return u
 };
-_html2canvas.Util.Bounds = function(t) {
+_html2canvas.Util.Bounds = function (t) {
     var n, r = {};
     if (t.getBoundingClientRect) {
         n = t.getBoundingClientRect();
@@ -313,7 +314,7 @@ _html2canvas.Util.Bounds = function(t) {
         return r
     }
 };
-_html2canvas.Util.getCSS = function(e, t, n) {
+_html2canvas.Util.getCSS = function (e, t, n) {
     function s(t, n) {
         var r = e.runtimeStyle && e.runtimeStyle[t],
             i, s = e.style;
@@ -334,6 +335,7 @@ _html2canvas.Util.getCSS = function(e, t, n) {
         }
         return n
     }
+
     var r, i = t.match(/^background(Size|Position)$/);
     if (previousElement !== e) {
         computedCSS = document.defaultView.getComputedStyle(e, null)
@@ -343,7 +345,8 @@ _html2canvas.Util.getCSS = function(e, t, n) {
         r = (r || "").split(",");
         r = r[n || 0] || r[0] || "auto";
         r = _html2canvas.Util.trimText(r).split(" ");
-        if (t === "backgroundSize" && (!r[0] || r[0].match(/cover|contain|auto/))) {} else {
+        if (t === "backgroundSize" && (!r[0] || r[0].match(/cover|contain|auto/))) {
+        } else {
             r[0] = r[0].indexOf("%") === -1 ? s(t + "X", r[0]) : r[0];
             if (r[1] === undefined) {
                 if (t === "backgroundSize") {
@@ -366,7 +369,7 @@ _html2canvas.Util.getCSS = function(e, t, n) {
     }
     return r
 };
-_html2canvas.Util.resizeBounds = function(e, t, n, r, i) {
+_html2canvas.Util.resizeBounds = function (e, t, n, r, i) {
     var s = n / r,
         o = e / t,
         u, a;
@@ -387,21 +390,21 @@ _html2canvas.Util.resizeBounds = function(e, t, n, r, i) {
         height: a
     }
 };
-_html2canvas.Util.BackgroundPosition = function(e, t, n, r, i) {
+_html2canvas.Util.BackgroundPosition = function (e, t, n, r, i) {
     var s = backgroundBoundsFactory("backgroundPosition", e, t, n, r, i);
     return {
         left: s[0],
         top: s[1]
     }
 };
-_html2canvas.Util.BackgroundSize = function(e, t, n, r) {
+_html2canvas.Util.BackgroundSize = function (e, t, n, r) {
     var i = backgroundBoundsFactory("backgroundSize", e, t, n, r);
     return {
         width: i[0],
         height: i[1]
     }
 };
-_html2canvas.Util.Extend = function(e, t) {
+_html2canvas.Util.Extend = function (e, t) {
     for (var n in e) {
         if (e.hasOwnProperty(n)) {
             t[n] = e[n]
@@ -409,13 +412,13 @@ _html2canvas.Util.Extend = function(e, t) {
     }
     return t
 };
-_html2canvas.Util.Children = function(e) {
+_html2canvas.Util.Children = function (e) {
     var t;
     try {
-        t = e.nodeName && e.nodeName.toUpperCase() === "IFRAME" ? e.contentDocument || e.contentWindow.document : function(e) {
+        t = e.nodeName && e.nodeName.toUpperCase() === "IFRAME" ? e.contentDocument || e.contentWindow.document : function (e) {
             var t = [];
             if (e !== null) {
-                (function(e, t) {
+                (function (e, t) {
                     var n = e.length,
                         r = 0;
                     if (typeof t.length === "number") {
@@ -439,9 +442,9 @@ _html2canvas.Util.Children = function(e) {
     }
     return t
 };
-_html2canvas.Util.Font = function() {
+_html2canvas.Util.Font = function () {
     var e = {};
-    return function(t, n, r) {
+    return function (t, n, r) {
         if (e[t + "-" + n] !== undefined) {
             return e[t + "-" + n]
         }
@@ -485,10 +488,10 @@ _html2canvas.Util.Font = function() {
         return l
     }
 }();
-(function() {
+(function () {
     _html2canvas.Generate = {};
     var e = [/^(-webkit-linear-gradient)\(([a-z\s]+)([\w\d\.\s,%\(\)]+)\)$/, /^(-o-linear-gradient)\(([a-z\s]+)([\w\d\.\s,%\(\)]+)\)$/, /^(-webkit-gradient)\((linear|radial),\s((?:\d{1,3}%?)\s(?:\d{1,3}%?),\s(?:\d{1,3}%?)\s(?:\d{1,3}%?))([\w\d\.\s,%\(\)\-]+)\)$/, /^(-moz-linear-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?))([\w\d\.\s,%\(\)]+)\)$/, /^(-webkit-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(\w+)\s([a-z\-]+)([\w\d\.\s,%\(\)]+)\)$/, /^(-moz-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(\w+)\s?([a-z\-]*)([\w\d\.\s,%\(\)]+)\)$/, /^(-o-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(\w+)\s([a-z\-]+)([\w\d\.\s,%\(\)]+)\)$/];
-    _html2canvas.Generate.parseGradient = function(t, n) {
+    _html2canvas.Generate.parseGradient = function (t, n) {
         var r, i, s = e.length,
             o, u, a, f, l, c, h, p, d, v;
         for (i = 0; i < s; i += 1) {
@@ -722,7 +725,7 @@ _html2canvas.Util.Font = function() {
         }
         return r
     };
-    _html2canvas.Generate.Gradient = function(e, t) {
+    _html2canvas.Generate.Gradient = function (e, t) {
         if (t.width === 0 || t.height === 0) {
             return
         }
@@ -779,7 +782,7 @@ _html2canvas.Util.Font = function() {
         }
         return n
     };
-    _html2canvas.Generate.ListAlpha = function(e) {
+    _html2canvas.Generate.ListAlpha = function (e) {
         var t = "",
             n;
         do {
@@ -789,7 +792,7 @@ _html2canvas.Util.Font = function() {
         } while (e * 26 > 26);
         return t
     };
-    _html2canvas.Generate.ListRoman = function(e) {
+    _html2canvas.Generate.ListRoman = function (e) {
         var t = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"],
             n = [1e3, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1],
             r = "",
@@ -806,7 +809,7 @@ _html2canvas.Util.Font = function() {
         return r
     }
 })();
-_html2canvas.Parse = function(e, t) {
+_html2canvas.Parse = function (e, t) {
     function c() {
         return Math.max(Math.max(i.body.scrollWidth, i.documentElement.scrollWidth), Math.max(i.body.offsetWidth, i.documentElement.offsetWidth), Math.max(i.body.clientWidth, i.documentElement.clientWidth))
     }
@@ -833,7 +836,7 @@ _html2canvas.Parse = function(e, t) {
             case "lowercase":
                 return e.toLowerCase();
             case "capitalize":
-                return e.replace(/(^|\s|:|-|\(|\))([a-z])/g, function(e, t, n) {
+                return e.replace(/(^|\s|:|-|\(|\))([a-z])/g, function (e, t, n) {
                     if (e.length > 0) {
                         return t + n.toUpperCase()
                     }
@@ -939,7 +942,7 @@ _html2canvas.Parse = function(e, t) {
             l = !t.letterRendering && /^(left|right|justify|auto)$/.test(u) && m(a(e, "letterSpacing")) ? n.nodeValue.split(/(\b| )/) : n.nodeValue.split("");
             f = y(i, e, o, s);
             if (t.chinese) {
-                l.forEach(function(e, t) {
+                l.forEach(function (e, t) {
                     if (/.*[\u4E00-\u9FA5].*$/.test(e)) {
                         e = e.split("");
                         e.unshift(t, 1);
@@ -947,7 +950,7 @@ _html2canvas.Parse = function(e, t) {
                     }
                 })
             }
-            l.forEach(function(e, t) {
+            l.forEach(function (e, t) {
                 var n = w(c, e, o, t < l.length - 1);
                 if (n) {
                     g(e, n.left, n.bottom, i);
@@ -1077,7 +1080,7 @@ _html2canvas.Parse = function(e, t) {
     }
 
     function _(e) {
-        return ["Top", "Right", "Bottom", "Left"].map(function(t) {
+        return ["Top", "Right", "Bottom", "Left"].map(function (t) {
             return {
                 width: p(e, "border" + t + "Width"),
                 color: a(e, "border" + t + "Color")
@@ -1086,13 +1089,13 @@ _html2canvas.Parse = function(e, t) {
     }
 
     function D(e) {
-        return ["TopLeft", "TopRight", "BottomRight", "BottomLeft"].map(function(t) {
+        return ["TopLeft", "TopRight", "BottomRight", "BottomLeft"].map(function (t) {
             return a(e, "border" + t + "Radius")
         })
     }
 
     function H(e, t, n, r) {
-        var i = function(e, t, n) {
+        var i = function (e, t, n) {
             return {
                 x: e.x + (t.x - e.x) * n,
                 y: e.y + (t.y - e.y) * n
@@ -1103,7 +1106,7 @@ _html2canvas.Parse = function(e, t) {
             startControl: t,
             endControl: n,
             end: r,
-            subdivide: function(s) {
+            subdivide: function (s) {
                 var o = i(e, t, s),
                     u = i(t, n, s),
                     a = i(n, r, s),
@@ -1112,10 +1115,10 @@ _html2canvas.Parse = function(e, t) {
                     c = i(f, l, s);
                 return [H(e, o, f, c), H(c, l, a, r)]
             },
-            curveTo: function(e) {
+            curveTo: function (e) {
                 e.push(["bezierCurve", t.x, t.y, n.x, n.y, r.x, r.y])
             },
-            curveToReversed: function(r) {
+            curveToReversed: function (r) {
                 r.push(["bezierCurve", n.x, n.y, t.x, t.y, e.x, e.y])
             }
         }
@@ -1278,7 +1281,7 @@ _html2canvas.Parse = function(e, t) {
 
     function R(e, t) {
         var n = e.drawShape();
-        t.forEach(function(e, t) {
+        t.forEach(function (e, t) {
             n[t === 0 ? "moveTo" : e[0] + "To"].apply(null, e.slice(1))
         });
         return n
@@ -1297,7 +1300,7 @@ _html2canvas.Parse = function(e, t) {
         var r = i.createElement("valuewrap"),
             s = ["lineHeight", "textAlign", "fontFamily", "color", "fontSize", "paddingLeft", "paddingTop", "width", "height", "border", "borderLeftWidth", "borderTopWidth"],
             o, f;
-        s.forEach(function(t) {
+        s.forEach(function (t) {
             try {
                 r.style[t] = a(e, t)
             } catch (n) {
@@ -1342,7 +1345,7 @@ _html2canvas.Parse = function(e, t) {
         var s = r.substr(0, 3) === "url",
             o = document.createElement(s ? "img" : "span");
         o.className = f + "-before " + f + "-after";
-        Object.keys(n).filter(V).forEach(function(e) {
+        Object.keys(n).filter(V).forEach(function (e) {
             o.style[e] = n[e]
         });
         if (s) {
@@ -1408,7 +1411,7 @@ _html2canvas.Parse = function(e, t) {
     function G(e, t, n, r, i) {
         var s = _html2canvas.Util.BackgroundSize(e, t, r, i),
             o = _html2canvas.Util.BackgroundPosition(e, t, r, i, s),
-            u = a(e, "backgroundRepeat").split(",").map(function(e) {
+            u = a(e, "backgroundRepeat").split(",").map(function (e) {
                 return e.trim()
             });
         r = Z(r, s);
@@ -1517,7 +1520,7 @@ _html2canvas.Parse = function(e, t) {
             Y(e, c, l)
         }
         l.restore();
-        h.borders.forEach(function(e) {
+        h.borders.forEach(function (e) {
             U(l, e.args, e.color)
         });
         if (!n) {
@@ -1573,7 +1576,7 @@ _html2canvas.Parse = function(e, t) {
             t = rt(e, t, n) || t;
             if (!o.test(e.nodeName)) {
                 if (e.tagName == "IFRAME") e = e.contentDocument;
-                _html2canvas.Util.Children(e).forEach(function(r) {
+                _html2canvas.Util.Children(e).forEach(function (r) {
                     if (r.nodeType === 1) {
                         st(r, t, n)
                     } else if (r.nodeType === 3) {
@@ -1610,13 +1613,14 @@ _html2canvas.Parse = function(e, t) {
                 }
             }
         }
+
         var n = new Image,
             r = c(),
             i = h(),
             s = "";
         o(e);
         n.src = ["data:image/svg+xml,", "<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='" + r + "' height='" + i + "'>", "<foreignObject width='" + r + "' height='" + i + "'>", "<html xmlns='http://www.w3.org/1999/xhtml' style='margin:0;'>", s.replace(/\#/g, "%23"), "</html>", "</foreignObject>", "</svg>"].join("");
-        n.onload = function() {
+        n.onload = function () {
             t.svgRender = n
         }
     }
@@ -1626,13 +1630,14 @@ _html2canvas.Parse = function(e, t) {
         if (s.svgRendering) {
             ot(document.documentElement, e)
         }
-        Array.prototype.slice.call(n.children, 0).forEach(function(t) {
+        Array.prototype.slice.call(n.children, 0).forEach(function (t) {
             st(t, e)
         });
         e.backgroundColor = a(document.documentElement, "backgroundColor");
         u.removeChild(l);
         return e
     }
+
     var n = t.elements === undefined ? document.body : t.elements[0],
         r = 0,
         i = n.ownerDocument,
@@ -1645,8 +1650,8 @@ _html2canvas.Parse = function(e, t) {
     l.innerHTML = "." + f + '-before:before { content: "" !important; display: none !important; }' + "." + f + '-after:after { content: "" !important; display: none !important; }';
     u.appendChild(l);
     e = e || {};
-    var P = function(e) {
-        return function(t, n, r, i) {
+    var P = function (e) {
+        return function (t, n, r, i) {
             var s = r * e,
                 o = i * e,
                 u = t + r,
@@ -1709,7 +1714,7 @@ _html2canvas.Parse = function(e, t) {
     }(4 * ((Math.sqrt(2) - 1) / 3));
     return ut()
 };
-_html2canvas.Preload = function(e) {
+_html2canvas.Preload = function (e) {
     function p(e) {
         l.href = e;
         l.href = l.href;
@@ -1741,7 +1746,7 @@ _html2canvas.Preload = function(e) {
         }
         a += "url=" + encodeURIComponent(n) + "&callback=" + o;
         f = u.createElement("script");
-        window[o] = function(e) {
+        window[o] = function (e) {
             if (e.substring(0, 6) === "error:") {
                 i.succeeded = false;
                 t.numLoaded++;
@@ -1754,7 +1759,8 @@ _html2canvas.Preload = function(e) {
             window[o] = undefined;
             try {
                 delete window[o]
-            } catch (n) {}
+            } catch (n) {
+            }
             f.parentNode.removeChild(f);
             f = null;
             delete i.script;
@@ -1799,7 +1805,7 @@ _html2canvas.Preload = function(e) {
 
     function w(e, t) {
         var n;
-        _html2canvas.Util.parseBackgroundImage(e).filter(b).forEach(function(e) {
+        _html2canvas.Util.parseBackgroundImage(e).filter(b).forEach(function (e) {
             if (e.method === "url") {
                 r.loadImage(e.args[0])
             } else if (e.method.match(/\-?gradient$/)) {
@@ -1814,10 +1820,11 @@ _html2canvas.Preload = function(e) {
     function E(e) {
         var t = false;
         try {
-            _html2canvas.Util.Children(e).forEach(function(e) {
+            _html2canvas.Util.Children(e).forEach(function (e) {
                 E(e)
             })
-        } catch (n) {}
+        } catch (n) {
+        }
         try {
             t = e.nodeType
         } catch (r) {
@@ -1836,7 +1843,7 @@ _html2canvas.Preload = function(e) {
     }
 
     function S(n, r) {
-        n.onload = function() {
+        n.onload = function () {
             if (r.timer !== undefined) {
                 window.clearTimeout(r.timer)
             }
@@ -1845,7 +1852,7 @@ _html2canvas.Preload = function(e) {
             n.onerror = n.onload = null;
             d()
         };
-        n.onerror = function() {
+        n.onerror = function () {
             if (n.crossOrigin === "anonymous") {
                 window.clearTimeout(r.timer);
                 if (e.proxy) {
@@ -1864,6 +1871,7 @@ _html2canvas.Preload = function(e) {
             d()
         }
     }
+
     var t = {
             numLoaded: 0,
             numFailed: 0,
@@ -1876,14 +1884,14 @@ _html2canvas.Preload = function(e) {
         a = u.images,
         f = a.length,
         l = u.createElement("a"),
-        c = function(e) {
+        c = function (e) {
             return e.crossOrigin !== undefined
         }(new Image),
         h;
     l.href = window.location.href;
     n = l.protocol + l.host;
     r = {
-        loadImage: function(n) {
+        loadImage: function (n) {
             var r, i;
             if (n && t[n] === undefined) {
                 r = new Image;
@@ -1909,7 +1917,7 @@ _html2canvas.Preload = function(e) {
                     t.numTotal++;
                     S(r, i);
                     r.src = n;
-                    r.customComplete = function() {
+                    r.customComplete = function () {
                         if (!this.img.complete) {
                             this.timer = window.setTimeout(this.img.customComplete, 100)
                         } else {
@@ -1926,7 +1934,7 @@ _html2canvas.Preload = function(e) {
                 }
             }
         },
-        cleanupDOM: function(n) {
+        cleanupDOM: function (n) {
             var r, i;
             if (!t.cleanupDone) {
                 if (n && typeof n === "string") {
@@ -1941,7 +1949,8 @@ _html2canvas.Preload = function(e) {
                             window[r.callbackname] = undefined;
                             try {
                                 delete window[r.callbackname]
-                            } catch (s) {}
+                            } catch (s) {
+                            }
                             if (r.script && r.script.parentNode) {
                                 r.script.setAttribute("src", "about:blank");
                                 r.script.parentNode.removeChild(r.script)
@@ -1966,7 +1975,7 @@ _html2canvas.Preload = function(e) {
                 }
             }
         },
-        renderingDone: function() {
+        renderingDone: function () {
             if (h) {
                 window.clearTimeout(h)
             }
@@ -1989,13 +1998,13 @@ _html2canvas.Preload = function(e) {
     }
     return r
 };
-_html2canvas.Renderer = function(e, t) {
+_html2canvas.Renderer = function (e, t) {
     function n(e) {
         var t = [];
-        var n = function(e) {
+        var n = function (e) {
             var r = [],
                 i = [];
-            e.children.forEach(function(e) {
+            e.children.forEach(function (e) {
                 if (e.children && e.children.length > 0) {
                     r.push(e);
                     i.push(e.zindex)
@@ -2003,12 +2012,12 @@ _html2canvas.Renderer = function(e, t) {
                     t.push(e)
                 }
             });
-            i.sort(function(e, t) {
+            i.sort(function (e, t) {
                 return e - t
             });
-            i.forEach(function(e) {
+            i.forEach(function (e) {
                 var t;
-                r.some(function(n, r) {
+                r.some(function (n, r) {
                     t = r;
                     return n.zindex === e
                 });
@@ -2033,9 +2042,10 @@ _html2canvas.Renderer = function(e, t) {
         }
         return n
     }
+
     return r(t.renderer)(e, t, document, n(e), _html2canvas)
 };
-_html2canvas.Util.Support = function(e, t) {
+_html2canvas.Util.Support = function (e, t) {
     function n() {
         var e = new Image,
             n = t.createElement("canvas"),
@@ -2075,12 +2085,13 @@ _html2canvas.Util.Support = function(e, t) {
         }
         return s
     }
+
     return {
         rangeBounds: r(),
         svgRendering: e.svgRendering && n()
     }
 };
-window.html2canvas = function(e, t) {
+window.html2canvas = function (e, t) {
     e = e.length ? e : [e];
     var n, r, i = {
         logging: false,
@@ -2102,7 +2113,7 @@ window.html2canvas = function(e, t) {
     };
     i = _html2canvas.Util.Extend(t, i);
     _html2canvas.logging = i.logging;
-    i.complete = function(e) {
+    i.complete = function (e) {
         if (typeof i.onpreloaded === "function") {
             if (i.onpreloaded(e) === false) {
                 return
@@ -2120,7 +2131,7 @@ window.html2canvas = function(e, t) {
                 i.onrendered(r)
             } else {
                 var t = new Image(25, 25);
-                t.onload = function() {
+                t.onload = function () {
                     r.getContext("2d").drawImage(t, coordX, coordY, 25, 25);
                     i.onrendered(r)
                 };
@@ -2128,17 +2139,17 @@ window.html2canvas = function(e, t) {
             }
         }
     };
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         _html2canvas.Preload(i)
     }, 0);
     return {
-        render: function(e, t) {
+        render: function (e, t) {
             return _html2canvas.Renderer(e, _html2canvas.Util.Extend(t, i))
         },
-        parse: function(e, t) {
+        parse: function (e, t) {
             return _html2canvas.Parse(e, _html2canvas.Util.Extend(t, i))
         },
-        preload: function(e) {
+        preload: function (e) {
             return _html2canvas.Preload(_html2canvas.Util.Extend(e, i))
         },
         log: h2clog
@@ -2148,10 +2159,10 @@ window.html2canvas.log = h2clog;
 window.html2canvas.Renderer = {
     Canvas: undefined
 };
-_html2canvas.Renderer.Canvas = function(e) {
+_html2canvas.Renderer.Canvas = function (e) {
     function o(e, t) {
         e.beginPath();
-        t.forEach(function(t) {
+        t.forEach(function (t) {
             e[t.name].apply(e, t["arguments"])
         });
         e.closePath()
@@ -2204,13 +2215,14 @@ _html2canvas.Renderer.Canvas = function(e) {
                 break
         }
     }
+
     e = e || {};
     var t = document,
         n = [],
         r = document.createElement("canvas"),
         i = r.getContext("2d"),
         s = e.canvas || t.createElement("canvas");
-    return function(e, t, n, r, i) {
+    return function (e, t, n, r, i) {
         var o = s.getContext("2d"),
             u, l, c, h, p, d;
         s.width = s.style.width = t.width || e.ctx.width;
@@ -2257,23 +2269,23 @@ _html2canvas.Renderer.Canvas = function(e) {
         return s
     }
 };
-(function() {
+(function () {
     var e = 0,
         t = ["ms", "moz", "webkit", "o"];
     for (var n = 0; n < t.length && !window.requestAnimationFrame; ++n) {
         window.requestAnimationFrame = window[t[n] + "RequestAnimationFrame"];
         window.cancelAnimationFrame = window[t[n] + "CancelAnimationFrame"] || window[t[n] + "RequestCancelAnimationFrame"]
     }
-    if (!window.requestAnimationFrame) window.requestAnimationFrame = function(t, n) {
+    if (!window.requestAnimationFrame) window.requestAnimationFrame = function (t, n) {
         var r = (new Date).getTime();
         var i = Math.max(0, 16 - (r - e));
-        var s = window.setTimeout(function() {
+        var s = window.setTimeout(function () {
             t(r + i)
         }, i);
         e = r + i;
         return s
     };
-    if (!window.cancelAnimationFrame) window.cancelAnimationFrame = function(e) {
+    if (!window.cancelAnimationFrame) window.cancelAnimationFrame = function (e) {
         clearTimeout(e)
     }
 })();

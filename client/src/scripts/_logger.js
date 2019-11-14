@@ -1,54 +1,53 @@
 /* ********************************************************
 web dev Logger 
 ****************************************************** */
-var webrtcdevlogs=[];
+var webrtcdevlogs = [];
 
-function isJSON(text){
-    if (typeof text!=="string"){
+function isJSON(text) {
+    if (typeof text !== "string") {
         return false;
     }
-    try{
+    try {
         JSON.parse(text);
         return true;
-    }
-    catch (error){
+    } catch (error) {
         return false;
     }
 }
 
 function toStr(obj) {
-  try{
-      return JSON.stringify(obj, function(key, value) {
-      if (value && value.sdp) {
-        log(value.sdp.type, '\t', value.sdp.sdp);
-        return '';
-      } else return value;
-    }, '\t');
-  }catch(e){
-    return obj; // in case the obj is non valid json or just a string 
-  }
+    try {
+        return JSON.stringify(obj, function (key, value) {
+            if (value && value.sdp) {
+                log(value.sdp.type, '\t', value.sdp.sdp);
+                return '';
+            } else return value;
+        }, '\t');
+    } catch (e) {
+        return obj; // in case the obj is non valid json or just a string
+    }
 }
 
-function getArgsJson(arg){
-  var str="";
-  for (i = 0; i < arg.length; i++) {
-    if (arg[i]) {
-      str += toStr(arg[i]);
+function getArgsJson(arg) {
+    var str = "";
+    for (i = 0; i < arg.length; i++) {
+        if (arg[i]) {
+            str += toStr(arg[i]);
+        }
     }
-  }
-  return str;
+    return str;
 }
 
 
 var webrtcdevlogger = {
-  // if(debug){
-    
+    // if(debug){
+
     log: console.log,
     info: console.info,
     debug: console.debug,
     warn: console.warn,
     error: console.error
-  // }else{
+    // }else{
 
     // log : function(){
     //   // var arg = getArgsJson(arguments);
@@ -101,6 +100,6 @@ var webrtcdevlogger = {
     //   }
     //    console.error(arguments);
     // }
-  //}
+    //}
 
 };

@@ -179,17 +179,24 @@ gulp.task('codecss',function(done) {
 var scriptList=[
     "client/src/scripts/_logger.js",
     "client/src/scripts/RTCM.js",
+    // --------------------- helper libs
+    "client/src/helperlibs/html2canvas.js",
+    // "client/src/scripts/jszip.js"
+    // "client/src/scripts/firebase.js",
     "client/src/scripts/head.js",
     "client/src/scripts/_init.js",
-    "client/src/scripts/_notify.js",
+    // --------------------- dom modifiers
+    "client/src/dommodifiers/_webcallviewmanager.js",
+    "client/src/dommodifiers/_filesharingdommanager.js",
+    "client/src/dommodifiers/_mediadommanager.js",
+    "client/src/dommodifiers/_notify.js",
+    // "client/src/scripts/_settings.js",
+    // ---------------------- scripts
     "client/src/scripts/_screenshare.js",
     "client/src/scripts/_webrtcchecks.js",
-    "client/src/scripts/_settings.js",
-    // "client/src/scripts/firebase.js",
     "client/src/scripts/FileBufferReader.js",
     "client/src/scripts/MediaStreamRecorder.js",
     "client/src/scripts/RecordRTC.js",
-    "client/src/scripts/html2canvas.js",
     "client/src/scripts/_snapshot.js",
     "client/src/scripts/_geolocation.js",
     "client/src/scripts/_chat.js",
@@ -207,9 +214,7 @@ var scriptList=[
     "client/src/scripts/_timer.js",
     "client/src/scripts/_stats.js",
     "client/src/scripts/_tracing.js",
-    // "client/src/scripts/jszip.js"
     "client/src/scripts/_peerinfomanager.js",
-    "client/src/scripts/_webcallviewmanager.js",
     "client/src/scripts/_sessionmanager.js",
     "client/src/scripts/_exitmanager.js",
     "client/src/scripts/tail.js"

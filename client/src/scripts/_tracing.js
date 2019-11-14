@@ -58,15 +58,6 @@ this.showUserStats= showUserStats = function(){
 }
 
 /**
- * getwebcallpeers
- * @method
- * @name getwebcallpeers
- */
-this.getwebcallpeers = function(){
-	return webcallpeers;
-}
-
-/**
  * get screenshost to send along with debug logs
  * @method
  * @name getscreenshot

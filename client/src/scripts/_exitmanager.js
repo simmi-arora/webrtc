@@ -3,7 +3,7 @@
  * @method
  * @name leaveWebRTC
  */
-var leaveWebRTC = function(){
+var leaveWebRTC = function () {
     shownotification("Leaving the session ");
 };
 
@@ -11,7 +11,7 @@ var leaveWebRTC = function(){
     webrtcdev.log( "Local Storage Channel " ,  localStorage.getItem("channel"));
 };
 */
-window.onunload=function(){
-    webrtcdev.log( "[startjs] onunload " , localStorage.getItem("channel"));
+window.onunload = function () {
+    webrtcdev.log("[startjs] onunload ", localStorage.getItem("channel"));
     alert(" Refreshing the Page will loose the session data");
 };

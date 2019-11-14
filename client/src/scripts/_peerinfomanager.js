@@ -133,3 +133,12 @@ function updatePeerInfo(userid, username, usecolor, useremail, userrole, type) {
             webrtcdev.error(" Promise rejected ", err);
         });
 }
+
+/**
+ * getwebcallpeers
+ * @method
+ * @name getwebcallpeers
+ */
+this.getwebcallpeers = function(){
+    return webcallpeers;
+}

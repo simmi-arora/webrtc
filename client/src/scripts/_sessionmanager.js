@@ -1268,7 +1268,6 @@ var connectWebRTC = function (type, channel, selfuserid, remoteUsers) {
         }
 
     }
-
 };
 
 
