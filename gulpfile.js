@@ -208,7 +208,10 @@ var scriptList=[
     "client/src/scripts/_stats.js",
     "client/src/scripts/_tracing.js",
     // "client/src/scripts/jszip.js"
-    "client/src/scripts/start.js",
+    "client/src/scripts/_peerinfomanager.js",
+    "client/src/scripts/_webcallviewmanager.js",
+    "client/src/scripts/_sessionmanager.js",
+    "client/src/scripts/_exitmanager.js",
     "client/src/scripts/tail.js"
 ];
 

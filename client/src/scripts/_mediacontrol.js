@@ -1,5 +1,47 @@
+/**********************************
+Detect Webcam 
+**********************************/
+
+function detectWebcam(callback) {
+  let md = navigator.mediaDevices;
+  if (!md || !md.enumerateDevices) return callback(false);
+  md.enumerateDevices().then(devices => {
+    callback(devices.some(device => 'videoinput' === device.kind));
+  })
+}
+
+/************************************
+    webrtc get media
+***********************************/
+/*
+* Get Audio and Video Stream Media
+*/
+function getCamMedia(rtcConn){
+    rtcConn.dontAttachStream =  false,
+    rtcConn.dontCaptureUserMedia = false,
+    rtcConn.dontGetRemoteStream = false;
+
+    webrtcdev.log(" [startJS] getCamMedia  role :" , role );
+    return new Promise(function (resolve, reject) {
+        if(role == "inspector"){
+            console.log("[startJS] getCamMedia  - Joining as inspector without camera Video");
+        }else if(outgoingVideo){
+            webrtcdev.log("[startJS] getCamMedia  - Capture Media ");
+            rtcConn.getUserMedia();  // not wait for the rtc conn on media stream or on error 
+        }else{
+            webrtcdev.error(" [startJS] getCamMedia - dont Capture outgoing video " , outgoingVideo);
+            onNoCameraCard();
+        }
+        resolve("success");
+    }).catch(
+       (reason) => {
+        webrtcdev.error('[startJS] getCamMedia  - rejected promise ('+reason+')');
+    });
+}
+
+
 /***************************************************
-video handling 
+    video handling 
 *********************************************************/
 
 function appendVideo(e, style) {
@@ -24,18 +66,38 @@ function createVideoContainer(e, style, callback) {
     if (callback) callback(div);
 }
 
-/************************************
-       User Detail attchmenet to Video Element
+/**********************************************
+    User Detail attachmenet to Video Element
 *******************************************/
+
+/**
+ * function to attach user details header on top of video
+ * @method
+ * @name attachUserDetails
+ * @param {dom} vid
+ * @param {json} peerinfo
+ */
 function attachUserDetails(vid , peerinfo){
-    var nameBox=document.createElement("div");
-    nameBox.setAttribute("style","background-color:"+ peerinfo.color);
-    nameBox.className = "videoHeaderClass";
-    nameBox.innerHTML = peerinfo.name+"<br/>";
+    if( vid.parentNode.querySelectorAll("videoheaders"+peerinfo.userid)>0) {
+        webrtcdev.warn(" video header already present ", "videoheaders"+peerinfo.userid);
+        return
+    }
+    var nameBox = document.createElement("div");
+    nameBox.setAttribute("style","background-color:"+ peerinfo.color),
+    nameBox.className = "videoHeaderClass",
+    nameBox.innerHTML = peerinfo.name+"<br/>",
+    nameBox.id = "videoheaders"+peerinfo.userid;
     // vid.parentNode.appendChild(nameBox); 
     vid.parentNode.insertBefore(nameBox, vid.parentNode.firstChild);
 }
 
+/**
+ * function to attach user's meta details header on top of video
+ * @method
+ * @name attachMetaUserDetails
+ * @param {dom} vid
+ * @param {json} peerinfo
+ */
 function attachMetaUserDetails(vid , peerinfo){
     webrtcdev.log(peerinfo.userid+ ":" + peerinfo.type);
     var detailsbox = document.createElement("span");
@@ -44,6 +106,13 @@ function attachMetaUserDetails(vid , peerinfo){
     vid.parentNode.insertBefore(detailsbox, vid.parentNode.firstChild);
 }
 
+/**
+ * function to attach control bar to video for minmax , record etc
+ * @method
+ * @name attachControlButtons
+ * @param {dom} vid
+ * @param {json} peerinfo
+ */
 function attachControlButtons( vid ,  peerinfo){
 
     var stream = peerinfo.stream;
@@ -108,9 +177,11 @@ function attachControlButtons( vid ,  peerinfo){
     vid.parentNode.appendChild(controlBar);        
 }
 
-/************************************
-        control Buttons attchmenet to Video Element
-*******************************************/
+/****************************************************
+    control Buttons attachment to Video Element
+*********************************************************/
+
+
 function createFullScreenButton(controlBarName, peerinfo, streamid, stream ){
     var button = document.createElement("span");
     button.id = controlBarName+"fullscreeButton";
