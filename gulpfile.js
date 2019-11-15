@@ -187,10 +187,14 @@ var scriptList=[
     "client/src/scripts/_init.js",
     // --------------------- dom modifiers
     "client/src/dommodifiers/_webcallviewmanager.js",
-    "client/src/dommodifiers/_filesharingdommanager.js",
-    "client/src/dommodifiers/_mediadommanager.js",
+    "client/src/dommodifiers/_filesharing_dommanager.js",
+    "client/src/dommodifiers/_media_dommanager.js",
     "client/src/dommodifiers/_notify.js",
+    "client/src/dommodifiers/_screensharedommodifier.js",
+    "client/src/dommodifiers/_chat_dommodifier.js",
     // "client/src/scripts/_settings.js",
+    // --------------------- stats and analytics
+    "client/src/analytics/_stats.js",
     // ---------------------- scripts
     "client/src/scripts/_screenshare.js",
     "client/src/scripts/_webrtcchecks.js",
@@ -212,7 +216,6 @@ var scriptList=[
     "client/src/scripts/_texteditor.js",
     "client/src/scripts/_turn.js",
     "client/src/scripts/_timer.js",
-    "client/src/scripts/_stats.js",
     "client/src/scripts/_tracing.js",
     "client/src/scripts/_peerinfomanager.js",
     "client/src/scripts/_sessionmanager.js",

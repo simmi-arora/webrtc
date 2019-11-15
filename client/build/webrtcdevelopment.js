@@ -1,54 +1,53 @@
 /* ********************************************************
 web dev Logger 
 ****************************************************** */
-var webrtcdevlogs=[];
+var webrtcdevlogs = [];
 
-function isJSON(text){
-    if (typeof text!=="string"){
+function isJSON(text) {
+    if (typeof text !== "string") {
         return false;
     }
-    try{
+    try {
         JSON.parse(text);
         return true;
-    }
-    catch (error){
+    } catch (error) {
         return false;
     }
 }
 
 function toStr(obj) {
-  try{
-      return JSON.stringify(obj, function(key, value) {
-      if (value && value.sdp) {
-        log(value.sdp.type, '\t', value.sdp.sdp);
-        return '';
-      } else return value;
-    }, '\t');
-  }catch(e){
-    return obj; // in case the obj is non valid json or just a string 
-  }
+    try {
+        return JSON.stringify(obj, function (key, value) {
+            if (value && value.sdp) {
+                log(value.sdp.type, '\t', value.sdp.sdp);
+                return '';
+            } else return value;
+        }, '\t');
+    } catch (e) {
+        return obj; // in case the obj is non valid json or just a string
+    }
 }
 
-function getArgsJson(arg){
-  var str="";
-  for (i = 0; i < arg.length; i++) {
-    if (arg[i]) {
-      str += toStr(arg[i]);
+function getArgsJson(arg) {
+    var str = "";
+    for (i = 0; i < arg.length; i++) {
+        if (arg[i]) {
+            str += toStr(arg[i]);
+        }
     }
-  }
-  return str;
+    return str;
 }
 
 
 var webrtcdevlogger = {
-  // if(debug){
-    
+    // if(debug){
+
     log: console.log,
     info: console.info,
     debug: console.debug,
     warn: console.warn,
     error: console.error
-  // }else{
+    // }else{
 
     // log : function(){
     //   // var arg = getArgsJson(arguments);
@@ -101,7 +100,7 @@ var webrtcdevlogger = {
     //   }
     //    console.error(arguments);
     // }
-  //}
+    //}
 
 };
 'use strict';
@@ -13286,9 +13285,9 @@ var formatCounterValue = function formatCounterValue(counter, glue, format) {
 /***/ })
 /******/ ]);
 });
-var webrtcdevcon = function() {
+var webrtcdevcon = function () {
 
-	_this=this;
+    _this = this;
 /*-----------------------------------------------------------------------------------*/
 /*                    Global Init JS                                                 */
 /*-----------------------------------------------------------------------------------*/
@@ -13296,184 +13295,185 @@ var webrtcdevcon = function() {
 var t = "";
 var e = null;
 var n = "";
-var rtcConn= null;
-var scrConn= null;
-var selfuserid=null , remoteUserId=null;
+var rtcConn = null;
+var scrConn = null;
+var selfuserid = null, remoteUserId = null;
 var containerDiv;
-var webcallpeers=[];
+var webcallpeers = [];
 var sessions = {};
-var repeatFlagShowButton =null, repeatFlagHideButton =null, repeatFlagRemoveButton=null, repeatFlagStopuploadButton=null ;
+var repeatFlagShowButton = null, repeatFlagHideButton = null, repeatFlagRemoveButton = null,
+    repeatFlagStopuploadButton = null;
 
 /* DOM objects for single user video , user in conf and all other users*/
-var localVideo=null, selfVideo=null, remoteVideos=[];
+var localVideo = null, selfVideo = null, remoteVideos = [];
 
 var webrtcDetectedBrowser = null;
 var webrtcDetectedVersion = null;
 /*var usersList     = document.getElementById("userslist");
 var numbersOfUsers  = document.getElementById("numbersofusers");
 var usersContainer  = document.getElementById("usersContainer");*/
-var tempuserid ;
+var tempuserid;
 var sessions = {};
-    
-var selfusername="" , selfemail="" , selfcolor="" ;
-var remoteusername="" , remoteemail="" , remotecolor="" ;
 
-var latitude="" , longitude="" , operatingsystem="";
+var selfusername = "", selfemail = "", selfcolor = "";
+var remoteusername = "", remoteemail = "", remotecolor = "";
+
+var latitude = "", longitude = "", operatingsystem = "";
 
 /* webrtc session intilization */
 var autoload = true;
-var sessionid = null, socketAddr = "/" , webrtcdevIceServers=[];
-var localStream , localStreamId, remoteStream , remoteStreamId;
+var sessionid = null, socketAddr = "/", webrtcdevIceServers = [];
+var localStream, localStreamId, remoteStream, remoteStreamId;
 
 /* incoming and outgoing call params */
-var incomingAudio =true , incomingVideo =true , incomingData = true;
-var outgoingAudio =true , outgoingVideo =true , outgoingData = true;
+var incomingAudio = true, incomingVideo = true, incomingData = true;
+var outgoingAudio = true, outgoingVideo = true, outgoingData = true;
 
-var debug=false;
+var debug = false;
 
-var timerobj =false;
+var timerobj = false;
 var peerTimerStarted = false;
 
-var chatobj=false , chatContainer= null;
+var chatobj = false, chatContainer = null;
 
-var fileshareobj=false ;
+var fileshareobj = false;
 var pendingFileTransferlimit = 3;
 
-var screenrecordobj =false ;
+var screenrecordobj = false;
 
-var snapshotobj=false ;
+var snapshotobj = false;
 
-var videoRecordobj=false , videoRecordContainer=null;
+var videoRecordobj = false, videoRecordContainer = null;
 
-var drawCanvasobj=false ;
+var drawCanvasobj = false;
 
-var texteditorobj= false;
+var texteditorobj = false;
 
-var codeeditorobj=false, editor=null;
+var codeeditorobj = false, editor = null;
 
-var reconnectobj=false;
+var reconnectobj = false;
 
-var cursorobj=false;
+var cursorobj = false;
 
-var muteobj=false;
+var muteobj = false;
 
-var minmaxobj=false;
+var minmaxobj = false;
 
-var listeninobj=false;
+var listeninobj = false;
 
-var screenshareobj=false;
+var screenshareobj = false;
 
-var helpobj=false;
+var helpobj = false;
 
-var statisticsobj=false;
+var statisticsobj = false;
 
-var screen, isScreenOn = 0,  chromeMediaSourceId = null , extensioninstalled ;
-var screen_roomid , screen_userid;
+var screen, isScreenOn = 0, chromeMediaSourceId = null, extensioninstalled;
+var screen_roomid, screen_userid;
 
-var role="participant";
+var role = "participant";
 
-var webrtcdev =  webrtcdevlogger;
+var webrtcdev = webrtcdevlogger;
 
 /*********** global ****************/
-this.sessionid="";
+this.sessionid = "";
 
 /**
- * creates sessionid 
+ * creates sessionid
  * @method
  * @name makesessionid
  * @param {string} autoload
  * @return {string}sessionid
  */
-this.makesessionid = function(autoload , callback ){
-  if(autoload && !location.hash.replace('#', '').length) {
-    // When Session should autogenerate ssid and locationbar doesnt have a session name
-    location.href = location.href.split('#')[0] + '#' + (Math.random() * 100).toString().replace('.', '');
-    location.reload();
-  }else if(autoload && location.href.replace('#', '').length){
-    // When Session should autogenerate ssid and locationbar doesnt have a session name
-    if(location.href.indexOf('?')>-1){
-      sessionid = (location.hash.substring(0,location.hash.indexOf('?'))).replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
-    }else{
-      sessionid = location.hash.replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
+this.makesessionid = function (autoload, callback) {
+    if (autoload && !location.hash.replace('#', '').length) {
+        // When Session should autogenerate ssid and locationbar doesnt have a session name
+        location.href = location.href.split('#')[0] + '#' + (Math.random() * 100).toString().replace('.', '');
+        location.reload();
+    } else if (autoload && location.href.replace('#', '').length) {
+        // When Session should autogenerate ssid and locationbar doesnt have a session name
+        if (location.href.indexOf('?') > -1) {
+            sessionid = (location.hash.substring(0, location.hash.indexOf('?'))).replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
+        } else {
+            sessionid = location.hash.replace(/\/|:|#|\?|\$|\^|%|\.|`|~|!|\+|@|\[|\||]|\|*. /g, '').split('\n').join('').split('\r').join('');
+        }
+        callback(sessionid);
+    } else {
+        sessionid = prompt("Enter session ", "");
+        callback(sessionid);
     }
-    callback(sessionid);
-  }else{
-    sessionid = prompt("Enter session ", "");
-    callback(sessionid);
-  }
 }
 
 /**************************************************************************************
-    peerconnection 
-****************************************************************************/
+ peerconnection
+ ****************************************************************************/
 
-var channelpresence= false;
-var localVideoStreaming= null;
-var turn="none";
-var localobj={}, remoteobj={};
-var pendingFileTransfer=[];
+var channelpresence = false;
+var localVideoStreaming = null;
+var turn = "none";
+var localobj = {}, remoteobj = {};
+var pendingFileTransfer = [];
 
 
 function isData(session) {
-  return !session.audio && !session.video && !session.screen && session.data;
+    return !session.audio && !session.video && !session.screen && session.data;
 }
 
 function isNull(obj) {
-  return typeof obj == 'undefined';
+    return typeof obj == 'undefined';
 }
 
 function isString(obj) {
-  return typeof obj == 'string';
+    return typeof obj == 'string';
 }
 
 function isEmpty(session) {
-  var length = 0;
-  for (var s in session) {
-    length++;
-  }
-  return length == 0;
+    var length = 0;
+    for (var s in session) {
+        length++;
+    }
+    return length == 0;
 }
 
 // this method converts array-buffer into string
 function ab2str(buf) {
-  var result = '';
-  try {
-    result = String.fromCharCode.apply(null, new Uint16Array(buf));
-  } catch (e) {}
-  return result;
+    var result = '';
+    try {
+        result = String.fromCharCode.apply(null, new Uint16Array(buf));
+    } catch (e) {
+    }
+    return result;
 }
 
 // this method converts string into array-buffer
 function str2ab(str) {
-  if (!isString(str)) str = JSON.stringify(str);
+    if (!isString(str)) str = JSON.stringify(str);
 
-  var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
-  var bufView = new Uint16Array(buf);
-  for (var i = 0, strLen = str.length; i < strLen; i++) {
-    bufView[i] = str.charCodeAt(i);
-  }
-  return buf;
+    var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+    var bufView = new Uint16Array(buf);
+    for (var i = 0, strLen = str.length; i < strLen; i++) {
+        bufView[i] = str.charCodeAt(i);
+    }
+    return buf;
 }
 
 
 function getLength(obj) {
-  var length = 0;
-  for (var o in obj)
-    if (o) length++;
-  return length;
+    var length = 0;
+    for (var o in obj)
+        if (o) length++;
+    return length;
 }
 
 
-
 function isHTML(str) {
-  var a = document.createElement('div');
-  a.innerHTML = str;
+    var a = document.createElement('div');
+    a.innerHTML = str;
 
-  for (var c = a.childNodes, i = c.length; i--; ) {
-    if (c[i].nodeType == 1) return true; 
-  }
+    for (var c = a.childNodes, i = c.length; i--;) {
+        if (c[i].nodeType == 1) return true;
+    }
 
-  return false;
+    return false;
 }
 
 
@@ -13482,9 +13482,9 @@ function getElement(e) {
 }
 
 function getElementById(elem) {
-    try{
+    try {
         return document.getElementById(elem);
-    }catch(e){
+    } catch (e) {
         webrtcdev.error(e);
         return "";
     }
@@ -13496,13 +13496,14 @@ function getRandomColor() {
 }
 
 function guid() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
-  }
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-    s4() + '-' + s4() + s4() + s4();
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
 }
 
 
@@ -13528,41 +13529,40 @@ function bytesToSize(e) {
 
 
 /************************************************
-scripts or stylesheets load unloading
-********************************************/
-function loadjscssfile(filename, filetype){
-  if (filetype=="js"){ //if filename is a external JavaScript file
-    var fileref=document.createElement('script')
-    fileref.setAttribute("type","text/javascript")
-    fileref.setAttribute("src", filename)
-  }
-  else if (filetype=="css"){ //if filename is an external CSS file
-    var fileref=document.createElement("link")
-    fileref.setAttribute("rel", "stylesheet")
-    fileref.setAttribute("type", "text/css")
-    fileref.setAttribute("href", filename)
-  }
-  if (typeof fileref!="undefined")
-    document.getElementsByTagName("head")[0].appendChild(fileref)
+ scripts or stylesheets load unloading
+ ********************************************/
+function loadjscssfile(filename, filetype) {
+    if (filetype == "js") { //if filename is a external JavaScript file
+        var fileref = document.createElement('script')
+        fileref.setAttribute("type", "text/javascript")
+        fileref.setAttribute("src", filename)
+    } else if (filetype == "css") { //if filename is an external CSS file
+        var fileref = document.createElement("link")
+        fileref.setAttribute("rel", "stylesheet")
+        fileref.setAttribute("type", "text/css")
+        fileref.setAttribute("href", filename)
+    }
+    if (typeof fileref != "undefined")
+        document.getElementsByTagName("head")[0].appendChild(fileref)
 }
 
 function loadScript(src, onload) {
-  var script = document.createElement('script');
-  script.src = src;
-  script.async = true;
-  document.documentElement.appendChild(script);
+    var script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    document.documentElement.appendChild(script);
 }
 
 /* ********************************************************
 UI / DOM related functions
 ****************************************************** */
 
-Element.prototype.remove = function() {
+Element.prototype.remove = function () {
     this.parentElement.removeChild(this);
 }
-NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
-    for(var i = this.length - 1; i >= 0; i--) {
-        if(this[i] && this[i].parentElement) {
+NodeList.prototype.remove = HTMLCollection.prototype.remove = function () {
+    for (var i = this.length - 1; i >= 0; i--) {
+        if (this[i] && this[i].parentElement) {
             this[i].parentElement.removeChild(this[i]);
         }
     }
@@ -13580,32 +13580,32 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
  * @name showelem
  * @param {dom} elem
  */
-function showelem(elem){
-    if( typeof elem   === 'object' && elem.nodeType !== undefined){
+function showelem(elem) {
+    if (typeof elem === 'object' && elem.nodeType !== undefined) {
         elem.removeAttribute("hidden");
-        elem.setAttribute("style","display:block!important");
-    }else if(document.getElementById(elem)){
+        elem.setAttribute("style", "display:block!important");
+    } else if (document.getElementById(elem)) {
         document.getElementById(elem).removeAttribute("hidden");
-        document.getElementById(elem).setAttribute("style","display:block");
-    }else{
+        document.getElementById(elem).setAttribute("style", "display:block");
+    } else {
         webrtcdev.warn("elem not found ", elem);
     }
 }
 
 /**
- * function to hide an Element by id of dom 
+ * function to hide an Element by id of dom
  * @method
  * @name hideelem
  * @param {dom} elem
  */
-function hideelem(elem){
-    if( typeof elem   === 'object' && elem.nodeType !== undefined){
+function hideelem(elem) {
+    if (typeof elem === 'object' && elem.nodeType !== undefined) {
         elem.addAttribute("hidden");
-        elem.setAttribute("style","display:none!important");
-    }else if(document.getElementById(elem)){
-        document.getElementById(eid).setAttribute("hidden" , true);
-        document.getElementById(eid).setAttribute("style","display:none");
-        webrtcdev.log("hideElement ", eid , document.getElementById(eid));
+        elem.setAttribute("style", "display:none!important");
+    } else if (document.getElementById(elem)) {
+        document.getElementById(eid).setAttribute("hidden", true);
+        document.getElementById(eid).setAttribute("style", "display:none");
+        webrtcdev.log("hideElement ", eid, document.getElementById(eid));
     }
 }
 
@@ -13613,7 +13613,7 @@ function hideelem(elem){
 
 
 /**
- * Assigns session varables, ICE gateways and widgets 
+ * Assigns session varables, ICE gateways and widgets
  * @constructor
  * @param {json} _localObj - local object.
  * @param {json} _remoteObj - remote object.
@@ -13622,82 +13622,82 @@ function hideelem(elem){
  * @param {json} session - session object.
  * @param {json} widgets - widgets object.
  */
-this.setsession = function(_localobj, _remoteobj , incoming, outgoing , session, widgets){
+this.setsession = function (_localobj, _remoteobj, incoming, outgoing, session, widgets) {
     //try{
-        this.sessionid = sessionid  = session.sessionid;
-        socketAddr = session.socketAddr;
-        localobj = _localobj;
-        remoteobj = _remoteobj;
-        webrtcdev.log("[startjs] WebRTCdev Session - " , session);
+    this.sessionid = sessionid = session.sessionid;
+    socketAddr = session.socketAddr;
+    localobj = _localobj;
+    remoteobj = _remoteobj;
+    webrtcdev.log("[startjs] WebRTCdev Session - ", session);
     // }catch(e){
     //     webrtcdev.error(e);
     //     alert(" Session object doesnt have all parameters ");
     // }
 
-    turn = (session.hasOwnProperty('turn')?session.turn:null);
+    turn = (session.hasOwnProperty('turn') ? session.turn : null);
     webrtcdev.log("[ startjs] WebRTCdev TURN - ", turn);
-    if(turn && turn !="none"){
-        if(turn.active && turn.iceServers){
-            webrtcdev.log("WebRTCdev - Getting preset static ICE servers " , turn.iceServers);
+    if (turn && turn != "none") {
+        if (turn.active && turn.iceServers) {
+            webrtcdev.log("WebRTCdev - Getting preset static ICE servers ", turn.iceServers);
             webrtcdevIceServers = turn.iceServers;
-        }else{
+        } else {
             webrtcdev.info("WebRTCdev - Calling API to fetch dynamic ICE servers ");
-            getICEServer();  
+            getICEServer();
             // getICEServer( turn.username ,turn.secretkey , turn.domain,
             //                 turn.application , turn.room , turn.secure);                
         }
-    }else{
+    } else {
         webrtcdev.log("WebRTCdev - TURN not applied ");
     }
 
-    if(widgets){
+    if (widgets) {
 
-        webrtcdev.log( " WebRTCdev - widgets  " , widgets);
+        webrtcdev.log(" WebRTCdev - widgets  ", widgets);
 
-        if(widgets.debug)           debug           = widgets.debug || false
+        if (widgets.debug) debug = widgets.debug || false
 
-        if(widgets.chat)            chatobj         = widgets.chat || null;
+        if (widgets.chat) chatobj = widgets.chat || null;
 
-        if(widgets.fileShare)       fileshareobj    = widgets.fileShare || null;
+        if (widgets.fileShare) fileshareobj = widgets.fileShare || null;
 
-        if(widgets.screenrecord)    screenrecordobj = widgets.screenrecord || null;
+        if (widgets.screenrecord) screenrecordobj = widgets.screenrecord || null;
 
-        if(widgets.screenshare)     screenshareobj  = widgets.screenshare || null;
+        if (widgets.screenshare) screenshareobj = widgets.screenshare || null;
 
-        if(widgets.snapshot)        snapshotobj     = widgets.snapshot || null;
+        if (widgets.snapshot) snapshotobj = widgets.snapshot || null;
 
-        if(widgets.videoRecord)     videoRecordobj  = widgets.videoRecord || null;
+        if (widgets.videoRecord) videoRecordobj = widgets.videoRecord || null;
 
-        if(widgets.reconnect)       reconnectobj    = widgets.reconnect || null;
+        if (widgets.reconnect) reconnectobj = widgets.reconnect || null;
 
-        if(widgets.drawCanvas)      drawCanvasobj   = widgets.drawCanvas || null;
+        if (widgets.drawCanvas) drawCanvasobj = widgets.drawCanvas || null;
 
-        if(widgets.texteditor)      texteditorobj   = widgets.texteditor || null;
+        if (widgets.texteditor) texteditorobj = widgets.texteditor || null;
 
-        if(widgets.codeeditor)      codeeditorobj   = widgets.codeeditor || null;
+        if (widgets.codeeditor) codeeditorobj = widgets.codeeditor || null;
 
-        if(widgets.mute)            muteobj         = widgets.mute || null;
+        if (widgets.mute) muteobj = widgets.mute || null;
 
-        if(widgets.timer)           timerobj        = widgets.timer || null;
+        if (widgets.timer) timerobj = widgets.timer || null;
 
-        if(widgets.listenin)        listeninobj     = widgets.listenin || null;
+        if (widgets.listenin) listeninobj = widgets.listenin || null;
 
-        if(widgets.cursor)          cursorobj       = widgets.cursor || null;
+        if (widgets.cursor) cursorobj = widgets.cursor || null;
 
-        if(widgets.minmax)          minmaxobj       = widgets.minmax || null;
+        if (widgets.minmax) minmaxobj = widgets.minmax || null;
 
-        if(widgets.help)            helpobj         = widgets.help || null;
+        if (widgets.help) helpobj = widgets.help || null;
 
-        if(widgets.statistics)      statisticsobj   = widgets.statistics || null;
+        if (widgets.statistics) statisticsobj = widgets.statistics || null;
     }
 
     return {
-        sessionid : sessionid,
+        sessionid: sessionid,
         socketAddr: socketAddr,
-        turn : turn,
-        widgets  : widgets,
+        turn: turn,
+        widgets: widgets,
         startwebrtcdev: funcStartWebrtcdev,
-        rtcConn : rtcConn
+        rtcConn: rtcConn
     };
 }
 
@@ -13706,102 +13706,102 @@ this.setsession = function(_localobj, _remoteobj , incoming, outgoing , session,
  * @method
  * @name funcStartWebrtcdev
  */
-function funcStartWebrtcdev(){
-    console.log(" [startjs] funcStartWebrtcdev - webrtcdev" , webrtcdev);
+function funcStartWebrtcdev() {
+    console.log(" [startjs] funcStartWebrtcdev - webrtcdev", webrtcdev);
     return new Promise(function (resolve, reject) {
-        webrtcdev.log(" [ startJS webrtcdom ] : begin DetectRTC checkDevices"); 
-        if(role!="inspector") checkDevices(resolve, reject , incoming , outgoing);
-    }).then((res)=>{
-        webrtcdev.log(" [ startJS webrtcdom ] : sessionid : "+ sessionid+" and localStorage  " , localStorage);
+        webrtcdev.log(" [ startJS webrtcdom ] : begin DetectRTC checkDevices");
+        if (role != "inspector") checkDevices(resolve, reject, incoming, outgoing);
+    }).then((res) => {
+        webrtcdev.log(" [ startJS webrtcdom ] : sessionid : " + sessionid + " and localStorage  ", localStorage);
 
-        return new Promise(function (resolve , reject){
-            if(localStorage.length>=1 && localStorage.getItem("channel") != sessionid){
-                webrtcdev.log("[startjs] Current Session ID " + sessionid + " doesnt match cached channel id "+ localStorage.getItem("channel") +"-> clearCaches()");
+        return new Promise(function (resolve, reject) {
+            if (localStorage.length >= 1 && localStorage.getItem("channel") != sessionid) {
+                webrtcdev.log("[startjs] Current Session ID " + sessionid + " doesnt match cached channel id " + localStorage.getItem("channel") + "-> clearCaches()");
                 clearCaches();
-            }else {
+            } else {
                 webrtcdev.log(" no action taken on localStorage");
             }
             resolve("done");
         });
-    }).then((res)=>{
+    }).then((res) => {
 
-        webrtcdev.log(" [ startJS webrtcdom ] : incoming " , incoming);
-        webrtcdev.log(" [ startJS webrtcdom ] : outgoing " , outgoing);
+        webrtcdev.log(" [ startJS webrtcdom ] : incoming ", incoming);
+        webrtcdev.log(" [ startJS webrtcdom ] : outgoing ", outgoing);
 
-        return new Promise(function (resolve , reject){
-            if(incoming){
-                incomingAudio = incoming.audio ; 
-                incomingVideo = incoming.video ; 
-                incomingData  = incoming.data  ;  
+        return new Promise(function (resolve, reject) {
+            if (incoming) {
+                incomingAudio = incoming.audio;
+                incomingVideo = incoming.video;
+                incomingData = incoming.data;
             }
-            if(outgoing){
-                outgoingAudio = outgoing.audio ; 
-                outgoingVideo = outgoing.video ; 
-                outgoingData  = outgoing.data ;
+            if (outgoing) {
+                outgoingAudio = outgoing.audio;
+                outgoingVideo = outgoing.video;
+                outgoingData = outgoing.data;
             }
             resolve("done");
         });
-    }).then((res)=>{
+    }).then((res) => {
 
-        webrtcdev.log(" [ startJS webrtcdom ] : localobj " , localobj);
-        webrtcdev.log(" [ startJS webrtcdom ] : remoteobj " , remoteobj);
+        webrtcdev.log(" [ startJS webrtcdom ] : localobj ", localobj);
+        webrtcdev.log(" [ startJS webrtcdom ] : remoteobj ", remoteobj);
 
-        return new Promise(function (resolve , reject){
+        return new Promise(function (resolve, reject) {
             /* When user is single */
             localVideo = localobj.video;
 
             /* when user is in conference */
             let _remotearr = remoteobj.videoarr;
             /* first video container in remotearr belongs to user */
-            if(outgoingVideo){
+            if (outgoingVideo) {
                 selfVideo = _remotearr[0];
             }
             /* create arr for remote peers videos */
-            if(!remoteobj.dynamicVideos){
-                for(var x=1;x<_remotearr.length;x++){
-                    remoteVideos.push(_remotearr[x]);    
+            if (!remoteobj.dynamicVideos) {
+                for (var x = 1; x < _remotearr.length; x++) {
+                    remoteVideos.push(_remotearr[x]);
                 }
             }
             resolve("done");
         });
-    }).then((res)=>{
-        return new Promise(function (resolve , reject){
+    }).then((res) => {
+        return new Promise(function (resolve, reject) {
 
-            if(localobj.hasOwnProperty('userdetails')){
-                let obj      = localobj.userdetails;
-                webrtcdev.info("localobj userdetails " , obj);
-                selfusername = obj.username  || "LOCAL";
-                selfcolor    = obj.usercolor || "";
-                selfemail    = obj.useremail || "";
-                role         = obj.role      || "participant";
-            }else{
+            if (localobj.hasOwnProperty('userdetails')) {
+                let obj = localobj.userdetails;
+                webrtcdev.info("localobj userdetails ", obj);
+                selfusername = obj.username || "LOCAL";
+                selfcolor = obj.usercolor || "";
+                selfemail = obj.useremail || "";
+                role = obj.role || "participant";
+            } else {
                 webrtcdev.warn("localobj has no userdetails ");
             }
             resolve("done");
         });
-    }).then( ()=> setRtcConn(sessionid)
-    ).then( (result)=> setWidgets(rtcConn)
-    ).then( (result)=> startSocketSession(rtcConn, socketAddr,  sessionid)
-    ).catch((err) =>{
-        webrtcdev.error(" Promise rejected " , err);
+    }).then(() => setRtcConn(sessionid)
+    ).then((result) => setWidgets(rtcConn)
+    ).then((result) => startSocketSession(rtcConn, socketAddr, sessionid)
+    ).catch((err) => {
+        webrtcdev.error(" Promise rejected ", err);
     });
 }
 
-this.issafari= /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-/********************************************************************************** 
-        Session call and Updating Peer Info
-************************************************************************************/
+this.issafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+/**********************************************************************************
+ Session call and Updating Peer Info
+ ************************************************************************************/
 /**
- * starts a call 
+ * starts a call
  * @method
  * @name startCall
  * @param {json} obj
  */
-this.startCall=function(obj){
-    webrtcdev.log(" startCall obj" , obj);
-    webrtcdev.log(" TURN " , turn);
+this.startCall = function (obj) {
+    webrtcdev.log(" startCall obj", obj);
+    webrtcdev.log(" TURN ", turn);
     //if(turn=='none'){
-        obj.startwebrtcdev();
+    obj.startwebrtcdev();
     // }else if(turn!=null){
     //     repeatInitilization = window.setInterval(obj.startwebrtcdev, 2000);     
     // }
@@ -13809,21 +13809,21 @@ this.startCall=function(obj){
 }
 
 /**
- * stops a call and removes loalstorage items 
+ * stops a call and removes loalstorage items
  * @method
  * @name stopCall
  */
-this.stopCall=function(){
+this.stopCall = function () {
     webrtcdev.log(" stopCall ");
     rtcConn.closeEntireSession();
 
-    if(!localStorage.getItem("channel"))
+    if (!localStorage.getItem("channel"))
         localStorage.removeItem("channel");
 
-    if(!localStorage.getItem("userid"))
+    if (!localStorage.getItem("userid"))
         localStorage.removeItem("userid");
-    
-    if(!localStorage.getItem("remoteUsers"))
+
+    if (!localStorage.getItem("remoteUsers"))
         localStorage.removeItem("remoteUsers");
 
     return;
@@ -13836,67 +13836,69 @@ this.stopCall=function(){
  * @name updateWebCallView
  * @param {json} peerInfo
  */
-function updateWebCallView(peerinfo){
+function updateWebCallView(peerinfo) {
     let myrole = role;
     webrtcdev.log("[start.js - updateWebCallView] start with ",
-        " peerinfo" , peerinfo , 
-        " | myrole :", myrole ,
-        " | video indexOf : ", peerinfo.vid.indexOf("videoundefined") );
+        " peerinfo", peerinfo,
+        " | myrole :", myrole,
+        " | video indexOf : ", peerinfo.vid.indexOf("videoundefined"));
 
-    try{
-        switch(myrole){
-            
+    try {
+        switch (myrole) {
+
             case "inspector":
-                var vi=0;
-                for(var v=0; v<remoteVideos.length; v++){
-                    webrtcdev.log("Remote Video index array " , v , " || ", remoteVideos[v] , 
-                        document.getElementsByName(remoteVideos[v])  , 
+                var emptyvideoindex = 0;
+                for (var v = 0; v < remoteVideos.length; v++) {
+                    webrtcdev.log("Remote Video index array ", v, " || ", remoteVideos[v],
+                        document.getElementsByName(remoteVideos[v]),
                         document.getElementsByName(remoteVideos[v]).src);
-                    if(remoteVideos[v].src){
-                        vi++;
+                    if (remoteVideos[v].src) {
+                        emptyvideoindex++;
                     }
                 }
 
-                var remvid;
-                var video = document.createElement('video');
-                remoteVideos[vi] = video;
+
+                let video = document.createElement('video');
+                remoteVideos[emptyvideoindex] = video;
                 document.getElementById(remoteobj.videoContainer).appendChild(video);
-                remvid = remoteVideos[vi];
-                webrtcdev.log(" [start.js - updateWebCallView] role-inspector , attaching stream" , remvid, peerinfo.stream );
+
+                let remvid = remoteVideos[emptyvideoindex];
+                webrtcdev.log(" [start.js - updateWebCallView] role-inspector , attaching stream", remvid, peerinfo.stream);
                 attachMediaStream(remvid, peerinfo.stream);
-                if(remvid.hidden) removid.hidden = false;
+                if (remvid.hidden) removid.hidden = false;
                 remvid.id = peerinfo.videoContainer;
                 remvid.className = remoteobj.videoClass;
-                //attachControlButtons(remvid, peerInfo); 
-                if(remoteobj.userDisplay && peerinfo.name ){
-                    attachUserDetails( remvid, peerinfo); 
+                //attachControlButtons(remvid, peerInfo);
+
+                if (remoteobj.userDisplay && peerinfo.name) {
+                    attachUserDetails(remvid, peerinfo);
                 }
-                if(remoteobj.userMetaDisplay && peerinfo.userid){
-                    attachMetaUserDetails( remvid, peerinfo ); 
+                if (remoteobj.userMetaDisplay && peerinfo.userid) {
+                    attachMetaUserDetails(remvid, peerinfo);
                 }
                 // Hide the unsed video for Local
                 var _templ = document.getElementsByName(localVideo)[0];
-                if(_templ) _templ.hidden=true;
+                if (_templ) _templ.hidden = true;
 
-                for(v in remoteobj.videoarr){
+                for (v in remoteobj.videoarr) {
                     var _templ2 = document.getElementsByName(remoteobj.videoarr[v])[0];
-                    if(_templ2) _templ2.setAttribute("style","display:none");
+                    if (_templ2) _templ2.setAttribute("style", "display:none");
                 }
 
-                for(t in document.getElementsByClassName("timeBox")){
-                    document.getElementsByClassName("timeBox")[t].hidden=true;
+                for (t in document.getElementsByClassName("timeBox")) {
+                    document.getElementsByClassName("timeBox")[t].hidden = true;
                 }
-            break;
+                break;
 
-            case "host":
-            case "guest":
             case "participant":
 
-                if(peerinfo.vid.indexOf("videolocal") > -1 ){
-                    webrtcdev.info(" [start.js - updateWebCallView] role-participant , peerinfo Vid is Local");
+                if (peerinfo.vid.indexOf("videolocal") > -1) {
+
                     // when video is local
-                    if(localVideo && document.getElementsByName(localVideo)[0]){
-                        var vid = document.getElementsByName(localVideo)[0];
+                    webrtcdev.info(" [start.js - updateWebCallView] role-participant , peerinfo Vid is Local");
+
+                    if (localVideo && document.getElementsByName(localVideo)[0]) {
+                        let vid = document.getElementsByName(localVideo)[0];
                         vid.muted = true;
                         vid.className = localobj.videoClass;
                         attachMediaStream(vid, peerinfo.stream);
@@ -13904,145 +13906,147 @@ function updateWebCallView(peerinfo){
                         // if(localobj.userDisplay && peerInfo.name)
                         //     attachUserDetails( vid, peerInfo ); 
 
-                        if(localobj.userDisplay && peerinfo.name)
-                            attachUserDetails( vid, peerinfo ); 
-                        
-                        if(localobj.userMetaDisplay && peerinfo.userid)
-                            attachMetaUserDetails( vid , peerinfo ); 
+                        if (localobj.userDisplay && peerinfo.name)
+                            attachUserDetails(vid, peerinfo);
 
-                        webrtcdev.info(" User is alone in the session  , hiding remote video container" , 
-                        "showing users single video conrainer and attaching attachMediaStream and attachUserDetails ");
+                        if (localobj.userMetaDisplay && peerinfo.userid)
+                            attachMetaUserDetails(vid, peerinfo);
 
-                    }else{
+                        webrtcdev.info(" User is alone in the session  , hiding remote video container",
+                            "showing users single video container and attaching attachMediaStream and attachUserDetails ");
+
+                    } else {
                         //alert(" Please Add a video container in config for single");
-                        webrtcdev.error(" No local video conatainer in localobj -> " , localobj);
+                        webrtcdev.error(" No local video container in localobj -> ", localobj);
                     }
 
-                } else if(peerinfo.vid.indexOf("videoremote") > -1) {
+                } else if (peerinfo.vid.indexOf("videoremote") > -1) {
+
+                    //when video is remote
                     webrtcdev.info(" [start.js - updateWebCallView] role-participant , peerinfo Vid is Remote");
-                    //when video is remote 
 
                     // handling local video transition to active
-                    if( outgoingVideo && localVideo && selfVideo ){
+                    if (outgoingVideo && localVideo && selfVideo) {
                         /*chk if local video is added to conf , else adding local video to index 0 */
                         //localvid : video container before p2p session 
                         var localvid = document.getElementsByName(localVideo)[0];
                         // selfvid : local video in a p2p session
                         var selfvid = document.getElementsByName(selfVideo)[0];
-                        
-                        if(selfvid.played.length==0){
-                            if(localvid.played.lebth>0){
+
+                        if (selfvid.played.length == 0) {
+                            if (localvid.played.lebth > 0) {
                                 reattachMediaStream(selfvid, localvid);
-                            }else{
+                            } else {
                                 attachMediaStream(selfvid, webcallpeers[0].stream);
                             }
                             selfvid.id = webcallpeers[0].videoContainer;
                             selfvid.className = remoteobj.videoClass;
                             selfvid.muted = true;
-                            attachControlButtons( selfvid, webcallpeers[0]); 
+                            attachControlButtons(selfvid, webcallpeers[0]);
 
-                            if(localobj.userDisplay && webcallpeers[0].name){
-                                attachUserDetails( selfvid, webcallpeers[0] );
-                            } 
-
-                            if(localobj.userMetaDisplay && webcallpeers[0].userid){
-                                attachMetaUserDetails( selfvid, webcallpeers[0] ); 
+                            if (localobj.userDisplay && webcallpeers[0].name) {
+                                attachUserDetails(selfvid, webcallpeers[0]);
                             }
-                        }else{
-                            webrtcdev.log(" not uppdating self video as it is already playing ");
+
+                            if (localobj.userMetaDisplay && webcallpeers[0].userid) {
+                                attachMetaUserDetails(selfvid, webcallpeers[0]);
+                            }
+                        } else {
+                            webrtcdev.log(" not updating self video as it is already playing ");
                         }
 
-                        webrtcdev.info(" User is joined by a remote peer , hiding local video container" , 
-                        "showing users conf video container and attaching attachMediaStream and attachUserDetails ");
+                        webrtcdev.info(" User is joined by a remote peer , hiding local video container",
+                            "showing users conf video container and attaching attachMediaStream and attachUserDetails ");
 
-                    }else if(!outgoingVideo){
-                        webrtcdev.error(" Outgoing Local video is " , outgoingVideo);
-                    }else{
+                    } else if (!outgoingVideo) {
+                        webrtcdev.error(" Outgoing Local video is ", outgoingVideo);
+                    } else {
                         //alert(" Please Add a video container in config for video call ");
                         webrtcdev.error(" Local video container not defined ");
                     }
 
                     // handling remote video addition 
-                    if(remoteVideos){
+                    if (remoteVideos) {
 
                         /*get the next empty index of video and pointer in remote video array */
-                        var vi=0;
-                        for(v in remoteVideos){
-                            webrtcdev.log("Remote Video index array " , v , " || ", remoteVideos[v] , 
-                                document.getElementsByName(remoteVideos[v]),  document.getElementsByName(remoteVideos[v]).src);
-                            if(document.getElementsByName(remoteVideos[v])[0] && document.getElementsByName(remoteVideos[v])[0].src !=""){
-                                vi++;
+                        let emptyvideoindex = 0;
+                        for (v in remoteVideos) {
+                            webrtcdev.log("Remote Video index array ", v, " || ", remoteVideos[v],
+                                document.getElementsByName(remoteVideos[v]), document.getElementsByName(remoteVideos[v]).src);
+                            if (document.getElementsByName(remoteVideos[v])[0] && document.getElementsByName(remoteVideos[v])[0].src != "") {
+                                emptyvideoindex++;
                             }
-                            // }else if(remoteVideos[v].video){
-                            //     vi++;
-                            // }
                         }
 
-                        try{
-                            if(remoteobj.maxAllowed=="unlimited"){
+                        try {
+                            if (remoteobj.maxAllowed == "unlimited") {
+                                // unlimitted video can be added dynamically
                                 webrtcdev.log("remote video is unlimited , creating video for remoteVideos array ");
-                                var video = document.createElement('video');
-                                //video.autoplay = "autoplay";
-                                remoteVideos[vi] = {
-                                    "userid": peerinfo.userid, 
-                                    "video" : video
+                                let video = document.createElement('video');
+                                //  added  new video element to remoteVideos at current index
+                                remoteVideos[emptyvideoindex] = {
+                                    "userid": peerinfo.userid,
+                                    "video": video
                                 };
                                 document.getElementById(remoteobj.dynamicVideos.videoContainer).appendChild(video);
-                            }else{
-                                webrtcdev.log("remote video is limited to size maxAllowed , current index ", vi);
-                                var remVideoHolder = document.getElementsByName(remoteVideos[vi]);
-                                webrtcdev.log("searching for video with index ", vi , " in remote video : " , remVideoHolder[0] );
-                                if(remVideoHolder){
-                                    if(remVideoHolder[0]){
-                                        remoteVideos[vi] = { 
-                                            "userid": peerinfo.userid, 
-                                            "video" : remVideoHolder[0] 
+                            } else {
+                                webrtcdev.log("remote video is limited to size maxAllowed , current index ", emptyvideoindex);
+                                //remote video is limited to size maxAllowed
+                                let remVideoHolder = document.getElementsByName(remoteVideos[emptyvideoindex]);
+                                webrtcdev.log("searching for video with index ", emptyvideoindex , " in remote video : ", remVideoHolder[0]);
+                                if (remVideoHolder) {
+                                    if (remVideoHolder[0]) {
+                                        // since remvideo holder exist at current index , add video element to remoteVideos
+                                        remoteVideos[emptyvideoindex] = {
+                                            "userid": peerinfo.userid,
+                                            "video": remVideoHolder[0]
                                         };
                                     }
-                                }else{
+                                } else {
+                                    webrtcdev.warn(" since remvideo holder doesnt exist just overwrite the last remote with the video ")
                                     // since remvideo holder doesnt exist just overwrite the last remote with the video 
-                                    remoteVideos[remoteVideos.length -1] = { 
-                                        "userid": peerinfo.userid, 
-                                        "video" : remVideoHolder[0] 
+                                    remoteVideos[remoteVideos.length - 1] = {
+                                        "userid": peerinfo.userid,
+                                        "video": remVideoHolder[0]
                                     };
                                 }
                             }
 
-                            attachMediaStream(remoteVideos[vi].video, peerinfo.stream);
+                            attachMediaStream(remoteVideos[emptyvideoindex].video, peerinfo.stream);
                             //if(remoteVideos[vi].video.hidden) remoteVideos[vi].video.hidden = false;
-                            showelem(remoteVideos[vi].video);
+                            showelem(remoteVideos[emptyvideoindex].video);
 
-                            remoteVideos[vi].video.id = peerinfo.videoContainer;
-                            remoteVideos[vi].video.className = remoteobj.videoClass;
-                            attachControlButtons(remoteVideos[vi].video, peerinfo); 
+                            remoteVideos[emptyvideoindex].video.id = peerinfo.videoContainer;
+                            remoteVideos[emptyvideoindex].video.className = remoteobj.videoClass;
+                            attachControlButtons(remoteVideos[emptyvideoindex].video, peerinfo);
 
-                            if(remoteobj.userDisplay && peerinfo.name ) {
-                                attachUserDetails( remoteVideos[vi].video, peerinfo); 
+                            if (remoteobj.userDisplay && peerinfo.name) {
+                                attachUserDetails(remoteVideos[emptyvideoindex].video, peerinfo);
                             }
-                            
-                            if(remoteobj.userMetaDisplay && peerinfo.userid) {
-                                attachMetaUserDetails( remoteVideos[vi].video, peerInfo ); 
+
+                            if (remoteobj.userMetaDisplay && peerinfo.userid) {
+                                attachMetaUserDetails(remoteVideos[emptyvideoindex].video, peerInfo);
                             }
-                        
-                        }catch(e){
-                            webrtcdev.error(e);
+
+                        } catch (err) {
+                            webrtcdev.error(err);
                         }
 
-                    }else{
+                    } else {
                         alert("remote Video containers not defined");
                     }
-                
+
                 } else {
                     webrtcdev.error(" PeerInfo vid didnt match either case ");
                 }
-            break;
+                break;
 
             default:
                 webrtcdev.log("[start.js - updateWebCallView] Switch default case");
         }
 
-    }catch(err){
-        webrtcdev.error("[start.js - updateWebCallView] " , err);
+    } catch (err) {
+        webrtcdev.error("[start.js - updateWebCallView] ", err);
     }
 
     webrtcdev.log(" [start.js - updateWebCallView] - finish");
@@ -14056,11 +14060,11 @@ function updateWebCallView(peerinfo){
  * @param {json} peerInfo
  * @param {function} callback
  */
-function destroyWebCallView(peerInfo , callback){
-    webrtcdev.log(" [starjs] destroyWebCallView peerInfo" , peerInfo);
-    if( peerInfo.videoContainer && document.getElementById(peerInfo.videoContainer))
-        document.getElementById(peerInfo.videoContainer).src="";
-    
+function destroyWebCallView(peerInfo, callback) {
+    webrtcdev.log(" [starjs] destroyWebCallView peerInfo", peerInfo);
+    if (peerInfo.videoContainer && document.getElementById(peerInfo.videoContainer))
+        document.getElementById(peerInfo.videoContainer).src = "";
+
     /*if(fileshareobj.active){
         if(fileshareobj.props.fileShare){
             if(fileshareobj.props.fileShare=="divided")
@@ -14074,6 +14078,1308 @@ function destroyWebCallView(peerInfo , callback){
     }*/
 
     callback(true);
+}
+/**
+ * Create File share button
+ * @method
+ * @name createFileShareButton
+ * @param {json} fileshareobj
+ */
+function createFileShareButton(fileshareobj){
+    widgetholder= "topIconHolder_ul";
+
+    var button= document.createElement("span");
+    button.setAttribute("data-provides","fileinput");
+    button.className= fileshareobj.button.class;
+    button.innerHTML= fileshareobj.button.html;
+    button.onclick = function() {
+        var fileSelector = new FileSelector();
+        fileSelector.selectSingleFile(function(file) {
+            sendFile(file);
+        });
+    };
+    var li =document.createElement("li");
+    li.appendChild(button);
+    document.getElementById(widgetholder).appendChild(li);
+}
+
+/**
+ * Assign File share button
+ * @method
+ * @name assignFileShareButton
+ * @param {json} fileshareobj
+ */
+function assignFileShareButton(fileshareobj){
+    var button= document.getElementById(fileshareobj.button.id);
+    button.onclick = function() {
+        var fileSelector = new FileSelector();
+        fileSelector.selectSingleFile(function(file) {
+            sendFile(file);
+        });
+    };
+}
+
+
+/**
+ * addstaticProgressHelper for queues files
+ * @method
+ * @name addstaticProgressHelper
+ * @param {id} uuid
+ * @param {json} peerinfo
+ * @param {string} filename
+ * @param {int} fileSize
+ * @param {string} progressHelperclassName
+ */
+function addstaticProgressHelper(uuid , peerinfo , filename , fileSize,  file , progressHelperclassName , filefrom , fileto){
+    try{
+        if(!peerinfo){
+            webrtcdev.error(" [filehsraingJs] Progress helpler cannot be added for one peer as its absent")
+            return;
+        }else if(!peerinfo.fileList.container || !document.getElementById(peerinfo.fileList.container)){
+            webrtcdev.error(" [filehsraingJs] Progress helpler cannot be added , missing fileListcontainer ")
+            return;
+        }
+
+        //if(!document.getElementById(filename)){
+        webrtcdev.log(" [filehsraingJs] addstaticProgressHelper -  attributes : uuid -" , uuid ,
+            "peerinfo - " , peerinfo ,
+            "filename - " , filename , "file size - " ,  fileSize,
+            "progress helper class - "  , progressHelperclassName );
+
+        var progressid = uuid+"_"+filefrom+"_"+fileto;
+        webrtcdev.log(" [startjs] addstaticProgressHelper - progressid " , progressid);
+
+        var progressul =  document.createElement("ul");
+        //progressul.id = progressid,
+        progressul.id= filename;
+        progressul.title = filename+ " size - "+ file.size + " type - "+ file.type + " last modified on -" + file.lastModifiedDate;
+
+        if(debug){
+            var progressDebug = document.createElement("li");
+            progressDebug.innerHTML = filename+ " size - "+ file.size + " type - "+ file.type + " last modified on -" + file.lastModifiedDate
+                + " from :" + filefrom + " --> to :" + fileto;
+            progressul.appendChild(progressDebug);
+        }
+
+        var progressDiv = document.createElement("li");
+        progressDiv.id = progressid,
+            progressDiv.title = "paused " + filename+ " size - "+ file.size + " type - "+ file.type + " last modified on -" + file.lastModifiedDate,
+            progressDiv.setAttribute("class", progressHelperclassName),
+            progressDiv.setAttribute("type","progressbar"),
+            progressDiv.innerHTML = "<label>Paused</label><progress></progress>",
+            progressul.appendChild(progressDiv);
+        //progressHelper[uuid].label = filename + " "+ fileSize;
+
+        var stopuploadButton = document.createElement("li");
+        stopuploadButton.id= "stopuploadButton"+filename;
+        stopuploadButton.style.float="right";
+        stopuploadButton.innerHTML ='<i class="fa fa-trash-o" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
+        stopuploadButton.onclick=function(event){
+            //alert( " addstaticProgressHelper stopuploadButton "+ filename);
+            if(repeatFlagStopuploadButton != filename){
+                hideFile( progressid);
+                //var tobeHiddenElement = event.target.parentNode.id;
+                removeFile(progressid);
+                repeatFlagStopuploadButton = filename;
+            }else if(repeatFlagStopuploadButton == filename){
+                repeatFlagStopuploadButton= "";
+            }
+            //Once the button is clicked , remove the button
+            stopuploadButton.remove();
+            //stopuploadButton.hidden = true;
+            //stopuploadButton.hide();
+            for(x in pendingFileTransfer){
+                if(pendingFileTransfer[x].name == filename){
+                    webrtcdev.log(" removing pendingFileTransfer element " , pendingFileTransfer[x])
+                    pendingFileTransfer.splice(x,1);
+                }
+            }
+        },
+            progressul.appendChild(stopuploadButton);
+
+        //document.getElementById(peerinfo.fileList.container).appendChild(progressul);
+        parentDom = document.getElementById(peerinfo.fileList.container);
+        parentDom.insertBefore(progressul,parentDom.firstChild);
+
+        // }else{
+        //     webrtcdev.log(" Not creating progress bar div as it already exists ");
+        // }
+
+    }catch(e){
+        webrtcdev.error(" [filehsraingJs] problem in addstaticProgressHelper  " , e);
+    }
+}
+
+
+/**
+ * Add progress bar for files sharing in progress
+ * @method
+ * @name addProgressHelper
+ * @param {id} uuid
+ * @param {json} peerinfo
+ * @param {string} filename
+ * @param {int} fileSize
+ * @param {string} progressHelperclassName
+ */
+function addProgressHelper(uuid , peerinfo , filename , fileSize,  file , progressHelperclassName , filefrom , fileto ){
+    try{
+        if(!peerinfo){
+            webrtcdev.error(" [filehsraingJs] Progress helpler cannot be added for one peer as its absent")
+            return;
+        }else if(!peerinfo.fileList.container || !document.getElementById(peerinfo.fileList.container)){
+            webrtcdev.error(" [filehsraingJs] Progress helpler cannot be added , missing fileListcontainer ")
+            return;
+        }
+
+        //if(!document.getElementById(filename)){
+        webrtcdev.log(" [filehsraingJs] progress helper attributes  attributes : uuid -" , uuid ,
+            "peerinfo - " , peerinfo ,
+            "filename - " , filename , "file size - " ,  fileSize,
+            "progress helper class - " , progressHelperclassName ,
+            "file to - " , fileto ,
+            "file from - " , filefrom);
+
+        var progressid = uuid+"_"+filefrom+"_"+fileto;
+        webrtcdev.log(" [startjs] addProgressHelper - progressid " , progressid);
+
+        var progressul =  document.createElement("ul");
+        progressul.id = progressid,
+            progressul.title = filename+ " size - "+ file.size + " type - "+ file.type + " last modified on -" + file.lastModifiedDate,
+            progressul.setAttribute("type", "progressbar");
+
+        if(debug){
+            var progressDebug = document.createElement("li");
+            progressDebug.innerHTML = filename+ " size - "+ file.size + " type - "+ file.type + " last modified on -" + file.lastModifiedDate
+                + " from :" + filefrom + " --> to :" + fileto +"</br>";
+            progressul.appendChild(progressDebug);
+        }
+
+        var progressDiv = document.createElement("li");
+        progressDiv.setAttribute("class", progressHelperclassName),
+            //progressDiv.setAttribute("filefor", ),
+            progressDiv.innerHTML = "<label>0%</label><progress></progress>",
+            progressul.appendChild(progressDiv),
+            progressHelper[progressid] = {
+                div: progressDiv,
+                progress: progressDiv.querySelector("progress"),
+                label: progressDiv.querySelector("label")
+            },
+            progressHelper[progressid].progress.max = fileSize;
+        //progressHelper[uuid].label = filename + " "+ fileSize;
+
+        var stopuploadButton = document.createElement("li");
+        stopuploadButton.id = "stopuploadButton"+progressid;
+        stopuploadButton.style.float ="right";
+        stopuploadButton.innerHTML ='<i class="fa fa-trash-o" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
+        stopuploadButton.onclick = function(event){
+            webrtcdev.log(" [startjs] addProgressHelper - remove progressid " , progressid ,
+                " dom : " , document.getElementById(progressid));
+            hideFile(progressid);
+            stopSendFile( progressid , filename , file , fileto, filefrom );
+            removeFile(progressid);
+
+            // If file has been hidden already then stop senidng the message shareFileStopUpload
+            if(repeatFlagStopuploadButton != filename){
+                //var tobeHiddenElement = event.target.parentNode.id;
+                rtcConn.send({
+                    type:"shareFileStopUpload",
+                    _element: progressid,
+                    _filename : filename
+                });
+
+                repeatFlagStopuploadButton = filename;
+            }else if(repeatFlagStopuploadButton == filename){
+                repeatFlagStopuploadButton = "";
+            }
+            //Once the button is clicked , remove the button
+            stopuploadButton.remove();
+            //stopuploadButton.hidden = true;
+            //stopuploadButton.hide();
+        },
+            progressul.appendChild(stopuploadButton);
+
+        parentDom = document.getElementById(peerinfo.fileList.container);
+        parentDom.insertBefore(progressul , parentDom.firstChild);
+
+        // }else{
+        //     webrtcdev.log(" Not creating progress bar div as it already exists ");
+        // }
+
+    }catch(e){
+        webrtcdev.error(" [filehsraingJs] problem in addProgressHelper  " , e);
+    }
+}
+
+function updateLabel(e, r) {
+    if (-1 != e.position) {
+        var n = +e.position.toFixed(2).split(".")[1] || 100;
+        r.innerHTML = n + "%"
+    }
+}
+
+function simulateClick(buttonName){
+    document.getElementById(buttonName).click();
+    webrtcdev.log("simulateClick on "+buttonName);
+    return true;
+}
+
+
+
+
+/*
+ * Display list and file list box button
+ * @method
+ * @name displayList
+ * @param {id} file uuid
+ * @param {json} peerinfo
+ * @param {string} fileurl
+ * @param {string} filename
+ * @param {string} filetype
+ */
+function displayList(uuid , peerinfo , fileurl , filename , filetype ){
+    try{
+        if(!fileshareobj.active) return;
+
+        webrtcdev.log("[filesharing js] displayList - uuid: ", uuid , " peerinfo :" ,  peerinfo,
+            "file url : " , fileurl, " file name : " , filename, " file type :", filetype);
+        var showDownloadButton = true , showRemoveButton=true;
+
+        var elementList = peerinfo.fileList.container;
+        var elementDisplay = peerinfo.fileShare.container;
+        var listlength = peerinfo.filearray.length;
+
+        /*
+        if(peerinfo.name=="localVideo"){
+            showRemoveButton=false;
+        }else{
+            showRemoveButton=false;
+        }*/
+        var _filename=null;
+        if (filetype =="sessionRecording"){
+            filename = filename.videoname+"_"+filename.audioname;
+            _filename = filename;
+        }
+
+        //get parent DOM and remove progress bar
+        var parentdom, filedom ;
+        var fileprogressbar = document.querySelectorAll('ul[id^="'+uuid+'"]');
+
+        // console.log(" ====================== filename  ", document.querySelectorAll('ul[id^="'+filename+'"]'));
+        // console.log(" ====================== uuid ", document.querySelectorAll('ul[id^="'+uuid+'"]'));
+
+        if(fileprogressbar.length > 0 ){
+            for ( x in fileprogressbar){
+
+                webrtcdev.log("[filesharing js] displayList remove progress bar ",
+                    "index - " , x , " file dom - " ,  fileprogressbar[x] );
+
+                if (fileprogressbar[x].type=="progressbar" || fileprogressbar[x].indexOf("progressbar") >-1){
+                    // if the progress bar exist , remove the progress bar div and create the ul
+                    // fileprogressbar[x].getAttribute("type")=="progressbar" /removed due to not a function error
+                    if(peerinfo.fileList.container && document.getElementById(peerinfo.fileList.container)){
+                        parentdom = document.getElementById(peerinfo.fileList.container);
+                        webrtcdev.log("[ filesharing js ] displayList , set up parent dom " , parentdom);
+                        parentdom.removeChild(fileprogressbar[x]);
+                    }else{
+                        webrtcdev.log("[ filesharing js ] displayList , Not sure what does this do " , fileprogressbar[x]);
+                        parentdom = fileprogressbar[x].parentNode.parentNode;
+                        //parentdom.removeChild(fileprogressbar[x].parentNode);
+                    }
+                }else{
+                    console.log("[filesharing js] displayList - cannot remove since , elem is not of type progressbar  " , fileprogressbar[x]);
+                }
+            }
+        }else{
+            webrtcdev.log("[ filesharing js ] displayList , progress bar area doesnt exist , set parent dom to  body or whereever file id exists ");
+            // if the progress bar area does not exist
+            if(document.getElementById(elementList)){
+                // directly append to the file list
+                parentdom = document.getElementById(elementList);
+            }else{
+                // append to top of the page
+                parentdom = document.body;
+            }
+        }
+
+    }catch(e){
+        webrtcdev.error(" [filesharing ] Display list exception " , e);
+    }
+
+    //append progress bar to parent dom
+    webrtcdev.log(" [filesharing js] displayList set up parent dom  " , parentdom);
+
+    filedom = document.createElement("ul") ;
+    filedom.id = filename+uuid;
+    filedom.type = peerinfo.type;  // local or remote ,
+    filedom.innerHTML="";
+    filedom.className="row";
+    filedom.setAttribute("style","float: left; width: 98%; margin-left: 2%;");
+
+    var name = document.createElement("li");
+    /*name.innerHTML = listlength +"   " + filename ;*/
+    name.innerHTML = filename ;
+    name.title = filetype +" shared by " +peerinfo.name ;
+    name.className = "filenameClass";
+    name.id = "name"+filename+uuid;
+    filedom.appendChild(name);
+
+    // Download Button
+    var downloadButton = document.createElement("li");
+    downloadButton.id = "downloadButton"+filename+uuid;
+    downloadButton.title = "Download";
+    downloadButton.setAttribute("style","float: right");
+    if (fileshareobj.filelist.saveicon) {
+        var img = document.createElement("img");
+        img.src = fileshareobj.filelist.downloadicon;
+        downloadButton.appendChild(img);
+    } else {
+        downloadButton.innerHTML = '<i class="fa fa-download" style=" color: #615aa8;padding: 10px; font-size: larger;"></i>';
+    }
+    downloadButton.onclick = function () {
+        downloadFile(uuid , elementDisplay , fileurl , _filename , filetype);
+    };
+
+    //Save Button
+    var saveButton = document.createElement("li");
+    saveButton.id= "saveButton"+filename+uuid;
+    saveButton.title = "Save";
+    saveButton.setAttribute("data-toggle","modal");
+    saveButton.setAttribute("data-target", "#saveModal");
+    saveButton.setAttribute("style","float: right");
+    if (fileshareobj.filelist.saveicon) {
+        var img = document.createElement("img");
+        img.src = fileshareobj.filelist.saveicon;
+        saveButton.appendChild(img);
+    } else {
+        saveButton.innerHTML = '<i class="fa fa-floppy-o" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
+    }
+    saveButton.onclick=function(){
+        createModalPopup(filetype);
+    };
+
+    // Show Button
+    var showButton = document.createElement("li");
+    showButton.id= "showButton"+filename+uuid;
+    showButton.title="Show";
+    showButton.setAttribute("style","float: right");
+    if (fileshareobj.filelist.saveicon) {
+        var img = document.createElement("img");
+        img.src = fileshareobj.filelist.showicon;
+        showButton.appendChild(img);
+    } else {
+        showButton.innerHTML = '<i class="fa fa-eye-slash" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
+    }
+    var countClicks=0;
+    repeatFlagHideButton = filename;
+    repeatFlagShowButton = "";
+    showButton.onclick = function () {
+        countClicks++;
+        showHideFile(uuid , elementDisplay , fileurl , filename , filetype , showButton , countClicks );
+    };
+
+    /*
+    hide button
+    var hideButton = document.createElement("div");
+    hideButton.id= "hideButton"+filename;
+    hideButton.style.float="right";
+
+    //hideButton.setAttribute("class" , "btn btn-primary");
+    //hideButton.innerHTML='hide';
+    //hideButton.innerHTML='<i class="fa fa-eye-slash" style="font-size: 25px;"></i>';
+    hideButton.onclick=function(event){
+        if(repeatFlagHideButton != filename){
+            hideFile(uuid , elementDisplay , fileurl , filename , filetype);
+            rtcConn.send({
+                type:"shareFileHide",
+                _uuid: uuid ,
+                _element: elementDisplay,
+                _fileurl : fileurl,
+                _filename : filename,
+                _filetype : filetype
+            });
+            repeatFlagHideButton= filename;
+        }else if(repeatFlagHideButton == filename){
+            repeatFlagHideButton= "";
+        }
+    };
+    */
+
+    //Remove Button
+    var removeButton = document.createElement("li");
+    removeButton.id= "removeButton"+filename+uuid;
+    removeButton.title="Remove";
+    removeButton.setAttribute("style","float: right");
+    // removeButton.style.float="right";
+    removeButton.innerHTML ='<i class="fa fa-trash-o" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
+    removeButton.onclick=function(event){
+        if(repeatFlagRemoveButton != filename){
+            //var tobeHiddenElement = event.target.parentNode.id;
+            var tobeHiddenElement = filename+uuid;
+            hideFile( elementDisplay , filename );
+            rtcConn.send({
+                type : "shareFileRemove",
+                _element : tobeHiddenElement,
+                _filename : filename
+            });
+            removeFile(tobeHiddenElement);
+            repeatFlagRemoveButton = filename;
+            webrtcdev.log("[startjs] filedom to be hidden : " , filedom);
+            // filedom.hidden = true;
+            filedom.setAttribute("style", "display:none!important");
+        }else if(repeatFlagRemoveButton == filename){
+            repeatFlagRemoveButton = "";
+        }
+    };
+    if(peerinfo.userid != selfuserid){
+        removeButton.hidden=true;
+        removeButton.setAttribute("style","display:none!important");
+    }
+
+    if( role == "inspector"){
+        showDownloadButton.hidden=true;
+        showButton.hidden=true;
+        saveButton.hidden=true;
+        removeButton.hidden=true;
+    }
+
+    //Appenmd all of the above compoenets inot file list view
+    if(showDownloadButton)
+        filedom.appendChild(downloadButton);
+    filedom.appendChild(showButton);
+    filedom.appendChild(saveButton);
+    //filedom.appendChild(hideButton);
+    if(showRemoveButton)
+        filedom.appendChild(removeButton);
+
+    webrtcdev.log("[filesharing JS ] filedom " , filedom  ," | parentdom ", parentdom );
+
+    if(parentdom){
+        parentDom2 = parentdom.parentNode;
+        parentDom2.insertBefore(filedom , parentDom2.firstChild);
+        fileListed(filedom);
+    }else{
+        webrtcdev.error("[filesharing JS ] filedom's parent doem not found ");
+    }
+}
+
+
+/*
+ * Display file by type
+ * @method
+ * @name getFileElementDisplayByType
+ * @param {string} fileurl
+ * @param {string} filename
+ * @param {string} filetype
+ */
+function getFileElementDisplayByType(filetype , fileurl , filename){
+
+    webrtcdev.log(" [filehsaring js]  - getFileElementDisplayByType ",
+        "file type :", filetype , "file url : " , fileurl, ", file name : " ,  filename );
+
+    var elementDisplay;
+
+    if(filetype.indexOf("msword")>-1 || filetype.indexOf("officedocument")>-1) {
+        var divNitofcation= document.createElement("div");
+        divNitofcation.className="alert alert-warning";
+        divNitofcation.innerHTML= "Microsoft and Libra word file cannot be opened in browser. " +
+            "Click bottom DOWNLOAD in UF box . File shows up below the UF box. Click arrow on right, then select OPEN  . File Opens in New Window, then 'Save As'.";
+        elementDisplay=divNitofcation;
+
+    }else if(filetype.indexOf("image")>-1){
+        var image= document.createElement("img");
+        image.src= fileurl;
+        image.style.width="100%";
+        image.style.height="100%";
+        image.title=filename;
+        image.id= "display"+filename;
+        elementDisplay=image;
+
+    }else if (filetype == "sessionRecording") {
+
+        var filename = filename.videoname+"_"+filename.audioname;
+        var div =  document.createElement("div");
+        div.setAttribute("background-color","black");
+        div.id= "display"+filename;
+        div.title=  filename;
+
+        var video = document.createElement('video');
+        video.src = fileurl.videofileurl;
+        //video.type = "video/webm";
+        video.setAttribute("type", "audvideo/webm");
+        video.setAttribute("name", "videofile");
+        video.controls = "controls";
+        video.title = filename.videoname + ".webm";
+
+        var audio = document.createElement('audio');
+        audio.src = fileurl.audiofileurl;
+        audio.setAttribute("type" , "audio/wav");
+        audio.controls = "controls";
+        audio.title = filename.videoname + ".wav";
+
+        //audio.hidden=true;
+
+        div.appendChild(video);
+        div.appendChild(audio);
+
+        elementDisplay  = div;
+
+        video.play();
+        audio.play();
+
+    }else if(filetype.indexOf("videoScreenRecording")>-1){
+        webrtcdev.log("videoScreenRecording " , fileurl);
+        var video = document.createElement("video");
+        video.src = fileurl;
+        video.setAttribute("controls","controls");
+        video.style.width="100%";
+        video.title=filename;
+        video.id= "display"+filename;
+        elementDisplay=video;
+
+    }else if(filetype.indexOf("video")>-1){
+        webrtcdev.log("videoRecording " , fileurl);
+        var video = document.createElement("video");
+        video.src=fileurl;
+        /*
+        try{
+            if(fileurl.video!=undefined ){
+                video.src = URL.createObjectURL(fileurl.video);
+            }else{
+                video.src = URL.createObjectURL(fileurl);
+            }
+        }catch(e){
+            video.src=fileurl;
+        }*/
+
+        video.setAttribute("controls","controls");
+        video.style.width="100%";
+        video.title=filename;
+        video.id= "display"+filename;
+        elementDisplay=video;
+
+    }else{
+        var iframe= document.createElement("iframe");
+        iframe.style.width="100%";
+        iframe.src= fileurl;
+        iframe.className= "viewerIframeClass";
+        iframe.title= filename;
+        iframe.id= "display"+filename;
+        elementDisplay=iframe;
+    }
+    return  elementDisplay;
+}
+
+function displayFile( uuid , peerinfo , fileurl , filename , filetype ){
+
+    webrtcdev.log(" [filehsaring js]  - displayFile  - uuid: ", uuid , " peerinfo :" ,  peerinfo,
+        "file url : " , fileurl, " file name : " , filename, " file type :", filetype);
+    try{
+
+        if(!peerinfo || !peerinfo.fileShare) return;
+
+        var parentdom =  document.getElementById(peerinfo.fileShare.container);
+        var filedom = getFileElementDisplayByType(filetype , fileurl , filename);
+
+        if(parentdom){
+            //parentdom.innerHTML="";
+            //parentdom.appendChild(filedom);
+            showFile( peerinfo.fileShare.container , fileurl , filename , filetype );
+
+        }else if(role=="inspector"){
+            for( r in webcallpeers){
+                var i = ++r;
+                var parentdominspector = document.getElementById(webcallpeers[i].fileShare.container);
+                if(parentdominspector){
+                    //parentdom =  document.getElementById(webcallpeers[i].fileShare.container);
+                    //parentdom.innerHTML="";
+                    //parentdom.appendChild(filedom);
+                    showFile( webcallpeers[i].fileShare.container , fileurl , filename , filetype );
+                    break;
+                }
+            }
+        }else{
+            document.body.appendChild(filedom);
+        }
+    }catch(e){
+        webrtcdev.error("[filehsaring js] displayFile  has a problem " , e)
+    }
+
+    /*
+    if($('#'+ parentdom).length > 0)
+        $("#"+element).html(getFileElementDisplayByType(_filetype , _fileurl , _filename));
+    else
+        $("body").append(getFileElementDisplayByType(_filetype , _fileurl , _filename));*/
+}
+
+function syncButton(buttonId){
+    var buttonElement= document.getElementById(buttonId);
+
+    for(x in webcallpeers){
+        if(buttonElement.getAttribute("lastClickedBy")==webcallpeers[x].userid){
+            buttonElement.setAttribute("lastClickedBy" , '');
+            return;
+        }
+    }
+
+    if(buttonElement.getAttribute("lastClickedBy")==''){
+        buttonElement.setAttribute("lastClickedBy" , rtcConn.userid);
+        rtcConn.send({
+            type:"buttonclick",
+            buttonName: buttonId
+        });
+    }
+}
+
+/* ************* file Listing container button functions --------------- */
+
+/**
+ * Shows or hides file and sync activity with peers
+ * @method
+ * @name showHideFile
+ * @param {id} uuid - unique universal id for the file
+ * @param {dom} element - name of dom element
+ * @param {bloburl} fileurl - blob of the file
+ * @param {string} filename - name for file
+ * @param {string} filetype - type of  file
+ */
+function showHideFile(uuid , elementDisplay , fileurl , filename , filetype , showHideButton ,countClicks ){
+    webrtcdev.log(" [filehsaring js]  - show/hide elementDisplay ", elementDisplay);
+    webrtcdev.log(" [filehsaring js]  - show/hide button ",  filename , " || ", countClicks);
+    if (countClicks%2 == 1 ){
+        showFile( elementDisplay , fileurl , filename , filetype );
+        /*rtcConn.send({
+            type:"shareFileShow",
+            _uuid: uuid ,
+            _element: elementDisplay,
+            _fileurl : fileurl,
+            _filename : filename,
+            _filetype : filetype
+        }); */
+        showHideButton.innerHTML = '<i class="fa fa-eye-slash" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
+        webrtcdev.log(" [filehsaring js]  Executed script to show the file");
+    } else if (countClicks%2 == 0 ){
+        hideFile( elementDisplay, filename );
+        /*rtcConn.send({
+            type: "shareFileHide",
+            _uuid: uuid,
+            _element: elementDisplay,
+            _fileurl: fileurl,
+            _filename: filename,
+            _filetype: filetype
+        });*/
+        showHideButton.innerHTML = '<i class="fa fa-eye" style="color: #615aa8;padding: 10px; font-size: larger;"></i>';
+        webrtcdev.log(" [filehsaring js]  Executed script to hide the file ");
+    }
+}
+
+function showFile( element , fileurl , filename , filetype ){
+    webrtcdev.log("[filehsaring js]  showFile container - " , element , document.getElementById(element));
+    var filedom = getFileElementDisplayByType(filetype , fileurl , filename);
+    webrtcdev.log("[filehsaring js]  showFile  filedom - " , filedom);
+    if(document.getElementById(element)){
+        document.getElementById(element).innerHTML = "";
+        document.getElementById(element).removeAttribute("hidden");
+        document.getElementById(element).setAttribute("style","display:block!important");
+        document.getElementById(element).appendChild(filedom);
+    }else{
+        webrtcdev.warn(" [filehsaring js] cant show file as parent DOM fir fileDiaply container doesnt exist ");
+    }
+}
+
+function hideFile( element ){
+    webrtcdev.log("[filehsaring js]  hidefile " , element);
+    //if(document.getElementById(element) && $("#"+element).has("#display"+filename)){
+    if(document.getElementById(element)){
+        document.getElementById(element).innerHTML = "";
+        document.getElementById(element).hidden = true;
+        document.getElementById(element).setAttribute("style","display:none!important");
+        webrtcdev.log("[filehsaring js] hidefile done" );
+    }else{
+        webrtcdev.warn(" [filehsaring js]  file is not displayed to hide  ");
+    }
+}
+
+function removeFile(element){
+    webrtcdev.log("[filehsaring js]  removeFile " , element);
+    document.getElementById(element).remove();
+}
+
+
+/**
+ * Creates container for file sharing
+ * @method
+ * @name downloadFile
+ * @param {id} uuid - uniwue identifier for file
+ * @param {element} parent -
+ * @param {url} fileurl
+ * @param {str} filename
+ * ffiletype {str}
+ */
+function downloadFile(uuid , element , fileurl , _filename , filetype){
+    webrtcdev.log(" downloadButton _filename ", _filename , "  filetype ", filetype);
+    if (filetype =="sessionRecording"){
+        var a = document.createElement("a");
+        document.body.appendChild(a);
+        a.style = "display: none";
+        a.href = fileurl.audiofileurl;
+        //a.download = _filename.audioname+".wav";
+        a.download = peerinfo.filearray[0] + ".wav";
+        a.click();
+        window.URL.revokeObjectURL(fileurl.audiofileurl);
+
+        var v = document.createElement("a");
+        document.body.appendChild(v);
+        v.style = "display: none";
+        v.href = fileurl.videofileurl;
+        //v.download = _filename.videoname+".webm";
+        v.download = peerinfo.filearray[1] + ".webm";
+        v.click();
+        window.URL.revokeObjectURL(fileurl.videofileurl);
+
+        /*window.open(fileurl.audiofileurl , filename.audioname+".wav");
+        window.open(fileurl.videofileurl , filename.videoname+".webm");*/
+        /*
+        var zip = new JSZip();
+        zip.file(filename.videoname , filename.videofileurl);
+        var audio = zip.folder("audio");
+        audio.file(filename.audioname, fileurl.audiofileurl);
+        zip.generateAsync({type:"blob"})
+        .then(function(content) {
+            // see FileSaver.js
+            //saveAs(content, "sessionRecording.zip");
+            window.open(content , "sessionRecording.zip");
+        });*/
+    }else{
+        window.open(fileurl , "downloadedDocument");
+    }
+}
+
+/**
+ * Creates container for file sharing
+ * @method
+ * @name createFileSharingBox
+ * @param {object} peerinfo - single object peerinfo from webcallpeers
+ * @param {dom} parent - name of dom element parent
+ */
+function createFileSharingBox(peerinfo, parent){
+    try {
+        webrtcdev.log(" [ filehsreing js ]  createFileSharingBox " , peerinfo, parent);
+        if (document.getElementById(peerinfo.fileShare.outerbox))
+            return;
+
+        var fileSharingBox = document.createElement("div");
+
+        if(fileshareobj.props.fileList =="single"){
+            fileSharingBox.className = "col-md-12 fileviewing-box";
+        }else {
+            fileSharingBox.className = "fileviewing-box";
+        }
+        fileSharingBox.setAttribute("style", "background-color:" + peerinfo.color);
+        fileSharingBox.id = peerinfo.fileShare.outerbox;
+
+        /*--------------------------------add for File Share control Bar--------------------*/
+        /*
+        <div class="button-corner">
+            <span data-placement="bottom" data-toggle="tooltip" title="" data-original-title="minimize"><i class="fa fa-minus-square"></i></span>
+            <span data-placement="bottom" data-toggle="tooltip" title="" data-original-title="maxsimize"><i class="fa fa-external-link-square"></i></span>
+            <span data-placement="bottom" data-toggle="tooltip" title="" data-original-title="close"><i class="fa fa-times-circle"></i></span>
+        </div>*/
+
+        var fileControlBar = document.createElement("p");
+        fileControlBar.id = peerinfo.fileShare.container + "controlBar";
+        fileControlBar.appendChild(document.createTextNode( peerinfo.name));
+        //fileControlBar.appendChild(document.createTextNode("File Viewer " + peerinfo.name));
+
+
+
+        if(fileshareobj.fileshare.minicon != "none"){
+            // Minimize the File viewer box
+            var minButton = document.createElement("span");
+            /*    minButton.className="btn btn-default glyphicon glyphicon-import closeButton";
+            minButton.innerHTML="Minimize";*/
+            if (fileshareobj.fileshare.minicon) {
+                var img = document.createElement("img");
+                img.src = fileshareobj.fileshare.minicon;
+                minButton.appendChild(img);
+            } else {
+                minButton.innerHTML = '<i class="fa fa-minus-square" style="font-size: 25px;"></i>';
+            }
+            minButton.id = peerinfo.fileShare.minButton;
+            minButton.title = "Minimize";
+            minButton.style.float = "right";
+            minButton.style.display = "none";
+            minButton.setAttribute("lastClickedBy", '');
+            minButton.onclick = function () {
+                resizeFV(peerinfo.userid, minButton.id, peerinfo.fileShare.outerbox);
+                minButton.style.display = "none";
+                maxButton.style.display = "block";
+            }
+
+            fileControlBar.appendChild(minButton);
+        }
+
+        if(fileshareobj.fileshare.maxicon != "none"){
+            // Mximize the file viewer box
+            var maxButton = document.createElement("span");
+            /*    maxButton.className= "btn btn-default glyphicon glyphicon-export closeButton";
+            maxButton.innerHTML="Maximize";*/
+            if (fileshareobj.fileshare.maxicon) {
+                let maxicon = fileshareobj.fileshare.maxicon;
+                webrtcdev.log(" [fileShare JS ] creating custom maxicon" , maxicon);
+                var img = document.createElement("img");
+                img.src = maxicon;
+                maxButton.appendChild(img);
+            } else {
+                let maxicon = '<i class="fa fa-external-link-square" style="font-size: 25px;"></i>';
+                maxButton.innerHTML = maxicon;
+                webrtcdev.log(" [fileShare JS ] creating default maxicon" , maxicon);
+            }
+            maxButton.id = peerinfo.fileShare.maxButton;
+            maxButton.title="Maximize";
+            maxButton.style.float = "right";
+            maxButton.style.display = "block";
+            maxButton.setAttribute("lastClickedBy", '');
+            maxButton.onclick = function () {
+                maxFV(peerinfo.userid, maxButton.id, peerinfo.fileShare.outerbox);
+                maxButton.style.display = "none";
+                minButton.style.display = "block";
+            }
+            fileControlBar.appendChild(maxButton);
+        }else{
+            webrtcdev.log(" [fileShare JS ] maxicon is none" );
+        }
+
+
+
+        // close the file viewer box
+        var closeButton = document.createElement("span");
+        /* closeButton.className="btn btn-default glyphicon glyphicon-remove closeButton";
+        closeButton.innerHTML="Close";*/
+        if (fileshareobj.fileshare.closeicon) {
+            var img = document.createElement("img");
+            img.src = fileshareobj.fileshare.closeicon;
+            closeButton.appendChild(img);
+        } else {
+            closeButton.innerHTML = '<i class="fa fa-times-circle" style="font-size: 25px;"></i>';
+        }
+        closeButton.id = peerinfo.fileShare.closeButton;
+        closeButton.title="Close";
+        closeButton.style.float = "right";
+        closeButton.setAttribute("lastClickedBy", '');
+        closeButton.onclick = function () {
+            closeFV(peerinfo.userid, closeButton.id, peerinfo.fileShare.container);
+        }
+        fileControlBar.appendChild(closeButton);
+
+
+
+        // rotate the content of file viewer box
+        var angle = 0 , orientation = null;
+        var rotateButton = document.createElement("span");
+        if (fileshareobj.fileshare.rotateicon) {
+            var img = document.createElement("img");
+            img.src = fileshareobj.fileshare.rotateicon;
+            rotateButton.appendChild(img);
+        } else {
+            rotateButton.innerHTML = '<i class="fa fa-mail-forward" style="font-size: 25px;"></i>';
+        }
+        rotateButton.id = peerinfo.fileShare.rotateButton;
+        rotateButton.title="Rotate";
+        rotateButton.style.float = "right";
+        rotateButton.onclick = function () {
+            var domparent = document.getElementById(peerinfo.fileShare.container);
+            var dom = domparent.firstChild;
+
+            webrtcdev.log(" [filehsraing ] rotateButton dom ", dom  , dom.nodeName, "dom parent ", domparent);
+
+            angle = (angle + 90) % 360;
+            dom.setAttribute("angle", angle);
+
+            if(dom) {
+                //alert(" dom type " + dom.nodeName);
+                if(dom.nodeName == "VIDEO"){
+
+                    rescaleVideo(dom, domparent);
+
+                }else if (dom.nodeName == "IMG"){
+
+                    rescaleImage(dom , domparent);
+
+                }else if (dom.nodeName == "IFRAME"){
+
+                    rescaleIFrame(dom , domparent);
+
+                }else{
+                    // do not allow rotate
+                    dom.setAttribute("orientation",  "");
+                }
+            }else{
+                webrtcdev.error(" [filehsraing ] rotateButton  , dom doesnt exist" );
+            }
+            // dom.className = "col rotate" + angle + dom.getAttribute("orientation");
+        }
+
+        fileControlBar.appendChild(rotateButton);
+
+
+        /*--------------------------------add for File Share Container--------------------*/
+        var fileShareContainer = document.createElement("div");
+        fileShareContainer.className = "filesharingWidget";
+        fileShareContainer.id = peerinfo.fileShare.container;
+
+        var fillerArea = document.createElement("p");
+        fillerArea.className = "filler";
+
+        if (debug) {
+            var nameBox = document.createElement("span");
+            nameBox.innerHTML = "<br/>" + fileShareContainer.id + "<br/>";
+            fileSharingBox.appendChild(nameBox);
+        }
+
+        linebreak = document.createElement("br");
+
+        fileSharingBox.appendChild(fileControlBar);
+        fileSharingBox.appendChild(linebreak);
+        fileSharingBox.appendChild(linebreak);
+        fileSharingBox.appendChild(fileShareContainer);
+        fileSharingBox.appendChild(fillerArea);
+
+        parent.appendChild(fileSharingBox);
+    } catch (e) {
+        webrtcdev.error(" createFileSharingBox ", e);
+    }
+}
+
+
+function rescaleVideo(dom , domparent){
+    var angle = dom.getAttribute("angle")||0;
+
+    if( dom.videoWidth > dom.videoHeight ){
+        dom.setAttribute("style","height:"+domparent.clientWidth+"px;margin-left: 0px");
+        orientation = "landscape";
+    }else {
+        orientation = "portrait";
+    }
+    dom.setAttribute("orientation",  orientation);
+    dom.className = "col rotate" + angle + dom.getAttribute("orientation");
+
+    return ;
+}
+
+
+function rescaleIFrame(dom , domparent){
+    var angle = dom.getAttribute("angle")||0;
+
+    dom.setAttribute("style","height:"+domparent.clientWidth +"px !important;width:100%");
+    dom.setAttribute("orientation",  "portrait");
+    // }else if (dom.nodeName == "VIDEO"){
+    //     dom.setAttribute("style","height:"+domparent.clientWidth +"px;margin-left: 0px");
+    //     dom.setAttribute("orientation",  "landscape");
+    dom.className = "col rotate" + angle + dom.getAttribute("orientation");
+
+    return ;
+}
+
+
+function rescaleImage(dom , domparent){
+
+    var orientation ;
+    var angle = dom.getAttribute("angle")||0;
+
+    if( dom.width > dom.height ){
+        orientation = "landscape";
+
+        if(angle =="90" || angle == "270"){
+            // new width / new height  = old width/old height
+            // thus new width = old width / old height * new height
+            newwidth =  (dom.width / dom.height) * domparent.clientWidth ;
+            dom.setAttribute("style","width:"+newwidth+"px; height:"+domparent.clientWidth+"px");
+        }
+        // if(angle =="180" || angle == "0"){
+        //     dom.setAttribute("style","width:100%; height:100%");
+        // }
+
+    } else{
+        orientation = "portrait";
+
+        if(angle =="90" || angle == "270"){
+            // old width/old height = new width / new height
+            // thus new width = old width / old height * new height
+            newwidth =  (dom.width / dom.height) * domparent.clientWidth ;
+            dom.setAttribute("style","height:"+domparent.clientWidth+"px; max-width:"+newwidth+"px;");
+        }
+        // if(angle =="180" || angle == "0"){
+        //     dom.setAttribute("style","width:100%; height:100%");
+        // }
+
+    }
+
+    dom.setAttribute("orientation",  orientation);
+    dom.className = "col rotate" + angle + dom.getAttribute("orientation");
+
+    return ;
+
+}
+
+/**
+ * Creates container for file listing
+ * @method
+ * @name createFileListingBox
+ * @param {object} peerinfo - single object peerinfo from webcallpeers
+ * @param {dom} parent - name of dom element parent
+ */
+function createFileListingBox(peerinfo, parent){
+
+    try {
+        if (document.getElementById(peerinfo.fileList.outerbox))
+            return;
+
+        var fileListingBox = document.createElement("div");
+
+        if(fileshareobj.props.fileList =="single"){
+            fileListingBox.className = "col-sm-12 filesharing-box";
+        }else {
+            fileListingBox.className = "filesharing-box";
+        }
+
+        fileListingBox.id = peerinfo.fileList.outerbox;
+        //fileListingBox.setAttribute("style", "background-color:" + peerinfo.color);
+
+        /*--------------------------------add for File List control Bar--------------------*/
+
+        var fileListControlBar = document.createElement("p");
+        //fileListControlBar.appendChild(document.createTextNode(peerinfo.name + "     "));
+        //fileListControlBar.appendChild(document.createTextNode("Uploaded Files " + peerinfo.name + "     "));
+
+        /*
+        var fileHelpButton= document.createElement("span");s
+        fileHelpButton.className="btn btn-default glyphicon glyphicon-question-sign closeButton";
+        fileHelpButton.innerHTML="Help";
+        /*fileListControlBar.appendChild(fileHelpButton);*/
+
+        var minButton = document.createElement("span");
+        minButton.innerHTML = '<i class="fa fa-minus-square" style="font-size: 20px;></i>';
+        minButton.id = peerinfo.fileShare.minButton;
+        minButton.setAttribute("lastClickedBy", '');
+        minButton.onclick = function () {
+            resizeFV(peerinfo.userid, minButton.id, peerinfo.fileShare.outerbox);
+        }
+
+        var maxButton = document.createElement("span");
+        maxButton.innerHTML = '<i class="fa fa-external-link-square" style="font-size: 20px;></i>';
+        maxButton.id = peerinfo.fileShare.maxButton;
+        maxButton.setAttribute("lastClickedBy", '');
+        maxButton.onclick = function () {
+            maxFV(peerinfo.userid, maxButton.id, peerinfo.fileShare.outerbox);
+        }
+
+        var closeButton = document.createElement("span");
+        closeButton.innerHTML = '<i class="fa fa-times-circle" style="font-size: 20px;></i>';
+        closeButton.id = peerinfo.fileShare.closeButton;
+        closeButton.setAttribute("lastClickedBy", '');
+        closeButton.onclick = function () {
+            closeFV(peerinfo.userid, closeButton.id, peerinfo.fileShare.container);
+        }
+
+        fileListControlBar.appendChild(minButton);
+        fileListControlBar.appendChild(maxButton);
+        fileListControlBar.appendChild(closeButton);
+
+        /*-------------------------------- add for File List Container--------------------*/
+        var fileListContainer = document.createElement("div");
+        fileListContainer.id = peerinfo.fileList.container;
+        fileListContainer.setAttribute("style","float:left");
+
+        var fileProgress = document.createElement("div");
+
+        if (debug) {
+            var nameBox = document.createElement("span");
+            nameBox.innerHTML = fileListContainer.id;
+            fileListingBox.appendChild(nameBox);
+        }
+
+        fileListingBox.appendChild(fileListControlBar);
+        fileListingBox.appendChild(fileListContainer);
+        fileListingBox.appendChild(fileProgress);
+
+        parent.appendChild(fileListingBox);
+    } catch (e) {
+        webrtcdev.error(" createFileListingBox ", e);
+    }
+}
+
+
+function createFileSharingDiv(peerinfo){
+    webrtcdev.log(" -------createFileSharingDiv  " , peerinfo);
+
+    // When the peerinfo role is inspctor but self role is not inspector only then exit
+    if(peerinfo.role =="inspector" && role !="inspector") return;
+
+    if (!document.getElementById(peerinfo.fileShare.outerbox)){
+        var parentFileShareContainer = document.getElementById(fileshareobj.fileShareContainer);
+        createFileSharingBox(peerinfo , parentFileShareContainer);
+    }
+
+    if(!document.getElementById(peerinfo.fileList.outerbox)){
+        var parentFileListContainer = document.getElementById(fileshareobj.fileListContainer);
+        createFileListingBox(peerinfo , parentFileListContainer);
+    }
+}
+
+/* ************* file sharing container button functions --------------- */
+function closeFV(userid,  buttonId , selectedFileSharingBox){
+    document.getElementById(selectedFileSharingBox).innerHTML="";
+    /*syncButton(buttonId);*/
+}
+
+function resizeFV(userid,  buttonId , selectedFileSharingBox){
+    for(x in webcallpeers){
+        if(webcallpeers[x].fileShare.outerbox==selectedFileSharingBox) {
+            document.getElementById(selectedFileSharingBox).hidden=false;
+            document.getElementById(selectedFileSharingBox).style.width="50%";
+        }else{
+            document.getElementById(webcallpeers[x].fileShare.outerbox).hidden=false;
+            document.getElementById(webcallpeers[x].fileShare.outerbox).style.width="50%";
+        }
+    }
+    /*
+    document.getElementById(selectedFileSharingBox).hidden=false;
+    document.getElementById(selectedFileSharingBox).style.width="50%";
+    syncButton(buttonId);*/
+}
+
+function minFV(userid, buttonId , selectedFileSharingBox){
+    document.getElementById(selectedFileSharingBox).hidden=false;
+    document.getElementById(selectedFileSharingBox).style.width="50%";
+    document.getElementById(selectedFileSharingBox).style.height="10%";
+    /*syncButton(buttonId);*/
+}
+
+function maxFV(userid, buttonId, selectedFileSharingBox){
+    for(x in webcallpeers){
+        if(webcallpeers[x].fileShare.outerbox==selectedFileSharingBox) {
+            document.getElementById(selectedFileSharingBox).hidden=false;
+            document.getElementById(selectedFileSharingBox).style.width="100%";
+        }else{
+            document.getElementById(webcallpeers[x].fileShare.outerbox).hidden=true;
+            document.getElementById(webcallpeers[x].fileShare.outerbox).style.width="0%";
+        }
+    }
+    /*syncButton(buttonId);  */
+}
+
+/**
+ * Save File Modal Popup
+ * @method
+ * @name createModalPopup
+ * @param {string} filetype
+ */
+function createModalPopup(filetype ){
+    webrtcdev.log( " create Modal popup for filetype " , filetype);
+
+    var mainDiv= document.getElementById("mainDiv");
+
+    if(document.getElementById("saveModal")){
+        mainDiv.removeChild(document.getElementById("saveModal"));
+    }
+
+    var modalBox=document.createElement("div");
+    modalBox.className="modal fade";
+    modalBox.setAttribute("role" , "dialog");
+    modalBox.id="saveModal";
+
+    var modalinnerBox=document.createElement("div");
+    modalinnerBox.className="modal-dialog";
+
+    var modal=document.createElement("div");
+    modal.className = "modal-content";
+
+    var modalheader= document.createElement("div");
+    modalheader.className = "modal-header";
+
+    var closeButton= document.createElement("button");
+    closeButton.className="close";
+    closeButton.setAttribute("data-dismiss", "modal");
+    closeButton.innerHTML="&times;";
+
+    var title=document.createElement("h4");
+    title.className="modal-title";
+    title.innerHTML="Save File";
+    title.setAttribute("float" ,  "left");
+    modalheader.appendChild(title);
+    modalheader.appendChild(closeButton);
+
+    var modalbody = document.createElement("div");
+    modalbody.className = "modal-body";
+    modalbody.innerHTML = "";
+
+    var body=document.createElement("div");
+    switch(filetype){
+        case  "blobcanvas":
+            title.innerHTML="Save Drawing";
+            var d1=document.createElement("div");
+            d1.innerHTML= "Right Click on Save, pop up window gives following info: Right Click on Draw image, Click Save As when window opens up.";
+            body.appendChild(d1);
+            break;
+        case "application/pdf":
+            title.innerHTML="Save PDF";
+            var d1= document.createElement("div");
+            d1.innerHTML='Click DOWNLOAD on top of the doc . Click SAVE AS when window opens up';
+            var i1 = document.createElement("img");
+            i1.src= "images/savefile.PNG";
+            body.appendChild(d1);
+            body.appendChild(i1);
+            break;
+        // browser supported formats
+        case "image/jpeg":
+        case "image/png":
+        case "video/mov":
+        case "video/webm":
+        case "imagesnapshot":
+            title.innerHTML="Save Picture / Video";
+            var d1=document.createElement("div");
+            d1.innerHTML='Right Click on the FILE . Click SAVE AS when window opens up';
+            body.appendChild(d1);
+            break;
+        // browser supported audio formats
+        case "audio/mp3":
+            title.innerHTML="Save Music File";
+            var d1= document.createElement("div");
+            d1.innerHTML="Right Click on the FILE (play display line). Click SAVE AS when window opens up";
+            body.appendChild(d1);
+            break;
+        // propertiary stuff that will not open in browser
+        case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+        case "application/vnd.ms-excel":
+        case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+        case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        case "video/x-ms-wmv":
+            title.innerHTML="Save Microsoft Office / Libra / Open Office Documents";
+            var d1= document.createElement("div");
+            d1.innerHTML="Click bottom DOWNLOAD in Uploaded Files box . File shows up below the Uploaded Files box. Click arrow on right, then select OPEN  . File Opens in New Window, then 'Save As'.";
+            body.appendChild(d1);
+            break;
+        case "sessionRecording":
+            title.innerHTML="Save Session Recording";
+            var d1=document.createElement("div");
+            d1.innerHTML='Extract the video and audio recording from the dowloaded compresed file and play together ';
+            body.appendChild(d1);
+            break;
+        default :
+            var d1=document.createElement("div");
+            d1.innerHTML='Document is Unrecognizable, cannot be saved, but can be shared with Remote. Use/Click Screen Share for Remote to view your screen. Then open the document on your screen.';
+            body.appendChild(d1);
+            break;
+    }
+
+    modalbody.appendChild(body);
+    modal.appendChild(modalheader);
+    modal.appendChild(modalbody);
+
+    modalinnerBox.appendChild(modal);
+    modalBox.appendChild(modalinnerBox);
+
+    mainDiv.appendChild(modalBox);
 }
 /***************************************************
  video handling
@@ -14468,144 +15774,487 @@ function spawnNotification(theBody,theIcon,theTitle) {
 /*-----------------------------------------------------------------------------------*/
 
 
+
+/*-----------------------------------------------------------------------------------*/
+/*                        stats JS                                                   */
+/*-----------------------------------------------------------------------------------*/
+
+function getStats(mediaStreamTrack, callback, interval) {
+    var peer = this;
+    if (arguments[0] instanceof RTCMultiConnection) {
+        peer = arguments[0];
+        
+        if(!!navigator.mozGetUserMedia) {
+            mediaStreamTrack = arguments[1];
+            callback = arguments[2];
+            interval = arguments[3];
+        }
+
+        if (!(mediaStreamTrack instanceof MediaStreamTrack) && !!navigator.mozGetUserMedia) {
+            throw '2nd argument is not instance of MediaStreamTrack.';
+        }
+    } else if (!(mediaStreamTrack instanceof MediaStreamTrack) && !!navigator.mozGetUserMedia) {
+        throw '1st argument is not instance of MediaStreamTrack.';
+    }
+
+    var globalObject = {
+        audio: {},
+        video: {}
+    };
+
+    var nomore = false;
+
+    (function getPrivateStats() {
+        _getStats(function(results) {
+            var result = {
+                audio: {},
+                video: {},
+                results: results,
+                nomore: function() {
+                    nomore = true;
+                }
+            };
+
+            for (var i = 0; i < results.length; ++i) {
+                var res = results[i];
+
+                if(res.datachannelid && res.type === 'datachannel') {
+                    result.datachannel = {
+                        state: res.state // open or connecting
+                    }
+                }
+
+                if(res.type === 'googLibjingleSession') {
+                    result.isOfferer = res.googInitiator;
+                }
+
+                if(res.type == 'googCertificate') {
+                    result.encryption = res.googFingerprintAlgorithm;
+                }
+
+                if (res.googCodecName == 'opus' && res.bytesSent) {
+                    var kilobytes = 0;
+                    if(!!res.bytesSent) {
+                        if (!globalObject.audio.prevBytesSent) {
+                            globalObject.audio.prevBytesSent = res.bytesSent;
+                        }
+
+                        var bytes = res.bytesSent - globalObject.audio.prevBytesSent;
+                        globalObject.audio.prevBytesSent = res.bytesSent;
+
+                        kilobytes = bytes / 1024;
+                    }
+
+                    if(!result.audio) {
+                        result.audio = res;
+                    }
+                    
+                    result.audio.availableBandwidth = kilobytes.toFixed(1);
+                }
+
+                if (res.googCodecName == 'VP8') {
+                    // if(!globalObject.)
+                    // bytesReceived
+                    // packetsReceived
+                    // timestamp
+                    var kilobytes = 0;
+                    if(!!res.bytesSent) {
+                        if (!globalObject.video.prevBytesSent) {
+                            globalObject.video.prevBytesSent = res.bytesSent;
+                        }
+
+                        var bytes = res.bytesSent - globalObject.video.prevBytesSent;
+                        globalObject.video.prevBytesSent = res.bytesSent;
+
+                        kilobytes = bytes / 1024;
+                    }
+
+                    if(!result.video) {
+                        result.video = res;
+                    }
+
+                    result.video.availableBandwidth = kilobytes.toFixed(1);
+
+                    if(res.googFrameHeightReceived && res.googFrameWidthReceived) {
+                        result.resolutions = {
+                            width: res.googFrameWidthReceived,
+                            height: res.googFrameHeightReceived
+                        };
+                    }
+                }
+
+                if (res.type == 'VideoBwe') {
+                    result.video.bandwidth = {
+                        googActualEncBitrate: res.googActualEncBitrate,
+                        googAvailableSendBandwidth: res.googAvailableSendBandwidth,
+                        googAvailableReceiveBandwidth: res.googAvailableReceiveBandwidth,
+                        googRetransmitBitrate: res.googRetransmitBitrate,
+                        googTargetEncBitrate: res.googTargetEncBitrate,
+                        googBucketDelay: res.googBucketDelay,
+                        googTransmitBitrate: res.googTransmitBitrate
+                    };
+                }
+
+                // res.googActiveConnection means either STUN or TURN is used.
+
+                if (res.type == 'googCandidatePair' && res.googActiveConnection == 'true') {
+                    result.connectionType = {
+                        local: {
+                            candidateType: res.googLocalCandidateType,
+                            ipAddress: res.googLocalAddress
+                        },
+                        remote: {
+                            candidateType: res.googRemoteCandidateType,
+                            ipAddress: res.googRemoteAddress
+                        },
+                        transport: res.googTransportType
+                    };
+                }
+
+                var systemNetworkType = ((navigator.connection || {}).type || 'unknown').toString().toLowerCase();
+
+                if(res.type === 'localcandidate') {
+                    if(!result.connectionType) {
+                        result.connectionType = {};
+                    }
+
+                    result.connectionType.local = {
+                        candidateType: res.candidateType,
+                        ipAddress: res.ipAddress + ':' + res.portNumber,
+                        networkType: res.networkType/* || systemNetworkType */ || 'unknown',
+                        transport: res.transport
+                    }
+                }
+
+                if(res.type === 'remotecandidate') {
+                    if(!result.connectionType) {
+                        result.connectionType = {};
+                    }
+                    
+                    result.connectionType.local = {
+                        candidateType: res.candidateType,
+                        ipAddress: res.ipAddress + ':' + res.portNumber,
+                        networkType: res.networkType || systemNetworkType,
+                        transport: res.transport
+                    }
+                }
+            }
+
+            try {
+                if(peer.iceConnectionState.search(/failed|closed/gi) !== -1) {
+                    nomore = true;
+                }
+            }
+            catch(e) {
+                nomore = true;
+            }
+
+            if(nomore === true) {
+                if(result.datachannel) {
+                    result.datachannel.state = 'close';
+                }
+                result.ended = true;
+            }
+
+            callback(result);
+
+            // second argument checks to see, if target-user is still connected.
+            if (!nomore) {
+                typeof interval != undefined && interval && setTimeout(getPrivateStats, interval || 1000);
+            }
+        });
+    })();
+
+    // a wrapper around getStats which hides the differences (where possible)
+    // following code-snippet is taken from somewhere on the github
+    function _getStats(cb) {
+        // if !peer or peer.signalingState == 'closed' then return;
+        webrtcdev.log( "peer " , peer);
+        if(!peer.getStats()) return;
+
+        if (!!navigator.mozGetUserMedia) {
+            peer.getStats(
+                mediaStreamTrack,
+                function(res) {
+                    var items = [];
+                    res.forEach(function(result) {
+                        items.push(result);
+                    });
+                    cb(items);
+                },
+                cb
+            );
+        } else {
+            peer.getStats(function(res) {
+                var items = [];
+                res.result().forEach(function(result) {
+                    var item = {};
+                    result.names().forEach(function(name) {
+                        item[name] = result.stat(name);
+                    });
+                    item.id = result.id;
+                    item.type = result.type;
+                    item.timestamp = result.timestamp;
+                    items.push(item);
+                });
+                cb(items);
+            });
+        }
+    };
+}
+
+function merge(mergein, mergeto) {
+    if (!mergein) mergein = {};
+    if (!mergeto) return mergein;
+
+    for (var item in mergeto) {
+        mergein[item] = mergeto[item];
+    }
+    return mergein;
+}
+
+if (typeof module !== 'undefined'/* && !!module.exports*/) {
+    module.exports = getStats;
+}
+
+if(typeof window !== 'undefined') {
+    window.getStats = getStats;
+}
+
+
+
+function activateBandwidthButtons(timerobj){
+    if(document.getElementById("minimizeBandwidthButton")){
+        var button= document.getElementById("minimizeBandwidthButton");
+        button.onclick=function(e){
+            if(document.getElementById("bandwidthContainer").hidden)
+                document.getElementById("bandwidthContainer").hidden=false;
+            else
+                document.getElementById("bandwidthContainer").hidden=true;
+        }  
+    }
+}
+
+/**
+ * shows status of ongoing webrtc call
+ * @method
+ * @name showStatus
+ * @param {obj} conn
+ */
+function showStatus(){
+    getStats(rtcConn, function(result) {
+        webrtcdev.info("[stats]",result.connectionType.remote.ipAddress);
+        webrtcdev.info("[stats]",result.connectionType.remote.candidateType);
+        webrtcdev.info("[stats]",result.connectionType.transport);
+    } , 10000);
+    webrtcdev.info("[stats] WebcallPeers " , webcallpeers);
+}
+
+/**
+ * shows stats of ongoing webrtc call 
+ * @method
+ * @name showStatus
+ * @param {obj} conn
+ */
+function showRtpstats(){
+    try{
+        for( x=0; x<rtcConn.peers.getLength(); x++){
+            var pid =  rtcConn.peers.getAllParticipants()[x];
+            var arg = JSON.stringify(rtcConn.peers[pid] , undefined, 2);
+            document.getElementById(statisticsobj.statsConainer).innerHTML += "<pre >"+ arg + "</pre>";        
+        }
+    }catch(e){
+        webrtcdev.error("[stats] rtpstats" , e);
+    }
+
+}
+
+/*
+ * shows rtc conn of ongoing webrtc call 
+ * @method
+ * @name showRtcConn
+ */
+this.showRtcConn = function(){
+    if(rtcConn){
+        webrtcdev.info(" =========================================================================");
+        webrtcdev.info("[stats] rtcConn : " , rtcConn);
+        webrtcdev.info("[stats] rtcConn.peers.getAllParticipants() : " , rtcConn.peers.getAllParticipants());
+        webrtcdev.info(" =========================================================================");
+    }else{
+        webrtcdev.debug(" rtcConn doesnt exist ");
+    }
+}
+
+/*
+ * shows rtcp capabilities of transceivers webrtc call 
+ * @method
+ * @name showRTCPcapabilities
+ * @param {obj} conn
+ */
+function showRTCPcapabilities(){
+    let str = ""; 
+    str += RTCRtpSender.getCapabilities('audio');
+    str += RTCRtpSender.getCapabilities('video');
+
+    str += RTCRtpSender.getCapabilities('audio');
+    str += RTCRtpSender.getCapabilities('video');
+
+    document.getElementById(statisticsobj.statsConainer).innerHTML += "<pre >"+ str + "</pre>";    
+}
+
+
+/*
+check MediaStreamTrack
+    MediaTrackSupportedConstraints, 
+    MediaTrackCapabilities, 
+    MediaTrackConstraints 
+    MediaTrackSettings
+*/
+function getstatsMediaDevices(){
+    webrtcdev.log("[stats] getSupportedConstraints - " , navigator.mediaDevices.getSupportedConstraints());
+}
+
+
+
+/*-----------------------------------------------------------------------------------*/
 /**************************************************************
-Screenshare 
-****************************************************************/
+ Screenshare
+ ****************************************************************/
 'use strict';
 ;
 
-var sourceId , screen_constraints , screenStreamId;
+var sourceId, screen_constraints, screenStreamId;
 var isFirefox = typeof window.InstallTrigger !== 'undefined';
 var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
 var isChrome = !!window.chrome && !isOpera;
 // var isMobileDevice = !!navigator.userAgent.match(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile/i);
 
-var screenCallback ;
-var iceServers=[];
-var signaler,screen,screenRoomid;
-var screenShareButton ;
+var screenCallback;
+var iceServers = [];
+var signaler, screen, screenRoomid;
+var screenShareButton;
 var screenShareStreamLocal = null;
 
 
 /**
- * function set up Srcreens share session RTC peer connection 
+ * function set up Srcreens share session RTC peer connection
  * @method
  * @name webrtcdevPrepareScreenShare
  * @param {function} callback
  */
-function webrtcdevPrepareScreenShare(screenRoomid ){
+function webrtcdevPrepareScreenShare(screenRoomid) {
 
-    localStorage.setItem("screenRoomid " , screenRoomid);
-    webrtcdev.log("[screenshare JS] webrtcdevPrepareScreenShare - screenRoomid : " , screenRoomid);
-    webrtcdev.log("[screenshare JS] webrtcdevPrepareScreenShare - filling up iceServers : " , turn , webrtcdevIceServers);
+    localStorage.setItem("screenRoomid ", screenRoomid);
+    webrtcdev.log("[screenshare JS] webrtcdevPrepareScreenShare - screenRoomid : ", screenRoomid);
+    webrtcdev.log("[screenshare JS] webrtcdevPrepareScreenShare - filling up iceServers : ", turn, webrtcdevIceServers);
 
-    scrConn             = new RTCMultiConnection(),
-    scrConn.channel     = screenRoomid,
-    scrConn.socketURL   = location.hostname+":8085/" ,
-    scrConn.session = {
-        screen: true,
-        oneway: true
-    },
-    scrConn.sdpConstraints.mandatory = {
-        OfferToReceiveAudio: false,
-        OfferToReceiveVideo: true
-    },
-    // scrConn.dontCaptureUserMedia = false,
+    scrConn = new RTCMultiConnection(),
+        scrConn.channel = screenRoomid,
+        scrConn.socketURL = location.hostname + ":8085/" ,
+        scrConn.session = {
+            screen: true,
+            oneway: true
+        },
+        scrConn.sdpConstraints.mandatory = {
+            OfferToReceiveAudio: false,
+            OfferToReceiveVideo: true
+        },
+        // scrConn.dontCaptureUserMedia = false,
 
-    scrConn.onMediaError = function(error, constraints) {
-        webrtcdev.error(error, constraints);
-        shownotificationWarning(error.name);
-    },
+        scrConn.onMediaError = function (error, constraints) {
+            webrtcdev.error(error, constraints);
+            shownotificationWarning(error.name);
+        },
 
-    scrConn.onstream = function(event) {
-        webrtcdev.log("[screenshareJS] on stream in _screenshare :" , event);
+        scrConn.onstream = function (event) {
+            webrtcdev.log("[screenshareJS] on stream in _screenshare :", event);
 
-        if (debug) {
-            var nameBox = document.createElement("span");
-            nameBox.innerHTML = "<br/>" + screenRoomid + "<br/>";
-            getElementById(screenshareobj.screenshareContainer).appendChild(nameBox);
-        }
-
-        if(event.type=="remote" && event.type!="local"){
-            // Remote got screen share stream 
-            shownotificationWarning("started streaming remote's screen");
-            webrtcdev.log("[screensharejs] on stream remote ");
-
-            if(event.stream.streamid){
-                webrtcdev.log("remote screen event.stream.streamId " + event.stream.streamId);
-                screenStreamId=event.stream.streamid;                    
-            }else if(event.streamid){
-                webrtcdev.log("remote screen event.streamid " + event.streamid);
-                screenStreamId=event.streamid;  
+            if (debug) {
+                var nameBox = document.createElement("span");
+                nameBox.innerHTML = "<br/>" + screenRoomid + "<br/>";
+                getElementById(screenshareobj.screenshareContainer).appendChild(nameBox);
             }
 
-            var video = document.createElement('video');
-            var stream = event.stream;
-            attachMediaStream(video, stream);
-            //video.id = peerInfo.videoContainer;
-            getElementById(screenshareobj.screenshareContainer).appendChild(video);
-            getElementById(screenshareobj.screenshareContainer).hidden=false;
-            rtcConn.send({
-                type:"screenshare", 
-                screenid: screenRoomid,
-                message:"screenshareStartedViewing"
-            });
+            if (event.type == "remote" && event.type != "local") {
+                // Remote got screen share stream
+                shownotificationWarning("started streaming remote's screen");
+                webrtcdev.log("[screensharejs] on stream remote ");
 
-        }else{
-            // Local got screen share stream 
-            shownotificationWarning("started streaming local screen");
-            webrtcdev.log("[screenshareJS] on stream local ");
+                if (event.stream.streamid) {
+                    webrtcdev.log("remote screen event.stream.streamId " + event.stream.streamId);
+                    screenStreamId = event.stream.streamid;
+                } else if (event.streamid) {
+                    webrtcdev.log("remote screen event.streamid " + event.streamid);
+                    screenStreamId = event.streamid;
+                }
 
-            rtcConn.send({
-                type:"screenshare", 
-                screenid: screenRoomid,
-                screenStreamid: screenStreamId,
-                message:"startscreenshare"
-            });
-        }
+                var video = document.createElement('video');
+                var stream = event.stream;
+                attachMediaStream(video, stream);
+                //video.id = peerInfo.videoContainer;
+                getElementById(screenshareobj.screenshareContainer).appendChild(video);
+                getElementById(screenshareobj.screenshareContainer).hidden = false;
+                rtcConn.send({
+                    type: "screenshare",
+                    screenid: screenRoomid,
+                    message: "screenshareStartedViewing"
+                });
 
-        //createScreenViewButton();
+            } else {
+                // Local got screen share stream
+                shownotificationWarning("started streaming local screen");
+                webrtcdev.log("[screenshareJS] on stream local ");
 
-        // Event Listner for Screen share stream started 
-        onScreenShareStarted();
-    },
+                rtcConn.send({
+                    type: "screenshare",
+                    screenid: screenRoomid,
+                    screenStreamid: screenStreamId,
+                    message: "startscreenshare"
+                });
+            }
 
-    scrConn.onstreamended = function(event) {
-        if(event)
-            webrtcdev.log("[screenshare JS] onstreamended -" , event);
+            //createScreenViewButton();
 
-        if(screenShareButton){
-            screenShareButton.className = screenshareobj.button.shareButton.class_off;
-            screenShareButton.innerHTML = screenshareobj.button.shareButton.html_off;
-        }
-        //removeScreenViewButton();
+            // Event Listner for Screen share stream started
+            onScreenShareStarted();
+        },
 
-        // event listener for Screen share stream ended 
-        onScreenShareSEnded();
-    },
-    
-    scrConn.onopen = function (event) {    
-        webrtcdev.log("[screensharejs] scrConn onopen - " , scrConn.connectionType);
-    },
+        scrConn.onstreamended = function (event) {
+            if (event)
+                webrtcdev.log("[screenshare JS] onstreamended -", event);
 
-    scrConn.onerror = function (err) {    
-        webrtcdev.error("[screensharejs] scrConn error - " , err);
-    },
+            if (screenShareButton) {
+                screenShareButton.className = screenshareobj.button.shareButton.class_off;
+                screenShareButton.innerHTML = screenshareobj.button.shareButton.html_off;
+            }
+            //removeScreenViewButton();
 
-    scrConn.onEntireSessionClosed = function(event){
-        webrtcdev.log("[screensharejs] scrConn onEntireSessionClosed - " , event);
-    },
+            // event listener for Screen share stream ended
+            onScreenShareSEnded();
+        },
 
-    scrConn.socketMessageEvent = 'scrRTCMultiConnection-Message',
-    scrConn.socketCustomEvent = 'scrRTCMultiConnection-Custom-Message';
+        scrConn.onopen = function (event) {
+            webrtcdev.log("[screensharejs] scrConn onopen - ", scrConn.connectionType);
+        },
 
-    if(turn && turn!='none'){
-        if(!webrtcdevIceServers) {
+        scrConn.onerror = function (err) {
+            webrtcdev.error("[screensharejs] scrConn error - ", err);
+        },
+
+        scrConn.onEntireSessionClosed = function (event) {
+            webrtcdev.log("[screensharejs] scrConn onEntireSessionClosed - ", event);
+        },
+
+        scrConn.socketMessageEvent = 'scrRTCMultiConnection-Message',
+        scrConn.socketCustomEvent = 'scrRTCMultiConnection-Custom-Message';
+
+    if (turn && turn != 'none') {
+        if (!webrtcdevIceServers) {
             webrtcdev.error("[screensharejs] ICE server not found yet in screenshare session");
             alert("ICE server not found yet in screenshare session ");
         }
-        scrConn.iceServers  = webrtcdevIceServers;      
-    } 
+        scrConn.iceServers = webrtcdevIceServers;
+    }
 
     return scrConn;
 }
@@ -14616,34 +16265,34 @@ function webrtcdevPrepareScreenShare(screenRoomid ){
  * @name webrtcdevSharescreen
  */
 function webrtcdevSharescreen(scrroomid) {
-    webrtcdev.log("[screenshareJS] webrtcdevSharescreen, preparing screenshare by initiating ScrConn , scrroomid - " , scrroomid);
+    webrtcdev.log("[screenshareJS] webrtcdevSharescreen, preparing screenshare by initiating ScrConn , scrroomid - ", scrroomid);
 
-    return new Promise((resolve, reject) => { 
+    return new Promise((resolve, reject) => {
         scrConn = webrtcdevPrepareScreenShare(scrroomid)
         resolve(scrroomid);
     })
-    .then(function(scrroomid){
-        if(socket){
-            webrtcdev.log("[screenshare JS] open-channel-screenshare on - ", socket.io.uri);
-            socket.emit("open-channel-screenshare", {
-                channel    : scrroomid,
-                sender     : selfuserid,
-                maxAllowed : 6
-            });
-            shownotification("Making a new session for screenshare" + scrroomid);
-        }else{
-            webrtcdev.error("[screenshare JS] parent socket doesnt exist ");
-        }
-
-        socket.on("open-channel-screenshare-resp",function(event) {
-            webrtcdev.log("[screenshare JS] open-channel-screenshare-response -" , event);
-             if (event.status && event.channel == scrroomid) {
-                scrConn.open(scrroomid, function() {   
-                     webrtcdev.log("[screenshare JS] webrtcdevSharescreen, opened up room for screen share ");
+        .then(function (scrroomid) {
+            if (socket) {
+                webrtcdev.log("[screenshare JS] open-channel-screenshare on - ", socket.io.uri);
+                socket.emit("open-channel-screenshare", {
+                    channel: scrroomid,
+                    sender: selfuserid,
+                    maxAllowed: 6
                 });
-             }
+                shownotification("Making a new session for screenshare" + scrroomid);
+            } else {
+                webrtcdev.error("[screenshare JS] parent socket doesnt exist ");
+            }
+
+            socket.on("open-channel-screenshare-resp", function (event) {
+                webrtcdev.log("[screenshare JS] open-channel-screenshare-response -", event);
+                if (event.status && event.channel == scrroomid) {
+                    scrConn.open(scrroomid, function () {
+                        webrtcdev.log("[screenshare JS] webrtcdevSharescreen, opened up room for screen share ");
+                    });
+                }
+            });
         });
-    });
 }
 
 /**
@@ -14655,262 +16304,86 @@ function webrtcdevSharescreen(scrroomid) {
  * @param {string} usercolor
  * @param {string} type
  */
-function connectScrWebRTC(type, scrroomid ){
-     webrtcdev.log("[screenshareJS] connectScrWebRTC, first preparing screenshare by initiating ScrConn , scrroomid - " , scrroomid);
+function connectScrWebRTC(type, scrroomid) {
+    webrtcdev.log("[screenshareJS] connectScrWebRTC, first preparing screenshare by initiating ScrConn , scrroomid - ", scrroomid);
 
-    return new Promise((resolve, reject) => { 
+    return new Promise((resolve, reject) => {
         webrtcdevPrepareScreenShare(scrroomid)
         resolve(scrroomid);
     })
-    .then(function(scrroomid){
-        webrtcdev.log("[screenshare JS] connectScrWebRTC -> " , type, scrroomid );
-        if(type=="join"){
-            scrConn.join(scrroomid);
-            shownotification("Connected with existing Screenshare channel "+ scrroomid);
-        }else{
-            shownotification("Connection type not found for Screenshare ");
-            webrtcdev.error("[screenshare JS] connectScrWebRTC - Connection type not found for Screenshare ");
-        }  
-    });
+        .then(function (scrroomid) {
+            webrtcdev.log("[screenshare JS] connectScrWebRTC -> ", type, scrroomid);
+            if (type == "join") {
+                scrConn.join(scrroomid);
+                shownotification("Connected with existing Screenshare channel " + scrroomid);
+            } else {
+                shownotification("Connection type not found for Screenshare ");
+                webrtcdev.error("[screenshare JS] connectScrWebRTC - Connection type not found for Screenshare ");
+            }
+        });
 }
 
 /**
- * view screen being shared 
+ * view screen being shared
  * @method
  * @name webrtcdevViewscreen
  * @param {string} roomid
  */
-function webrtcdevViewscreen(roomid){
+function webrtcdevViewscreen(roomid) {
     scrConn.join(roomid);
 }
 
 /**
- * function stop screen share session RTC peer connection 
+ * function stop screen share session RTC peer connection
  * @method
  * @name webrtcdevStopShareScreen
  */
-function webrtcdevStopShareScreen(){
-    try{
+function webrtcdevStopShareScreen() {
+    try {
 
         rtcConn.send({
-            type:"screenshare", 
-            message:"stoppedscreenshare"
+            type: "screenshare",
+            message: "stoppedscreenshare"
         });
 
         scrConn.closeEntireSession();
-        webrtcdev.log("[screenshare JS] Sender stopped: screenRoomid ", screenRoomid ,
-                      "| Screen stoppped "  , scrConn , 
-                      "| container " , getElementById(screenshareobj.screenshareContainer));
-        
-        if(screenShareStreamLocal){
+        webrtcdev.log("[screenshare JS] Sender stopped: screenRoomid ", screenRoomid,
+            "| Screen stoppped ", scrConn,
+            "| container ", getElementById(screenshareobj.screenshareContainer));
+
+        if (screenShareStreamLocal) {
             screenShareStreamLocal.stop();
-            screenShareStreamLocal=null;        
+            screenShareStreamLocal = null;
         }
 
         let stream1 = scrConn.streamEvents.selectFirst()
         stream1.stream.getTracks().forEach(track => track.stop());
 
         webrtcdevCleanShareScreen();
-    }catch(err){
+    } catch (err) {
         webrtcdev.error("[screensharejs] webrtcdevStopShareScreen - ", err);
     }
 }
 
 /**
- * function clear screen share session RTC peer connection 
+ * function clear screen share session RTC peer connection
  * @method
  * @name webrtcdevCleanShareScreen
  */
-function webrtcdevCleanShareScreen(streamid){
-    try{
+function webrtcdevCleanShareScreen(streamid) {
+    try {
         scrConn.onstreamended();
         scrConn.removeStream(streamid);
         scrConn.close();
         scrConn = null;
 
-        if(screenshareobj.screenshareContainer && getElementById(screenshareobj.screenshareContainer)){
-            getElementById(screenshareobj.screenshareContainer).innerHTML="";
+        if (screenshareobj.screenshareContainer && getElementById(screenshareobj.screenshareContainer)) {
+            getElementById(screenshareobj.screenshareContainer).innerHTML = "";
         }
 
-    }catch(err){
+    } catch (err) {
         webrtcdev.error("[screensharejs] webrtcdevStopShareScreen - ", err);
     }
-}
-
-/**
- * find if view button is provided or need to be created 
- * @method
- * @name createOrAssignScreenviewButton
- */
-function createOrAssignScreenviewButton(){
-    if(screenshareobj.button.viewButton.id && getElementById(screenshareobj.button.viewButton.id)) {
-        let button = getElementById(screenshareobj.button.viewButton.id);
-        assignScreenViewButton(button);
-    }else{
-        createScreenViewButton();
-    }
-}
-
-/**
- * create the view button for screnshare
- * @method
- * @name createScreenViewButton
- */
-function createScreenViewButton(){
-    if(getElementById("viewScreenShareButton"))
-        return;
-    var viewScreenShareButton= document.createElement("span");
-    viewScreenShareButton.className=screenshareobj.button.viewButton.class_off;
-    viewScreenShareButton.innerHTML=screenshareobj.button.viewButton.html_off;
-    viewScreenShareButton.id="viewScreenShareButton";
-    webrtcdevViewscreen(screenRoomid);
-    viewScreenShareButton.onclick = function() {
-        if(viewScreenShareButton.className==screenshareobj.button.viewButton.class_off){
-            getElementById(screenshareobj.screenshareContainer).hidden=false;
-            viewScreenShareButton.className=screenshareobj.button.viewButton.class_on;
-            viewScreenShareButton.innerHTML=screenshareobj.button.viewButton.html_on;
-        }else if(viewScreenShareButton.className==screenshareobj.button.viewButton.class_on){
-            getElementById(screenshareobj.screenshareContainer).hidden=true;
-            viewScreenShareButton.className=screenshareobj.button.viewButton.class_off;
-            viewScreenShareButton.innerHTML=screenshareobj.button.viewButton.html_off;
-        }
-    };
-
-    if(getElementById("topIconHolder_ul")){
-        let li =document.createElement("li");
-        li.appendChild(viewScreenShareButton);
-        getElementById("topIconHolder_ul").appendChild(li);
-    }
-}
-
-/**
- * assign the view button for screnshare with existing buttom dom
- * @method
- * @name assignScreenViewButton
- */
-function assignScreenViewButton(button){
-    /*    
-    if(getElementById(screenshareobj.button.viewButton.id))
-        return;*/
-    webrtcdevViewscreen(screenRoomid);
-    button.onclick = function() {
-        if(button.className==screenshareobj.button.viewButton.class_off){
-            getElementById(screenshareobj.screenshareContainer).hidden=false;
-            button.className=screenshareobj.button.viewButton.class_on;
-            button.innerHTML=screenshareobj.button.viewButton.html_on;
-        }else if(button.className==screenshareobj.button.viewButton.class_on){
-            getElementById(screenshareobj.screenshareContainer).hidden=true;
-            button.className=screenshareobj.button.viewButton.class_off;
-            button.innerHTML=screenshareobj.button.viewButton.html_off;
-        }
-    };
-}
-
-/**
- * if viewScreenShareButton button exists , remove it
- * @method
- * @name removeScreenViewButton
- */
-function removeScreenViewButton(){
-    if(getElementById("viewScreenShareButton")){
-        let elem = getElementById("viewScreenShareButton");
-        elem.parentElement.removeChild(elem);
-    }
-    return;
-}
-
-
-/**
- * If button id are present then assign sreen share button or creatr a new one
- * @method
- * @name createOrAssignScreenshareButton
- * @param {json} screenshareobject
- */
-function createOrAssignScreenshareButton(screenshareobj){
-    webrtcdev.log( "createOrAssignScreenshareButton " , screenshareobj);
-    if(screenshareobj.button.shareButton.id && getElementById(screenshareobj.button.shareButton.id)) {
-        assignScreenShareButton(screenshareobj.button.shareButton);
-        hideScreenInstallButton();
-        showScreenShareButton();
-    }    
-    else{
-        createScreenShareButton();
-    }
-}
-
-/**
- * create Screen share Button
- * @method
- * @name createScreenshareButton
- */
-function createScreenshareButton(){
-    screenShareButton= document.createElement("span");
-    screenShareButton.className = screenshareobj.button.shareButton.class_off;
-    screenShareButton.innerHTML = screenshareobj.button.shareButton.html_off;
-    screenShareButton.id="screenShareButton";
-    screenShareButton.onclick = function(event) {    
-        if(screenShareButton.className==screenshareobj.button.shareButton.class_off){
-            let time     = new Date().getUTCMilliseconds(); 
-            screenRoomid = "screenshare"+"_"+sessionid+"_"+time;
-            webrtcdevSharescreen(screenRoomid);
-            screenShareButton.className=screenshareobj.button.shareButton.class_on;
-            screenShareButton.innerHTML=screenshareobj.button.shareButton.html_on;
-        }else if(screenShareButton.className==screenshareobj.button.shareButton.class_on){
-            screenShareButton.className=screenshareobj.button.shareButton.class_off;
-            screenShareButton.innerHTML=screenshareobj.button.shareButton.html_off;
-            webrtcdevStopShareScreen();
-        }else{
-            webrtcdev.log( "[svreenshare js] createScreenshareButton ,classname neither on nor off" , creenShareButton.className);
-        }
-    };
-    let li =document.createElement("li");
-    li.appendChild(screenShareButton);
-    getElementById("topIconHolder_ul").appendChild(li);
-    return screenShareButton;
-}
-
-
-/**
- * If button id are present then assign sreen share button or creatr a new one
- * @method
- * @name assignScreenShareButton
- * @param {json} scrshareBtn
- */
-function assignScreenShareButton(scrshareBtn){
-    webrtcdev.log("assignScreenShareButton");
-    let button = getElementById(scrshareBtn.id);
-    
-    button.onclick = function(event) {
-        if(button.className == scrshareBtn.class_off){
-            let time     = new Date().getUTCMilliseconds(); 
-            screenRoomid = "screenshare"+"_"+sessionid+"_"+time;
-            // after posting message to obtain source Id from chrome extension wait for response 
-            webrtcdevSharescreen(screenRoomid);
-            button.className = scrshareBtn.class_on;
-            button.innerHTML = scrshareBtn.html_on;
-            //f(debug) getElementById(button.id+"buttonstatus").innerHTML("Off");
-        }else if(button.className == scrshareBtn.class_on){
-            button.className = scrshareBtn.class_off;
-            button.innerHTML = scrshareBtn.html_off;
-            webrtcdevStopShareScreen();
-            //if(debug) getElementById(button.id+"buttonstatus").innerHTML("On");
-        }else{
-            webrtcdev.warn("[svreenshare js] createScreenshareButton ,classname neither on nor off" , creenShareButton.className);
-        }
-    }
-    return button;
-}
-
-function hideScreenShareButton(){
-    let button=getElementById(screenshareobj.button.shareButton.id);
-    button.hidden=true;
-    button.setAttribute("style","display:none");
-}
-
-function showScreenShareButton(){
-    let button=getElementById(screenshareobj.button.shareButton.id);
-    button.removeAttribute("hidden");
-    button.setAttribute("style","display:block");
 }
 
 /*
@@ -14918,77 +16391,30 @@ function showScreenShareButton(){
  * @method
  * @name showScrConn
  */
-this.showScrConn = function(){
-    if(scrConn){
+this.showScrConn = function () {
+    if (scrConn) {
         webrtcdev.info(" =========================================================================");
-        webrtcdev.info(" srcConn : "  , scrConn);
-        webrtcdev.info(" srcConn.peers.getAllParticipants() : " , scrConn.peers.getAllParticipants());
+        webrtcdev.info(" srcConn : ", scrConn);
+        webrtcdev.info(" srcConn.peers.getAllParticipants() : ", scrConn.peers.getAllParticipants());
         webrtcdev.info(" =========================================================================");
-    }else{
+    } else {
         webrtcdev.debug(" Screen share is not active ");
     }
 }
 
 
 /**
- * Alert boxes for user if screen share isnt working 
+ * Alert boxes for user if screen share isnt working
  * @method
  * @name screenshareNotification
  */
-function resetAlertBox(){
-    getElementById("alertBox").hidden=false;
-    getElementById("alertBox").innerHTML="";
-}
-
-var counterBeforeFailureNotice=0;
-function screenshareNotification(message , type){
-
-    if(getElementById("alertBox")){
-        
-        getElementById("alertBox").innerHTML="";
-
-        if(type=="screenshareBegin"){
-
-            var alertDiv =document.createElement("div");
-            resetAlertBox();
-            alertDiv.className="alert alert-info";
-            alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ "You have begun sharing screen , waiting for peer to view";
-            getElementById("alertBox").appendChild(alertDiv);
-
-            setTimeout(function() {
-                var alertDiv = document.createElement("div");
-                resetAlertBox();
-                alertDiv.className="alert alert-danger";
-                alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ "Peer was not able to view screen , please retry";
-                getElementById("alertBox").appendChild(alertDiv);
-            }, 20000);
-
-        }else if(type=="screenshareStartedViewing"){
-                
-            var alertDiv =document.createElement("div");
-            resetAlertBox();
-            alertDiv.className="alert alert-success";
-            alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ "Peer has started viewing screen ";        
-            getElementById("alertBox").appendChild(alertDiv);
-
-        }else if(type=="screenshareError"){
-
-            var alertDiv = document.createElement("div");
-            resetAlertBox();
-            alertDiv.className="alert alert-danger";
-            alertDiv.innerHTML='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+ "There was a error while sharing screen , please contact support ";
-            getElementById("alertBox").appendChild(alertDiv);
-
-        }else{
-            // Handle these msgs too : TBD
-        }
-
-    }else{
-        alert(message);
-    }
+function resetAlertBox() {
+    getElementById("alertBox").hidden = false;
+    getElementById("alertBox").innerHTML = "";
 }
 /*-----------------------------------------------------------------------------------*/
 /*                        webrtc checks JS                                           */
+
 /*-----------------------------------------------------------------------------------*/
 
 /**
@@ -14997,50 +16423,50 @@ function screenshareNotification(message , type){
  * @name checkDevices
  * @param {object} connection
  */
-function checkDevices(obj){
+function checkDevices(obj) {
     webrtcdev.info(" =============================== check Devices ==========================================");
-    if(obj.hasMicrophone) {
+    if (obj.hasMicrophone) {
         // seems current system has at least one audio input device
         webrtcdev.info("has Microphone");
-    }else{
+    } else {
         webrtcdev.error("doesnt have  hasMicrophone");
     }
 
-    if(obj.hasSpeakers) {
+    if (obj.hasSpeakers) {
         webrtcdev.info("has Speakers");
         // seems current system has at least one audio output device
-    }else{
+    } else {
         webrtcdev.error("doesnt have  Speakers");
     }
 
-    if(obj.hasWebcam) {
+    if (obj.hasWebcam) {
         webrtcdev.info("has Webcam");
         // seems current system has at least one video input device
-    }else{
+    } else {
         webrtcdev.error("doesnt have Webcam");
     }
 
-    webrtcdev.log(" Audio Input Device " );
-    for( x in obj.audioInputDevices) webrtcdev.info(obj.audioInputDevices[x]);
+    webrtcdev.log(" Audio Input Device ");
+    for (x in obj.audioInputDevices) webrtcdev.info(obj.audioInputDevices[x]);
 
-    webrtcdev.log(" Audio Output Device " );
-    for( x in obj.audioOutputDevices) webrtcdev.info(obj.audioOutputDevices[x]);        
+    webrtcdev.log(" Audio Output Device ");
+    for (x in obj.audioOutputDevices) webrtcdev.info(obj.audioOutputDevices[x]);
 
-    webrtcdev.log(" Video Input Device " );
-    for( x in obj.videoInputDevices) webrtcdev.info(obj.videoInputDevices[x]);  
+    webrtcdev.log(" Video Input Device ");
+    for (x in obj.videoInputDevices) webrtcdev.info(obj.videoInputDevices[x]);
 
-    webrtcdev.info(" Screen Device " + obj.displayResolution); 
+    webrtcdev.info(" Screen Device " + obj.displayResolution);
 
     webrtcdev.info(" =========================================================================");
 
-     // Update Stats if active
-    if(statisticsobj && statisticsobj.active){
+    // Update Stats if active
+    if (statisticsobj && statisticsobj.active) {
         // getStats(event.stream.getVideoTracks() , function(result) {
         //     document.getElementById("network-stats-body").innerHTML = result;        
         // } , 20000);
-        document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(obj); 
+        document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(obj);
         document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(obj.bandwidth);
-        document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(obj.codecs); 
+        document.getElementById(statisticsobj.statsConainer).innerHTML += JSON.stringify(obj.codecs);
 
         alert("detect RTC appended ");
     }
@@ -15052,29 +16478,29 @@ function checkDevices(obj){
  * @name checkWebRTCSupport
  * @param {object} connection
  */
-function checkWebRTCSupport(obj){
+function checkWebRTCSupport(obj) {
 
-    webrtcdev.info(" Browser " , obj.browser.name + obj.browser.fullVersion );
+    webrtcdev.info(" Browser ", obj.browser.name + obj.browser.fullVersion);
 
-    if(obj.isWebRTCSupported) {
-    // seems WebRTC compatible client
-    }else{
+    if (obj.isWebRTCSupported) {
+        // seems WebRTC compatible client
+    } else {
 
     }
 
-    if(obj.isAudioContextSupported) {
+    if (obj.isAudioContextSupported) {
         // seems Web-Audio compatible client
     }
 
-    if(obj.isScreenCapturingSupported) {
+    if (obj.isScreenCapturingSupported) {
         // seems WebRTC screen capturing feature is supported on this client
     }
 
-    if(obj.isSctpDataChannelsSupported) {
+    if (obj.isSctpDataChannelsSupported) {
         // seems WebRTC SCTP data channels feature are supported on this client
     }
 
-    if(obj.isRtpDataChannelsSupported) {
+    if (obj.isRtpDataChannelsSupported) {
         // seems WebRTC (old-fashioned) RTP data channels feature are supported on this client
     }
 
@@ -21751,22 +23177,21 @@ function syncSnapshot(datasnapshot , datatype , dataname ){
 /*-----------------------------------------------------------------------------------*/
 
 if (navigator.geolocation) {
-    /*webrtcdev.log(navigator);*/
-    operatingsystem= navigator.platform;
+    operatingsystem = navigator.platform;
     navigator.geolocation.getCurrentPosition(showPosition, showError);
 } else {
     x.innerHTML = "Geolocation is not supported by this browser.";
 }
 
 /**
- * shows position from lat and long 
+ * shows position from lat and long
  * @method
  * @name showPosition
  * @param {object} position
  */
 function showPosition(position) {
     webrtcdev.log("Latitude: " + position.coords.latitude +
-    "<br>Longitude: " + position.coords.longitude);
+        "<br>Longitude: " + position.coords.longitude);
     latitude = position.coords.latitude;
     longitude = position.coords.longitude;
     /*return position;*/
@@ -21779,7 +23204,7 @@ function showPosition(position) {
  * @param {object} error
  */
 function showError(error) {
-    switch(error.code) {
+    switch (error.code) {
         case error.PERMISSION_DENIED:
             shownotification("User denied the request for Geolocation.")
             break;
@@ -21806,23 +23231,23 @@ function showError(error) {
  * @name createChatButton
  * @param {json} chat widget object
  */
-function createChatButton(obj){
-    var button= document.createElement("span");
-    button.className= chatobj.button.class_on;
-    button.innerHTML= chatobj.button.html_on;
-    button.onclick = function() {
-        if(button.className==chatobj.button.class_off){
-            document.getElementById(chatobj.container.id).hidden=true;
-            button.className=chatobj.button.class_on;
-            button.innerHTML= chatobj.button.html_on;
-        }else if(button.className==chatobj.button.class_on){
-            document.getElementById(chatobj.container.id).hidden=false;
-            button.className=chatobj.button.class_off;
-            button.innerHTML= chatobj.button.html_off;
+function createChatButton(obj) {
+    var button = document.createElement("span");
+    button.className = chatobj.button.class_on;
+    button.innerHTML = chatobj.button.html_on;
+    button.onclick = function () {
+        if (button.className == chatobj.button.class_off) {
+            document.getElementById(chatobj.container.id).hidden = true;
+            button.className = chatobj.button.class_on;
+            button.innerHTML = chatobj.button.html_on;
+        } else if (button.className == chatobj.button.class_on) {
+            document.getElementById(chatobj.container.id).hidden = false;
+            button.className = chatobj.button.class_off;
+            button.innerHTML = chatobj.button.html_off;
         }
     };
 
-    var li =document.createElement("li");
+    var li = document.createElement("li");
     li.appendChild(button);
     document.getElementById("topIconHolder_ul").appendChild(li);
 }
@@ -21849,43 +23274,43 @@ function createChatButton(obj){
  * @name createChatBox
  * @param {json} chat widget object
  */
-function createChatBox(obj){
+function createChatBox(obj) {
 
-    var mainInputBox=document.createElement("div");
+    var mainInputBox = document.createElement("div");
 
-    var chatInput= document.createElement("input");
+    var chatInput = document.createElement("input");
     chatInput.setAttribute("type", "text");
-    chatInput.className= "form-control chatInputClass";
-    chatInput.id="chatInput";
-    chatInput.onkeypress=function(e){
+    chatInput.className = "form-control chatInputClass";
+    chatInput.id = "chatInput";
+    chatInput.onkeypress = function (e) {
         if (e.keyCode == 13) {
             sendChatMessage(chatInput.value);
             chatInput.value = "";
         }
     };
 
-    var chatButton= document.createElement("span");
-    chatButton.className= "btn btn-primary";
-    chatButton.innerHTML= "Enter";
-    chatButton.onclick=function(){
-        var chatInput=document.getElementById("chatInput");
+    var chatButton = document.createElement("span");
+    chatButton.className = "btn btn-primary";
+    chatButton.innerHTML = "Enter";
+    chatButton.onclick = function () {
+        var chatInput = document.getElementById("chatInput");
         sendChatMessage(chatInput.value);
         chatInput.value = "";
     }
-    
-    var whoTyping= document.createElement("div");
-    whoTyping.className= "whoTypingClass";
-    whoTyping.id="whoTyping";
+
+    var whoTyping = document.createElement("div");
+    whoTyping.className = "whoTypingClass";
+    whoTyping.id = "whoTyping";
 
     mainInputBox.appendChild(chatInput);
     mainInputBox.appendChild(chatButton);
     mainInputBox.appendChild(whoTyping);
     document.getElementById(chatobj.container.id).appendChild(mainInputBox);
 
-    var chatBoard=document.createElement("div");
-    chatBoard.className="chatMessagesClass";
-    chatBoard.setAttribute("contenteditable",true);
-    chatBoard.id=chatobj.chatBox.id;
+    var chatBoard = document.createElement("div");
+    chatBoard.className = "chatMessagesClass";
+    chatBoard.setAttribute("contenteditable", true);
+    chatBoard.id = chatobj.chatBox.id;
     document.getElementById(chatobj.container.id).appendChild(chatBoard);
 }
 
@@ -21896,37 +23321,37 @@ function createChatBox(obj){
  * @name assignChatBox
  * @param {json} chat widget object
  */
-function assignChatBox(obj){
+function assignChatBox(obj) {
 
     var chatInput = document.getElementById(chatobj.inputBox.text_id);
-    chatInput.onkeypress=function(e){
+    chatInput.onkeypress = function (e) {
         if (e.keyCode == 13) {
-            var peerinfo = findPeerInfo( selfuserid );
-            webrtcdev.log(" chat " , selfuserid , peerinfo);
-            sendChatMessage(chatInput.value , peerinfo);
+            var peerinfo = findPeerInfo(selfuserid);
+            webrtcdev.log(" chat ", selfuserid, peerinfo);
+            sendChatMessage(chatInput.value, peerinfo);
             chatInput.value = "";
         }
     };
 
-    if(document.getElementById(chatobj.inputBox.sendbutton_id)){
-        var chatButton= document.getElementById(chatobj.inputBox.sendbutton_id);
-        chatButton.onclick=function(e){
+    if (document.getElementById(chatobj.inputBox.sendbutton_id)) {
+        var chatButton = document.getElementById(chatobj.inputBox.sendbutton_id);
+        chatButton.onclick = function (e) {
 
-            var peerinfo = findPeerInfo( selfuserid );
-            var chatInput=document.getElementById(chatobj.inputBox.text_id);
-            sendChatMessage(chatInput.value , peerinfo);
+            var peerinfo = findPeerInfo(selfuserid);
+            var chatInput = document.getElementById(chatobj.inputBox.text_id);
+            sendChatMessage(chatInput.value, peerinfo);
             chatInput.value = "";
-        }  
+        }
     }
 
-    if(document.getElementById(chatobj.inputBox.minbutton_id)){
-        var button= document.getElementById(chatobj.inputBox.minbutton_id);
-        button.onclick=function(e){
-            if(document.getElementById(chatobj.container.id).hidden)
-                document.getElementById(chatobj.container.id).hidden=false;
+    if (document.getElementById(chatobj.inputBox.minbutton_id)) {
+        var button = document.getElementById(chatobj.inputBox.minbutton_id);
+        button.onclick = function (e) {
+            if (document.getElementById(chatobj.container.id).hidden)
+                document.getElementById(chatobj.container.id).hidden = false;
             else
-                document.getElementById(chatobj.container.id).hidden=true;
-        }  
+                document.getElementById(chatobj.container.id).hidden = true;
+        }
     }
 }
 
@@ -21937,7 +23362,7 @@ function assignChatBox(obj){
  * @name updateWhotyping
  * @param {string} data
  */
-function updateWhotyping(data){
+function updateWhotyping(data) {
     document.getElementById("whoTyping").innerHTML = data;
 }
 
@@ -21949,7 +23374,7 @@ function updateWhotyping(data){
  * @param {string} msg
  * @param {json} peerinfo
  */
-function sendChatMessage(msg,  peerinfo){
+function sendChatMessage(msg, peerinfo) {
     /*var userinfo;*/
     /*try{
         userinfo = getUserinfo(rtcConn.blobURLs[rtcConn.userid], "chat-message.png");
@@ -21964,9 +23389,9 @@ function sendChatMessage(msg,  peerinfo){
     });
 
     rtcConn.send({
-        type:"chat", 
+        type: "chat",
         userinfo: peerinfo,
-        message: msg 
+        message: msg
     });
 }
 
@@ -21977,8 +23402,8 @@ function sendChatMessage(msg,  peerinfo){
  * @param {string} text
  */
 function replaceURLWithHTMLLinks(text) {
-  var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-  return text.replace(exp,"<a href='$1'>$1</a>"); 
+    var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    return text.replace(exp, "<a href='$1'>$1</a>");
 }
 
 /* 
@@ -21989,7 +23414,7 @@ function replaceURLWithHTMLLinks(text) {
  */
 function addNewMessagelocal(e) {
     if ("" != e.message && " " != e.message) {
-        addMessageSnapshotFormat("user-activity user-activity-right localMessageClass" , e.userinfo , e.message , chatobj.chatBox.id);
+        addMessageSnapshotFormat("user-activity user-activity-right localMessageClass", e.userinfo, e.message, chatobj.chatBox.id);
     }
 }
 
@@ -22001,7 +23426,7 @@ function addNewMessagelocal(e) {
  */
 function addNewMessage(e) {
     if ("" != e.message && " " != e.message) {
-        addMessageSnapshotFormat("user-activity user-activity-right remoteMessageClass" , e.userinfo , e.message , chatobj.chatBox.id);
+        addMessageSnapshotFormat("user-activity user-activity-right remoteMessageClass", e.userinfo, e.message, chatobj.chatBox.id);
     }
 }
 
@@ -22014,24 +23439,24 @@ function addNewMessage(e) {
  * @param {string} message
  * @param {dom} parent
  */
-function addMessageSnapshotFormat(messageDivclass, userinfo , message , parent){
+function addMessageSnapshotFormat(messageDivclass, userinfo, message, parent) {
     var n = document.createElement("div");
-    n.className = messageDivclass; 
-    webrtcdev.log("addNewMessagelocal" , userinfo);
+    n.className = messageDivclass;
+    webrtcdev.log("addNewMessagelocal", userinfo);
 
-    takeSnapshot(userinfo, function(datasnapshot) {    
-        var image= document.createElement("img");
-        image.src= datasnapshot;
-        image.style.height="40px";
+    takeSnapshot(userinfo, function (datasnapshot) {
+        var image = document.createElement("img");
+        image.src = datasnapshot;
+        image.style.height = "40px";
 
         var t = document.createElement("span");
-        t.innerHTML =  replaceURLWithHTMLLinks(message);
+        t.innerHTML = replaceURLWithHTMLLinks(message);
 
-        n.appendChild(image) ;
+        n.appendChild(image);
         n.appendChild(t);
         //n.innerHTML = image +" : "+ replaceURLWithHTMLLinks(message);
         // displayFile(peerinfo.uuid , peerinfo, datasnapshot , snapshotname, "imagesnapshot");
-    });       
+    });
 
     document.getElementById(parent).insertBefore(n, document.getElementById(parent).firstChild);
 }
@@ -22045,15 +23470,15 @@ function addMessageSnapshotFormat(messageDivclass, userinfo , message , parent){
  * @param {string} message
  * @param {dom} parent
  */
-function addMessageLineformat(messageDivclass, messageheader , message , parent){
+function addMessageLineformat(messageDivclass, messageheader, message, parent) {
     var n = document.createElement("div");
-    n.className = messageDivclass; 
-    if(messageheader){
-        n.innerHTML = messageheader +" : "+ replaceURLWithHTMLLinks(message);
-    }else{
+    n.className = messageDivclass;
+    if (messageheader) {
+        n.innerHTML = messageheader + " : " + replaceURLWithHTMLLinks(message);
+    } else {
         n.innerHTML = replaceURLWithHTMLLinks(message);
     }
-    
+
     document.getElementById(parent).insertBefore(n, document.getElementById(parent).firstChild);
 }
 
@@ -22067,18 +23492,18 @@ function addMessageLineformat(messageDivclass, messageheader , message , parent)
  * @param {string} message
  * @param {dom} parent
  */
-function addMessageBlockFormat(messageheaderDivclass , messageheader ,messageDivclass, message , parent){
-    
+function addMessageBlockFormat(messageheaderDivclass, messageheader, messageDivclass, message, parent) {
+
     var t = document.createElement("div");
-    t.className = messageheaderDivclass, 
-    t.innerHTML = '<div class="chatusername">' + messageheader + "</div>";
+    t.className = messageheaderDivclass,
+        t.innerHTML = '<div class="chatusername">' + messageheader + "</div>";
 
     var n = document.createElement("div");
     n.className = messageDivclass,
-    n.innerHTML= message,
+        n.innerHTML = message,
 
-    t.appendChild(n),  
-    $("#"+parent).append(n);
+        t.appendChild(n),
+        $("#" + parent).append(n);
     /* $("#all-messages").scrollTop($("#all-messages")[0].scrollHeight) */
 }
 
@@ -22094,9 +23519,9 @@ function addMessageBlockFormat(messageheaderDivclass , messageheader ,messageDiv
 });*/
 
 //$('#chatbox').height($( "#leftVideo" ).height());
-$('#chatbox').css('max-height', $( "#leftVideo" ).height()+ 80);
-$('#chatBoard').css('max-height', $( "#leftVideo" ).height());
-$("#chatBoard").css("overflow-y" , "scroll");
+$('#chatbox').css('max-height', $("#leftVideo").height() + 80);
+$('#chatBoard').css('max-height', $("#leftVideo").height());
+$("#chatBoard").css("overflow-y", "scroll");
 
 /*-----------------------------------------------------------------------------------*/
 /**********************************
@@ -22215,7 +23640,7 @@ function reattachMediaStream(to, from) {
 /*-----------------------------------------------------------------------------------*/
 
 /**
- * Create Record Button to call start and stop recoriding functions 
+ * Create Record Button to call start and stop recoriding functions
  * @method
  * @name createRecordButton
  * @param {string} controlBarName
@@ -22223,26 +23648,26 @@ function reattachMediaStream(to, from) {
  * @param {string} streamid
  * @param {blob} stream
  */
-function createRecordButton(controlBarName, peerinfo, streamid, stream){
-    var recordButton=document.createElement("div");
-    recordButton.id=controlBarName+"recordButton";
+function createRecordButton(controlBarName, peerinfo, streamid, stream) {
+    var recordButton = document.createElement("div");
+    recordButton.id = controlBarName + "recordButton";
     recordButton.setAttribute("title", "Record");
     // recordButton.setAttribute("data-placement", "bottom");
     // recordButton.setAttribute("data-toggle", "tooltip");
     // recordButton.setAttribute("data-container", "body");
-    recordButton.className=videoRecordobj.button.class_off;
-    recordButton.innerHTML=videoRecordobj.button.html_off;
-    recordButton.onclick = function(e) {
-        if(recordButton.className==videoRecordobj.button.class_on){
-            recordButton.className=videoRecordobj.button.class_off;
-            recordButton.innerHTML=videoRecordobj.button.html_off;
+    recordButton.className = videoRecordobj.button.class_off;
+    recordButton.innerHTML = videoRecordobj.button.html_off;
+    recordButton.onclick = function (e) {
+        if (recordButton.className == videoRecordobj.button.class_on) {
+            recordButton.className = videoRecordobj.button.class_off;
+            recordButton.innerHTML = videoRecordobj.button.html_off;
             stopRecord(peerinfo, streamid, stream);
-        }else if(recordButton.className==videoRecordobj.button.class_off){
-            recordButton.className=videoRecordobj.button.class_on;
-            recordButton.innerHTML=videoRecordobj.button.html_on;
+        } else if (recordButton.className == videoRecordobj.button.class_off) {
+            recordButton.className = videoRecordobj.button.class_on;
+            recordButton.innerHTML = videoRecordobj.button.html_on;
             startRecord(peerinfo, streamid, stream);
         }
-    };  
+    };
 
     return recordButton;
 }
@@ -22259,9 +23684,9 @@ var listOfRecorders = {};
  * @param {string} streamid
  * @param {blob} stream
  */
-function startRecord(peerinfo , streamid, stream){
+function startRecord(peerinfo, streamid, stream) {
     var recorder = RecordRTC(stream, {
-        type: 'video'  , 
+        type: 'video',
         recorderType: MediaStreamRecorder,
     });
     recorder.startRecording();
@@ -22276,18 +23701,18 @@ function startRecord(peerinfo , streamid, stream){
  * @param {string} streamid
  * @param {blob} stream
  */
-function stopRecord(peerinfo , streamid , stream){
+function stopRecord(peerinfo, streamid, stream) {
     /*var streamid = prompt('Enter stream-id');*/
 
-    if(!listOfRecorders[streamid]) {
+    if (!listOfRecorders[streamid]) {
         /*throw 'Wrong stream-id';*/
         webrtcdev.log("wrong stream id ");
     }
     var recorder = listOfRecorders[streamid];
-    recorder.stopRecording(function() {
+    recorder.stopRecording(function () {
         var blob = recorder.getBlob();
-        if(!peerinfo){
-            if(selfuserid)
+        if (!peerinfo) {
+            if (selfuserid)
                 peerinfo = findPeerInfo(selfuserid);
             else
                 peerinfo = findPeerInfo(rtcConn.userid);
@@ -22299,51 +23724,51 @@ function stopRecord(peerinfo , streamid , stream){
         var formData = new FormData();
         formData.append('file', blob);
         $.post('/server-address', formData, serverCallback);*/
-    
-        var recordVideoname = "recordedvideo"+ new Date().getTime();
-        peerinfo.filearray.push(recordVideoname);
-        var numFile= document.createElement("div");
-        numFile.value= peerinfo.filearray.length;
-        var fileurl=URL.createObjectURL(blob);
 
-        displayList(peerinfo.uuid , peerinfo  ,fileurl , recordVideoname , "videoRecording");
-        displayFile(peerinfo.uuid , peerinfo , fileurl , recordVideoname , "videoRecording");
+        var recordVideoname = "recordedvideo" + new Date().getTime();
+        peerinfo.filearray.push(recordVideoname);
+        var numFile = document.createElement("div");
+        numFile.value = peerinfo.filearray.length;
+        var fileurl = URL.createObjectURL(blob);
+
+        displayList(peerinfo.uuid, peerinfo, fileurl, recordVideoname, "videoRecording");
+        displayFile(peerinfo.uuid, peerinfo, fileurl, recordVideoname, "videoRecording");
     });
 }
 
 /**
- * stopping session Record 
+ * stopping session Record
  * @method
  * @name stopSessionRecord
  * @param {json} peerinfo
  * @param {string} scrrecordStreamid
  * @param {blob} scrrecordStream
-  * @param {string} scrrecordAudioStreamid
+ * @param {string} scrrecordAudioStreamid
  * @param {blob} scrrecordAudioStream
  */
-function stopSessionRecord(peerinfo , scrrecordStreamid, scrrecordStream , scrrecordAudioStreamid, scrrecordAudioStream){
+function stopSessionRecord(peerinfo, scrrecordStreamid, scrrecordStream, scrrecordAudioStreamid, scrrecordAudioStream) {
     /*var streamid = prompt('Enter stream-id');*/
 
-    if(!listOfRecorders[scrrecordStreamid]) {
+    if (!listOfRecorders[scrrecordStreamid]) {
         /*throw 'Wrong stream-id';*/
         webrtcdev.log("wrong stream id scrrecordStreamid");
     }
 
-    if(!listOfRecorders[scrrecordAudioStreamid]) {
+    if (!listOfRecorders[scrrecordAudioStreamid]) {
         /*throw 'Wrong stream-id';*/
         webrtcdev.log("wrong stream id scrrecordAudioStreamid");
     }
 
     var recorder = listOfRecorders[scrrecordStreamid];
-    recorder.stopRecording(function() {
+    recorder.stopRecording(function () {
         var blob = recorder.getBlob();
-        webrtcdev.log(" scrrecordStreamid stopped recoridng blob is " , blob);
+        webrtcdev.log(" scrrecordStreamid stopped recoridng blob is ", blob);
     });
 
     var recorder2 = listOfRecorders[scrrecordAudioStreamid];
-    recorder2.stopRecording(function() {
+    recorder2.stopRecording(function () {
         var blob = recorder2.getBlob();
-        webrtcdev.log(" scrrecordStreamid stopped recoridng blob is " , blob);
+        webrtcdev.log(" scrrecordStreamid stopped recoridng blob is ", blob);
     });
 
 }
@@ -22377,12 +23802,11 @@ function stopRecord(){
 }*/
 
 /*-----------------------------------------------------------------------------------*/
-
 /************************************************************************
-Canvas Record 
-*************************************************************************/
-var scrrecordStream = null , scrrecordStreamid = null;
-var mediaRecorder = null , chunks = [];
+ Canvas Record
+ *************************************************************************/
+var scrrecordStream = null, scrrecordStreamid = null;
+var mediaRecorder = null, chunks = [];
 // var scrrecordAudioStream = null , scrrecordAudioStreamid = null;
 
 // function syncVideoScreenRecording(data , datatype , dataname ){
@@ -22390,7 +23814,6 @@ var mediaRecorder = null , chunks = [];
 // }
 
 // function autorecordScreenVideo(){
-
 // }
 
 
@@ -22399,32 +23822,32 @@ var mediaRecorder = null , chunks = [];
  * @method
  * @name assignScreenRecordButton
  */
-function assignScreenRecordButton(){
+function assignScreenRecordButton() {
 
     var recordButton = document.getElementById(screenrecordobj.button.id);
 
-    recordButton.onclick = function() {
-        if(recordButton.className==screenrecordobj.button.class_on){
+    recordButton.onclick = function () {
+        if (recordButton.className == screenrecordobj.button.class_on) {
 
-            recordButton.className= screenrecordobj.button.class_off ;
-            recordButton.innerHTML= screenrecordobj.button.html_off;
+            recordButton.className = screenrecordobj.button.class_off;
+            recordButton.innerHTML = screenrecordobj.button.html_off;
             //recordButton.disabled=true;
             webrtcdevRecordScreen();
 
-        }else if(recordButton.className==screenrecordobj.button.class_off){
+        } else if (recordButton.className == screenrecordobj.button.class_off) {
 
             var peerinfo;
-            if(selfuserid)
+            if (selfuserid)
                 peerinfo = findPeerInfo(selfuserid);
             else
                 peerinfo = findPeerInfo(rtcConn.userid);
 
-            recordButton.className= screenrecordobj.button.class_on ;
-            recordButton.innerHTML= screenrecordobj.button.html_on;
+            recordButton.className = screenrecordobj.button.class_on;
+            recordButton.innerHTML = screenrecordobj.button.html_on;
             webrtcdevStopRecordScreen();
 
             // stopRecord(peerinfo , scrrecordStreamid, scrrecordStream , scrrecordAudioStreamid, scrrecordAudioStream);
-            
+
             // var scrrecordStreamBlob;
             // var scrrecordAudioStreamBlob;
 
@@ -22443,7 +23866,7 @@ function assignScreenRecordButton(){
             //     webrtcdev.log(" ===blobs====", scrrecordStreamBlob , scrrecordAudioStreamBlob); 
             //     mergeStreams(scrrecordStreamBlob , scrrecordAudioStreamBlob);
             //     //convertStreams(scrrecordStreamBlob , scrrecordAudioStreamBlob);
-                
+
             //     scrrecordStreamid = null;
             //     scrrecordStream = null ;
 
@@ -22634,10 +24057,9 @@ function assignScreenRecordButton(){
 }*/
 
 
-
 // function webrtcdevScreenRecordConstraints(chromeMediaSourceId){
 //     webrtcdev.log(" webrtcdevScreenRecordConstraints :" + chromeMediaSourceId);
-    
+
 //     // navigator.getUserMedia(
 //     //     {
 //     //         audio: true,
@@ -22736,7 +24158,7 @@ function assignScreenRecordButton(){
 
 async function webrtcdevRecordScreen() {
     webrtcdev.log("[screenrecord js] webrtcdevRecordScreen");
-   
+
     // if (navigator.getDisplayMedia) {
     //   return navigator.getDisplayMedia({video: true});
     // } else if (navigator.mediaDevices.getDisplayMedia) {
@@ -22744,7 +24166,7 @@ async function webrtcdevRecordScreen() {
     // } else {
     //   return navigator.mediaDevices.getUserMedia({video: {mediaSource: 'screen'}});
     // }
-    try{
+    try {
 
         // uses await to asynchronously wait for getDisplayMedia() to resolve with a MediaStream
         scrrecordStream = await navigator.mediaDevices.getDisplayMedia({
@@ -22759,8 +24181,8 @@ async function webrtcdevRecordScreen() {
             }
         });
         webrtcdev.log('[screenrecord js] stream', scrrecordStream);
-    }catch(err){
-        webrtcdev.error("[screenrecord js] Error in webrtcdevRecordScreen " , err);
+    } catch (err) {
+        webrtcdev.error("[screenrecord js] Error in webrtcdevRecordScreen ", err);
         // List of errors 
         //AbortError-  doesn't match any of the other exceptions below occurred.
         // InvalidStateError - document in whose context getDisplayMedia() was called is not fully active; for example, perhaps it is not the frontmost tab.
@@ -22769,14 +24191,15 @@ async function webrtcdevRecordScreen() {
         // NotReadableError - The user selected a screen, window, tab, or other source of screen data, but a hardware or operating system level error or lockout occurred, prevenging the sharing of the selected source.
         // OverconstrainedError - After creating the stream, applying the specified constraints fails because no compatible stream could be generated.
         // TypeError - The specified constraints include constraints which are not permitted when calling getDisplayMedia(). These unsupported constraints are advanced and any constraints which in turn have a member named min or exact.    
-    };
+    }
+    ;
 
     scrrecordStream.addEventListener('inactive', e => {
         webrtcdev.log('Capture stream inactive - stop recording!');
         webrtcdevStopRecordScreen(e);
     });
 
-    try{
+    try {
         mediaRecorder = new MediaRecorder(scrrecordStream, {mimeType: 'video/webm'});
         mediaRecorder.addEventListener('dataavailable', event => {
             if (event.data && event.data.size > 0) {
@@ -22785,14 +24208,14 @@ async function webrtcdevRecordScreen() {
         });
         mediaRecorder.start(10);
         webrtcdev.log('[screenrecord js] mediaRecorder', mediaRecorder);
-    }catch(err){
-        webrtcdev.error("[screenrecord js] Error in mediaRecorder " , err);
+    } catch (err) {
+        webrtcdev.error("[screenrecord js] Error in mediaRecorder ", err);
     }
 }
 
-function webrtcdevStopRecordScreen(event){
+function webrtcdevStopRecordScreen(event) {
 
-    webrtcdev.log("webrtcdevStopRecordScreen" , event);
+    webrtcdev.log("webrtcdevStopRecordScreen", event);
     // window.postMessage("webrtcdev-extension-stopsource-screenrecord", "*");
     mediaRecorder.stop();
     mediaRecorder = null;
@@ -22827,7 +24250,7 @@ function webrtcdevStopRecordScreen(event){
  * @param {json} peerinfo
  * @param {string} scrrecordStreamid
  * @param {blob} scrrecordStream
-  * @param {string} scrrecordAudioStreamid
+ * @param {string} scrrecordAudioStreamid
  * @param {blob} scrrecordAudioStream
  */
 // function mergeStreams(videoBlob, audioBlob) {
@@ -22956,14 +24379,14 @@ function webrtcdevStopRecordScreen(event){
 // }
 
 function PostBlob(resource) {
-   
+
     //var video = document.createElement('video');
     //video.controls = true;
     var fileurl = null;
-    if( resource instanceof Blob){
+    if (resource instanceof Blob) {
         fileurl = URL.createObjectURL(blob);
         //source.type = 'video/mp4; codecs=mpeg4';
-    }else{
+    } else {
         fileurl = resource;
     }
     //video.appendChild(source);
@@ -22980,18 +24403,18 @@ function PostBlob(resource) {
     // video.play();
 
     var peerinfo;
-    if(selfuserid){
+    if (selfuserid) {
         peerinfo = findPeerInfo(selfuserid);
-    }else{
+    } else {
         peerinfo = findPeerInfo(rtcConn.userid);
     }
-    var recordVideoname = "recordedvideo"+ new Date().getTime();
+    var recordVideoname = "recordedvideo" + new Date().getTime();
     peerinfo.filearray.push(recordVideoname);
     var numFile = document.createElement("div");
     numFile.value = peerinfo.filearray.length;
 
-    displayList(peerinfo.uuid , peerinfo  ,fileurl , recordVideoname , "videoScreenRecording");
-    displayFile(peerinfo.uuid , peerinfo , fileurl , recordVideoname , "videoScreenRecording");
+    displayList(peerinfo.uuid, peerinfo, fileurl, recordVideoname, "videoScreenRecording");
+    displayFile(peerinfo.uuid, peerinfo, fileurl, recordVideoname, "videoScreenRecording");
 }
 /*-----------------------------------------------------------------------------------*/
 /*                    File JS                                                   */
@@ -23334,21 +24757,21 @@ function assignButtonRedial(id){
 /*-----------------------------------------------------------------------------------*/
 
 /**
- * creates a listen in link for the sessionid 
+ * creates a listen in link for the sessionid
  * @method
  * @name getlisteninlink
  * @return {string}listeninlink
  */
-this.getlisteninlink = function(){
-	if(!sessionid) console.error("cant generate listenin link , no sessionid found ")
-	try{
-		webrtcdev.log(" Current Session ", window.origin );
-		let listeninlink = window.origin +"/#"+sessionid+'?appname=webrtcwebcall&role=inspector&audio=0&video=0';
-		return listeninlink
-	}catch(e){
-		webrtcdev.error("ListenIn :", e);
-		return false;
-	}
+this.getlisteninlink = function () {
+    if (!sessionid) console.error("cant generate listenin link , no sessionid found ")
+    try {
+        webrtcdev.log(" Current Session ", window.origin);
+        let listeninlink = window.origin + "/#" + sessionid + '?appname=webrtcwebcall&role=inspector&audio=0&video=0';
+        return listeninlink
+    } catch (e) {
+        webrtcdev.error("ListenIn :", e);
+        return false;
+    }
 }
 
 /*-----------------------------------------------------------------------------------*/
@@ -23361,31 +24784,32 @@ var cursorX;
 var cursorY;
 var cursorinterval;
 
-function placeCursor(element , x_pos, y_pos) {
-  element.style.position = "absolute";
-/*element.style.left = '100px';
-  element.style.top = '100px';*/
-  element.style.left = x_pos+'px';
-  element.style.top = y_pos+'px';
+function placeCursor(element, x_pos, y_pos) {
+    element.style.position = "absolute";
+    /*element.style.left = '100px';
+      element.style.top = '100px';*/
+    element.style.left = x_pos + 'px';
+    element.style.top = y_pos + 'px';
 }
 
-function startShareCursor(){
-  document.getElementById("cursor1").setAttribute("style","display:block");
-  document.onmousemove = function(e){
-    cursorX = e.pageX + 10 ;
-    cursorY = e.pageY;
-  }
-  cursorinterval = setInterval(shareCursor, 500);
+function startShareCursor() {
+    document.getElementById("cursor1").setAttribute("style", "display:block");
+    document.onmousemove = function (e) {
+        cursorX = e.pageX + 10;
+        cursorY = e.pageY;
+    }
+    cursorinterval = setInterval(shareCursor, 500);
 }
 
-function stopShareCursor(){
-    document.getElementById("cursor1").setAttribute("style","display:none");
+function stopShareCursor() {
+    document.getElementById("cursor1").setAttribute("style", "display:none");
     rtcConn.send({
-        type: "pointer", 
-        action : "stopCursor"
+        type: "pointer",
+        action: "stopCursor"
     });
-   clearInterval(cursorinterval);
+    clearInterval(cursorinterval);
 }
+
 /*function assignButtonCursor(bid){
   var button =document.getElementById(bid);
   button.onclick=function(){
@@ -23393,52 +24817,50 @@ function stopShareCursor(){
   }
 }*/
 
-function shareCursor(){
+function shareCursor() {
     var element = document.getElementById("cursor1");
-    element.hidden=false;
+    element.hidden = false;
 
-    placeCursor( element, cursorX, cursorY );
+    placeCursor(element, cursorX, cursorY);
 
     rtcConn.send({
-        type:"pointer", 
-        action : "startCursor",
-        corX: cursorX , 
+        type: "pointer",
+        action: "startCursor",
+        corX: cursorX,
         corY: cursorY
     });
 }
 
-function createCursorButton(controlBarName, peerinfo, streamid, stream ){
-    var button=document.createElement("span");
-    button.id = controlBarName+"cursorButton";
-    button.setAttribute("data-val","mute");
+function createCursorButton(controlBarName, peerinfo, streamid, stream) {
+    var button = document.createElement("span");
+    button.id = controlBarName + "cursorButton";
+    button.setAttribute("data-val", "mute");
     button.setAttribute("title", "Cursor");
-    button.className=cursorobj.button.class_on;
-    button.innerHTML=cursorobj.button.html_on;
-    button.onclick = function() {
+    button.className = cursorobj.button.class_on;
+    button.innerHTML = cursorobj.button.html_on;
+    button.onclick = function () {
         var btnid = button.id;
-        var peerinfo ;
-        if(selfuserid)
+        var peerinfo;
+        if (selfuserid)
             peerinfo = findPeerInfo(selfuserid);
         else
             peerinfo = findPeerInfo(rtcConn.userid);
 
-
-        if(btnid.indexOf(peerinfo.controlBarName)>-1){
-            if(button.className == cursorobj.button.class_on ){
+        if (btnid.indexOf(peerinfo.controlBarName) > -1) {
+            if (button.className == cursorobj.button.class_on) {
                 startShareCursor();
-                button.className=cursorobj.button.class_off;
-                button.innerHTML=cursorobj.button.html_off;
-            }else if (button.className == cursorobj.button.class_off ){            
+                button.className = cursorobj.button.class_off;
+                button.innerHTML = cursorobj.button.html_off;
+            } else if (button.className == cursorobj.button.class_off) {
                 stopShareCursor();
-                button.className=cursorobj.button.class_on;
-                button.innerHTML=cursorobj.button.html_on;
-            }     
+                button.className = cursorobj.button.class_on;
+                button.innerHTML = cursorobj.button.html_on;
+            }
             //syncButton(audioButton.id);   
-        }else{
+        } else {
             alert(" Use Local Pointer button ");
         }
 
-             
     };
     return button;
 }
@@ -23553,70 +24975,70 @@ function stopWebrtcdevcodeeditorSync(){
 
 /*-----------------------------------------------------------------------------------*/
 
-function createTextEditorButton(){
-    var texteditorButton= document.createElement("span");
-    texteditorButton.className=texteditorobj.button.class_off ;
-    texteditorButton.innerHTML=texteditorobj.button.html_off;
+function createTextEditorButton() {
+    var texteditorButton = document.createElement("span");
+    texteditorButton.className = texteditorobj.button.class_off;
+    texteditorButton.innerHTML = texteditorobj.button.html_off;
 
-    texteditorButton.onclick=function(){
-        if(texteditorButton.className==texteditorobj.button.class_off){
-            texteditorButton.className= texteditorobj.button.class_on ;
-            texteditorButton.innerHTML= texteditorobj.button.html_on;
+    texteditorButton.onclick = function () {
+        if (texteditorButton.className == texteditorobj.button.class_off) {
+            texteditorButton.className = texteditorobj.button.class_on;
+            texteditorButton.innerHTML = texteditorobj.button.html_on;
             startWebrtcdevTexteditorSync();
-            document.getElementById(texteditorobj.texteditorContainer).hidden=false;
-        }else if(texteditorButton.className==texteditorobj.button.class_on){
-            texteditorButton.className= texteditorobj.button.class_off ;
-            texteditorButton.innerHTML= texteditorobj.button.html_off;
+            document.getElementById(texteditorobj.texteditorContainer).hidden = false;
+        } else if (texteditorButton.className == texteditorobj.button.class_on) {
+            texteditorButton.className = texteditorobj.button.class_off;
+            texteditorButton.innerHTML = texteditorobj.button.html_off;
             stopWebrtcdevTexteditorSync();
-            document.getElementById(texteditorobj.texteditorContainer).hidden=true;
+            document.getElementById(texteditorobj.texteditorContainer).hidden = true;
         }
     };
-    var li =document.createElement("li");
+    var li = document.createElement("li");
     li.appendChild(texteditorButton);
     document.getElementById("topIconHolder_ul").appendChild(li);
 }
-        
-/*************************************************************************
-Text Editor
-******************************************************************************/
 
-function sendWebrtcdevTexteditorSync(evt){
+/*************************************************************************
+ Text Editor
+ ******************************************************************************/
+
+function sendWebrtcdevTexteditorSync(evt) {
     // Left: 37 Up: 38 Right: 39 Down: 40 Esc: 27 SpaceBar: 32 Ctrl: 17 Alt: 18 Shift: 16 Enter: 13
-    if(evt.which ==  37 || evt.which ==  38 || evt.which ==  39 || evt.which ==  40  || evt.which==17 || evt.which == 18|| evt.which == 16){
+    if (evt.which == 37 || evt.which == 38 || evt.which == 39 || evt.which == 40 || evt.which == 17 || evt.which == 18 || evt.which == 16) {
         return true; // handle left up right down  control alt shift
     }
 
-    var tobj ={
-        "option" : "text",
+    var tobj = {
+        "option": "text",
         "content": document.getElementById(texteditorobj.texteditorContainer).value
     }
-    webrtcdev.log(" sending " , document.getElementById(texteditorobj.texteditorContainer).value);
+    webrtcdev.log(" sending ", document.getElementById(texteditorobj.texteditorContainer).value);
     rtcMultiConnection.send({
-            type: "texteditor", 
-            data: tobj
+        type: "texteditor",
+        data: tobj
     });
 }
 
-function receiveWebrtcdevTexteditorSync(data){
-    webrtcdev.log("texteditor " , data);
-    if(data.option=="text"){
-        document.getElementById(texteditorobj.texteditorContainer).value=data.content;
+function receiveWebrtcdevTexteditorSync(data) {
+    webrtcdev.log("texteditor ", data);
+    if (data.option == "text") {
+        document.getElementById(texteditorobj.texteditorContainer).value = data.content;
     }
 }
 
-function startWebrtcdevTexteditorSync(){
+function startWebrtcdevTexteditorSync() {
     document.getElementById(texteditorobj.texteditorContainer).addEventListener("keyup", sendWebrtcdevTexteditorSync, false);
 }
 
-function stopWebrtcdevTexteditorSync(){
+function stopWebrtcdevTexteditorSync() {
     document.getElementById(texteditorobj.texteditorContainer).removeEventListener("keyup", sendWebrtcdevTexteditorSync, false);
 }
 
 /*********************************************
-ICE
-**************************************************/
+ ICE
+ **************************************************/
 /**
- * {@link https://github.com/altanai/webrtc/blob/master/client/build/scripts/_turn.js|TURN} 
+ * {@link https://github.com/altanai/webrtc/blob/master/client/build/scripts/_turn.js|TURN}
  * @summary JavaScript audio/video recording library runs top over WebRTC getUserMedia API.
  * @author {@link https://telecom.altanai.com/about-me/|Altanai}
  * @typedef _turn.js
@@ -23629,7 +25051,8 @@ ICE
  *   }
  */
 
-var iceServers=[];
+var iceServers = [];
+
 function createCORSRequest(method, url) {
     var xhr = new XMLHttpRequest();
     if ("withCredentials" in xhr) {
@@ -23644,17 +25067,17 @@ function createCORSRequest(method, url) {
 }
 
 //function getICEServer(username , secretkey , domain , appname , roomname , secure){
-function getICEServer(){
+function getICEServer() {
     var url = 'https://global.xirsys.net/_turn/Amplechat/';
     var xhr = createCORSRequest('PUT', url);
     xhr.onload = function () {
-        webrtcdev.log("[turn Js] Response from Xirsys " , xhr.responseText);
-        if(JSON.parse(xhr.responseText).v==null){
+        webrtcdev.log("[turn Js] Response from Xirsys ", xhr.responseText);
+        if (JSON.parse(xhr.responseText).v == null) {
             webrtcdevIceServers = "err";
-            shownotification("Media will not able to pass through "+ JSON.parse(xhr.responseText).e);
-        }else{
+            shownotification("Media will not able to pass through " + JSON.parse(xhr.responseText).e);
+        } else {
             webrtcdevIceServers = JSON.parse(xhr.responseText).v.iceServers;
-            webrtcdev.log("Obtained iceServers" , webrtcdevIceServers);
+            webrtcdev.log("Obtained iceServers", webrtcdevIceServers);
         }
     };
     xhr.onerror = function () {
@@ -23667,93 +25090,93 @@ function getICEServer(){
 /*                        timer JS                                                   */
 /*-----------------------------------------------------------------------------------*/
 /**
- * {@link https://github.com/altanai/webrtc/blob/master/client/build/scripts/_timer.js|TIMER} 
+ * {@link https://github.com/altanai/webrtc/blob/master/client/build/scripts/_timer.js|TIMER}
  * @summary Takes local and remote peers time , localtion and show and shows timer for session
  * @author {@link https://telecom.altanai.com/about-me/|Altanai}
  * @typedef _turn.js
  * @function
  */
 
-var hours,mins,secs;
+var hours, mins, secs;
 var today = new Date();
-var zone="";
-var t ;
-var worker = null; 
+var zone = "";
+var t;
+var worker = null;
 
-try{
+try {
     //worker = new Worker('js/timekeeper.js');
     // worker.addEventListener('message', function(e) {
     //     if(e.data.time){
     //         let timerspanpeer = getElementById(e.data.remotetimeid);
     //         timerspanpeer.innerHTML = e.data.time;
     //     }
-
     // }, false);
-}catch(e){
-    webrtcdev.error("[Timer]" , e)
+} catch (e) {
+    webrtcdev.error("[Timer]", e)
 }
+
 /**
  * function to start session timer with timerobj
  * @method
  * @name startsessionTimer
  * @param {json} timerobj
  */
-function startsessionTimer(timerobj){
+function startsessionTimer(timerobj) {
 
-    if(timerobj.counter.hours && timerobj.counter.minutes && timerobj.counter.seconds ){
+    if (timerobj.counter.hours && timerobj.counter.minutes && timerobj.counter.seconds) {
         hours = getElementById(timerobj.counter.hours);
         mins = getElementById(timerobj.counter.minutes);
         secs = getElementById(timerobj.counter.seconds);
 
-        if(timerobj.type=="forward"){
+        if (timerobj.type == "forward") {
             startForwardTimer();
-            hours.innerHTML=0;
-            mins.innerHTML=0;
-            secs.innerHTML=0;
+            hours.innerHTML = 0;
+            mins.innerHTML = 0;
+            secs.innerHTML = 0;
 
-        }else if (timerobj.type=="backward"){
-            hours.innerHTML=0;
-            mins.innerHTML=3;
-            secs.innerHTML=0;
+        } else if (timerobj.type == "backward") {
+            hours.innerHTML = 0;
+            mins.innerHTML = 3;
+            secs.innerHTML = 0;
             startBackwardTimer();
         }
-    }else{
+    } else {
         webrtcdev.error(" timerobj.counter DOM elemnts not found ");
     }
 
 }
 
 /**
- * function to start forward increasing session timer 
+ * function to start forward increasing session timer
  * @method
  * @name startForwardTimer
  */
-function startForwardTimer(){
+function startForwardTimer() {
     webrtcdev.log("[timerjs] startForwardTimer");
     var cd = secs;
     var cdm = mins;
-    var c = parseInt(cd.innerHTML,10);
-    var m =  parseInt(cdm.innerHTML,10);
-    ftimer(cd , c , cdm ,  m); 
+    var c = parseInt(cd.innerHTML, 10);
+    var m = parseInt(cdm.innerHTML, 10);
+    ftimer(cd, c, cdm, m);
 }
 
 /**
- * function to start backward decreasing session timer 
+ * function to start backward decreasing session timer
  * @method
  * @name startBackwardTimer
  */
-function startBackwardTimer(){
-    webrtcdev.log("[timerjs] startBackwardTimer", hours ,mins , secs);
+function startBackwardTimer() {
+    webrtcdev.log("[timerjs] startBackwardTimer", hours, mins, secs);
     var cd = secs;
     var cdm = mins;
-    var c = parseInt(cd.innerHTML,10);
-    var m =  parseInt(cdm.innerHTML,10);
+    var c = parseInt(cd.innerHTML, 10);
+    var m = parseInt(cdm.innerHTML, 10);
     //alert(" Time for session validy is "+m +" minutes :"+ c+ " seconds");
-    btimer(cd , c , cdm ,  m);  
+    btimer(cd, c, cdm, m);
 }
 
 /**
- * function to start backward decreasing session timer 
+ * function to start backward decreasing session timer
  * @method
  * @name Timer
  * @param {cd} timerobj
@@ -23761,62 +25184,62 @@ function startBackwardTimer(){
  * @param {cdm} timerobj
  * @param {m} timerobj
  */
-function ftimer(cd , c , cdm , m ){
-    var interv = setInterval(function() {
+function ftimer(cd, c, cdm, m) {
+    var interv = setInterval(function () {
         c++;
-        secs.innerHTML= c;
+        secs.innerHTML = c;
 
         if (c == 60) {
             c = 0;
-            m++;  
-            mins.innerHTML = m;                    
+            m++;
+            mins.innerHTML = m;
         }
     }, 1000);
 }
 
-function btimer(cd , c , cdm , m ){
-    var interv = setInterval(function() {
+function btimer(cd, c, cdm, m) {
+    var interv = setInterval(function () {
         c--;
-        secs.innerHTML= c;
+        secs.innerHTML = c;
 
         if (c == 0) {
             c = 60;
-            m--;  
-            mins.innerHTML=m;
-            if(m<0)  {
-                clearInterval(interv); 
+            m--;
+            mins.innerHTML = m;
+            if (m < 0) {
+                clearInterval(interv);
                 //alert("time over");
-            }                     
+            }
         }
     }, 1000);
 }
 
-function getDate(){
+function getDate() {
     var now = new Date();
     return now;
 }
 
-function prepareTime(){
+function prepareTime() {
 
 }
 
 
 /**
- * function to start local peers time based on locally captured time zone 
+ * function to start local peers time based on locally captured time zone
  * @method
  * @name startTime
  */
 function startTime() {
-    try{
+    try {
 
-        if(timerobj.span.currentTime_id && getElementById(timerobj.span.currentTime_id)){
+        if (timerobj.span.currentTime_id && getElementById(timerobj.span.currentTime_id)) {
             var timerspanlocal = getElementById(timerobj.span.currentTime_id);
             timerspanlocal.innerHTML = new Date().toLocaleTimeString();
             var t = setTimeout(startTime, 1000);
-        }else{
+        } else {
             webrtcdev.error(" No place for timerobj.span.currentTime_id");
         }
-    }catch(e){
+    } catch (e) {
         webrtcdev.error(e);
     }
     //webrtcdev.log(" localdate :" , today);
@@ -23828,15 +25251,15 @@ function startTime() {
  * @method
  * @name createRemotetimeArea
  */
-function createRemotetimeArea(userid){
+function createRemotetimeArea(userid) {
     let remotetimecontainer = document.createElement("ul");
-    remotetimecontainer.id="remoteTimerArea_"+userid;
+    remotetimecontainer.id = "remoteTimerArea_" + userid;
     var peerinfo = findPeerInfo(userid);
-    if(getElementById(peerinfo.videoContainer)){
+    if (getElementById(peerinfo.videoContainer)) {
         var parentTimecontainer = getElementById(peerinfo.videoContainer).parentNode;
         parentTimecontainer.appendChild(remotetimecontainer);
         return remotetimecontainer;
-    }else{
+    } else {
         return null;
     }
 }
@@ -23848,36 +25271,35 @@ function createRemotetimeArea(userid){
  * @param {str} zone
  * @param {id} userid
  */
-function peerTimeZone(zone , userid){
-    try{
-        if(timerobj.span.remoteTimeZone_id && 
-            getElementById(timerobj.span.remoteTimeZone_id) && 
-            !getElementById(timerobj.span.remoteTimeZone_id).innerHTML){
+function peerTimeZone(zone, userid) {
+    try {
+        if (timerobj.span.remoteTimeZone_id &&
+            getElementById(timerobj.span.remoteTimeZone_id) &&
+            !getElementById(timerobj.span.remoteTimeZone_id).innerHTML) {
             let timerzonepeer = getElementById(timerobj.span.remoteTimeZone_id);
             timerzonepeer.innerHTML = zone;
-        }else{
+        } else {
             webrtcdev.warn("timerobj.span.remoteTimeZone_id DOM doesnt exist , creating it ");
-            
-            if(getElementById("remoteTimeZone_"+userid))
-            return ;
+
+            if (getElementById("remoteTimeZone_" + userid))
+                return;
 
             let timerzonepeer = document.createElement("li");
-            timerzonepeer.id= "remoteTimeZone_"+userid;
+            timerzonepeer.id = "remoteTimeZone_" + userid;
             timerzonepeer.innerHTML = zone + " , ";
 
             var remotetimecontainer;
-            if(!getElementById("remoteTimerArea_"+userid)){
+            if (!getElementById("remoteTimerArea_" + userid)) {
                 remotetimecontainer = createRemotetimeArea(userid);
-            }else{
-                remotetimecontainer = getElementById("remoteTimerArea_"+userid);
+            } else {
+                remotetimecontainer = getElementById("remoteTimerArea_" + userid);
             }
             remotetimecontainer.appendChild(timerzonepeer);
         }
-    }catch(e){
+    } catch (e) {
         webrtcdev.error(e);
     }
 }
-
 
 
 /**
@@ -23888,71 +25310,71 @@ function peerTimeZone(zone , userid){
  * @param {id} userid
  */
 
-var startPeersTime = function (date,zone,userid){
-    
-    try{
-        var tobj=[];
-        
+var startPeersTime = function (date, zone, userid) {
+
+    try {
+        var tobj = [];
+
         // Starting peer timer for all peers
-        for(var x in webcallpeers){
+        for (var x in webcallpeers) {
 
-            webrtcdev.debug(" [timerjs] startPeersTime for " , userid);
+            webrtcdev.debug(" [timerjs] startPeersTime for ", userid);
 
-            if( window.location.href.indexOf("conference") > -1 && getElementById("remoteTimeDate_"+webcallpeers[x].userid)){
+            if (window.location.href.indexOf("conference") > -1 && getElementById("remoteTimeDate_" + webcallpeers[x].userid)) {
                 //if its conference , send to webworkers 
                 webrtcdev.info(" timerobj.span.remoteTime_id exist for local and remotes, appending to tobj to send to worker cumulatively");
                 tobj.push({
-                    zone: webcallpeers[x].zone, 
-                    userid :webcallpeers[x].userid,
-                    remotetimeid : "remoteTimeDate_"+webcallpeers[x].userid
+                    zone: webcallpeers[x].zone,
+                    userid: webcallpeers[x].userid,
+                    remotetimeid: "remoteTimeDate_" + webcallpeers[x].userid
                 });
 
-            } else if(timerobj.span.remoteTime_id && getElementById(timerobj.span.remoteTime_id)){
+            } else if (timerobj.span.remoteTime_id && getElementById(timerobj.span.remoteTime_id)) {
                 // update the time for p2p
                 webrtcdev.info(" timerobj.span.remoteTime_id exists and its a p2p session , hence updating it");
                 options = {
-                  //year: 'numeric', month: 'numeric', day: 'numeric',
-                  hour: 'numeric', minute: 'numeric', second: 'numeric',
-                  hour12: false,
-                  timeZone: webcallpeers[x].zone
+                    //year: 'numeric', month: 'numeric', day: 'numeric',
+                    hour: 'numeric', minute: 'numeric', second: 'numeric',
+                    hour12: false,
+                    timeZone: webcallpeers[x].zone
                 };
                 let timerspanpeer = getElementById(timerobj.span.remoteTime_id);
-                timerspanpeer.innerHTML = new Date().toLocaleString('en-US', options );
+                timerspanpeer.innerHTML = new Date().toLocaleString('en-US', options);
             } else {
                 // create the timer for p2p and conferences
-                webrtcdev.info(" timerobj.span.remoteTime_id DOM does not exist , creating it" ,
-                    timerobj.span.remoteTime_id , getElementById(timerobj.span.remoteTime_id)  );
+                webrtcdev.info(" timerobj.span.remoteTime_id DOM does not exist , creating it",
+                    timerobj.span.remoteTime_id, getElementById(timerobj.span.remoteTime_id));
 
-                if(getElementById("remoteTimeDate_"+userid))
-                return ;
+                if (getElementById("remoteTimeDate_" + userid))
+                    return;
 
                 let timerspanpeer = document.createElement("li");
-                timerspanpeer.id= "remoteTimeDate_"+userid;
-                timerspanpeer.innerHTML = new Date().toLocaleString('en-US', options );
+                timerspanpeer.id = "remoteTimeDate_" + userid;
+                timerspanpeer.innerHTML = new Date().toLocaleString('en-US', options);
 
                 var remotetimecontainer;
-                if(!getElementById("remoteTimerArea_"+userid)){
+                if (!getElementById("remoteTimerArea_" + userid)) {
                     remotetimecontainer = createRemotetimeArea(userid);
-                }else{
-                    remotetimecontainer = getElementById("remoteTimerArea_"+userid);
+                } else {
+                    remotetimecontainer = getElementById("remoteTimerArea_" + userid);
                 }
                 remotetimecontainer.appendChild(timerspanpeer);
 
-                if(window.location.href.indexOf("conference") <= -1){
+                if (window.location.href.indexOf("conference") <= -1) {
                     // if its not conf then loop for p2p
                     var t = setTimeout(startPeersTime, 5000);
                 }
             }
             peerTimerStarted = true;
         }
-        
-        webrtcdev.info("[timerjs] tobj " , tobj);
-        if(tobj.length > 0){
+
+        webrtcdev.info("[timerjs] tobj ", tobj);
+        if (tobj.length > 0) {
             worker.postMessage(tobj);
         }
 
-    }catch(e){
-        webrtcdev.error(e);   
+    } catch (e) {
+        webrtcdev.error(e);
     }
 }
 
@@ -23962,16 +25384,16 @@ var startPeersTime = function (date,zone,userid){
  * @method
  * @name timeZone
  */
-function timeZone(){
-    try{
-        if(timerobj.span.currentTimeZone_id && getElementById(timerobj.span.currentTimeZone_id)){
+function timeZone() {
+    try {
+        if (timerobj.span.currentTimeZone_id && getElementById(timerobj.span.currentTimeZone_id)) {
             zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             var timerzonelocal = getElementById(timerobj.span.currentTimeZone_id);
             timerzonelocal.innerHTML = zone;
-        }else{
+        } else {
             webrtcdev.error(" timerobj.span.currentTimeZone_id DOM doesnt exist ");
         }
-    }catch(e){
+    } catch (e) {
         webrtcdev.error(e);
     }
 }
@@ -23980,16 +25402,16 @@ function timeZone(){
  * function to share local tiem and zone to other peer
  * @name shareTimePeer
  */
-function shareTimePeer(){
-    try{
-        var msg={
-            type:"timer", 
-            time: (today).toJSON() , 
+function shareTimePeer() {
+    try {
+        var msg = {
+            type: "timer",
+            time: (today).toJSON(),
             zone: zone
         };
         rtcConn.send(msg);
-    }catch(e){
-        webrtcdev.error(e);   
+    } catch (e) {
+        webrtcdev.error(e);
     }
 }
 
@@ -23997,20 +25419,23 @@ function shareTimePeer(){
  * function to activateButtons
  * @name activateButtons
  */
-function activateBttons(timerobj){
-    if(timerobj.container.minbutton_id && getElementById(timerobj.container.minbutton_id)){
-        var button= getElementById(timerobj.container.minbutton_id);
-        button.onclick=function(e){
-            if(getElementById(timerobj.container.id).hidden)
-                getElementById(timerobj.container.id).hidden=false;
+function activateBttons(timerobj) {
+    if (timerobj.container.minbutton_id && getElementById(timerobj.container.minbutton_id)) {
+        var button = getElementById(timerobj.container.minbutton_id);
+        button.onclick = function (e) {
+            if (getElementById(timerobj.container.id).hidden)
+                getElementById(timerobj.container.id).hidden = false;
             else
-                getElementById(timerobj.container.id).hidden=true;
-        }  
+                getElementById(timerobj.container.id).hidden = true;
+        }
     }
 }
 
 function checkTime(i) {
-    if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+    if (i < 10) {
+        i = "0" + i
+    }
+    ;  // add zero in front of numbers < 10
     return i;
 }
 
@@ -24152,12 +25577,11 @@ function removePeerInfo(userid) {
     return new Promise(function (resolve, reject) {
         webrtcdev.log(" [startjs] removePeerInfo  remove userid: ", userid);
         webcallpeers.splice(userid, 1);
-        webrtcdev.log(" [startjs] removePeerInfo  After removing: ", webcallpeers);
         resolve("done");
     })
-        .catch((err) => {
-            webrtcdev.error("[startjs removePeerInfo] Promise rejected ", err);
-        });
+    .catch((err) => {
+        webrtcdev.error("[startjs removePeerInfo] Promise rejected ", err);
+    });
 }
 
 /**
@@ -24293,7 +25717,7 @@ function startSocketSession(rtcConn, socketAddr, sessionid) {
 
     return new Promise((resolve, reject) => {
         try {
-            var addr = "/";
+            let addr = "/";
             if (socketAddr != "/") {
                 addr = socketAddr;
             }
@@ -24302,8 +25726,8 @@ function startSocketSession(rtcConn, socketAddr, sessionid) {
                 transports: ['websocket']
             });
             // socket.set('log level', 3);
-        } catch (e) {
-            webrtcdev.error(" problem in socket connnection", e);
+        } catch(err) {
+            webrtcdev.error(" problem in socket connnection", err);
             throw (" problem in socket connnection");
         }
 
@@ -24318,7 +25742,7 @@ function startSocketSession(rtcConn, socketAddr, sessionid) {
             return;
         }
 
-        // Socket Listners
+        // Socket Listeners
         socket.on("connect", function () {
             socket.on('disconnected', function () {
                 shownotification("Disconnected from signaller ");
@@ -24347,18 +25771,16 @@ function startSocketSession(rtcConn, socketAddr, sessionid) {
                     );
 
                     rtcConn.connectionType = "open",
-
-                        rtcConn.session = {
-                            video: outgoingVideo,
-                            audio: outgoingAudio,
-                            data: outgoingData
-                        },
-
-                        rtcConn.sdpConstraints.mandatory = {
-                            OfferToReceiveAudio: incomingAudio,
-                            OfferToReceiveVideo: incomingVideo
-                        };
-                    resolve(); // immediately give the result: 123
+                    rtcConn.session = {
+                        video: outgoingVideo,
+                        audio: outgoingAudio,
+                        data: outgoingData
+                    },
+                    rtcConn.sdpConstraints.mandatory = {
+                        OfferToReceiveAudio: incomingAudio,
+                        OfferToReceiveVideo: incomingVideo
+                    };
+                    resolve("ok"); // immediately give the result: 123
                 });
 
                 promise.then(
@@ -24461,12 +25883,12 @@ function startSocketSession(rtcConn, socketAddr, sessionid) {
                             color = remotecolor;
                         }
                         updatePeerInfo(participantId, name, color, email, role, "remote");
-                        // shownotification( event.data.extra.role  + "  " +event.type);
+                        shownotification( event.data.extra.role  + "  " +event.type);
                     } else {
                         // Peer was already present, this is s rejoin 
                         webrtcdev.log(" [sartjs] channel-event : PeerInfo was already present, this is s rejoin, update the peerinfo ");
                         updatePeerInfo(participantId, name, color, email, role, "remote");
-                        //shownotification(event.data.extra.role+" "+event.type);
+                        shownotification(event.data.extra.role+" "+event.type);
                     }
 
                     if (!peerinfo) {
@@ -24490,13 +25912,12 @@ function startSocketSession(rtcConn, socketAddr, sessionid) {
                 webrtcdev.warn(" unhandled channel event ");
             }
         });
-
         resolve("done");
     })
-        .catch((err) => {
-            webrtcdev.error("[startjs] startSocketSession error -", err);
-            reject(err);
-        });
+    .catch((err) => {
+        webrtcdev.error("[startjs] startSocketSession error -", err);
+        reject(err);
+    });
 }
 
 
@@ -24512,542 +25933,537 @@ var setRtcConn = function (sessionid) {
 
         webrtcdev.log("[startjs - setRtcConn] initiating RtcConn"),
 
-            rtcConn = new RTCMultiConnection(),
+        rtcConn = new RTCMultiConnection(),
 
-            rtcConn.channel = this.sessionid,
-            rtcConn.socketURL = location.hostname + ":8085/",
+        rtcConn.channel = this.sessionid,
+        rtcConn.socketURL = location.hostname + ":8085/",
 
-            // turn off media till connection happens
-            webrtcdev.log("info", "[startjs] set dontAttachStream , dontCaptureUserMedia , dontGetRemoteStream as true "),
-            rtcConn.dontAttachStream = true,
-            rtcConn.dontCaptureUserMedia = true,
-            rtcConn.dontGetRemoteStream = true,
+        // turn off media till connection happens
+        webrtcdev.log("info", "[startjs] set dontAttachStream , dontCaptureUserMedia , dontGetRemoteStream as true "),
+        rtcConn.dontAttachStream = true,
+        rtcConn.dontCaptureUserMedia = true,
+        rtcConn.dontGetRemoteStream = true,
 
-            rtcConn.onNewParticipant = function (participantId, userPreferences) {
-                webrtcdev.log("[sartjs] rtcconn onNewParticipant, participantId -  ", participantId, " , userPreferences - ", userPreferences);
-                //shownotification("[sartjs] onNewParticipant userPreferences.connectionDescription.sender : " + participantId + " name : "+ remoteusername + " requests new participation ");
-                rtcConn.acceptParticipationRequest(participantId, userPreferences);
-            },
+        rtcConn.onNewParticipant = function (participantId, userPreferences) {
+            webrtcdev.log("[sartjs] rtcconn onNewParticipant, participantId -  ", participantId, " , userPreferences - ", userPreferences);
+            //shownotification("[sartjs] onNewParticipant userPreferences.connectionDescription.sender : " + participantId + " name : "+ remoteusername + " requests new participation ");
+            rtcConn.acceptParticipationRequest(participantId, userPreferences);
+        },
 
-            rtcConn.onopen = function (event) {
+        rtcConn.onopen = function (event) {
 
-                webrtcdev.log("[startjs] rtconn onopen - ", event);
-                try {
+            webrtcdev.log("[startjs] rtconn onopen - ", event);
+            try {
 
-                    webrtcdev.log("[startjs onopen] selfuserid ", selfuserid);
-                    // Add remote peer userid to remoteUsers
-                    remoteUsers = rtcConn.peers.getAllParticipants(),
-                        webrtcdev.log(" [startJS onopen] Collecting remote peers", remoteUsers);
+                webrtcdev.log("[startjs onopen] selfuserid ", selfuserid);
+                // Add remote peer userid to remoteUsers
+                remoteUsers = rtcConn.peers.getAllParticipants(),
+                    webrtcdev.log(" [startJS onopen] Collecting remote peers", remoteUsers);
 
-                    webrtcdev.log(" [startJS onopen] webcallpeers length ", webcallpeers.length);
-                    // remove old non existing peers, excluded selfuserid
-                    webrtcdev.log(" [startjs] removePeerInfo  Before  ", webcallpeers);
-                    for (x in webcallpeers) {
-                        webrtcdev.log(" [startJS onopen] webcallpeers[" + x + "]", webcallpeers[x], webcallpeers[x].userid);
-                        if (!(remoteUsers.includes(webcallpeers[x].userid)) && (webcallpeers[x].userid != selfuserid)) {
-                            console.warn("[startjs remove PeerInfo - ", webcallpeers[x].userid, " which neither exists in remote peer and not is selfuserid");
-                            removePeerInfo(webcallpeers[x].userid);
+                webrtcdev.log(" [startJS onopen] webcallpeers length ", webcallpeers.length);
+                // remove old non existing peers, excluded selfuserid
+                webrtcdev.log(" [startjs] removePeerInfo  Before  ", webcallpeers);
+                for (x in webcallpeers) {
+                    webrtcdev.log(" [startJS onopen] webcallpeers[" + x + "]", webcallpeers[x]);
+                    if (!(remoteUsers.includes(webcallpeers[x].userid)) && (webcallpeers[x].userid != selfuserid)) {
+                        console.warn("[startjs remove PeerInfo - ", webcallpeers[x].userid, " which neither exists in remote peer and not is selfuserid");
+                        removePeerInfo(webcallpeers[x].userid);
+                    }
+                }
+                webrtcdev.log(" [startjs] removePeerInfo  After  ", webcallpeers);
+
+                // add new peers
+                for (x in remoteUsers) {
+                    webrtcdev.log(" [startJS] join-channel. Adding remote peer ", remoteUsers[x]);
+                    if (remoteUsers[x] == event.userid) {
+                        let remoterole = event.extra.role || "participant", // will fail in case of 2 listeners
+                            remotecolor = event.extra.color,
+                            remoteemail = event.extra.email,
+                            remoteusername = event.extra.remoteusername;
+                        updatePeerInfo(remoteUsers[x], remoteusername, remotecolor, remoteemail, remoterole, "remote");
+                        if (remoterole == "inspector") {
+                            shownotificationWarning("This session is being inspected ")
                         }
+                        break;
                     }
-
-                    // add new peers
-                    for (x in remoteUsers) {
-                        webrtcdev.log(" [startJS] join-channel. Adding remote peer ", remoteUsers[x]);
-                        if (remoteUsers[x] == event.userid) {
-                            let remoterole = event.extra.role || "participant", // will fail in case of 2 listeners
-                                remotecolor = event.extra.color,
-                                remoteemail = event.extra.email,
-                                remoteusername = event.extra.remoteusername;
-                            updatePeerInfo(remoteUsers[x], remoteusername, remotecolor, remoteemail, remoterole, "remote");
-                            if (remoterole == "inspector") {
-                                shownotificationWarning("This session is being inspected ")
-                            }
-                        }
-                        // }else{
-                        //     updatePeerInfo(remoteUsers[x], remoteusername, remotecolor, remoteemail, remoterole , "remote");
-                        // }
-                        webrtcdev.log(" [startJS onopen] created/updated local peerinfo for open-channel ");
-                    }
-
-                    // Remove Duplicates from remote
-                    remoteUsers = remoteUsers.filter(function (elem, index, self) {
-                        return index == self.indexOf(elem);
-                    });
-
-                    // setting local caches
-                    webrtcdev.log(" [startjs onopen] setting cache - channel " + sessionid + " with self-userid " + selfuserid + " and remoteUsers " + remoteUsers);
-
-                    // In debug mode let the users create multiple user sesison in same browser ,
-                    // do not use localstoarge values to get old userid for resuse
-                    if (!debug) {
-                        if (!localStorage.getItem("userid"))
-                            localStorage.setItem("userid", selfuserid);
-
-                        if (!localStorage.getItem("remoteUsers"))
-                            localStorage.setItem("remoteUsers", remoteUsers);
-
-                        if (!localStorage.getItem("channel"))
-                            localStorage.setItem("channel", sessionid);
-                    }
-
-                    webrtcdev.log(" [startjs onopen] webcallpeers ", webcallpeers);
-                    // Connect to webrtc
-                    if (rtcConn.connectionType == "open")
-                        connectWebRTC("open", sessionid, selfuserid, []);
-                    else if (rtcConn.connectionType == "join")
-                        connectWebRTC("join", sessionid, selfuserid, remoteUsers);
-                    else
-                        shownotification("connnection type is neither open nor join", "warning");
-
-                    if (timerobj && timerobj.active) {
-                        startsessionTimer(timerobj);
-                        shareTimePeer();
-                    }
-                    shownotification(event.extra.name + " joined session ", "info");
-                    showdesktopnotification();
-
-                    // if the callback function is defined in client implementation , call it
-                    if (typeof onSessionConnect !== 'undefined') {
-                        onSessionConnect();
-                    }
-                    //eventEmitter.emit('sessionconnected');        // Call Function just in case the client is implementing this
-
-                    // stats widget
-                    if (statisticsobj && statisticsobj.active) {
-                        //populate RTP stats
-                        showRtpstats();
-                    }
-
-                } catch (err) {
-                    shownotification("problem in session open ", "warning");
-                    webrtcdev.error("problem in session open", err);
-                }
-            },
-
-            rtcConn.onMediaError = function (error, constraints) {
-                webrtcdev.error("[startJS] onMediaError - ", error, constraints);
-
-                if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-                    webrtcdev.warn("enumerateDevices() not supported.");
-                    return;
+                    webrtcdev.log(" [startJS onopen] created/updated local peerinfo for open-channel ");
                 }
 
-                // List cameras and microphones.
-                navigator.mediaDevices.enumerateDevices()
-                    .then(function (devices) {
-                        devices.forEach(function (device) {
-                            webrtcdev.log("[startJS] onMediaError- checkDevices ", device.kind, ": ", device.label, " id = ", device.deviceId);
-                        });
-                    })
-                    .catch(function (err) {
-                        webrtcdev.error('[startJS] onMediaError- checkDevices ', err.name, ": ", err.message);
-                    });
+                // Remove Duplicates from remote
+                // remoteUsers = remoteUsers.filter(function (elem, index, self) {
+                //     return index == self.indexOf(elem);
+                // });
 
-                // retrying checkDevices
-                // checkDevices();
+                // setting local caches
+                webrtcdev.log(" [startjs onopen] setting cache - channel " + sessionid + " with self-userid " + selfuserid + " and remoteUsers " + remoteUsers);
 
-                webrtcdev.warn("[startJS] onMediaError- Joining without camera Stream");
-                shownotification(error.name + " Joining without camera Stream ", "warning");
-                localVideoStreaming = false;
-                // For local Peer , if camera is not allowed or not connected then put null in video containers
-                var peerinfo = webcallpeers[0];
-                peerinfo.type = "Local";
-                peerinfo.stream = null;
-                peerinfo.streamid = "nothing01";
-                updateWebCallView(peerinfo);
+                // In debug mode let the users create multiple user sesison in same browser ,
+                // do not use localstoarge values to get old userid for resuse
+                if (!debug) {
+                    if (!localStorage.getItem("userid"))
+                        localStorage.setItem("userid", selfuserid);
 
-                // start local Connect
-                onLocalConnect() // event emitter for app client
-            },
+                    if (!localStorage.getItem("remoteUsers"))
+                        localStorage.setItem("remoteUsers", remoteUsers);
 
-            rtcConn.onstream = function (event) {
-                webrtcdev.log("[startJs onstream ] on stream Started event ", event);
-                if (event.type == "local") localVideoStreaming = true;
-
-                var peerinfo = findPeerInfo(event.userid);
-                if (!peerinfo) {
-                    webrtcdev.error("[sartjs] onstream - PeerInfo not present in webcallpeers ", event.userid, rtcConn, " creating it now ");
-                    //userid, username, usecolor, useremail, userrole, type
-                    updatePeerInfo(event.userid, event.extra.name, event.extra.color, event.extra.email, event.extra.role, event.type),
-                        webrtcdev.log(" [startJS] onstream - updated local peerinfo for open-channel "),
-                        peerinfo = findPeerInfo(event.userid);
-                    //alert(" Cannot create session for Peer");
-                } else if (role == "inspector" && event.type == "local") {
-                    //ignore
-                    webrtcdev.info("[startjs] onstream - ignore any incoming stream from inspector");
+                    if (!localStorage.getItem("channel"))
+                        localStorage.setItem("channel", sessionid);
                 }
 
-                peerinfo.type = event.type;
-                peerinfo.stream = event.stream;
-                peerinfo.streamid = event.stream.streamid;
-                updateWebCallView(peerinfo);
+                webrtcdev.log(" [startjs onopen] webcallpeers ", webcallpeers);
+                // Connect to webrtc
+                if (rtcConn.connectionType == "open")
+                    connectWebRTC("open", sessionid, selfuserid, []);
+                else if (rtcConn.connectionType == "join")
+                    connectWebRTC("join", sessionid, selfuserid, remoteUsers);
+                else
+                    shownotification("connnection type is neither open nor join", "warning");
 
-                onLocalConnect() // event emitter for app client
-            },
-
-            rtcConn.onstreamended = function (event) {
-                webrtcdev.log(" On streamEnded event ", event);
-                var mediaElement = document.getElementById(event.streamid);
-                if (mediaElement) {
-                    mediaElement.parentNode.removeChild(mediaElement);
+                if (timerobj && timerobj.active) {
+                    startsessionTimer(timerobj);
+                    shareTimePeer();
                 }
-            },
+                shownotification(event.extra.name + " joined session ", "info");
+                showdesktopnotification();
 
-            rtcConn.chunkSize = 50 * 1000,
-
-            rtcConn.onmessage = function (e) {
-                webrtcdev.log("[startjs] on message ", e);
-                if (e.data.typing) {
-                    updateWhotyping(e.extra.name + " is typing ...");
-                } else if (e.data.stoppedTyping) {
-                    updateWhotyping("");
-                } else {
-                    var msgpeerinfo = findPeerInfo(e.userid);
-                    switch (e.data.type) {
-                        case "screenshare":
-                            if (e.data.message == "startscreenshare") {
-                                let scrroomid = e.data.screenid;
-                                shownotification("Starting screen share ", scrroomid);
-                                //createScreenViewButton();
-                                let button = document.getElementById(screenshareobj.button.shareButton.id);
-                                button.className = screenshareobj.button.shareButton.class_busy;
-                                button.innerHTML = screenshareobj.button.shareButton.html_busy;
-                                button.disabled = true;
-                                connectScrWebRTC("join", scrroomid);
-                            } else if (e.data.message == "screenshareStartedViewing") {
-                                screenshareNotification("", "screenshareStartedViewing");
-                            } else if (e.data.message == "stoppedscreenshare") {
-                                shownotification("Screenshare has stopped : " + e.data.screenStreamid);
-                                //createScreenViewButton();
-                                let button = document.getElementById(screenshareobj.button.shareButton.id);
-                                button.className = screenshareobj.button.shareButton.class_off;
-                                button.innerHTML = screenshareobj.button.shareButton.html_off;
-                                button.disabled = false;
-                                webrtcdevCleanShareScreen(e.data.screenStreamid);
-                            } else {
-                                webrtcdev.warn(" unreognized screen share nessage ", e.data.message);
-                            }
-                            break;
-                        case "chat":
-                            updateWhotyping(e.extra.name + " has send message");
-                            addNewMessage({
-                                header: e.extra.name,
-                                message: e.data.message,
-                                userinfo: e.data.userinfo,
-                                color: e.extra.color
-                            });
-                            break;
-                        case "imagesnapshot":
-                            displayList(null, msgpeerinfo, e.data.message, e.data.name, "imagesnapshot");
-                            displayFile(null, msgpeerinfo, e.data.message, e.data.name, "imagesnapshot");
-                            break;
-                        case "videoRecording":
-                            displayList(null, msgpeerinfo, e.data.message, e.data.name, "videoRecording");
-                            displayFile(null, msgpeerinfo, e.data.message, e.data.name, "videoRecording");
-                            break;
-                        case "videoScreenRecording":
-                            displayList(null, msgpeerinfo, e.data.message, e.data.name, "videoScreenRecording");
-                            displayFile(null, msgpeerinfo, e.data.message, e.data.name, "videoScreenRecording");
-                            break;
-                        case "file":
-                            addNewMessage({
-                                header: e.extra.name,
-                                message: e.data.message,
-                                userinfo: getUserinfo(rtcConn.blobURLs[e.userid], "chat-message.png"),
-                                color: e.extra.color
-                            });
-                            break;
-                        case "canvas":
-                            if (e.data.draw) {
-                                CanvasDesigner.syncData(e.data.draw);
-                            } else if (e.data.board) {
-                                webrtcdev.log(" Canvas : ", e.data);
-                                if (e.data.board.from == "remote") {
-                                    if (e.data.board.event == "open" && isDrawOpened != true)
-                                        syncDrawBoard(e.data.board);
-                                    else if (e.data.board.event == "close" && isDrawOpened == true)
-                                        syncDrawBoard(e.data.board);
-                                }
-                            } else {
-                                webrtcdev.warn(" Board data mismatch", e.data);
-                            }
-                            break;
-                        case "texteditor":
-                            receiveWebrtcdevTexteditorSync(e.data.data);
-                            break;
-                        case "codeeditor":
-                            receiveWebrtcdevCodeeditorSync(e.data.data);
-                            break;
-                        case "pointer":
-                            var elem = document.getElementById("cursor2");
-                            if (elem) {
-                                if (e.data.action == "startCursor") {
-                                    elem.setAttribute("style", "display:block");
-                                    placeCursor(elem, e.data.corX, e.data.corY);
-                                } else if (e.data.action == "stopCursor") {
-                                    elem.setAttribute("style", "display:none");
-                                }
-                            } else {
-                                alert(" Cursor for remote is not present ");
-                            }
-
-                            break;
-                        case "timer":
-                            if (!msgpeerinfo.time && !msgpeerinfo.zone) {
-                                //check if the peer has stored zone and time info
-                                msgpeerinfo.time = e.data.time;
-                                msgpeerinfo.zone = e.data.zone;
-                                webrtcdev.log("[startjs] webcallpeers appended with zone and datetime ", msgpeerinfo);
-                            }
-                            webrtcdev.log("[startjs] peerTimerStarted, start peerTimeZone and startPeersTime");
-                            peerTimeZone(e.data.zone, e.userid);
-                            startPeersTime(e.data.time, e.data.zone, e.userid);
-                            break;
-                        case "buttonclick":
-                            var buttonElement = document.getElementById(e.data.buttonName);
-                            if (buttonElement.getAttribute("lastClickedBy") != rtcConn.userid) {
-                                buttonElement.setAttribute("lastClickedBy", e.userid);
-                                buttonElement.click();
-                            }
-                            break;
-                        case "syncOldFiles":
-                            sendOldFiles();
-                            break;
-                        case "shareFileRemove":
-                            webrtcdev.log(" [startjs] shareFileRemove - remove file : ", e.data._filename);
-                            var progressdiv = e.data._element;
-                            var filename = e.data._filename;
-                            let removeButton = "removeButton" + progressdiv;
-
-                            if (document.getElementById("display" + filename))
-                                document.getElementById("display" + filename).setAttribute("style", "display:none !important");
-
-                            if (document.getElementById(progressdiv)) {
-                                document.getElementById(progressdiv).setAttribute("style", "display:none !important");
-                                removeFile(progressdiv);
-                                webrtcdev.log(" [startjs] shareFileRemove done");
-                            } else {
-                                webrtcdev.log(" [startjs] shareFileRemove already done since ", progressdiv, "element doesnt exist ");
-                                // already removed
-                                return;
-                            }
-                            document.getElementById(removeButton).click();
-                            document.getElementById(removeButton).hidden = true;
-
-                            break;
-                        case "shareFileStopUpload":
-                            var progressid = e.data._element;
-                            webrtcdev.log(" [startjs] shareFileStopUpload", progressid);
-                            // var filename = e.data._filename;
-
-                            //console.log(" here 1 ");
-                            for (x in webcallpeers) {
-                                //console.log("here 2 ")
-                                for (y in webcallpeers[x].filearray) {
-                                    //console.log ("here ------------- " , webcallpeers[x].filearray[y]);
-                                    if (webcallpeers[x].filearray[y].pid == progressid) {
-                                        console.log("[ startjs ] shareFileStopUpload -  filepid ", webcallpeers[x].filearray[y].pid, " | status ", webcallpeers[x].filearray[y].status);
-                                        webcallpeers[x].filearray[y].status = "stopped";
-                                        hideFile(progressid);
-                                        removeFile(progressid);
-                                        return;
-                                    }
-                                }
-                            }
-                            //  let stopuploadButton = "stopuploadButton"+filename;
-                            // document.getElementById(stopuploadButton).hidden = true;
-                            break;
-                        default:
-                            webrtcdev.warn(" unrecognizable message from peer  ", e);
-                            break;
-                    }
+                // if the callback function is defined in client implementation , call it
+                if (typeof onSessionConnect !== 'undefined') {
+                    onSessionConnect();
                 }
+                //eventEmitter.emit('sessionconnected');        // Call Function just in case the client is implementing this
+
+                // stats widget
+                if (statisticsobj && statisticsobj.active) {
+                    //populate RTP stats
+                    showRtpstats();
+                }
+
+            } catch (err) {
+                shownotification("problem in session open ", "warning");
+                webrtcdev.error("problem in session open", err);
+            }
+        },
+
+        rtcConn.onMediaError = function (error, constraints) {
+            webrtcdev.error("[startJS] onMediaError - ", error, constraints);
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+                webrtcdev.warn("enumerateDevices() not supported.");
                 return;
-            },
+            }
 
-            rtcConn.sendMessage = function (event) {
-                webrtcdev.log(" sendMessage ", event);
-                event.userid = rtcConn.userid,
-                    event.extra = rtcConn.extra,
-                    rtcConn.sendCustomMessage(event)
-            },
-
-            rtcConn.onleave = function (e) {
-                /*
-                addNewMessage({
-                    header: e.extra.name,
-                    message: e.extra.name + " left session.",
-                    userinfo: getUserinfo(rtcConn.blobURLs[e.userid], "info.png"),
-                    color: e.extra.color
-                }), */
-
-                var peerinfo = findPeerInfo(e.userid);
-
-                webrtcdev.log(" RTCConn onleave user", e, " his peerinfo ", peerinfo, " rom webcallpeers ", webcallpeers);
-                if (e.extra.name != "undefined")
-                    shownotification(e.extra.name + "  left the conversation.");
-                //rtcConn.playRoleOfInitiator()
-
-                /*if(peerinfo){
-                    destroyWebCallView(peerinfo, function (result) {
-                        if (result)
-                            removePeerInfo(e.userid);
+            // List cameras and microphones.
+            navigator.mediaDevices.enumerateDevices()
+                .then(function (devices) {
+                    devices.forEach(function (device) {
+                        webrtcdev.log("[startJS] onMediaError- checkDevices ", device.kind, ": ", device.label, " id = ", device.deviceId);
                     });
-                }*/
-                //eventEmitter.emit('sessiondisconnected', peerinfo);
-            },
-
-            rtcConn.onclose = function (e) {
-                webrtcdev.log(" RTCConn on close conversation ", e);
-                /*alert(e.extra.name + "closed ");*/
-            },
-
-            rtcConn.onEntireSessionClosed = function (event) {
-                rtcConn.attachStreams.forEach(function (stream) {
-                    stream.stop();
+                })
+                .catch(function (err) {
+                    webrtcdev.error('[startJS] onMediaError- checkDevices ', err.name, ": ", err.message);
                 });
-                shownotification("Session Disconneted");
-                //alert(" Entire Session Disconneted ");
-                //eventEmitter.emit('sessiondisconnected', '');
-            },
 
-            rtcConn.onFileStart = function (file) {
-                webrtcdev.log("[start] on File start ", file);
-                webrtcdev.log("[start] on File start description  , name :", file.name, " from -> ", file.userid, " to ->", file.remoteUserId);
+            // retrying checkDevices
+            // checkDevices();
 
-                //alert ( "send fille to " + file.remoteUserId , findPeerInfo(file.remoteUserId).name);
+            webrtcdev.warn("[startJS] onMediaError- Joining without camera Stream");
+            shownotification(error.name + " Joining without camera Stream ", "warning");
+            localVideoStreaming = false;
+            // For local Peer , if camera is not allowed or not connected then put null in video containers
+            var peerinfo = webcallpeers[0];
+            peerinfo.type = "Local";
+            peerinfo.stream = null;
+            peerinfo.streamid = "nothing01";
+            updateWebCallView(peerinfo);
 
-                var progressid = file.uuid + "_" + file.userid + "_" + file.remoteUserId;
-                var peerinfo = findPeerInfo(file.userid);
-                // check if not already present ,
-                // done to include one entry even if same file is being sent to multiple particpants
-                if (!peerinfo.filearray.includes("name : file.name")) {
-                    // add to peerinfo file array
-                    peerinfo.filearray.push({
-                        "pid": progressid,
-                        "name": file.name,
-                        "status": "progress",
-                        "from": file.userid,
-                        "to": file.remoteUserId
-                    });
+            // start local Connect
+            onLocalConnect() // event emitter for app client
+        },
 
-                    // create multiple instances  , also pass file from and file to for the progress bars
-                    addProgressHelper(file.uuid, peerinfo, file.name, file.maxChunks, file, "fileBoxClass", file.userid, file.remoteUserId);
-                }
-                onFileShareStart(file);
-            },
+        rtcConn.onstream = function (event) {
+            webrtcdev.log("[startJs onstream ] on stream Started event ", event);
+            if (event.type == "local") localVideoStreaming = true;
 
-            rtcConn.onFileProgress = function (e) {
-                //.log("[start] on File progress uuid : ", e.uuid , " , name :", e.name ,
-                //   " from -> ", e.userid , " to ->" , e.remoteUserId);
-                try {
-                    // if the file has already recahed max chunks then exit
-                    if (e.currentPosition > e.maxChunks) return;
+            var peerinfo = findPeerInfo(event.userid);
+            if (!peerinfo) {
+                webrtcdev.error("[sartjs] onstream - PeerInfo not present in webcallpeers ", event.userid, rtcConn, " creating it now ");
 
-                    var progressid = e.uuid + "_" + e.userid + "_" + e.remoteUserId;
-                    var r = progressHelper[progressid];
-                    // webrtcdev.log("[start] on File progress ",
-                    //     " progresshelper id - " , progressid ,
-                    //     "currentPosition - " , e.currentPosition ,
-                    //     "maxchunks - ", e.maxChunks ,
-                    //     "progress.max - " , r.progress.max);
+                //userid, username, usecolor, useremail, userrole, type
+                updatePeerInfo(event.userid, event.extra.name, event.extra.color, event.extra.email, event.extra.role, event.type),
+                webrtcdev.log(" [startJS] onstream - updated local peerinfo for open-channel "),
+                peerinfo = findPeerInfo(event.userid);
+                //alert(" Cannot create session for Peer");
+            } else if (role == "inspector" && event.type == "local") {
+                //ignore
+                webrtcdev.info("[startjs] onstream - ignore any incoming stream from inspector");
+            }
 
-                    r && (r.progress.value = e.currentPosition || e.maxChunks || r.progress.max, updateLabel(r.progress, r.label));
-                } catch (err) {
-                    webrtcdev.error("[startjs] Problem in onFileProgress ", err);
-                }
-            },
+            peerinfo.type = event.type;
+            peerinfo.stream = event.stream;
+            peerinfo.streamid = event.stream.streamid;
+            updateWebCallView(peerinfo);
 
-            rtcConn.onFileEnd = function (file) {
-                webrtcdev.log("[start] On file End description , file :", file, " from -> ", file.userid, " to ->", file.remoteUserId);
+            onLocalConnect(); // event emitter for app client
+        },
 
-                //alert ( "end file to " + file.remoteUserId , findPeerInfo(file.remoteUserId).name);
+        rtcConn.onstreamended = function (event) {
+            webrtcdev.log(" On streamEnded event ", event);
+            let mediaElement = document.getElementById(event.streamid);
+            if (mediaElement) {
+                mediaElement.parentNode.removeChild(mediaElement);
+            }
+        },
 
-                var progressid = file.uuid + "_" + file.userid + "_" + file.remoteUserId;
-                var filename = file.name;
+        rtcConn.chunkSize = 50 * 1000,
 
-                // find duplicate file
-                // for(x in webcallpeers){
-                //     for (y in webcallpeers[x].filearray){
-                //         webrtcdev.log(" Duplicate find , Files shared  so far " , webcallpeers[x].filearray[y].name);
-                //         if(webcallpeers[x].filearray[y].name==filename){
-                //             //discard file as duplicate
-                //             webrtcdev.error("duplicate file shared ");
-                //             return;
-                //         }
-                //     }
-                // }
-
-                // push to peerinfo's file array
-                var peerinfo = findPeerInfo(file.userid);
-                if (peerinfo != null) {
-                    for (x in peerinfo.filearray)
-                        if (peerinfo.filearray[x].name == filename && peerinfo.filearray[x].pid == progressid) {
-                            //update filearray status to finished
-                            peerinfo.filearray[x].status = "finished";
-
-                            // Hide the stop upload button for this file
-                            var stopuploadbutton = document.getElementById("stopuploadButton" + progressid);
-                            if (stopuploadbutton) stopuploadbutton.hidden = true;
+        rtcConn.onmessage = function (e) {
+            webrtcdev.log("[startjs] on message ", e);
+            if (e.data.typing) {
+                updateWhotyping(e.extra.name + " is typing ...");
+            } else if (e.data.stoppedTyping) {
+                updateWhotyping("");
+            } else {
+                var msgpeerinfo = findPeerInfo(e.userid);
+                switch (e.data.type) {
+                    case "screenshare":
+                        if (e.data.message == "startscreenshare") {
+                            let scrroomid = e.data.screenid;
+                            shownotification("Starting screen share ", scrroomid);
+                            //createScreenViewButton();
+                            let button = document.getElementById(screenshareobj.button.shareButton.id);
+                            button.className = screenshareobj.button.shareButton.class_busy;
+                            button.innerHTML = screenshareobj.button.shareButton.html_busy;
+                            button.disabled = true;
+                            connectScrWebRTC("join", scrroomid);
+                        } else if (e.data.message == "screenshareStartedViewing") {
+                            screenshareNotification("", "screenshareStartedViewing");
+                        } else if (e.data.message == "stoppedscreenshare") {
+                            shownotification("Screenshare has stopped : " + e.data.screenStreamid);
+                            //createScreenViewButton();
+                            let button = document.getElementById(screenshareobj.button.shareButton.id);
+                            button.className = screenshareobj.button.shareButton.class_off;
+                            button.innerHTML = screenshareobj.button.shareButton.html_off;
+                            button.disabled = false;
+                            webrtcdevCleanShareScreen(e.data.screenStreamid);
+                        } else {
+                            webrtcdev.warn(" unreognized screen share nessage ", e.data.message);
                         }
+                        break;
+                    case "chat":
+                        updateWhotyping(e.extra.name + " has send message");
+                        addNewMessage({
+                            header: e.extra.name,
+                            message: e.data.message,
+                            userinfo: e.data.userinfo,
+                            color: e.extra.color
+                        });
+                        break;
+                    case "imagesnapshot":
+                        displayList(null, msgpeerinfo, e.data.message, e.data.name, "imagesnapshot");
+                        displayFile(null, msgpeerinfo, e.data.message, e.data.name, "imagesnapshot");
+                        break;
+                    case "videoRecording":
+                        displayList(null, msgpeerinfo, e.data.message, e.data.name, "videoRecording");
+                        displayFile(null, msgpeerinfo, e.data.message, e.data.name, "videoRecording");
+                        break;
+                    case "videoScreenRecording":
+                        displayList(null, msgpeerinfo, e.data.message, e.data.name, "videoScreenRecording");
+                        displayFile(null, msgpeerinfo, e.data.message, e.data.name, "videoScreenRecording");
+                        break;
+                    case "file":
+                        addNewMessage({
+                            header: e.extra.name,
+                            message: e.data.message,
+                            userinfo: getUserinfo(rtcConn.blobURLs[e.userid], "chat-message.png"),
+                            color: e.extra.color
+                        });
+                        break;
+                    case "canvas":
+                        if (e.data.draw) {
+                            CanvasDesigner.syncData(e.data.draw);
+                        } else if (e.data.board) {
+                            webrtcdev.log(" Canvas : ", e.data);
+                            if (e.data.board.from == "remote") {
+                                if (e.data.board.event == "open" && isDrawOpened != true)
+                                    syncDrawBoard(e.data.board);
+                                else if (e.data.board.event == "close" && isDrawOpened == true)
+                                    syncDrawBoard(e.data.board);
+                            }
+                        } else {
+                            webrtcdev.warn(" Board data mismatch", e.data);
+                        }
+                        break;
+                    case "texteditor":
+                        receiveWebrtcdevTexteditorSync(e.data.data);
+                        break;
+                    case "codeeditor":
+                        receiveWebrtcdevCodeeditorSync(e.data.data);
+                        break;
+                    case "pointer":
+                        var elem = document.getElementById("cursor2");
+                        if (elem) {
+                            if (e.data.action == "startCursor") {
+                                elem.setAttribute("style", "display:block");
+                                placeCursor(elem, e.data.corX, e.data.corY);
+                            } else if (e.data.action == "stopCursor") {
+                                elem.setAttribute("style", "display:none");
+                            }
+                        } else {
+                            alert(" Cursor for remote is not present ");
+                        }
+
+                        break;
+                    case "timer":
+                        if (!msgpeerinfo.time && !msgpeerinfo.zone) {
+                            //check if the peer has stored zone and time info
+                            msgpeerinfo.time = e.data.time;
+                            msgpeerinfo.zone = e.data.zone;
+                            webrtcdev.log("[startjs] webcallpeers appended with zone and datetime ", msgpeerinfo);
+                        }
+                        webrtcdev.log("[startjs] peerTimerStarted, start peerTimeZone and startPeersTime");
+                        peerTimeZone(e.data.zone, e.userid);
+                        startPeersTime(e.data.time, e.data.zone, e.userid);
+                        break;
+                    case "buttonclick":
+                        var buttonElement = document.getElementById(e.data.buttonName);
+                        if (buttonElement.getAttribute("lastClickedBy") != rtcConn.userid) {
+                            buttonElement.setAttribute("lastClickedBy", e.userid);
+                            buttonElement.click();
+                        }
+                        break;
+                    case "syncOldFiles":
+                        sendOldFiles();
+                        break;
+                    case "shareFileRemove":
+                        webrtcdev.log(" [startjs] shareFileRemove - remove file : ", e.data._filename);
+                        var progressdiv = e.data._element;
+                        var filename = e.data._filename;
+                        let removeButton = "removeButton" + progressdiv;
+
+                        if (document.getElementById("display" + filename))
+                            document.getElementById("display" + filename).setAttribute("style", "display:none !important");
+
+                        if (document.getElementById(progressdiv)) {
+                            document.getElementById(progressdiv).setAttribute("style", "display:none !important");
+                            removeFile(progressdiv);
+                            webrtcdev.log(" [startjs] shareFileRemove done");
+                        } else {
+                            webrtcdev.log(" [startjs] shareFileRemove already done since ", progressdiv, "element doesnt exist ");
+                            // already removed
+                            return;
+                        }
+                        document.getElementById(removeButton).click();
+                        document.getElementById(removeButton).hidden = true;
+
+                        break;
+                    case "shareFileStopUpload":
+                        var progressid = e.data._element;
+                        webrtcdev.log(" [startjs] shareFileStopUpload", progressid);
+                        // var filename = e.data._filename;
+
+                        for (x in webcallpeers) {
+                            for (y in webcallpeers[x].filearray) {
+                                if (webcallpeers[x].filearray[y].pid == progressid) {
+                                    console.log("[ startjs ] shareFileStopUpload -  filepid ", webcallpeers[x].filearray[y].pid, " | status ", webcallpeers[x].filearray[y].status);
+                                    webcallpeers[x].filearray[y].status = "stopped";
+                                    hideFile(progressid);
+                                    removeFile(progressid);
+                                    return;
+                                }
+                            }
+                        }
+                        //  let stopuploadButton = "stopuploadButton"+filename;
+                        // document.getElementById(stopuploadButton).hidden = true;
+                        break;
+                    default:
+                        webrtcdev.warn(" unrecognizable message from peer  ", e);
+                        break;
                 }
+            }
+            return;
+        },
 
-                // if all file progress bars with the name are finsihed
-                //- tbd
+        rtcConn.sendMessage = function (event) {
+            webrtcdev.log(" sendMessage ", event);
+            event.userid = rtcConn.userid,
+                event.extra = rtcConn.extra,
+                rtcConn.sendCustomMessage(event)
+        },
 
-                // Display on File Viewer and List
-                webrtcdev.log("[start] onFileEnd - Display on File Viewer and List -", file.url, filename, file.type);
-                displayFile(file.uuid, peerinfo, file.url, filename, file.type);
+        rtcConn.onleave = function (e) {
+            /*
+            addNewMessage({
+                header: e.extra.name,
+                message: e.extra.name + " left session.",
+                userinfo: getUserinfo(rtcConn.blobURLs[e.userid], "info.png"),
+                color: e.extra.color
+            }), */
 
-                webrtcdev.log("[startjs] onFileEnd - Display List -", filename + file.uuid, document.getElementById(filename + file.uuid));
-                // if the file is from me ( orignal share ) then diaply listing in viewbox just one
-                if (selfuserid == file.userid && document.getElementById(filename + file.uuid)) {
-                    return;
-                }
-                displayList(file.uuid, peerinfo, file.url, filename, file.type);
-                onFileShareEnded(file);
+            var peerinfo = findPeerInfo(e.userid);
 
-                //start the pending transfer from pendingFileTransfer.push(file);
-                if (pendingFileTransfer.length >= pendingFileTransferlimit) {
-                    webrtcdev.log("resuming pending/paused file ", pendingFileTransfer[0]);
-                    document.getElementById(pendingFileTransfer[0].name).hidden = true;
-                    sendFile(pendingFileTransfer[0]);
-                    pendingFileTransfer.pop();
-                }
-            },
+            webrtcdev.log(" RTCConn onleave user", e, " his peerinfo ", peerinfo, " rom webcallpeers ", webcallpeers);
+            if (e.extra.name != "undefined")
+                shownotification(e.extra.name + "  left the conversation.");
+            //rtcConn.playRoleOfInitiator()
 
-            rtcConn.takeSnapshot = function (userid, callback) {
-                takeSnapshot({
-                    userid: userid,
-                    connection: connection,
-                    callback: callback
+            /*if(peerinfo){
+                destroyWebCallView(peerinfo, function (result) {
+                    if (result)
+                        removePeerInfo(e.userid);
                 });
-            },
+            }*/
+            //eventEmitter.emit('sessiondisconnected', peerinfo);
+        },
 
-            rtcConn.connectionType = null,
-            rtcConn.remoteUsers = [],
+        rtcConn.onclose = function (e) {
+            webrtcdev.log(" RTCConn on close conversation ", e);
+            /*alert(e.extra.name + "closed ");*/
+        },
 
-            rtcConn.extra = {
-                // do not use tempuserid for uuid now
-                uuid: rtcConn.userid,
-                name: selfusername || "",
-                color: selfcolor || "",
-                email: selfemail || "",
-                role: role || "participant"
-            },
+        rtcConn.onEntireSessionClosed = function (event) {
+            rtcConn.attachStreams.forEach(function (stream) {
+                stream.stop();
+            });
+            shownotification("Session Disconneted");
+            //alert(" Entire Session Disconneted ");
+            //eventEmitter.emit('sessiondisconnected', '');
+        },
 
-            rtcConn.socketMessageEvent = 'RTCMultiConnection-Message',
-            rtcConn.socketCustomEvent = 'RTCMultiConnection-Custom-Message',
+        rtcConn.onFileStart = function (file) {
+            webrtcdev.log("[start] on File start ", file);
+            webrtcdev.log("[start] on File start description  , name :", file.name, " from -> ", file.userid, " to ->", file.remoteUserId);
 
-            rtcConn.enableFileSharing = true,
-            rtcConn.filesContainer = document.body || document.documentElement,
+            //alert ( "send fille to " + file.remoteUserId , findPeerInfo(file.remoteUserId).name);
 
-            rtcConn.iceServers = webrtcdevIceServers,
+            var progressid = file.uuid + "_" + file.userid + "_" + file.remoteUserId;
+            var peerinfo = findPeerInfo(file.userid);
+            // check if not already present ,
+            // done to include one entry even if same file is being sent to multiple particpants
+            if (!peerinfo.filearray.includes("name : file.name")) {
+                // add to peerinfo file array
+                peerinfo.filearray.push({
+                    "pid": progressid,
+                    "name": file.name,
+                    "status": "progress",
+                    "from": file.userid,
+                    "to": file.remoteUserId
+                });
 
-            webrtcdev.log(" [startjs] rtcConn : ", rtcConn);
+                // create multiple instances  , also pass file from and file to for the progress bars
+                addProgressHelper(file.uuid, peerinfo, file.name, file.maxChunks, file, "fileBoxClass", file.userid, file.remoteUserId);
+            }
+            onFileShareStart(file);
+        },
+
+        rtcConn.onFileProgress = function (e) {
+            //.log("[start] on File progress uuid : ", e.uuid , " , name :", e.name ,
+            //   " from -> ", e.userid , " to ->" , e.remoteUserId);
+            try {
+                // if the file has already recahed max chunks then exit
+                if (e.currentPosition > e.maxChunks) return;
+
+                var progressid = e.uuid + "_" + e.userid + "_" + e.remoteUserId;
+                var r = progressHelper[progressid];
+                // webrtcdev.log("[start] on File progress ",
+                //     " progresshelper id - " , progressid ,
+                //     "currentPosition - " , e.currentPosition ,
+                //     "maxchunks - ", e.maxChunks ,
+                //     "progress.max - " , r.progress.max);
+
+                r && (r.progress.value = e.currentPosition || e.maxChunks || r.progress.max, updateLabel(r.progress, r.label));
+            } catch (err) {
+                webrtcdev.error("[startjs] Problem in onFileProgress ", err);
+            }
+        },
+
+        rtcConn.onFileEnd = function (file) {
+            webrtcdev.log("[start] On file End description , file :", file, " from -> ", file.userid, " to ->", file.remoteUserId);
+
+            //alert ( "end file to " + file.remoteUserId , findPeerInfo(file.remoteUserId).name);
+
+            var progressid = file.uuid + "_" + file.userid + "_" + file.remoteUserId;
+            var filename = file.name;
+
+            // find duplicate file
+            // for(x in webcallpeers){
+            //     for (y in webcallpeers[x].filearray){
+            //         webrtcdev.log(" Duplicate find , Files shared  so far " , webcallpeers[x].filearray[y].name);
+            //         if(webcallpeers[x].filearray[y].name==filename){
+            //             //discard file as duplicate
+            //             webrtcdev.error("duplicate file shared ");
+            //             return;
+            //         }
+            //     }
+            // }
+
+            // push to peerinfo's file array
+            var peerinfo = findPeerInfo(file.userid);
+            if (peerinfo != null) {
+                for (x in peerinfo.filearray)
+                    if (peerinfo.filearray[x].name == filename && peerinfo.filearray[x].pid == progressid) {
+                        //update filearray status to finished
+                        peerinfo.filearray[x].status = "finished";
+
+                        // Hide the stop upload button for this file
+                        var stopuploadbutton = document.getElementById("stopuploadButton" + progressid);
+                        if (stopuploadbutton) stopuploadbutton.hidden = true;
+                    }
+            }
+
+            // if all file progress bars with the name are finsihed
+            //- tbd
+
+            // Display on File Viewer and List
+            webrtcdev.log("[start] onFileEnd - Display on File Viewer and List -", file.url, filename, file.type);
+            displayFile(file.uuid, peerinfo, file.url, filename, file.type);
+
+            webrtcdev.log("[startjs] onFileEnd - Display List -", filename + file.uuid, document.getElementById(filename + file.uuid));
+            // if the file is from me ( orignal share ) then diaply listing in viewbox just one
+            if (selfuserid == file.userid && document.getElementById(filename + file.uuid)) {
+                return;
+            }
+            displayList(file.uuid, peerinfo, file.url, filename, file.type);
+            onFileShareEnded(file);
+
+            //start the pending transfer from pendingFileTransfer.push(file);
+            if (pendingFileTransfer.length >= pendingFileTransferlimit) {
+                webrtcdev.log("resuming pending/paused file ", pendingFileTransfer[0]);
+                document.getElementById(pendingFileTransfer[0].name).hidden = true;
+                sendFile(pendingFileTransfer[0]);
+                pendingFileTransfer.pop();
+            }
+        },
+
+        rtcConn.takeSnapshot = function (userid, callback) {
+            takeSnapshot({
+                userid: userid,
+                connection: connection,
+                callback: callback
+            });
+        },
+
+        rtcConn.connectionType = null,
+        rtcConn.remoteUsers = [],
+
+        rtcConn.extra = {
+            uuid: rtcConn.userid,
+            name: selfusername || "",
+            color: selfcolor || "",
+            email: selfemail || "",
+            role: role || "participant"
+        },
+
+        rtcConn.socketMessageEvent = 'RTCMultiConnection-Message',
+        rtcConn.socketCustomEvent = 'RTCMultiConnection-Custom-Message',
+
+        rtcConn.enableFileSharing = true,
+        rtcConn.filesContainer = document.body || document.documentElement,
+
+        rtcConn.iceServers = webrtcdevIceServers,
+
+        webrtcdev.log(" [startjs] rtcConn : ", rtcConn);
 
         //tempuserid = supportSessionRefresh();
-        //rtcConn.userid = tempuserid;
 
         // if(this.turn!=null && this.turn !="none"){
         //     if (!webrtcdevIceServers) {
@@ -25123,7 +26539,6 @@ function checkDevices(resolveparent, rejectparent, incoming, outgoing) {
         //     if(role == "inspector"){
         //         resolve("ok");
         //     }
-
         //     if(!DetectRTC.isWebsiteHasWebcamPermissions || !DetectRTC.isWebsiteHasMicrophonePermissions){
         //         //permission not found , retry getting permissions 
         //         webrtcdev.warn(" [startJS] checkDevices : permission not found for mic or camera , try getusermedia again ");
@@ -25575,7 +26990,7 @@ this.clearCaches = clearCaches = function () {
  * @method
  * @name leaveWebRTC
  */
-var leaveWebRTC = function(){
+var leaveWebRTC = function () {
     shownotification("Leaving the session ");
 };
 
@@ -25583,8 +26998,8 @@ var leaveWebRTC = function(){
     webrtcdev.log( "Local Storage Channel " ,  localStorage.getItem("channel"));
 };
 */
-window.onunload=function(){
-    webrtcdev.log( "[startjs] onunload " , localStorage.getItem("channel"));
+window.onunload = function () {
+    webrtcdev.log("[startjs] onunload ", localStorage.getItem("channel"));
     alert(" Refreshing the Page will loose the session data");
 };
 };

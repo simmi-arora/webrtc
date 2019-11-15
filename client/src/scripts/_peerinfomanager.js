@@ -33,12 +33,11 @@ function removePeerInfo(userid) {
     return new Promise(function (resolve, reject) {
         webrtcdev.log(" [startjs] removePeerInfo  remove userid: ", userid);
         webcallpeers.splice(userid, 1);
-        webrtcdev.log(" [startjs] removePeerInfo  After removing: ", webcallpeers);
         resolve("done");
     })
-        .catch((err) => {
-            webrtcdev.error("[startjs removePeerInfo] Promise rejected ", err);
-        });
+    .catch((err) => {
+        webrtcdev.error("[startjs removePeerInfo] Promise rejected ", err);
+    });
 }
 
 /**

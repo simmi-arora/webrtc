@@ -3,7 +3,6 @@
 /*-----------------------------------------------------------------------------------*/
 
 if (navigator.geolocation) {
-    /*webrtcdev.log(navigator);*/
     operatingsystem = navigator.platform;
     navigator.geolocation.getCurrentPosition(showPosition, showError);
 } else {
