@@ -190,7 +190,7 @@ var scriptList=[
     "client/src/dommodifiers/_filesharing_dommanager.js",
     "client/src/dommodifiers/_media_dommanager.js",
     "client/src/dommodifiers/_notify.js",
-    "client/src/dommodifiers/_screensharedommodifier.js",
+    "client/src/dommodifiers/_screenshare_dommodifier.js",
     "client/src/dommodifiers/_chat_dommodifier.js",
     // "client/src/scripts/_settings.js",
     // --------------------- stats and analytics

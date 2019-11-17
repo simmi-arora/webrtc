@@ -42,7 +42,7 @@ function attachControlButtons(vid, peerinfo) {
     var controlBarName = peerinfo.controlBarName;
     var snapshotViewer = peerinfo.fileSharingContainer;
 
-    //Preventing multple control bars
+    //Preventing multiple control bars
     var c = vid.parentNode.childNodes;
     for (i = 0; i < c.length; i++) {
         //webrtcdev.log("ChildNode of video Parent " , c[i]);
@@ -55,7 +55,7 @@ function attachControlButtons(vid, peerinfo) {
     }
 
     // Control bar holds media control elements like , mute unmute , fillscreen ,. recird , snapshot
-    var controlBar = document.createElement("div");
+    let controlBar = document.createElement("div");
     controlBar.id = controlBarName;
 
     if (peerinfo.type == "local")
@@ -64,7 +64,7 @@ function attachControlButtons(vid, peerinfo) {
         controlBar.className = "remoteVideoControlBarClass";
 
     if (debug) {
-        var nameBox = document.createElement("div");
+        let nameBox = document.createElement("div");
         nameBox.innerHTML = vid.id;
         controlBar.appendChild(nameBox);
     }
@@ -97,11 +97,19 @@ function attachControlButtons(vid, peerinfo) {
     }
 
     vid.parentNode.appendChild(controlBar);
+    return;
 }
 
-
+/**
+ * function to createFullScreenButton
+ * @method
+ * @name createFullScreenButton
+ * @param {string} controlBarName
+ * @param {json} peerinfo
+ * @return {dom} button
+ */
 function createFullScreenButton(controlBarName, peerinfo, streamid, stream) {
-    var button = document.createElement("span");
+    let button = document.createElement("span");
     button.id = controlBarName + "fullscreeButton";
     button.setAttribute("title", "Full Screen");
     button.className = minmaxobj.max.button.class_off;
@@ -126,9 +134,16 @@ function createFullScreenButton(controlBarName, peerinfo, streamid, stream) {
     return button;
 }
 
-
+/**
+ * function to createMinimizeVideoButton
+ * @method
+ * @name createMinimizeVideoButton
+ * @param {string} controlBarName
+ * @param {json} peerinfo
+ * @return {dom} button
+ */
 function createMinimizeVideoButton(controlBarName, peerinfo, streamid, stream) {
-    var button = document.createElement("span");
+    let button = document.createElement("span");
     button.id = controlBarName + "minmizevideoButton";
     button.setAttribute("title", "Minimize Video");
     button.className = minmaxobj.min.button.class_off;
@@ -149,9 +164,16 @@ function createMinimizeVideoButton(controlBarName, peerinfo, streamid, stream) {
     return button;
 }
 
-
+/**
+ * function to createAudioMuteButton
+ * @method
+ * @name attachUserDetails
+ * @param {string} controlBarName
+ * @param {json} peerinfo
+ * @return {dom} button
+ */
 function createAudioMuteButton(controlBarName, peerinfo) {
-    var audioButton = document.createElement("span");
+    let audioButton = document.createElement("span");
     audioButton.id = controlBarName + "audioButton";
     audioButton.setAttribute("data-val", "mute");
     audioButton.setAttribute("title", "Toggle Audio");
@@ -179,8 +201,16 @@ function createAudioMuteButton(controlBarName, peerinfo) {
     return audioButton;
 }
 
+/**
+ * function to createVideoMuteButton
+ * @method
+ * @name createVideoMuteButton
+ * @param {string} controlBarName
+ * @param {json} peerinfo
+ * @return {dom} button
+ */
 function createVideoMuteButton(controlBarName, peerinfo) {
-    var videoButton = document.createElement("span");
+    let videoButton = document.createElement("span");
     videoButton.id = controlBarName + "videoButton";
     videoButton.setAttribute("title", "Toggle Video");
     videoButton.setAttribute("data-container", "body");
@@ -218,11 +248,12 @@ function createVideoMuteButton(controlBarName, peerinfo) {
  * @param {json} peerinfo
  */
 function attachUserDetails(vid, peerinfo) {
+    webrtcdev.log("[media_dommanager] attachUserDetails - ",peerinfo.userid , ":" , peerinfo.type);
     if (vid.parentNode.querySelectorAll("videoheaders" + peerinfo.userid) > 0) {
         webrtcdev.warn(" video header already present ", "videoheaders" + peerinfo.userid);
-        return
+        return;
     }
-    var nameBox = document.createElement("div");
+    let nameBox = document.createElement("div");
     nameBox.setAttribute("style", "background-color:" + peerinfo.color),
         nameBox.className = "videoHeaderClass",
         nameBox.innerHTML = peerinfo.name + "<br/>",
@@ -239,8 +270,8 @@ function attachUserDetails(vid, peerinfo) {
  * @param {json} peerinfo
  */
 function attachMetaUserDetails(vid, peerinfo) {
-    webrtcdev.log(peerinfo.userid + ":" + peerinfo.type);
-    var detailsbox = document.createElement("span");
+    webrtcdev.log("[media_dommanager] attachMetaUserDetails - ",peerinfo.userid , ":" , peerinfo.type);
+    let detailsbox = document.createElement("span");
     detailsbox.setAttribute("style", "background-color:" + peerinfo.color);
     detailsbox.innerHTML = peerinfo.userid + ":" + peerinfo.type + "<br/>";
     vid.parentNode.insertBefore(detailsbox, vid.parentNode.firstChild);

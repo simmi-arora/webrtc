@@ -13967,17 +13967,31 @@ function updateWebCallView(peerinfo) {
 
                     // handling remote video addition 
                     if (remoteVideos) {
-
-                        /*get the next empty index of video and pointer in remote video array */
+                        /* get the next empty index of video and pointer in remote video array */
                         let emptyvideoindex = 0;
                         for (v in remoteVideos) {
-                            webrtcdev.log("Remote Video index array ", v, " || ", remoteVideos[v],
-                                document.getElementsByName(remoteVideos[v]), document.getElementsByName(remoteVideos[v]).src);
-                            if (document.getElementsByName(remoteVideos[v])[0] && document.getElementsByName(remoteVideos[v])[0].src != "") {
-                                emptyvideoindex++;
+                            webrtcdev.log("[webcallviewdevmanager] Remote Video index array ", v, " || ", remoteVideos[v]);
+
+                            /* find of the video container of peer is already present in remoteVideos */
+                            if(remoteVideos[v].userid == peerinfo.userid && remoteVideos[v].stream=="" &&
+                                !!remoteVideos[v].video){
+                                webrtcdev.log("webcallviewdevmanager] Remote Video dom exist already but without stream" , remoteVideos[v].video );
+                                emptyvideoindex = v ;
+                                break;
+                            }else{
+                                let vids = document.getElementsByName(remoteVideos[v]);
+                                webrtcdev.log("webcallviewdevmanager] Remote Video dom exists  " , !(!vids), vids );
+                                if (vids.length <= 0) {
+                                    webrtcdev.log(" remote video space is empty ");
+                                    emptyvideoindex = v ;
+                                    break;
+                                }  else if (vids[0] && vids[0].src && vids[0].src != "") {
+                                    webrtcdev.log(" vid ", vids[0].src)
+                                    emptyvideoindex++;
+                                }
                             }
                         }
-
+                        alert("empty index "+ emptyvideoindex);
                         try {
                             if (remoteobj.maxAllowed == "unlimited") {
                                 // unlimitted video can be added dynamically
@@ -13986,6 +14000,7 @@ function updateWebCallView(peerinfo) {
                                 //  added  new video element to remoteVideos at current index
                                 remoteVideos[emptyvideoindex] = {
                                     "userid": peerinfo.userid,
+                                    "stream" : peerinfo.stream,
                                     "video": video
                                 };
                                 document.getElementById(remoteobj.dynamicVideos.videoContainer).appendChild(video);
@@ -13993,22 +14008,26 @@ function updateWebCallView(peerinfo) {
                                 webrtcdev.log("remote video is limited to size maxAllowed , current index ", emptyvideoindex);
                                 //remote video is limited to size maxAllowed
                                 let remVideoHolder = document.getElementsByName(remoteVideos[emptyvideoindex]);
-                                webrtcdev.log("searching for video with index ", emptyvideoindex , " in remote video : ", remVideoHolder[0]);
+                                webrtcdev.log("searching for video with index ", emptyvideoindex , " in remote video : ", remVideoHolder);
                                 if (remVideoHolder) {
                                     if (remVideoHolder[0]) {
                                         // since remvideo holder exist at current index , add video element to remoteVideos
                                         remoteVideos[emptyvideoindex] = {
                                             "userid": peerinfo.userid,
+                                            "stream" : peerinfo.stream,
                                             "video": remVideoHolder[0]
                                         };
+                                        webrtcdev.log(" -----  remoteVideos[emptyvideoindex] updated " , remoteVideos[emptyvideoindex]);
                                     }
                                 } else {
                                     webrtcdev.warn(" since remvideo holder doesnt exist just overwrite the last remote with the video ")
                                     // since remvideo holder doesnt exist just overwrite the last remote with the video 
                                     remoteVideos[remoteVideos.length - 1] = {
                                         "userid": peerinfo.userid,
+                                        "stream" : peerinfo.stream,
                                         "video": remVideoHolder[0]
                                     };
+                                    webrtcdev.log(" -----  remoteVideos[remoteVideos.length-1] updated " , remoteVideos[emptyvideoindex]);
                                 }
                             }
 
@@ -15425,7 +15444,7 @@ function attachControlButtons(vid, peerinfo) {
     var controlBarName = peerinfo.controlBarName;
     var snapshotViewer = peerinfo.fileSharingContainer;
 
-    //Preventing multple control bars
+    //Preventing multiple control bars
     var c = vid.parentNode.childNodes;
     for (i = 0; i < c.length; i++) {
         //webrtcdev.log("ChildNode of video Parent " , c[i]);
@@ -15438,7 +15457,7 @@ function attachControlButtons(vid, peerinfo) {
     }
 
     // Control bar holds media control elements like , mute unmute , fillscreen ,. recird , snapshot
-    var controlBar = document.createElement("div");
+    let controlBar = document.createElement("div");
     controlBar.id = controlBarName;
 
     if (peerinfo.type == "local")
@@ -15447,7 +15466,7 @@ function attachControlButtons(vid, peerinfo) {
         controlBar.className = "remoteVideoControlBarClass";
 
     if (debug) {
-        var nameBox = document.createElement("div");
+        let nameBox = document.createElement("div");
         nameBox.innerHTML = vid.id;
         controlBar.appendChild(nameBox);
     }
@@ -15480,11 +15499,19 @@ function attachControlButtons(vid, peerinfo) {
     }
 
     vid.parentNode.appendChild(controlBar);
+    return;
 }
 
-
+/**
+ * function to createFullScreenButton
+ * @method
+ * @name createFullScreenButton
+ * @param {string} controlBarName
+ * @param {json} peerinfo
+ * @return {dom} button
+ */
 function createFullScreenButton(controlBarName, peerinfo, streamid, stream) {
-    var button = document.createElement("span");
+    let button = document.createElement("span");
     button.id = controlBarName + "fullscreeButton";
     button.setAttribute("title", "Full Screen");
     button.className = minmaxobj.max.button.class_off;
@@ -15509,9 +15536,16 @@ function createFullScreenButton(controlBarName, peerinfo, streamid, stream) {
     return button;
 }
 
-
+/**
+ * function to createMinimizeVideoButton
+ * @method
+ * @name createMinimizeVideoButton
+ * @param {string} controlBarName
+ * @param {json} peerinfo
+ * @return {dom} button
+ */
 function createMinimizeVideoButton(controlBarName, peerinfo, streamid, stream) {
-    var button = document.createElement("span");
+    let button = document.createElement("span");
     button.id = controlBarName + "minmizevideoButton";
     button.setAttribute("title", "Minimize Video");
     button.className = minmaxobj.min.button.class_off;
@@ -15532,9 +15566,16 @@ function createMinimizeVideoButton(controlBarName, peerinfo, streamid, stream) {
     return button;
 }
 
-
+/**
+ * function to createAudioMuteButton
+ * @method
+ * @name attachUserDetails
+ * @param {string} controlBarName
+ * @param {json} peerinfo
+ * @return {dom} button
+ */
 function createAudioMuteButton(controlBarName, peerinfo) {
-    var audioButton = document.createElement("span");
+    let audioButton = document.createElement("span");
     audioButton.id = controlBarName + "audioButton";
     audioButton.setAttribute("data-val", "mute");
     audioButton.setAttribute("title", "Toggle Audio");
@@ -15562,8 +15603,16 @@ function createAudioMuteButton(controlBarName, peerinfo) {
     return audioButton;
 }
 
+/**
+ * function to createVideoMuteButton
+ * @method
+ * @name createVideoMuteButton
+ * @param {string} controlBarName
+ * @param {json} peerinfo
+ * @return {dom} button
+ */
 function createVideoMuteButton(controlBarName, peerinfo) {
-    var videoButton = document.createElement("span");
+    let videoButton = document.createElement("span");
     videoButton.id = controlBarName + "videoButton";
     videoButton.setAttribute("title", "Toggle Video");
     videoButton.setAttribute("data-container", "body");
@@ -15601,11 +15650,12 @@ function createVideoMuteButton(controlBarName, peerinfo) {
  * @param {json} peerinfo
  */
 function attachUserDetails(vid, peerinfo) {
+    webrtcdev.log("[media_dommanager] attachUserDetails - ",peerinfo.userid , ":" , peerinfo.type);
     if (vid.parentNode.querySelectorAll("videoheaders" + peerinfo.userid) > 0) {
         webrtcdev.warn(" video header already present ", "videoheaders" + peerinfo.userid);
-        return
+        return;
     }
-    var nameBox = document.createElement("div");
+    let nameBox = document.createElement("div");
     nameBox.setAttribute("style", "background-color:" + peerinfo.color),
         nameBox.className = "videoHeaderClass",
         nameBox.innerHTML = peerinfo.name + "<br/>",
@@ -15622,8 +15672,8 @@ function attachUserDetails(vid, peerinfo) {
  * @param {json} peerinfo
  */
 function attachMetaUserDetails(vid, peerinfo) {
-    webrtcdev.log(peerinfo.userid + ":" + peerinfo.type);
-    var detailsbox = document.createElement("span");
+    webrtcdev.log("[media_dommanager] attachMetaUserDetails - ",peerinfo.userid , ":" , peerinfo.type);
+    let detailsbox = document.createElement("span");
     detailsbox.setAttribute("style", "background-color:" + peerinfo.color);
     detailsbox.innerHTML = peerinfo.userid + ":" + peerinfo.type + "<br/>";
     vid.parentNode.insertBefore(detailsbox, vid.parentNode.firstChild);
@@ -15774,6 +15824,232 @@ function spawnNotification(theBody,theIcon,theTitle) {
 /*-----------------------------------------------------------------------------------*/
 
 
+
+/**
+ * find if view button is provided or need to be created
+ * @method
+ * @name createOrAssignScreenviewButton
+ */
+function createOrAssignScreenviewButton() {
+    if (screenshareobj.button.viewButton.id && getElementById(screenshareobj.button.viewButton.id)) {
+        let button = getElementById(screenshareobj.button.viewButton.id);
+        assignScreenViewButton(button);
+    } else {
+        createScreenViewButton();
+    }
+}
+
+/**
+ * create the view button for screnshare
+ * @method
+ * @name createScreenViewButton
+ */
+function createScreenViewButton() {
+    if (getElementById("viewScreenShareButton"))
+        return;
+    var viewScreenShareButton = document.createElement("span");
+    viewScreenShareButton.className = screenshareobj.button.viewButton.class_off;
+    viewScreenShareButton.innerHTML = screenshareobj.button.viewButton.html_off;
+    viewScreenShareButton.id = "viewScreenShareButton";
+    webrtcdevViewscreen(screenRoomid);
+    viewScreenShareButton.onclick = function () {
+        if (viewScreenShareButton.className == screenshareobj.button.viewButton.class_off) {
+            getElementById(screenshareobj.screenshareContainer).hidden = false;
+            viewScreenShareButton.className = screenshareobj.button.viewButton.class_on;
+            viewScreenShareButton.innerHTML = screenshareobj.button.viewButton.html_on;
+        } else if (viewScreenShareButton.className == screenshareobj.button.viewButton.class_on) {
+            getElementById(screenshareobj.screenshareContainer).hidden = true;
+            viewScreenShareButton.className = screenshareobj.button.viewButton.class_off;
+            viewScreenShareButton.innerHTML = screenshareobj.button.viewButton.html_off;
+        }
+    };
+
+    if (getElementById("topIconHolder_ul")) {
+        let li = document.createElement("li");
+        li.appendChild(viewScreenShareButton);
+        getElementById("topIconHolder_ul").appendChild(li);
+    }
+}
+
+/**
+ * assign the view button for screnshare with existing buttom dom
+ * @method
+ * @name assignScreenViewButton
+ */
+function assignScreenViewButton(button) {
+    /*
+    if(getElementById(screenshareobj.button.viewButton.id))
+        return;*/
+    webrtcdevViewscreen(screenRoomid);
+    button.onclick = function () {
+        if (button.className == screenshareobj.button.viewButton.class_off) {
+            getElementById(screenshareobj.screenshareContainer).hidden = false;
+            button.className = screenshareobj.button.viewButton.class_on;
+            button.innerHTML = screenshareobj.button.viewButton.html_on;
+        } else if (button.className == screenshareobj.button.viewButton.class_on) {
+            getElementById(screenshareobj.screenshareContainer).hidden = true;
+            button.className = screenshareobj.button.viewButton.class_off;
+            button.innerHTML = screenshareobj.button.viewButton.html_off;
+        }
+    };
+}
+
+/**
+ * if viewScreenShareButton button exists , remove it
+ * @method
+ * @name removeScreenViewButton
+ */
+function removeScreenViewButton() {
+    if (getElementById("viewScreenShareButton")) {
+        let elem = getElementById("viewScreenShareButton");
+        elem.parentElement.removeChild(elem);
+    }
+    return;
+}
+
+
+/**
+ * If button id are present then assign sreen share button or creatr a new one
+ * @method
+ * @name createOrAssignScreenshareButton
+ * @param {json} screenshareobject
+ */
+function createOrAssignScreenshareButton(screenshareobj) {
+    webrtcdev.log("createOrAssignScreenshareButton ", screenshareobj);
+    if (screenshareobj.button.shareButton.id && getElementById(screenshareobj.button.shareButton.id)) {
+        assignScreenShareButton(screenshareobj.button.shareButton);
+        hideScreenInstallButton();
+        showScreenShareButton();
+    } else {
+        createScreenShareButton();
+    }
+}
+
+/**
+ * create Screen share Button
+ * @method
+ * @name createScreenshareButton
+ */
+function createScreenshareButton() {
+    screenShareButton = document.createElement("span");
+    screenShareButton.className = screenshareobj.button.shareButton.class_off;
+    screenShareButton.innerHTML = screenshareobj.button.shareButton.html_off;
+    screenShareButton.id = "screenShareButton";
+    screenShareButton.onclick = function (event) {
+        if (screenShareButton.className == screenshareobj.button.shareButton.class_off) {
+            let time = new Date().getUTCMilliseconds();
+            screenRoomid = "screenshare" + "_" + sessionid + "_" + time;
+            webrtcdevSharescreen(screenRoomid);
+            screenShareButton.className = screenshareobj.button.shareButton.class_on;
+            screenShareButton.innerHTML = screenshareobj.button.shareButton.html_on;
+        } else if (screenShareButton.className == screenshareobj.button.shareButton.class_on) {
+            screenShareButton.className = screenshareobj.button.shareButton.class_off;
+            screenShareButton.innerHTML = screenshareobj.button.shareButton.html_off;
+            webrtcdevStopShareScreen();
+        } else {
+            webrtcdev.log("[svreenshare js] createScreenshareButton ,classname neither on nor off", creenShareButton.className);
+        }
+    };
+    let li = document.createElement("li");
+    li.appendChild(screenShareButton);
+    getElementById("topIconHolder_ul").appendChild(li);
+    return screenShareButton;
+}
+
+
+/**
+ * If button id are present then assign sreen share button or creatr a new one
+ * @method
+ * @name assignScreenShareButton
+ * @param {json} scrshareBtn
+ */
+function assignScreenShareButton(scrshareBtn) {
+    webrtcdev.log("assignScreenShareButton");
+    let button = getElementById(scrshareBtn.id);
+
+    button.onclick = function (event) {
+        if (button.className == scrshareBtn.class_off) {
+            let time = new Date().getUTCMilliseconds();
+            screenRoomid = "screenshare" + "_" + sessionid + "_" + time;
+            // after posting message to obtain source Id from chrome extension wait for response
+            webrtcdevSharescreen(screenRoomid);
+            button.className = scrshareBtn.class_on;
+            button.innerHTML = scrshareBtn.html_on;
+            //f(debug) getElementById(button.id+"buttonstatus").innerHTML("Off");
+        } else if (button.className == scrshareBtn.class_on) {
+            button.className = scrshareBtn.class_off;
+            button.innerHTML = scrshareBtn.html_off;
+            webrtcdevStopShareScreen();
+            //if(debug) getElementById(button.id+"buttonstatus").innerHTML("On");
+        } else {
+            webrtcdev.warn("[svreenshare js] createScreenshareButton ,classname neither on nor off", creenShareButton.className);
+        }
+    }
+    return button;
+}
+
+function hideScreenShareButton() {
+    let button = getElementById(screenshareobj.button.shareButton.id);
+    button.hidden = true;
+    button.setAttribute("style", "display:none");
+}
+
+function showScreenShareButton() {
+    let button = getElementById(screenshareobj.button.shareButton.id);
+    button.removeAttribute("hidden");
+    button.setAttribute("style", "display:block");
+}
+
+
+
+var counterBeforeFailureNotice = 0;
+
+function screenshareNotification(message, type) {
+
+    if (getElementById("alertBox")) {
+
+        getElementById("alertBox").innerHTML = "";
+
+        if (type == "screenshareBegin") {
+
+            var alertDiv = document.createElement("div");
+            resetAlertBox();
+            alertDiv.className = "alert alert-info";
+            alertDiv.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' + "You have begun sharing screen , waiting for peer to view";
+            getElementById("alertBox").appendChild(alertDiv);
+
+            setTimeout(function () {
+                var alertDiv = document.createElement("div");
+                resetAlertBox();
+                alertDiv.className = "alert alert-danger";
+                alertDiv.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' + "Peer was not able to view screen , please retry";
+                getElementById("alertBox").appendChild(alertDiv);
+            }, 20000);
+
+        } else if (type == "screenshareStartedViewing") {
+
+            var alertDiv = document.createElement("div");
+            resetAlertBox();
+            alertDiv.className = "alert alert-success";
+            alertDiv.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' + "Peer has started viewing screen ";
+            getElementById("alertBox").appendChild(alertDiv);
+
+        } else if (type == "screenshareError") {
+
+            var alertDiv = document.createElement("div");
+            resetAlertBox();
+            alertDiv.className = "alert alert-danger";
+            alertDiv.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' + "There was a error while sharing screen , please contact support ";
+            getElementById("alertBox").appendChild(alertDiv);
+
+        } else {
+            // Handle these msgs too : TBD
+        }
+
+    } else {
+        alert(message);
+    }
+}
 
 /*-----------------------------------------------------------------------------------*/
 /*                        stats JS                                                   */
@@ -23545,8 +23821,8 @@ function detectWebcam(callback) {
 */
 function getCamMedia(rtcConn) {
     rtcConn.dontAttachStream = false,
-        rtcConn.dontCaptureUserMedia = false,
-        rtcConn.dontGetRemoteStream = false;
+    rtcConn.dontCaptureUserMedia = false,
+    rtcConn.dontGetRemoteStream = false;
 
     webrtcdev.log(" [startJS] getCamMedia  role :", role);
     return new Promise(function (resolve, reject) {
@@ -23606,33 +23882,32 @@ function transitionToWaiting() {
 
 function attachMediaStream(element, stream) {
     try {
-        webrtcdev.log("[ Mediacontrol - attachMediaStream ] ",
-            "element.srcObject", typeof element.src, typeof element.srcObject,
-            " || stream " + stream);
+        webrtcdev.log("[ Mediacontrol - attachMediaStream ] element " , element);
+        webrtcdev.log("[ Mediacontrol - attachMediaStream ] stream " , stream);
 
         if (stream) {
-            //if (typeof element.src == 'string') {
+            // if (typeof element.src == 'string') {
             //    element.src = URL.createObjectURL(stream);
-            //}else if (typeof element.srcObject == 'object') {
-            element.srcObject = stream;
-            //}else{
+            // }else if (typeof element.srcObject == 'object') {
+            //     element.srcObject = stream;
+            // }else{
             //    webrtcdev.log('Error attaching stream to element.' , element , stream);
-            //}
-
+            // }
+            element.srcObject = stream;
             element.play();
-            webrtcdev.log(" Media Stream attached to ", element, " succesfully");
+            webrtcdev.log("[ Mediacontrol - attachMediaStream ] Media Stream attached to ", element, " successfully");
         } else {
-            //element.src = "";
-            webrtcdev.debug(" Media Stream not attached to ", element, " as stream is not valid ", stream);
+            element.src = "";
+            webrtcdev.warn("[ Mediacontrol - attachMediaStream ] Media Stream empty '' attached to ", element, " as stream is not valid ", stream);
         }
 
-    } catch (e) {
-        webrtcdev.error(" [ Mediacontrol - attachMediaStream ]  error", e);
+    } catch(err) {
+        webrtcdev.error(" [ Mediacontrol - attachMediaStream ]  error", err);
     }
 
 }
 
-function reattachMediaStream(to, from) {
+function reattachMediaStream(to,from) {
     to.src = from.src;
 }
 /*-----------------------------------------------------------------------------------*/

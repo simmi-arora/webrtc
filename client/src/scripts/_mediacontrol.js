@@ -19,8 +19,8 @@ function detectWebcam(callback) {
 */
 function getCamMedia(rtcConn) {
     rtcConn.dontAttachStream = false,
-        rtcConn.dontCaptureUserMedia = false,
-        rtcConn.dontGetRemoteStream = false;
+    rtcConn.dontCaptureUserMedia = false,
+    rtcConn.dontGetRemoteStream = false;
 
     webrtcdev.log(" [startJS] getCamMedia  role :", role);
     return new Promise(function (resolve, reject) {
@@ -80,32 +80,31 @@ function transitionToWaiting() {
 
 function attachMediaStream(element, stream) {
     try {
-        webrtcdev.log("[ Mediacontrol - attachMediaStream ] ",
-            "element.srcObject", typeof element.src, typeof element.srcObject,
-            " || stream " + stream);
+        webrtcdev.log("[ Mediacontrol - attachMediaStream ] element " , element);
+        webrtcdev.log("[ Mediacontrol - attachMediaStream ] stream " , stream);
 
         if (stream) {
-            //if (typeof element.src == 'string') {
+            // if (typeof element.src == 'string') {
             //    element.src = URL.createObjectURL(stream);
-            //}else if (typeof element.srcObject == 'object') {
-            element.srcObject = stream;
-            //}else{
+            // }else if (typeof element.srcObject == 'object') {
+            //     element.srcObject = stream;
+            // }else{
             //    webrtcdev.log('Error attaching stream to element.' , element , stream);
-            //}
-
+            // }
+            element.srcObject = stream;
             element.play();
-            webrtcdev.log(" Media Stream attached to ", element, " succesfully");
+            webrtcdev.log("[ Mediacontrol - attachMediaStream ] Media Stream attached to ", element, " successfully");
         } else {
-            //element.src = "";
-            webrtcdev.debug(" Media Stream not attached to ", element, " as stream is not valid ", stream);
+            element.src = "";
+            webrtcdev.warn("[ Mediacontrol - attachMediaStream ] Media Stream empty '' attached to ", element, " as stream is not valid ", stream);
         }
 
-    } catch (e) {
-        webrtcdev.error(" [ Mediacontrol - attachMediaStream ]  error", e);
+    } catch(err) {
+        webrtcdev.error(" [ Mediacontrol - attachMediaStream ]  error", err);
     }
 
 }
 
-function reattachMediaStream(to, from) {
+function reattachMediaStream(to,from) {
     to.src = from.src;
 }
