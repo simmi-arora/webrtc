@@ -13973,24 +13973,28 @@ function updateWebCallView(peerinfo) {
                             webrtcdev.log("[webcallviewdevmanager] Remote Video index array ", v, " || ", remoteVideos[v]);
 
                             /* find of the video container of peer is already present in remoteVideos */
-                            if(remoteVideos[v].userid == peerinfo.userid && remoteVideos[v].stream=="" &&
-                                !!remoteVideos[v].video){
-                                webrtcdev.log("webcallviewdevmanager] Remote Video dom exist already but without stream" , remoteVideos[v].video );
-                                emptyvideoindex = v ;
-                                break;
-                            }else{
-                                let vids = document.getElementsByName(remoteVideos[v]);
-                                webrtcdev.log("webcallviewdevmanager] Remote Video dom exists  " , !(!vids), vids );
-                                if (vids.length <= 0) {
-                                    webrtcdev.log(" remote video space is empty ");
-                                    emptyvideoindex = v ;
+                            if(remoteVideos[v].userid == peerinfo.userid && remoteVideos[v].stream=="" && !!remoteVideos[v].video ){
+                                webrtcdev.log("[webcallviewdevmanager] Remote Video dom exist already for the userid, checking for srcobject ");
+                                if(!remoteVideos[v].video.srcObject) {
+                                    webrtcdev.log("[webcallviewdevmanager] Remote Video dom exist already but without stream", remoteVideos[v].video);
+                                    emptyvideoindex = v;
                                     break;
-                                }  else if (vids[0] && vids[0].src && vids[0].src != "") {
-                                    webrtcdev.log(" vid ", vids[0].src)
-                                    emptyvideoindex++;
                                 }
                             }
+
+                            /* video container of peer is not present in remoteVideos yet */
+                            let vids = document.getElementsByName(remoteVideos[v]);
+                            webrtcdev.log("webcallviewdevmanager] Remote Video dom exists  " , !(!vids), vids );
+                            if (vids.length <= 0) {
+                                webrtcdev.log(" remote video space is empty ");
+                                emptyvideoindex = v ;
+                                break;
+                            }  else if (vids[0] && vids[0].src && vids[0].src != "") {
+                                webrtcdev.log(" vid ", vids[0].src)
+                                emptyvideoindex++;
+                            }
                         }
+
                         alert("empty index "+ emptyvideoindex);
                         try {
                             if (remoteobj.maxAllowed == "unlimited") {
@@ -14009,7 +14013,7 @@ function updateWebCallView(peerinfo) {
                                 //remote video is limited to size maxAllowed
                                 let remVideoHolder = document.getElementsByName(remoteVideos[emptyvideoindex]);
                                 webrtcdev.log("searching for video with index ", emptyvideoindex , " in remote video : ", remVideoHolder);
-                                if (remVideoHolder) {
+                                if (remVideoHolder.length>=0) {
                                     if (remVideoHolder[0]) {
                                         // since remvideo holder exist at current index , add video element to remoteVideos
                                         remoteVideos[emptyvideoindex] = {
@@ -14017,17 +14021,22 @@ function updateWebCallView(peerinfo) {
                                             "stream" : peerinfo.stream,
                                             "video": remVideoHolder[0]
                                         };
-                                        webrtcdev.log(" -----  remoteVideos[emptyvideoindex] updated " , remoteVideos[emptyvideoindex]);
+                                        webrtcdev.log(" [webcallviewdevmanager] remoteVideos["+emptyvideoindex+"] updated " , remoteVideos[emptyvideoindex] , peerinfo.stream);
                                     }
+
+                                } else if( remoteVideos[emptyvideoindex].userid== peerinfo.userid && remoteVideos[emptyvideoindex].stream ==""){
+                                    // pre-existing video with stream ="" , update stream
+                                    remoteVideos[emptyvideoindex].stream = peerinfo.stream;
+
                                 } else {
-                                    webrtcdev.warn(" since remvideo holder doesnt exist just overwrite the last remote with the video ")
+                                    webrtcdev.warn(" [webcallviewdevmanager] since remvideo holder doesnt exist just overwrite the last remote with the video ")
                                     // since remvideo holder doesnt exist just overwrite the last remote with the video 
                                     remoteVideos[remoteVideos.length - 1] = {
                                         "userid": peerinfo.userid,
                                         "stream" : peerinfo.stream,
                                         "video": remVideoHolder[0]
                                     };
-                                    webrtcdev.log(" -----  remoteVideos[remoteVideos.length-1] updated " , remoteVideos[emptyvideoindex]);
+                                    webrtcdev.log("[webcallviewdevmanager] remoteVideos["+remoteVideos.length-1+"] updated " , remoteVideos[emptyvideoindex]);
                                 }
                             }
 
@@ -14048,7 +14057,7 @@ function updateWebCallView(peerinfo) {
                             }
 
                         } catch (err) {
-                            webrtcdev.error(err);
+                            webrtcdev.error("[webcallviewdevmanager] ",err);
                         }
 
                     } else {
@@ -14056,7 +14065,7 @@ function updateWebCallView(peerinfo) {
                     }
 
                 } else {
-                    webrtcdev.error(" PeerInfo vid didnt match either case ");
+                    webrtcdev.error("[webcallviewdevmanager]  PeerInfo vid didnt match either case ");
                 }
                 break;
 
