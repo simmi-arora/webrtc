@@ -295,8 +295,13 @@ function showelem(elem) {
         elem.removeAttribute("hidden");
         elem.setAttribute("style", "display:block!important");
     } else if (document.getElementById(elem)) {
-        document.getElementById(elem).removeAttribute("hidden");
-        document.getElementById(elem).setAttribute("style", "display:block");
+        elem = document.getElementById(elem);
+        elem.removeAttribute("hidden");
+        elem.setAttribute("style", "display:block");
+    } else if ( (document.getElementsByName(elem)).length >0 ){
+        elem = document.getElementsByName(elem);
+        elem[0].removeAttribute("hidden");
+        elem[0].setAttribute("style", "display:block");
     } else {
         webrtcdev.warn("elem not found ", elem);
     }

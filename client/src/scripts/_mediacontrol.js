@@ -14,9 +14,12 @@ function detectWebcam(callback) {
  webrtc get media
  ***********************************/
 
-/*
-* Get Audio and Video Stream Media
-*/
+/**
+ * get Video and micrpphone stream media
+ * @method
+ * @name getCamMedia
+ * @param {json} rtcConn
+ */
 function getCamMedia(rtcConn) {
     rtcConn.dontAttachStream = false,
     rtcConn.dontCaptureUserMedia = false,
@@ -78,11 +81,28 @@ function transitionToWaiting() {
     remoteVideo.style.opacity = 0;
 }
 
-function attachMediaStream(element, stream) {
+/**
+ * attach media stream to dom element
+ * @method
+ * @name attachMediaStream
+ * @param {string} remvid
+ * @param {stream} stream
+ */
+function attachMediaStream(remvid, stream) {
     try {
-        webrtcdev.log("[ Mediacontrol - attachMediaStream ] element " , element);
-        webrtcdev.log("[ Mediacontrol - attachMediaStream ] stream " , stream);
+        let element = "";
+        webrtcdev.log("[ Mediacontrol - attachMediaStream ] element " , remvid);
+        if ((document.getElementsByName(remvid)).length > 0){
+            element = document.getElementsByName(remvid)[0];
+        } else if(remvid.video){
+            element = remvid.video;
+        } else if(remvid.nodeName == "VIDEO") {
+            element = remvid;
+        }else{
+            return ;
+        }
 
+        webrtcdev.log("[ Mediacontrol - attachMediaStream ] stream " , stream);
         if (stream) {
             // if (typeof element.src == 'string') {
             //    element.src = URL.createObjectURL(stream);
