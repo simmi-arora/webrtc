@@ -115,14 +115,18 @@ function attachMediaStream(remvid, stream) {
             element.play();
             webrtcdev.log("[ Mediacontrol - attachMediaStream ] Media Stream attached to ", element, " successfully");
         } else {
-            element.src = "";
+            if ('srcObject' in element) {
+                element.srcObject = null;
+            } else {
+                // Avoid using this in new browsers, as it is going away.
+                element.src = null;
+            }
             webrtcdev.warn("[ Mediacontrol - attachMediaStream ] Media Stream empty '' attached to ", element, " as stream is not valid ", stream);
         }
 
     } catch(err) {
         webrtcdev.error(" [ Mediacontrol - attachMediaStream ]  error", err);
     }
-
 }
 
 function reattachMediaStream(to,from) {

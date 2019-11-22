@@ -249,15 +249,22 @@ function createVideoMuteButton(controlBarName, peerinfo) {
  */
 function attachUserDetails(vid, peerinfo) {
     webrtcdev.log("[media_dommanager] attachUserDetails - ",peerinfo.userid , ":" , peerinfo.type);
-    if (vid.parentNode.querySelectorAll("videoheaders" + peerinfo.userid) > 0) {
-        webrtcdev.warn(" video header already present ", "videoheaders" + peerinfo.userid);
-        return;
+    if((vid.parentNode.querySelectorAll('.videoHeaderClass')).length > 0){
+        webrtcdev.warn("[media_dommanager] video header already present " , vid.parentNode.querySelectorAll('.videoHeaderClass'));
+        if ((vid.parentNode.querySelectorAll("videoheaders" + peerinfo.userid)).length > 0) {
+            webrtcdev.warn("[media_dommanager] user's video header already present ", "videoheaders" + peerinfo.userid);
+            return;
+        }else{
+            webrtcdev.warn("[media_dommanager] video header already present for diff user , overwrite with ", "videoheaders" + peerinfo.userid);
+            let vidheader = vid.parentNode.querySelectorAll('.videoHeaderClass')[0];
+            vidheader.remove();
+        }
     }
     let nameBox = document.createElement("div");
     nameBox.setAttribute("style", "background-color:" + peerinfo.color),
-        nameBox.className = "videoHeaderClass",
-        nameBox.innerHTML = peerinfo.name + "<br/>",
-        nameBox.id = "videoheaders" + peerinfo.userid;
+    nameBox.className = "videoHeaderClass",
+    nameBox.innerHTML = peerinfo.name + "<br/>",
+    nameBox.id = "videoheaders" + peerinfo.userid;
     // vid.parentNode.appendChild(nameBox);
     vid.parentNode.insertBefore(nameBox, vid.parentNode.firstChild);
 }

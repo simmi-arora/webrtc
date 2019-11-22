@@ -25,7 +25,11 @@
  * @param {object} connection
  */
 function startSocketSession(rtcConn, socketAddr, sessionid) {
-    selfuserid = rtcConn.userid;
+    webrtcdev.log("[startjs] startSocketSession , set selfuserid ", rtcConn.userid);
+    if(!selfuserid)
+        selfuserid = rtcConn.userid;
+    else
+        webrtcdev.warn("[startjs] trying to overwrite selfuserid")
 
     return new Promise((resolve, reject) => {
         try {
@@ -279,7 +283,7 @@ var setRtcConn = function (sessionid) {
                     webrtcdev.log(" [startJS onopen] webcallpeers[" + x + "]", webcallpeers[x]);
                     if (!(remoteUsers.includes(webcallpeers[x].userid)) && (webcallpeers[x].userid != selfuserid)) {
                         console.warn("[startjs remove PeerInfo - ", webcallpeers[x].userid, " which neither exists in remote peer and not is selfuserid");
-                        removePeerInfo(webcallpeers[x].userid);
+                        removePeerInfo(x);
                     }
                 }
                 webrtcdev.log(" [startjs] removePeerInfo  After  ", webcallpeers);
@@ -435,7 +439,7 @@ var setRtcConn = function (sessionid) {
             } else if (e.data.stoppedTyping) {
                 updateWhotyping("");
             } else {
-                var msgpeerinfo = findPeerInfo(e.userid);
+                let msgpeerinfo = findPeerInfo(e.userid);
                 switch (e.data.type) {
                     case "screenshare":
                         if (e.data.message == "startscreenshare") {
@@ -458,7 +462,7 @@ var setRtcConn = function (sessionid) {
                             button.disabled = false;
                             webrtcdevCleanShareScreen(e.data.screenStreamid);
                         } else {
-                            webrtcdev.warn(" unreognized screen share nessage ", e.data.message);
+                            webrtcdev.warn(" unrecognized screenshare message ", e.data.message);
                         }
                         break;
                     case "chat":

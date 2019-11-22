@@ -291,18 +291,24 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function () {
  * @param {dom} elem
  */
 function showelem(elem) {
+    webrtcdev.log(" [init] show elem", elem ," , type ",  typeof elem , " , nodetype " , elem.nodeType);
+
     if (typeof elem === 'object' && elem.nodeType !== undefined) {
+        // validate its is a dom node
         elem.removeAttribute("hidden");
         elem.setAttribute("style", "display:block!important");
     } else if (document.getElementById(elem)) {
+        // serach by ID
         elem = document.getElementById(elem);
         elem.removeAttribute("hidden");
         elem.setAttribute("style", "display:block");
     } else if ( (document.getElementsByName(elem)).length >0 ){
+        // search by name
         elem = document.getElementsByName(elem);
         elem[0].removeAttribute("hidden");
         elem[0].setAttribute("style", "display:block");
     } else {
+        // not found
         webrtcdev.warn("elem not found ", elem);
     }
 }

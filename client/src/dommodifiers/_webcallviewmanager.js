@@ -141,7 +141,7 @@ function updateWebCallView(peerinfo) {
 
                     attachMediaStream(remoteVideos[emptyvideoindex], peerinfo.stream);
                     //if(remoteVideos[vi].video.hidden) remoteVideos[vi].video.hidden = false;
-                    showelem(remoteVideos[emptyvideoindex]);
+                    showelem(remoteVideos[emptyvideoindex].video);
 
                     remoteVideos[emptyvideoindex].video.id = peerinfo.videoContainer;
                     remoteVideos[emptyvideoindex].video.className = remoteobj.videoClass;
@@ -291,29 +291,45 @@ function findEmptyRemoteVideoIndex(peerinfo , remoteVideos){
             }
         }
 
-        /* video container of peer is not present in remoteVideos yet */
         let vids = document.getElementsByName(remoteVideos[v]);
-        webrtcdev.log("[webcallviewdevmanager] ] Remote Video dom exists  " , !(!vids), vids );
-        if (vids.length <= 0) {
-            webrtcdev.log("[webcallviewdevmanager] Remote video space is empty ");
+
+        /* video container of peer is not present in remoteVideos yet */
+        if(! remoteVideos[v].video) {
+            webrtcdev.log("[webcallviewdevmanager] ] Remote Video is not appended by json ",  vids);
+            if (vids.length <= 0) {
+                webrtcdev.log("[webcallviewdevmanager] Remote video space is empty ");
+                emptyvideoindex = v;
+                break;
+            }else{
+                webrtcdev.log("[webcallviewdevmanager] Remote video space exists ", vids[0]);
+                vids = vids[0];
+            }
+        }else{
+            webrtcdev.log("[webcallviewdevmanager] ] Remote Video has json appended ", remoteVideos[v]);
+            vids = remoteVideos[v].video;
+        }
+
+        console.log(" [webcallviewdevmanager] ]  ============== vids.src ", vids.src,
+            " , vids.srcObject ", vids.srcObject,
+            " , vids.readyState ", vids.readyState,
+            " , vids.played.length ", vids.played.length);
+        if (vids && vids.srcObject ) {
+            if(vids.srcObject.active) {
+                webrtcdev.log("[webcallviewdevmanager] video is already appended and playing ", vids,
+                    " vids.srcObject.active ", vids.srcObject.active ," move to next iteration");
+                emptyvideoindex++;
+            }else{
+                webrtcdev.log("[webcallviewdevmanager] video is already appended , but not playing ", vids,
+                    " vids.srcObject.active ", vids.srcObject.active ," use this index");
+                emptyvideoindex = v ;
+                break;
+            }
+        } else if(vids && !vids.srcObject){
+            webrtcdev.log("[webcallviewdevmanager] video is not played ", vids, "use this index ");
             emptyvideoindex = v ;
             break;
-        }
-
-        try{
-            console.log(" ============================================= vids[0].played.length ", vids[0].played.length);
-            console.log(" ============================================= vids[0].src ", vids[0].src, vids[0].srcObject);
-        }catch(e){
-
-        }
-
-        if (vids[0] && vids[0].src && vids[0].srcObject ) {
-            webrtcdev.log("[webcallviewdevmanager] video is already appended and playing ", vids[0], " move to next iteration");
-            emptyvideoindex ++;
-        } else if(vids[0] && !(vids[0].src && vids[0].srcObject) && vids[0].played.length == 0 ){
-            webrtcdev.log("[webcallviewdevmanager] video is not played ", vids[0]);
         }else{
-            webrtcdev.log("[webcallviewdevmanager] Not sure whats up with the video ", vids[0], " move to next iteration")
+            webrtcdev.warn("[webcallviewdevmanager] Not sure whats up with the video ", vids, " move to next iteration")
             emptyvideoindex ++;
         }
     }

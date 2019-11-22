@@ -29,14 +29,15 @@ var findPeerInfo = function (userid) {
  * @param {string} usercolor
  * @param {string} type
  */
-function removePeerInfo(userid) {
+function removePeerInfo(index) {
     return new Promise(function (resolve, reject) {
-        webrtcdev.log(" [startjs] removePeerInfo  remove userid: ", userid);
-        webcallpeers.splice(userid, 1);
+        webrtcdev.log(" [startjs] removePeerInfo  remove index: ", index , webcallpeers[index]);
+        webcallpeers.splice(index,1);
         resolve("done");
     })
     .catch((err) => {
         webrtcdev.error("[startjs removePeerInfo] Promise rejected ", err);
+        reject("err");
     });
 }
 

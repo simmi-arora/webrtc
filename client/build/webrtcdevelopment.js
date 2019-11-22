@@ -13581,18 +13581,24 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function () {
  * @param {dom} elem
  */
 function showelem(elem) {
+    webrtcdev.log(" [init] show elem", elem ," , type ",  typeof elem , " , nodetype " , elem.nodeType);
+
     if (typeof elem === 'object' && elem.nodeType !== undefined) {
+        // validate its is a dom node
         elem.removeAttribute("hidden");
         elem.setAttribute("style", "display:block!important");
     } else if (document.getElementById(elem)) {
+        // serach by ID
         elem = document.getElementById(elem);
         elem.removeAttribute("hidden");
         elem.setAttribute("style", "display:block");
     } else if ( (document.getElementsByName(elem)).length >0 ){
+        // search by name
         elem = document.getElementsByName(elem);
         elem[0].removeAttribute("hidden");
         elem[0].setAttribute("style", "display:block");
     } else {
+        // not found
         webrtcdev.warn("elem not found ", elem);
     }
 }
@@ -13978,7 +13984,7 @@ function updateWebCallView(peerinfo) {
 
                     attachMediaStream(remoteVideos[emptyvideoindex], peerinfo.stream);
                     //if(remoteVideos[vi].video.hidden) remoteVideos[vi].video.hidden = false;
-                    showelem(remoteVideos[emptyvideoindex]);
+                    showelem(remoteVideos[emptyvideoindex].video);
 
                     remoteVideos[emptyvideoindex].video.id = peerinfo.videoContainer;
                     remoteVideos[emptyvideoindex].video.className = remoteobj.videoClass;
@@ -14128,29 +14134,45 @@ function findEmptyRemoteVideoIndex(peerinfo , remoteVideos){
             }
         }
 
-        /* video container of peer is not present in remoteVideos yet */
         let vids = document.getElementsByName(remoteVideos[v]);
-        webrtcdev.log("[webcallviewdevmanager] ] Remote Video dom exists  " , !(!vids), vids );
-        if (vids.length <= 0) {
-            webrtcdev.log("[webcallviewdevmanager] Remote video space is empty ");
+
+        /* video container of peer is not present in remoteVideos yet */
+        if(! remoteVideos[v].video) {
+            webrtcdev.log("[webcallviewdevmanager] ] Remote Video is not appended by json ",  vids);
+            if (vids.length <= 0) {
+                webrtcdev.log("[webcallviewdevmanager] Remote video space is empty ");
+                emptyvideoindex = v;
+                break;
+            }else{
+                webrtcdev.log("[webcallviewdevmanager] Remote video space exists ", vids[0]);
+                vids = vids[0];
+            }
+        }else{
+            webrtcdev.log("[webcallviewdevmanager] ] Remote Video has json appended ", remoteVideos[v]);
+            vids = remoteVideos[v].video;
+        }
+
+        console.log(" [webcallviewdevmanager] ]  ============== vids.src ", vids.src,
+            " , vids.srcObject ", vids.srcObject,
+            " , vids.readyState ", vids.readyState,
+            " , vids.played.length ", vids.played.length);
+        if (vids && vids.srcObject ) {
+            if(vids.srcObject.active) {
+                webrtcdev.log("[webcallviewdevmanager] video is already appended and playing ", vids,
+                    " vids.srcObject.active ", vids.srcObject.active ," move to next iteration");
+                emptyvideoindex++;
+            }else{
+                webrtcdev.log("[webcallviewdevmanager] video is already appended , but not playing ", vids,
+                    " vids.srcObject.active ", vids.srcObject.active ," use this index");
+                emptyvideoindex = v ;
+                break;
+            }
+        } else if(vids && !vids.srcObject){
+            webrtcdev.log("[webcallviewdevmanager] video is not played ", vids, "use this index ");
             emptyvideoindex = v ;
             break;
-        }
-
-        try{
-            console.log(" ============================================= vids[0].played.length ", vids[0].played.length);
-            console.log(" ============================================= vids[0].src ", vids[0].src, vids[0].srcObject);
-        }catch(e){
-
-        }
-
-        if (vids[0] && vids[0].src && vids[0].srcObject ) {
-            webrtcdev.log("[webcallviewdevmanager] video is already appended and playing ", vids[0], " move to next iteration");
-            emptyvideoindex ++;
-        } else if(vids[0] && !(vids[0].src && vids[0].srcObject) && vids[0].played.length == 0 ){
-            webrtcdev.log("[webcallviewdevmanager] video is not played ", vids[0]);
         }else{
-            webrtcdev.log("[webcallviewdevmanager] Not sure whats up with the video ", vids[0], " move to next iteration")
+            webrtcdev.warn("[webcallviewdevmanager] Not sure whats up with the video ", vids, " move to next iteration")
             emptyvideoindex ++;
         }
     }
@@ -15711,15 +15733,22 @@ function createVideoMuteButton(controlBarName, peerinfo) {
  */
 function attachUserDetails(vid, peerinfo) {
     webrtcdev.log("[media_dommanager] attachUserDetails - ",peerinfo.userid , ":" , peerinfo.type);
-    if (vid.parentNode.querySelectorAll("videoheaders" + peerinfo.userid) > 0) {
-        webrtcdev.warn(" video header already present ", "videoheaders" + peerinfo.userid);
-        return;
+    if((vid.parentNode.querySelectorAll('.videoHeaderClass')).length > 0){
+        webrtcdev.warn("[media_dommanager] video header already present " , vid.parentNode.querySelectorAll('.videoHeaderClass'));
+        if ((vid.parentNode.querySelectorAll("videoheaders" + peerinfo.userid)).length > 0) {
+            webrtcdev.warn("[media_dommanager] user's video header already present ", "videoheaders" + peerinfo.userid);
+            return;
+        }else{
+            webrtcdev.warn("[media_dommanager] video header already present for diff user , overwrite with ", "videoheaders" + peerinfo.userid);
+            let vidheader = vid.parentNode.querySelectorAll('.videoHeaderClass')[0];
+            vidheader.remove();
+        }
     }
     let nameBox = document.createElement("div");
     nameBox.setAttribute("style", "background-color:" + peerinfo.color),
-        nameBox.className = "videoHeaderClass",
-        nameBox.innerHTML = peerinfo.name + "<br/>",
-        nameBox.id = "videoheaders" + peerinfo.userid;
+    nameBox.className = "videoHeaderClass",
+    nameBox.innerHTML = peerinfo.name + "<br/>",
+    nameBox.id = "videoheaders" + peerinfo.userid;
     // vid.parentNode.appendChild(nameBox);
     vid.parentNode.insertBefore(nameBox, vid.parentNode.firstChild);
 }
@@ -23977,14 +24006,18 @@ function attachMediaStream(remvid, stream) {
             element.play();
             webrtcdev.log("[ Mediacontrol - attachMediaStream ] Media Stream attached to ", element, " successfully");
         } else {
-            element.src = "";
+            if ('srcObject' in element) {
+                element.srcObject = null;
+            } else {
+                // Avoid using this in new browsers, as it is going away.
+                element.src = null;
+            }
             webrtcdev.warn("[ Mediacontrol - attachMediaStream ] Media Stream empty '' attached to ", element, " as stream is not valid ", stream);
         }
 
     } catch(err) {
         webrtcdev.error(" [ Mediacontrol - attachMediaStream ]  error", err);
     }
-
 }
 
 function reattachMediaStream(to,from) {
@@ -25928,14 +25961,15 @@ var findPeerInfo = function (userid) {
  * @param {string} usercolor
  * @param {string} type
  */
-function removePeerInfo(userid) {
+function removePeerInfo(index) {
     return new Promise(function (resolve, reject) {
-        webrtcdev.log(" [startjs] removePeerInfo  remove userid: ", userid);
-        webcallpeers.splice(userid, 1);
+        webrtcdev.log(" [startjs] removePeerInfo  remove index: ", index , webcallpeers[index]);
+        webcallpeers.splice(index,1);
         resolve("done");
     })
     .catch((err) => {
         webrtcdev.error("[startjs removePeerInfo] Promise rejected ", err);
+        reject("err");
     });
 }
 
@@ -26068,7 +26102,11 @@ this.getwebcallpeers = function(){
  * @param {object} connection
  */
 function startSocketSession(rtcConn, socketAddr, sessionid) {
-    selfuserid = rtcConn.userid;
+    webrtcdev.log("[startjs] startSocketSession , set selfuserid ", rtcConn.userid);
+    if(!selfuserid)
+        selfuserid = rtcConn.userid;
+    else
+        webrtcdev.warn("[startjs] trying to overwrite selfuserid")
 
     return new Promise((resolve, reject) => {
         try {
@@ -26322,7 +26360,7 @@ var setRtcConn = function (sessionid) {
                     webrtcdev.log(" [startJS onopen] webcallpeers[" + x + "]", webcallpeers[x]);
                     if (!(remoteUsers.includes(webcallpeers[x].userid)) && (webcallpeers[x].userid != selfuserid)) {
                         console.warn("[startjs remove PeerInfo - ", webcallpeers[x].userid, " which neither exists in remote peer and not is selfuserid");
-                        removePeerInfo(webcallpeers[x].userid);
+                        removePeerInfo(x);
                     }
                 }
                 webrtcdev.log(" [startjs] removePeerInfo  After  ", webcallpeers);
@@ -26478,7 +26516,7 @@ var setRtcConn = function (sessionid) {
             } else if (e.data.stoppedTyping) {
                 updateWhotyping("");
             } else {
-                var msgpeerinfo = findPeerInfo(e.userid);
+                let msgpeerinfo = findPeerInfo(e.userid);
                 switch (e.data.type) {
                     case "screenshare":
                         if (e.data.message == "startscreenshare") {
@@ -26501,7 +26539,7 @@ var setRtcConn = function (sessionid) {
                             button.disabled = false;
                             webrtcdevCleanShareScreen(e.data.screenStreamid);
                         } else {
-                            webrtcdev.warn(" unreognized screen share nessage ", e.data.message);
+                            webrtcdev.warn(" unrecognized screenshare message ", e.data.message);
                         }
                         break;
                     case "chat":
