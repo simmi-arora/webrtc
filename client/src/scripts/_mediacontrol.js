@@ -1,13 +1,49 @@
+function listDevices() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+        webrtcdev.warn("enumerateDevices() not supported.");
+        return;
+    }
+//List cameras and microphones.
+    navigator.mediaDevices.enumerateDevices()
+        .then(function (devices) {
+            devices.forEach(function (device) {
+                webrtcdev.log("[sessionmanager] checkDevices ", device.kind, ": ", device.label, " id = ", device.deviceId);
+            });
+        })
+        .catch(function (err) {
+            webrtcdev.error('[sessionmanager] checkDevices ', err.name, ": ", err.message);
+        });
+}
 /**********************************
  Detect Webcam
  **********************************/
 
+/**
+ * Detect if webcam is accesible by browser
+ * @method
+ * @name detectWebcam
+ * @param {function} callback
+ */
 function detectWebcam(callback) {
     let md = navigator.mediaDevices;
     if (!md || !md.enumerateDevices) return callback(false);
     md.enumerateDevices().then(devices => {
         callback(devices.some(device => 'videoinput' === device.kind));
-    })
+    });
+}
+
+/**
+ * Detect if Mic is accesible by browser
+ * @method
+ * @name detectMic
+ * @param {function} callback
+ */
+function detectMic(callback) {
+    let md = navigator.mediaDevices;
+    if (!md || !md.enumerateDevices) return callback(false);
+    md.enumerateDevices().then(devices => {
+        callback(devices.some(device => 'audioinput' === device.kind));
+    });
 }
 
 /************************************
@@ -24,14 +60,18 @@ function getCamMedia(rtcConn) {
     rtcConn.dontAttachStream = false,
     rtcConn.dontCaptureUserMedia = false,
     rtcConn.dontGetRemoteStream = false;
-
+    alert(" start getusermedia");
     webrtcdev.log(" [startJS] getCamMedia  role :", role);
     return new Promise(function (resolve, reject) {
         if (role == "inspector") {
             console.log("[startJS] getCamMedia  - Joining as inspector without camera Video");
-        } else if (outgoingVideo) {
+        } else if (outgoingVideo && outgoingAudio) {
             webrtcdev.log("[startJS] getCamMedia  - Capture Media ");
             rtcConn.getUserMedia();  // not wait for the rtc conn on media stream or on error 
+        } else if (!outgoingVideo && outgoingAudio) {
+            alert(" start  getCamMedia  - Dont Capture Webcam only Mic");
+            webrtcdev.warn("[startJS] getCamMedia  - Dont Capture Webcam only Mic ");
+            rtcConn.getUserMedia();  // not wait for the rtc conn on media stream or on error
         } else {
             webrtcdev.error(" [startJS] getCamMedia - dont Capture outgoing video ", outgoingVideo);
             onNoCameraCard();
