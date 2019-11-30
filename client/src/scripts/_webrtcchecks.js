@@ -4,46 +4,13 @@
 /*-----------------------------------------------------------------------------------*/
 
 /**
- * function to check devices like speakers , webcam ,  microphone etc
+ * function to updateStats
  * @method
- * @name checkDevices
+ * @name updateStats
  * @param {object} connection
  */
-function checkDevices(obj) {
+function updateStats(obj) {
     webrtcdev.info(" =============================== check Devices ==========================================");
-    if (obj.hasMicrophone) {
-        // seems current system has at least one audio input device
-        webrtcdev.info("has Microphone");
-    } else {
-        webrtcdev.error("doesnt have  hasMicrophone");
-    }
-
-    if (obj.hasSpeakers) {
-        webrtcdev.info("has Speakers");
-        // seems current system has at least one audio output device
-    } else {
-        webrtcdev.error("doesnt have  Speakers");
-    }
-
-    if (obj.hasWebcam) {
-        webrtcdev.info("has Webcam");
-        // seems current system has at least one video input device
-    } else {
-        webrtcdev.error("doesnt have Webcam");
-    }
-
-    webrtcdev.log(" Audio Input Device ");
-    for (x in obj.audioInputDevices) webrtcdev.info(obj.audioInputDevices[x]);
-
-    webrtcdev.log(" Audio Output Device ");
-    for (x in obj.audioOutputDevices) webrtcdev.info(obj.audioOutputDevices[x]);
-
-    webrtcdev.log(" Video Input Device ");
-    for (x in obj.videoInputDevices) webrtcdev.info(obj.videoInputDevices[x]);
-
-    webrtcdev.info(" Screen Device " + obj.displayResolution);
-
-    webrtcdev.info(" =========================================================================");
 
     // Update Stats if active
     if (statisticsobj && statisticsobj.active) {

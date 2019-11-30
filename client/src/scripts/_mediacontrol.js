@@ -3,7 +3,7 @@ function listDevices() {
         webrtcdev.warn("enumerateDevices() not supported.");
         return;
     }
-//List cameras and microphones.
+    //List cameras and microphones.
     navigator.mediaDevices.enumerateDevices()
         .then(function (devices) {
             devices.forEach(function (device) {
@@ -46,6 +46,46 @@ function detectMic(callback) {
     });
 }
 
+
+async function getVideoPermission(){
+    // navigator.getUserMedia({ audio: false, video: true}, function(){
+    //     outgoingVideo = false;
+    // }, function(){
+    //  outgoingVideo = false;
+    // });
+    let stream = null;
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true})
+        if (stream.getVideoTracks().length > 0) {
+            //code for when none of the devices are available
+            webrtcdev.log("--------------------------------- Video Permission obtained ");
+            outgoingVideo = true;
+            return;
+        }
+    } catch(err) {
+        webrtcdev.error(err.name + ": " + err.message);
+    }
+    outgoingVideo = false;
+    return;
+}
+
+
+async function getAudioPermission(){
+    let stream = null;
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false})
+        if (stream.getAudioTracks().length > 0) {
+            //code for when none of the devices are available
+            webrtcdev.log("--------------------------------- Audio Permission obtained ");
+            outgoingAudio = true;
+            return;
+        }
+    } catch(err) {
+        webrtcdev.error(err.name + ": " + err.message);
+    }
+    outgoingAudio = false;
+    return;
+}
 /************************************
  webrtc get media
  ***********************************/
@@ -58,21 +98,26 @@ function detectMic(callback) {
  */
 function getCamMedia(rtcConn) {
     rtcConn.dontAttachStream = false,
-    rtcConn.dontCaptureUserMedia = false,
     rtcConn.dontGetRemoteStream = false;
-    alert(" start getusermedia");
+
     webrtcdev.log(" [startJS] getCamMedia  role :", role);
+
+    webrtcdev.log(" start getusermedia - outgoingVideo " + outgoingVideo + " outgoingAudio "+ outgoingAudio );
     return new Promise(function (resolve, reject) {
         if (role == "inspector") {
+            rtcConn.dontCaptureUserMedia = true;
             console.log("[startJS] getCamMedia  - Joining as inspector without camera Video");
         } else if (outgoingVideo && outgoingAudio) {
+            rtcConn.dontCaptureUserMedia = false;
             webrtcdev.log("[startJS] getCamMedia  - Capture Media ");
             rtcConn.getUserMedia();  // not wait for the rtc conn on media stream or on error 
         } else if (!outgoingVideo && outgoingAudio) {
-            alert(" start  getCamMedia  - Dont Capture Webcam only Mic");
+            rtcConn.dontCaptureUserMedia = false;
+            // alert(" start  getCamMedia  - Dont Capture Webcam, only Mic");
             webrtcdev.warn("[startJS] getCamMedia  - Dont Capture Webcam only Mic ");
             rtcConn.getUserMedia();  // not wait for the rtc conn on media stream or on error
         } else {
+            rtcConn.dontCaptureUserMedia = true;
             webrtcdev.error(" [startJS] getCamMedia - dont Capture outgoing video ", outgoingVideo);
             onNoCameraCard();
         }

@@ -95,23 +95,22 @@ function startSocketSession(rtcConn, socketAddr, sessionid) {
                     rtcConn.sdpConstraints.mandatory = {
                         OfferToReceiveAudio: incomingAudio,
                         OfferToReceiveVideo: incomingVideo
-                    };
+                    },
+                    rtcConn.open(event.channel, function(res) {
+                        // alert(" callback from open room ", res);
+                        webrtcdev.log(" [sessionmanager] offer/answer webrtc ", selfuserid, " with role ", role);
+                    });
+                    webrtcdev.log(" [sessionmanager] ------------------------------ oooooooooooooo ");
                     resolve("ok"); // immediately give the result: 123
-                });
-
-                promise.then(
-                    rtcConn.open(event.channel, function () {
-                        webrtcdev.log(" [sessionmanager] offer/answer webrtc ", selfuserid, " with role ", role)
-                    })
-                ).then(function (res) {
+                }).then(function (res) {
                     updatePeerInfo(selfuserid, selfusername, selfcolor, selfemail, role, "local"),
-                        webrtcdev.log(" [sessionmanager] updated local peerinfo for open-channel ")
-                }).then(
-                    getCamMedia(rtcConn),
-                    webrtcdev.log(" [sessionmanager] done cam media ")
-                ).catch((reason) => {
+                        webrtcdev.log(" [sessionmanager] updated local peerinfo for open-channel ");
+                }).catch((reason) => {
                     webrtcdev.error(' [sessionmanager] Handle rejected promise (' + reason + ')');
                 });
+
+                getCamMedia(rtcConn);
+                webrtcdev.log(" [sessionmanager] open-channel-resp -  done cam media ");
             } else {
                 // signaller doesnt allow channel open
                 alert("Could not open this channel, Server refused");
@@ -136,16 +135,16 @@ function startSocketSession(rtcConn, socketAddr, sessionid) {
                         " OfferToReceiveVideo: ", incomingVideo
                     );
                     rtcConn.connectionType = "join",
-                        rtcConn.session = {
-                            video: outgoingVideo,
-                            audio: outgoingAudio,
-                            data: outgoingData
-                        },
-                        rtcConn.sdpConstraints.mandatory = {
-                            OfferToReceiveAudio: incomingAudio,
-                            OfferToReceiveVideo: incomingVideo
-                        },
-                        rtcConn.remoteUsers = event.users;
+                    rtcConn.session = {
+                        video: outgoingVideo,
+                        audio: outgoingAudio,
+                        data: outgoingData
+                    },
+                    rtcConn.sdpConstraints.mandatory = {
+                        OfferToReceiveAudio: incomingAudio,
+                        OfferToReceiveVideo: incomingVideo
+                    },
+                    rtcConn.remoteUsers = event.users;
                     resolve(); // immediately give the result: 123
                 });
 
@@ -156,20 +155,19 @@ function startSocketSession(rtcConn, socketAddr, sessionid) {
                     // for a new joiner , update his local info 
                     updatePeerInfo(selfuserid, selfusername, selfcolor, selfemail, role, "local"),
                     webrtcdev.log(" [sessionmanager] updated local peerinfo for join-channel ")
-                ).then(
-                    getCamMedia(rtcConn),
-                    webrtcdev.log(" [sessionmanager] done cam media ")
-                ).catch(
-                    (reason) => {
+                ).catch((reason) => {
                         webrtcdev.error('Handle rejected promise (' + reason + ')');
-                    }
-                );
+                });
+
+                getCamMedia(rtcConn),
+                webrtcdev.log(" [sessionmanager] join-channel-resp -  done cam media ");
+
                 if (event.message)
                     shownotification(event.msgtype + " : " + event.message);
             } else {
                 // signaller doesnt allow channel Join
                 webrtcdev.error(" [sessionmanager] Could not join this channel, Server refused");
-                alert("Coudl not join this channel, Server refused ");
+                alert("Could not join this channel, Server refused ");
             }
         });
 
@@ -215,7 +213,7 @@ function startSocketSession(rtcConn, socketAddr, sessionid) {
                     peerinfo.streamid = "";
                     updateWebCallView(peerinfo);
 
-                    onLocalConnect() // event emitter for app client 
+                    onLocalConnect(); // event emitter for app client
 
                 } else {
                     // max capacity of session is reached 
@@ -272,6 +270,7 @@ var setRtcConn = function (sessionid) {
             try {
 
                 webrtcdev.log("[sessionmanager onopen] selfuserid ", selfuserid);
+
                 // Add remote peer userid to remoteUsers
                 remoteUsers = rtcConn.peers.getAllParticipants(),
                     webrtcdev.log(" [sessionmanager onopen] Collecting remote peers", remoteUsers);
@@ -361,22 +360,22 @@ var setRtcConn = function (sessionid) {
         },
 
         rtcConn.onMediaError = function (error, constraints) {
-            webrtcdev.error("[sessionmanager] onMediaError - ", error, constraints);
+            webrtcdev.error("[sessionmanager] onMediaError - ", error, " constraints ", constraints);
 
-            listDevices();
-
+            // Join without stream
             webrtcdev.warn("[sessionmanager] onMediaError- Joining without camera Stream");
             shownotification(error.name + " Joining without camera Stream ", "warning");
             localVideoStreaming = false;
             // For local Peer , if camera is not allowed or not connected then put null in video containers
-            var peerinfo = webcallpeers[0];
+            let peerinfo = webcallpeers[0];
             peerinfo.type = "Local";
-            peerinfo.stream = null;
-            peerinfo.streamid = "nothing01";
+            peerinfo.stream = "";
+            peerinfo.streamid = "";
             updateWebCallView(peerinfo);
 
             // start local Connect
             onLocalConnect(); // event emitter for app client
+
         },
 
         rtcConn.onstream = function (event) {
@@ -634,8 +633,8 @@ var setRtcConn = function (sessionid) {
 
             //alert ( "send fille to " + file.remoteUserId , findPeerInfo(file.remoteUserId).name);
 
-            var progressid = file.uuid + "_" + file.userid + "_" + file.remoteUserId;
-            var peerinfo = findPeerInfo(file.userid);
+            let progressid = file.uuid + "_" + file.userid + "_" + file.remoteUserId;
+            let peerinfo = findPeerInfo(file.userid);
             // check if not already present ,
             // done to include one entry even if same file is being sent to multiple particpants
             if (!peerinfo.filearray.includes("name : file.name")) {
@@ -778,10 +777,10 @@ var setRtcConn = function (sessionid) {
         else
             reject("failed");
     })
-        .catch((err) => {
-            webrtcdev.error("setRtcConn", err);
-            reject(err);
-        });
+    .catch((err) => {
+        webrtcdev.error("setRtcConn", err);
+        reject(err);
+    });
 }
 
 /*
@@ -807,45 +806,9 @@ function supportSessionRefresh() {
 /*
 * Check Microphone and Camera Devices
 */
-function checkDevices(resolveparent, rejectparent, incoming, outgoing) {
-
-    listDevices();
-
-    return new Promise(function (resolve, reject) {
-
-        detectWebcam(function (hasWebcam) {
-            console.log('Has Webcam: ' + (hasWebcam ? 'yes' : 'no'));
-            if(!hasWebcam){
-                alert(" you dont have access to webcam ");
-                outgoing.video = false;
-                resolve("checkaudio");
-            }
-            resolve("ok");
-        });
-
-    }).then(function (value) {
-
-        if(value=="checkaudio"){
-            detectMic(function (hasMic) {
-                console.log('Has Mic: ' + (hasMic ? 'yes' : 'no'));
-                if(!hasMic){
-                    alert(" you dont have access to Mic ");
-                    outgoing.audio = false;
-                    resolve("ok");
-                }
-                resolve("ok");
-            });
-        }else{
-            resolve("ok");
-        }
-    }).then(function (value) {
-        webrtcdev.info("checkdevices complete");
-        resolveparent("done");
-    }).catch((err) => {
-        webrtcdev.error("Yes detectRTC failed to load ", err);
-        resolveparent("proceed");
-    });
-}
+// function checkDevices(resolveparent, rejectparent, incoming, outgoing) {
+//     listDevices();
+// }
 
 
 /**

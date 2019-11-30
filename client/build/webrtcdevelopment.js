@@ -42,64 +42,64 @@ function getArgsJson(arg) {
 var webrtcdevlogger = {
     // if(debug){
 
-    // log: console.log,
-    // info: console.info,
-    // debug: console.debug,
-    // warn: console.warn,
-    // error: console.error
+    log: console.log,
+    info: console.info,
+    debug: console.debug,
+    warn: console.warn,
+    error: console.error
     // }else{
 
-    log : function(){
-      // var arg = getArgsJson(arguments);
-      // document.getElementById("help-view-body").innerHTML += '[-]' + arg + "<br/>";
-      if(isJSON(arguments)){
-        let arg = JSON.stringify(arguments, undefined, 2);
-        webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
-      }else{
-        let arg = getArgsJson(arguments);
-        webrtcdevlogs.push("<p style='color:grey'>[-]" + arg + "</p>");
-      }
-      console.log(arguments);
-    },
-
-    info : function(){
-      if(isJSON(arguments)){
-         let arg = JSON.stringify(arguments, undefined, 2);
-        webrtcdevlogs.push("<pre style='color:blue'>[-]" + arg + "</pre>");
-      }else{
-        let arg = getArgsJson(arguments);
-        webrtcdevlogs.push("<p style='color:blue'>[INFO]" + arg + "</p>");
-      }
-      console.info(arguments);
-    },
-
-    debug : function(){
-      if(isJSON(arguments)){
-        let arg = JSON.stringify(arguments, undefined, 2);
-        webrtcdevlogs.push( "<pre style='color:green'>[DEBUG]" + arg + "</pre>");
-      }else{
-        let arg = getArgsJson(arguments);
-        webrtcdevlogs.push("<p style='color:green'>[DEBUG]" + arg + "</p>");
-      }
-      console.debug(arguments);
-    },
-
-    warn : function(){
-      let arg = getArgsJson(arguments);
-      webrtcdevlogs.push("<p style='color:yellow'>[WARN]" + arg + "</p>");
-      console.warn(arguments);
-    },
-
-    error : function(){
-      if(isJSON(arguments)){
-        let arg = JSON.stringify(arguments, undefined, 2);
-        webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
-      }else{
-        let arg = getArgsJson(arguments);
-        webrtcdevlogs.push("<p style='color:red'>[ERROR]"+ arg + "</p>");
-      }
-       console.error(arguments);
-    }
+    // log : function(){
+    //   // var arg = getArgsJson(arguments);
+    //   // document.getElementById("help-view-body").innerHTML += '[-]' + arg + "<br/>";
+    //   if(isJSON(arguments)){
+    //     let arg = JSON.stringify(arguments, undefined, 2);
+    //     webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
+    //   }else{
+    //     let arg = getArgsJson(arguments);
+    //     webrtcdevlogs.push("<p style='color:grey'>[-]" + arg + "</p>");
+    //   }
+    //   console.log(arguments);
+    // },
+    //
+    // info : function(){
+    //   if(isJSON(arguments)){
+    //      let arg = JSON.stringify(arguments, undefined, 2);
+    //     webrtcdevlogs.push("<pre style='color:blue'>[-]" + arg + "</pre>");
+    //   }else{
+    //     let arg = getArgsJson(arguments);
+    //     webrtcdevlogs.push("<p style='color:blue'>[INFO]" + arg + "</p>");
+    //   }
+    //   console.info(arguments);
+    // },
+    //
+    // debug : function(){
+    //   if(isJSON(arguments)){
+    //     let arg = JSON.stringify(arguments, undefined, 2);
+    //     webrtcdevlogs.push( "<pre style='color:green'>[DEBUG]" + arg + "</pre>");
+    //   }else{
+    //     let arg = getArgsJson(arguments);
+    //     webrtcdevlogs.push("<p style='color:green'>[DEBUG]" + arg + "</p>");
+    //   }
+    //   console.debug(arguments);
+    // },
+    //
+    // warn : function(){
+    //   let arg = getArgsJson(arguments);
+    //   webrtcdevlogs.push("<p style='color:yellow'>[WARN]" + arg + "</p>");
+    //   console.warn(arguments);
+    // },
+    //
+    // error : function(){
+    //   if(isJSON(arguments)){
+    //     let arg = JSON.stringify(arguments, undefined, 2);
+    //     webrtcdevlogs.push("<pre style='color:grey'>[-]" + arg + "</pre>");
+    //   }else{
+    //     let arg = getArgsJson(arguments);
+    //     webrtcdevlogs.push("<p style='color:red'>[ERROR]"+ arg + "</p>");
+    //   }
+    //    console.error(arguments);
+    // }
     // }
 
 };
@@ -3705,6 +3705,8 @@ function getUserMediaHandler(options) {
             return;
         }
 
+        console.log(" =======================KKKKKKKKKKKK ===================== ", options.localMediaConstraints );
+
         navigator.mediaDevices.getUserMedia(options.localMediaConstraints).then(function(stream) {
             stream.streamid = stream.streamid || stream.id || getRandomString();
             stream.idInstance = idInstance;
@@ -5226,36 +5228,73 @@ var TranslationHandler = (function() {
             localMediaConstraints = connection.mediaConstraints;
         }
 
-        getUserMediaHandler({
-            onGettingLocalMedia: function(stream) {
-                var videoConstraints = localMediaConstraints.video;
-                if (videoConstraints) {
-                    if (videoConstraints.mediaSource || videoConstraints.mozMediaSource) {
-                        stream.isScreen = true;
-                    } else if (videoConstraints.mandatory && videoConstraints.mandatory.chromeMediaSource) {
-                        stream.isScreen = true;
+        console.log(" ======================= invokeGetUserMedia ============= ", session.audio , session.video , localMediaConstraints);
+        if(localMediaConstraints.isScreen){
+            // For ScreenShare
+            getUserMediaHandler({
+                onGettingLocalMedia: function(stream) {
+                    var videoConstraints = localMediaConstraints.video;
+                    if (videoConstraints) {
+                        if (videoConstraints.mediaSource || videoConstraints.mozMediaSource) {
+                            stream.isScreen = true;
+                        } else if (videoConstraints.mandatory && videoConstraints.mandatory.chromeMediaSource) {
+                            stream.isScreen = true;
+                        }
                     }
-                }
 
-                if (!stream.isScreen) {
-                    stream.isVideo = !!getTracks(stream, 'video').length;
-                    stream.isAudio = !stream.isVideo && getTracks(stream, 'audio').length;
-                }
-
-                mPeer.onGettingLocalMedia(stream, function() {
-                    if (typeof callback === 'function') {
-                        callback(stream);
+                    if (!stream.isScreen) {
+                        stream.isVideo = !!getTracks(stream, 'video').length;
+                        stream.isAudio = !stream.isVideo && getTracks(stream, 'audio').length;
                     }
-                });
-            },
-            onLocalMediaError: function(error, constraints) {
-                mPeer.onLocalMediaError(error, constraints);
-            },
-            localMediaConstraints: localMediaConstraints || {
-                audio: session.audio ? localMediaConstraints.audio : false,
-                video: session.video ? localMediaConstraints.video : false
-            }
-        });
+
+                    mPeer.onGettingLocalMedia(stream, function() {
+                        if (typeof callback === 'function') {
+                            callback(stream);
+                        }
+                    });
+                },
+                onLocalMediaError: function(error, constraints) {
+                    mPeer.onLocalMediaError(error, constraints);
+                },
+                localMediaConstraints: localMediaConstraints
+            });
+        }else{
+            // For regular Call Audio / Video
+            getUserMediaHandler({
+                onGettingLocalMedia: function(stream) {
+                    var videoConstraints = localMediaConstraints.video;
+                    if (videoConstraints) {
+                        if (videoConstraints.mediaSource || videoConstraints.mozMediaSource) {
+                            stream.isScreen = true;
+                        } else if (videoConstraints.mandatory && videoConstraints.mandatory.chromeMediaSource) {
+                            stream.isScreen = true;
+                        }
+                    }
+
+                    if (!stream.isScreen) {
+                        stream.isVideo = !!getTracks(stream, 'video').length;
+                        stream.isAudio = !stream.isVideo && getTracks(stream, 'audio').length;
+                    }
+
+                    mPeer.onGettingLocalMedia(stream, function() {
+                        if (typeof callback === 'function') {
+                            callback(stream);
+                        }
+                    });
+                },
+                onLocalMediaError: function(error, constraints) {
+                    mPeer.onLocalMediaError(error, constraints);
+                },
+                // localMediaConstraints: localMediaConstraints || {
+                //     audio: session.audio ? localMediaConstraints.audio : false,
+                //     video: session.video ? localMediaConstraints.video : false
+                // }
+                localMediaConstraints:  {
+                    audio: session.audio ? localMediaConstraints.audio : false,
+                    video: session.video ? localMediaConstraints.video : false
+                }
+            });
+        }
     };
 
     function applyConstraints(stream, mediaConstraints) {
@@ -13718,11 +13757,56 @@ this.setsession = function (_localobj, _remoteobj, incoming, outgoing, session, 
  * @name funcStartWebrtcdev
  */
 function funcStartWebrtcdev() {
-    console.log(" [startjs] funcStartWebrtcdev - webrtcdev", webrtcdev);
+    console.log(" [initjs] funcStartWebrtcdev - webrtcdev", webrtcdev);
+
     return new Promise(function (resolve, reject) {
-        webrtcdev.log(" [ startJS webrtcdom ] : begin DetectRTC checkDevices");
-        if (role != "inspector") checkDevices(resolve, reject, incoming, outgoing);
+        webrtcdev.log(" [ startJS webrtcdom ] : begin  checkDevices for outgoing and incoming");
+        listDevices();
+
+        webrtcdev.log(" [ startJS webrtcdom ] : incoming ", incoming);
+        webrtcdev.log(" [ startJS webrtcdom ] : outgoing ", outgoing);
+        if (incoming) {
+            incomingAudio = incoming.audio;
+            incomingVideo = incoming.video;
+            incomingData = incoming.data;
+        }
+        if (outgoing) {
+            outgoingAudio = outgoing.audio;
+            outgoingVideo = outgoing.video;
+            outgoingData = outgoing.data;
+        }
+
+        if (role != "inspector"){
+
+            detectWebcam(function (hasWebcam) {
+                console.log('Has Webcam: ' + (hasWebcam ? 'yes' : 'no'));
+                if(!hasWebcam) {
+                    alert(" you dont have access to webcam ");
+                    outgoingVideo = false;
+                }
+                detectMic(function (hasMic) {
+                    console.log('Has Mic: ' + (hasMic ? 'yes' : 'no'));
+                    if (!hasMic) {
+                        alert(" you dont have access to Mic ");
+                        outgoingAudio = false;
+                    }
+
+                    // Try getting permission again and ask your to restart
+                    if(outgoingAudio) getAudioPermission();
+                    if(outgoingVideo) getVideoPermission();
+
+                    setTimeout(function() {
+                        webrtcdev.log(" outgoingAudio ", outgoingAudio , " outgoingVideo ",outgoingVideo);
+                        resolve("done");
+                    }, 2000);
+                });
+            });
+        }else{
+            resolve("done");
+        }
+
     }).then((res) => {
+
         webrtcdev.log(" [ startJS webrtcdom ] : sessionid : " + sessionid + " and localStorage  ", localStorage);
 
         return new Promise(function (resolve, reject) {
@@ -13734,24 +13818,7 @@ function funcStartWebrtcdev() {
             }
             resolve("done");
         });
-    }).then((res) => {
 
-        webrtcdev.log(" [ startJS webrtcdom ] : incoming ", incoming);
-        webrtcdev.log(" [ startJS webrtcdom ] : outgoing ", outgoing);
-
-        return new Promise(function (resolve, reject) {
-            if (incoming) {
-                incomingAudio = incoming.audio;
-                incomingVideo = incoming.video;
-                incomingData = incoming.data;
-            }
-            if (outgoing) {
-                outgoingAudio = outgoing.audio;
-                outgoingVideo = outgoing.video;
-                outgoingData = outgoing.data;
-            }
-            resolve("done");
-        });
     }).then((res) => {
 
         webrtcdev.log(" [ startJS webrtcdom ] : localobj ", localobj);
@@ -16783,46 +16850,13 @@ function resetAlertBox() {
 /*-----------------------------------------------------------------------------------*/
 
 /**
- * function to check devices like speakers , webcam ,  microphone etc
+ * function to updateStats
  * @method
- * @name checkDevices
+ * @name updateStats
  * @param {object} connection
  */
-function checkDevices(obj) {
+function updateStats(obj) {
     webrtcdev.info(" =============================== check Devices ==========================================");
-    if (obj.hasMicrophone) {
-        // seems current system has at least one audio input device
-        webrtcdev.info("has Microphone");
-    } else {
-        webrtcdev.error("doesnt have  hasMicrophone");
-    }
-
-    if (obj.hasSpeakers) {
-        webrtcdev.info("has Speakers");
-        // seems current system has at least one audio output device
-    } else {
-        webrtcdev.error("doesnt have  Speakers");
-    }
-
-    if (obj.hasWebcam) {
-        webrtcdev.info("has Webcam");
-        // seems current system has at least one video input device
-    } else {
-        webrtcdev.error("doesnt have Webcam");
-    }
-
-    webrtcdev.log(" Audio Input Device ");
-    for (x in obj.audioInputDevices) webrtcdev.info(obj.audioInputDevices[x]);
-
-    webrtcdev.log(" Audio Output Device ");
-    for (x in obj.audioOutputDevices) webrtcdev.info(obj.audioOutputDevices[x]);
-
-    webrtcdev.log(" Video Input Device ");
-    for (x in obj.videoInputDevices) webrtcdev.info(obj.videoInputDevices[x]);
-
-    webrtcdev.info(" Screen Device " + obj.displayResolution);
-
-    webrtcdev.info(" =========================================================================");
 
     // Update Stats if active
     if (statisticsobj && statisticsobj.active) {
@@ -23894,7 +23928,7 @@ function listDevices() {
         webrtcdev.warn("enumerateDevices() not supported.");
         return;
     }
-//List cameras and microphones.
+    //List cameras and microphones.
     navigator.mediaDevices.enumerateDevices()
         .then(function (devices) {
             devices.forEach(function (device) {
@@ -23937,6 +23971,46 @@ function detectMic(callback) {
     });
 }
 
+
+async function getVideoPermission(){
+    // navigator.getUserMedia({ audio: false, video: true}, function(){
+    //     outgoingVideo = false;
+    // }, function(){
+    //  outgoingVideo = false;
+    // });
+    let stream = null;
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true})
+        if (stream.getVideoTracks().length > 0) {
+            //code for when none of the devices are available
+            webrtcdev.log("--------------------------------- Video Permission obtained ");
+            outgoingVideo = true;
+            return;
+        }
+    } catch(err) {
+        webrtcdev.error(err.name + ": " + err.message);
+    }
+    outgoingVideo = false;
+    return;
+}
+
+
+async function getAudioPermission(){
+    let stream = null;
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false})
+        if (stream.getAudioTracks().length > 0) {
+            //code for when none of the devices are available
+            webrtcdev.log("--------------------------------- Audio Permission obtained ");
+            outgoingAudio = true;
+            return;
+        }
+    } catch(err) {
+        webrtcdev.error(err.name + ": " + err.message);
+    }
+    outgoingAudio = false;
+    return;
+}
 /************************************
  webrtc get media
  ***********************************/
@@ -23949,21 +24023,26 @@ function detectMic(callback) {
  */
 function getCamMedia(rtcConn) {
     rtcConn.dontAttachStream = false,
-    rtcConn.dontCaptureUserMedia = false,
     rtcConn.dontGetRemoteStream = false;
-    alert(" start getusermedia");
+
     webrtcdev.log(" [startJS] getCamMedia  role :", role);
+
+    webrtcdev.log(" start getusermedia - outgoingVideo " + outgoingVideo + " outgoingAudio "+ outgoingAudio );
     return new Promise(function (resolve, reject) {
         if (role == "inspector") {
+            rtcConn.dontCaptureUserMedia = true;
             console.log("[startJS] getCamMedia  - Joining as inspector without camera Video");
         } else if (outgoingVideo && outgoingAudio) {
+            rtcConn.dontCaptureUserMedia = false;
             webrtcdev.log("[startJS] getCamMedia  - Capture Media ");
             rtcConn.getUserMedia();  // not wait for the rtc conn on media stream or on error 
         } else if (!outgoingVideo && outgoingAudio) {
-            alert(" start  getCamMedia  - Dont Capture Webcam only Mic");
+            rtcConn.dontCaptureUserMedia = false;
+            // alert(" start  getCamMedia  - Dont Capture Webcam, only Mic");
             webrtcdev.warn("[startJS] getCamMedia  - Dont Capture Webcam only Mic ");
             rtcConn.getUserMedia();  // not wait for the rtc conn on media stream or on error
         } else {
+            rtcConn.dontCaptureUserMedia = true;
             webrtcdev.error(" [startJS] getCamMedia - dont Capture outgoing video ", outgoingVideo);
             onNoCameraCard();
         }
@@ -26212,23 +26291,22 @@ function startSocketSession(rtcConn, socketAddr, sessionid) {
                     rtcConn.sdpConstraints.mandatory = {
                         OfferToReceiveAudio: incomingAudio,
                         OfferToReceiveVideo: incomingVideo
-                    };
+                    },
+                    rtcConn.open(event.channel, function(res) {
+                        // alert(" callback from open room ", res);
+                        webrtcdev.log(" [sessionmanager] offer/answer webrtc ", selfuserid, " with role ", role);
+                    });
+                    webrtcdev.log(" [sessionmanager] ------------------------------ oooooooooooooo ");
                     resolve("ok"); // immediately give the result: 123
-                });
-
-                promise.then(
-                    rtcConn.open(event.channel, function () {
-                        webrtcdev.log(" [sessionmanager] offer/answer webrtc ", selfuserid, " with role ", role)
-                    })
-                ).then(function (res) {
+                }).then(function (res) {
                     updatePeerInfo(selfuserid, selfusername, selfcolor, selfemail, role, "local"),
-                        webrtcdev.log(" [sessionmanager] updated local peerinfo for open-channel ")
-                }).then(
-                    getCamMedia(rtcConn),
-                    webrtcdev.log(" [sessionmanager] done cam media ")
-                ).catch((reason) => {
+                        webrtcdev.log(" [sessionmanager] updated local peerinfo for open-channel ");
+                }).catch((reason) => {
                     webrtcdev.error(' [sessionmanager] Handle rejected promise (' + reason + ')');
                 });
+
+                getCamMedia(rtcConn);
+                webrtcdev.log(" [sessionmanager] open-channel-resp -  done cam media ");
             } else {
                 // signaller doesnt allow channel open
                 alert("Could not open this channel, Server refused");
@@ -26253,16 +26331,16 @@ function startSocketSession(rtcConn, socketAddr, sessionid) {
                         " OfferToReceiveVideo: ", incomingVideo
                     );
                     rtcConn.connectionType = "join",
-                        rtcConn.session = {
-                            video: outgoingVideo,
-                            audio: outgoingAudio,
-                            data: outgoingData
-                        },
-                        rtcConn.sdpConstraints.mandatory = {
-                            OfferToReceiveAudio: incomingAudio,
-                            OfferToReceiveVideo: incomingVideo
-                        },
-                        rtcConn.remoteUsers = event.users;
+                    rtcConn.session = {
+                        video: outgoingVideo,
+                        audio: outgoingAudio,
+                        data: outgoingData
+                    },
+                    rtcConn.sdpConstraints.mandatory = {
+                        OfferToReceiveAudio: incomingAudio,
+                        OfferToReceiveVideo: incomingVideo
+                    },
+                    rtcConn.remoteUsers = event.users;
                     resolve(); // immediately give the result: 123
                 });
 
@@ -26273,20 +26351,19 @@ function startSocketSession(rtcConn, socketAddr, sessionid) {
                     // for a new joiner , update his local info 
                     updatePeerInfo(selfuserid, selfusername, selfcolor, selfemail, role, "local"),
                     webrtcdev.log(" [sessionmanager] updated local peerinfo for join-channel ")
-                ).then(
-                    getCamMedia(rtcConn),
-                    webrtcdev.log(" [sessionmanager] done cam media ")
-                ).catch(
-                    (reason) => {
+                ).catch((reason) => {
                         webrtcdev.error('Handle rejected promise (' + reason + ')');
-                    }
-                );
+                });
+
+                getCamMedia(rtcConn),
+                webrtcdev.log(" [sessionmanager] join-channel-resp -  done cam media ");
+
                 if (event.message)
                     shownotification(event.msgtype + " : " + event.message);
             } else {
                 // signaller doesnt allow channel Join
                 webrtcdev.error(" [sessionmanager] Could not join this channel, Server refused");
-                alert("Coudl not join this channel, Server refused ");
+                alert("Could not join this channel, Server refused ");
             }
         });
 
@@ -26332,7 +26409,7 @@ function startSocketSession(rtcConn, socketAddr, sessionid) {
                     peerinfo.streamid = "";
                     updateWebCallView(peerinfo);
 
-                    onLocalConnect() // event emitter for app client 
+                    onLocalConnect(); // event emitter for app client
 
                 } else {
                     // max capacity of session is reached 
@@ -26389,6 +26466,7 @@ var setRtcConn = function (sessionid) {
             try {
 
                 webrtcdev.log("[sessionmanager onopen] selfuserid ", selfuserid);
+
                 // Add remote peer userid to remoteUsers
                 remoteUsers = rtcConn.peers.getAllParticipants(),
                     webrtcdev.log(" [sessionmanager onopen] Collecting remote peers", remoteUsers);
@@ -26478,22 +26556,22 @@ var setRtcConn = function (sessionid) {
         },
 
         rtcConn.onMediaError = function (error, constraints) {
-            webrtcdev.error("[sessionmanager] onMediaError - ", error, constraints);
+            webrtcdev.error("[sessionmanager] onMediaError - ", error, " constraints ", constraints);
 
-            listDevices();
-
+            // Join without stream
             webrtcdev.warn("[sessionmanager] onMediaError- Joining without camera Stream");
             shownotification(error.name + " Joining without camera Stream ", "warning");
             localVideoStreaming = false;
             // For local Peer , if camera is not allowed or not connected then put null in video containers
-            var peerinfo = webcallpeers[0];
+            let peerinfo = webcallpeers[0];
             peerinfo.type = "Local";
-            peerinfo.stream = null;
-            peerinfo.streamid = "nothing01";
+            peerinfo.stream = "";
+            peerinfo.streamid = "";
             updateWebCallView(peerinfo);
 
             // start local Connect
             onLocalConnect(); // event emitter for app client
+
         },
 
         rtcConn.onstream = function (event) {
@@ -26751,8 +26829,8 @@ var setRtcConn = function (sessionid) {
 
             //alert ( "send fille to " + file.remoteUserId , findPeerInfo(file.remoteUserId).name);
 
-            var progressid = file.uuid + "_" + file.userid + "_" + file.remoteUserId;
-            var peerinfo = findPeerInfo(file.userid);
+            let progressid = file.uuid + "_" + file.userid + "_" + file.remoteUserId;
+            let peerinfo = findPeerInfo(file.userid);
             // check if not already present ,
             // done to include one entry even if same file is being sent to multiple particpants
             if (!peerinfo.filearray.includes("name : file.name")) {
@@ -26895,10 +26973,10 @@ var setRtcConn = function (sessionid) {
         else
             reject("failed");
     })
-        .catch((err) => {
-            webrtcdev.error("setRtcConn", err);
-            reject(err);
-        });
+    .catch((err) => {
+        webrtcdev.error("setRtcConn", err);
+        reject(err);
+    });
 }
 
 /*
@@ -26924,45 +27002,9 @@ function supportSessionRefresh() {
 /*
 * Check Microphone and Camera Devices
 */
-function checkDevices(resolveparent, rejectparent, incoming, outgoing) {
-
-    listDevices();
-
-    return new Promise(function (resolve, reject) {
-
-        detectWebcam(function (hasWebcam) {
-            console.log('Has Webcam: ' + (hasWebcam ? 'yes' : 'no'));
-            if(!hasWebcam){
-                alert(" you dont have access to webcam ");
-                outgoing.video = false;
-                resolve("checkaudio");
-            }
-            resolve("ok");
-        });
-
-    }).then(function (value) {
-
-        if(value=="checkaudio"){
-            detectMic(function (hasMic) {
-                console.log('Has Mic: ' + (hasMic ? 'yes' : 'no'));
-                if(!hasMic){
-                    alert(" you dont have access to Mic ");
-                    outgoing.audio = false;
-                    resolve("ok");
-                }
-                resolve("ok");
-            });
-        }else{
-            resolve("ok");
-        }
-    }).then(function (value) {
-        webrtcdev.info("checkdevices complete");
-        resolveparent("done");
-    }).catch((err) => {
-        webrtcdev.error("Yes detectRTC failed to load ", err);
-        resolveparent("proceed");
-    });
-}
+// function checkDevices(resolveparent, rejectparent, incoming, outgoing) {
+//     listDevices();
+// }
 
 
 /**

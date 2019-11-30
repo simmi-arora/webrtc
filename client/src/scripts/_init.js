@@ -428,11 +428,56 @@ this.setsession = function (_localobj, _remoteobj, incoming, outgoing, session, 
  * @name funcStartWebrtcdev
  */
 function funcStartWebrtcdev() {
-    console.log(" [startjs] funcStartWebrtcdev - webrtcdev", webrtcdev);
+    console.log(" [initjs] funcStartWebrtcdev - webrtcdev", webrtcdev);
+
     return new Promise(function (resolve, reject) {
-        webrtcdev.log(" [ startJS webrtcdom ] : begin DetectRTC checkDevices");
-        if (role != "inspector") checkDevices(resolve, reject, incoming, outgoing);
+        webrtcdev.log(" [ startJS webrtcdom ] : begin  checkDevices for outgoing and incoming");
+        listDevices();
+
+        webrtcdev.log(" [ startJS webrtcdom ] : incoming ", incoming);
+        webrtcdev.log(" [ startJS webrtcdom ] : outgoing ", outgoing);
+        if (incoming) {
+            incomingAudio = incoming.audio;
+            incomingVideo = incoming.video;
+            incomingData = incoming.data;
+        }
+        if (outgoing) {
+            outgoingAudio = outgoing.audio;
+            outgoingVideo = outgoing.video;
+            outgoingData = outgoing.data;
+        }
+
+        if (role != "inspector"){
+
+            detectWebcam(function (hasWebcam) {
+                console.log('Has Webcam: ' + (hasWebcam ? 'yes' : 'no'));
+                if(!hasWebcam) {
+                    alert(" you dont have access to webcam ");
+                    outgoingVideo = false;
+                }
+                detectMic(function (hasMic) {
+                    console.log('Has Mic: ' + (hasMic ? 'yes' : 'no'));
+                    if (!hasMic) {
+                        alert(" you dont have access to Mic ");
+                        outgoingAudio = false;
+                    }
+
+                    // Try getting permission again and ask your to restart
+                    if(outgoingAudio) getAudioPermission();
+                    if(outgoingVideo) getVideoPermission();
+
+                    setTimeout(function() {
+                        webrtcdev.log(" outgoingAudio ", outgoingAudio , " outgoingVideo ",outgoingVideo);
+                        resolve("done");
+                    }, 2000);
+                });
+            });
+        }else{
+            resolve("done");
+        }
+
     }).then((res) => {
+
         webrtcdev.log(" [ startJS webrtcdom ] : sessionid : " + sessionid + " and localStorage  ", localStorage);
 
         return new Promise(function (resolve, reject) {
@@ -444,24 +489,7 @@ function funcStartWebrtcdev() {
             }
             resolve("done");
         });
-    }).then((res) => {
 
-        webrtcdev.log(" [ startJS webrtcdom ] : incoming ", incoming);
-        webrtcdev.log(" [ startJS webrtcdom ] : outgoing ", outgoing);
-
-        return new Promise(function (resolve, reject) {
-            if (incoming) {
-                incomingAudio = incoming.audio;
-                incomingVideo = incoming.video;
-                incomingData = incoming.data;
-            }
-            if (outgoing) {
-                outgoingAudio = outgoing.audio;
-                outgoingVideo = outgoing.video;
-                outgoingData = outgoing.data;
-            }
-            resolve("done");
-        });
     }).then((res) => {
 
         webrtcdev.log(" [ startJS webrtcdom ] : localobj ", localobj);
