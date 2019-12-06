@@ -216,6 +216,7 @@ module.exports = function(grunt) {
                 passwordVar: 'GITHUB_PASSWORD' //ENVIRONMENT VARIABLE that contains GitHub password
               }
             }
+            }
           }
     });
 
@@ -226,7 +227,6 @@ module.exports = function(grunt) {
 
     // grunt.loadNpmTasks('grunt-publish');
     grunt.loadNpmTasks('grunt-release');
-
 
     // Default task(s).
     grunt.registerTask('dev', ['concat','jshint','uglify']);
