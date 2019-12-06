@@ -13325,7 +13325,6 @@ var formatCounterValue = function formatCounterValue(counter, glue, format) {
 /******/ ]);
 });
 var webrtcdevcon = function () {
-
     _this = this;
 /*-----------------------------------------------------------------------------------*/
 /*                    Global Init JS                                                 */

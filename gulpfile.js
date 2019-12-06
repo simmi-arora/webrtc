@@ -48,15 +48,16 @@ var header = require('gulp-header'),
 
 gulp.task('clean', function (done) {
   del.sync('dist');
-  cone();
-})
+  done();
+});
 
 gulp.task('vendorjs',function(done) {
     vendorJsList=[ 
-      "https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js",
-      "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js",
-      "https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js",
-      "https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"
+        "https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js",
+        "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js",
+        "https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
     ]; 
     remoteSrc(vendorJsList, {base: null })
         // .pipe( rev({strict: true}) )
@@ -242,7 +243,7 @@ gulp.task('webrtcdevelopmentjs',function(done) {
     scriptList.push("client/src/scripts/start.js");
     scriptList.push("client/src/scripts/admin.js");    
     console.log(scriptList);
-    gulp.src(scriptList)
+    gulp.src(scriptList,{ allowEmpty: true })
         .pipe(header(headerComment))
         .pipe(babel({
             presets: ['es2015']
@@ -251,7 +252,6 @@ gulp.task('webrtcdevelopmentjs',function(done) {
         .pipe(concat('webrtcdevelopment.js'))  
         .pipe(replace(/use strict/g, ''))
         .pipe(gulp.dest(folderPath));
-        //.pipe(uglify()); 
     done();
 });
 
@@ -320,14 +320,11 @@ gulp.task('default', gulp.series(
 // onlu gulp webrtcdev js changes 
 gulp.task('develop', gulp.series(
     // 'vendorjs',
-    // 'drawjs' , 
-    // 'drawcss',
+    // 'drawjs' ,
     // 'codejs',
-    // 'codecss',
     'betawebrtcdevelopmentjs',
     // 'screensharejs',
     // 'mainstyle',
-    // 'webrtcdevelopmentcss',
     // 'serverjs'
 
 )); 
@@ -341,7 +338,6 @@ gulp.task('production', gulp.parallel(
     'codejs',
     'codecss',
     'webrtcdevelopmentjs',
-    /*'screensharejs',*/
     'mainstyle',
     'webrtcdevelopmentcss',
     'webrtcdevelopmentServer'
