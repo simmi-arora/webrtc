@@ -1,8 +1,6 @@
 /**************************************************************
  Screenshare
  ****************************************************************/
-'use strict';
-"use strict";
 
 var sourceId, screen_constraints, screenStreamId;
 var isFirefox = typeof window.InstallTrigger !== 'undefined';

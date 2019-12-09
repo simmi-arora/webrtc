@@ -102,9 +102,9 @@ gulp.task('webrtcdevelopmentServer',function(done) {
     ]; 
     console.log(list);
     gulp.src(list)
-        .pipe( rev({strict: true}) )
+        // .pipe( rev({strict: true}) )
         .pipe(header(headerComment))
-        .pipe(uglify())
+        // .pipe(uglify())
         .pipe(concat('webrtcdevelopmentServer.js'))  
         .pipe(gulp.dest(folderPath)); 
     done();

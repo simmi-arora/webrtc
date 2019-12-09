@@ -1,4 +1,4 @@
-'use strict';
+// 'use strict';
 
 // Last time updated: 2019-07-08 4:54:27 PM UTC
 
@@ -15250,8 +15250,6 @@ function getstatsMediaDevices(){
 /**************************************************************
  Screenshare
  ****************************************************************/
-'use strict';
-;
 
 var sourceId, screen_constraints, screenStreamId;
 var isFirefox = typeof window.InstallTrigger !== 'undefined';
