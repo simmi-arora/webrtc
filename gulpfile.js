@@ -178,8 +178,8 @@ gulp.task('codecss',function(done) {
 });
 
 var scriptList=[
-    "client/src/scripts/_logger.js",
     "client/src/scripts/RTCM.js",
+    "client/src/scripts/_logger.js",
     // --------------------- helper libs
     "client/src/helperlibs/html2canvas.js",
     // "client/src/scripts/jszip.js"
@@ -188,7 +188,7 @@ var scriptList=[
     "client/src/scripts/_init.js",
     // --------------------- dom modifiers
     "client/src/dommodifiers/_webcallviewmanager.js",
-    "client/src/dommodifiers/_filesharing_dommanager.js",
+    "client/src/dommodifiers/_filesharing_dommanager.jvi s",
     "client/src/dommodifiers/_media_dommanager.js",
     "client/src/dommodifiers/_notify.js",
     "client/src/dommodifiers/_screenshare_dommodifier.js",
@@ -267,7 +267,7 @@ gulp.task('mainstyle',function(done) {
     ]; 
     console.log(cssList);
     remoteSrc(cssList, {base: null })
-        .pipe( rev({strict: true}) )
+        // .pipe( rev({strict: true}) )
         .pipe(header(headerComment))
         .pipe(concat('webrtcdevelopment_header.css'))  
         .pipe(gulp.dest(folderPath));
@@ -289,7 +289,7 @@ gulp.task('webrtcdevelopmentcss',function(done) {
     console.log(cssList);
     gulp.src(cssList)
       //.pipe(uglify())
-        .pipe( rev({strict: true}) )
+      //   .pipe( rev({strict: true}) )
         .pipe(header(headerComment))
         .pipe(concat('webrtcdevelopment.css'))
         .pipe(less().on('error', function(error) { console.error(error)}))

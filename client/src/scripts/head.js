@@ -1,2 +1,2 @@
 var webrtcdevcon = function () {
-    _this = this;
+    var _this = this;

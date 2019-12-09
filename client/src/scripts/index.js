@@ -1,4 +1,4 @@
-'use strict';
+
 var Client = require('./start');
 
 function WebRTCDev(options) {

@@ -5113,7 +5113,7 @@ var TranslationHandler = (function() {
             connection.renegotiate(remoteUserId);
         }
     };
-
+    var IsChrome = !!navigator.webkitGetUserMedia;
     connection.invokeGetUserMedia = function(localMediaConstraints, callback, session) {
         if (!session) {
             session = connection.session;
